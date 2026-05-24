@@ -1,0 +1,82 @@
+site_name: Interphyre
+
+theme:
+  name: material
+  favicon: assets/favicon.svg
+  logo: assets/favicon.svg
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.instant
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+    - toc.integrate
+  font:
+    text: Source Sans 3
+    code: JetBrains Mono
+  palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Dark mode
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Light mode
+plugins:
+  - search
+
+extra_css:
+  - stylesheets/extra.css
+  - https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css
+
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js
+  - javascripts/katex.js
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Levels:
+      - One Ball Levels: levels.md
+  - Examples:
+      - Overview: examples/index.md
+      - Quickstart: examples/quickstart.md
+      - Gym Interface: examples/gym_interface.md
+      - Triggers: examples/triggers.md
+      - Interventions: examples/interventions.md
+      - Replanning: examples/replanning.md
+      - Counterfactuals: examples/counterfactuals.md
+      - Custom Levels: examples/custom_levels.md
+  - API:
+      - Overview: api/index.md
+      - Configuration: api/config.md
+      - Level Model: api/level.md
+      - Level Registry: api/levels.md
+      - Physics Engine: api/engine.md
+      - Gymnasium Environment: api/environment.md
+      - Objects: api/objects.md
+      - Rendering: api/render.md
+      - Interventions: api/interventions.md
+  - Tools: tools.md
+  - About: about.md
+  - Contributing: contributing.md

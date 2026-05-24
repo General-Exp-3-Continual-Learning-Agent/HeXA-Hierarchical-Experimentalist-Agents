@@ -1,0 +1,25 @@
+# Core deps for HeXA / SkillRL pipelines and the ReAct baselines.
+#
+# The InterPhyre simulator has its own pyproject.toml in interphyre/. Install
+# it with:
+#     pip install ./interphyre
+# which brings in box2d-py, gymnasium, pygame as transitive deps.
+
+# Numerics & image handling
+numpy>=1.26.0,<2.0.0
+opencv-python>=4.8.0
+Pillow>=10.0.0
+
+# JSON / token-counting utilities used by the distillation prompts
+tiktoken>=0.7.0
+
+# Plotting (only used by analysis scripts under skillrl/analysis/)
+matplotlib>=3.10.0
+
+# Progress bars (used in the runner)
+tqdm>=4.66.0
+
+# Optional — only for the open-source / Qwen baselines (uncomment if needed):
+# torch>=2.1.0
+# transformers>=4.40.0
+# vllm>=0.5.0

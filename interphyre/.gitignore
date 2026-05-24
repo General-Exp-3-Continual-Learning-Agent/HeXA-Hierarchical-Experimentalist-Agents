@@ -1,0 +1,52 @@
+.idea/
+.vscode/
+logs/
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+.DS_Store
+.pytest_cache/
+*.log
+temp_*
+site/
+plans/
+checkpoints/
+.mypy_cache/
+outputs/
+videos/
+reference/
+.cursor/
+.claude/
+.coverage
+*.egg-info
+.ruff_cache/
+.venv/
+.doltcfg/
+.beads/
+scratch/
+
+# Debug and test scripts (root level only)
+/debug_*.py
+/test_*.py
+
+# Generated output artifacts (keep on disk, not in git)
+results/
+.github/
+AGENTS.md
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db
+
+# Paper writing artifacts
+latex/
+
+# Beads credentials
+.beads/.beads-credential-key
+
+# Local config
+config.yaml
+
+# Beads / Dolt files (added by bd init)
+.beads-credential-key

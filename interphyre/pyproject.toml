@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "interphyre"
+version = "0.0.2"
+description = "Physics-based puzzle environment with interventions"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Sankaran Vaidyanathan", email = "sankaranv@cs.umass.edu" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "box2d-py>=2.3.8",
+    "gymnasium>=0.29.1",
+    "numpy>=1.26.0,<2.0.0",
+    "opencv-python>=4.8.0",
+    "Pillow>=10.0.0",
+    "pygame>=2.5.0",
+]
+
+[project.optional-dependencies]
+viz = ["matplotlib>=3.10.0"]
+dev = ["pytest>=8.0.0", "pytest-cov", "ruff>=0.4.0", "psutil>=5.9.0"]
+ml = [
+    "torch>=2.1.0",
+    "transformers>=4.40.0",
+    "peft>=0.11.1",
+    "accelerate>=0.25.0",
+    "timm>=0.9.10,<1.0.0",
+    "einops>=0.7.0",
+]
+data = [
+    "pandas>=2.0.0",
+    "tensorboard>=2.15.0",
+    "tqdm>=4.66.0",
+    "psutil>=7.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/sankaranv/interphyre"
+
+[tool.uv]
+# box2d-py has no Linux wheels on PyPI and requires an old SWIG (< 4.x) to build
+# from source. The pre-built wheel in wheels/ is cp311-linux_x86_64; it was
+# extracted from the conda forge build and is the canonical way to install on
+# this cluster. uv resolves it via find-links below.
+find-links = ["wheels"]
+
+[tool.setuptools.packages.find]
+include = ["interphyre*"]
+
+[tool.setuptools.package-data]
+interphyre = ["data/levels/*.json.lzma"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint.per-file-ignores]
+"tools/*" = ["E402"]

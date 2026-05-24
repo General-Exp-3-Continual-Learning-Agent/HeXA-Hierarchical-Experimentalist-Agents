@@ -1,0 +1,25 @@
+.md-typeset figure {
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.md-typeset video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+:root {
+  --md-primary-fg-color: #881C1C;
+  --md-primary-fg-color--dark: #5E1212;
+
+  --md-accent-fg-color: #CFA15C;
+
+  --md-default-bg-color: #FAF8F7;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #6B1515;
+  --md-accent-fg-color: #E0B873;
+}
