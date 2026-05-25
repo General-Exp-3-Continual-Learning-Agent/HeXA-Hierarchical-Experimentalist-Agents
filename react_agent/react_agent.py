@@ -21,22 +21,18 @@ _OSS_CONTROL_TOKENS = re.compile(
     r"<\|(?:start|end|channel|message|call|return|constrain|endofprompt)\|>"
 )
 
-# Matches the analysis channel body:
-#   <|channel|>analysis<|message|>THOUGHT<|end|>
-# After _OSS_CONTROL_TOKENS replaces tokens with spaces, the pattern becomes:
-#   analysis  THOUGHT
-# We also accept "assistantanalysis" / "analysis" tags that leak through.
-_OSS_ANALYSIS_RE = re.compile(
-    r"(?:assistant)?analysis\s+(.*?)(?=\s+(?:assistant)?(?:commentary|final)|"
-    r"\s+to=functions\.|$)",
+# Native format tool-call patterns (after control tokens are stripped).
+# The model produces several orderings:
+#   (a) "assistant to=functions.TOOL commentary json ARGS"   (standard)
+#   (b) "assistant commentary to=functions.TOOL json ARGS"   (variant)
+#   (c) "assistant commentary to=TOOL json ARGS"             (no functions. prefix)
+_OSS_TOOL_CALL_RE = re.compile(
+    r"(?:assistant\s+)?(?:commentary\s+)?to=(?:functions\.)?(\w+)"
+    r".*?(?:commentary\s+)?(?:json\s+)?(\{[^}]*\})",
     re.DOTALL,
 )
-
-# Matches a tool call:
-#   to=functions.TOOL_NAME ... commentary json  {ARGS}
-# where ARGS may contain nested braces.
-_OSS_TOOL_CALL_RE = re.compile(
-    r"to=\s*functions\.(\w+).*?(\{(?:[^{}]|\{[^{}]*\})*\})",
+_OSS_ANALYSIS_RE = re.compile(
+    r"analysis\s*(.*?)(?=(?:assistant|to=functions|commentary\s+to=|final|$))",
     re.DOTALL,
 )
 
@@ -78,150 +74,6 @@ def _extract_coords_from_thought(thought: str) -> str:
         return _json.dumps(coords)
 
     return "{}"
-
-
-# ── Tool-name sets for regex-based fallback detection ──────────────────────
-_KNOWN_TOOLS_NO_ARGS = frozenset({
-    "get_level_state", "get_contact_log", "describe_scene_geometry",
-})
-_KNOWN_TOOLS_WITH_COORDS = frozenset({
-    "simulate_action", "validate_action", "predict_first_contact", "finish",
-})
-_KNOWN_TOOLS_WITH_TRACE = frozenset({"simulate_with_trace"})
-_ALL_KNOWN_TOOLS = _KNOWN_TOOLS_NO_ARGS | _KNOWN_TOOLS_WITH_COORDS | _KNOWN_TOOLS_WITH_TRACE
-
-# Sorted longest-first so longer names match before shorter prefixes
-_TOOL_MENTION_RE = re.compile(
-    r"\b(" + "|".join(sorted(_ALL_KNOWN_TOOLS, key=len, reverse=True)) + r")\b"
-)
-
-# Matches JSON-encoded function calls: {"name": "tool", "arguments": {...}}
-_JSON_FN_CALL_RE = re.compile(
-    r'"(?:name|function|tool)"\s*:\s*"(\w+)"[^}]*?"(?:arguments?|parameters?|input)"\s*:\s*(\{[^}]*\})',
-    re.DOTALL,
-)
-
-
-def _truncate_messages(messages: List[Dict[str, Any]], keep_recent: int = 8) -> List[Dict[str, Any]]:
-    """
-    Keep system prompt + initial user message + most recent `keep_recent` turns.
-
-    A "turn" here is one assistant message (with optional tool result that
-    follows it).  Used to bound prefill context length on long ReAct chains
-    where eager attention's O(seq²) activation matrix can OOM the GPU.
-    """
-    if len(messages) <= 2:
-        return messages
-    # Always keep the first system + first user message
-    head = messages[:2]
-    tail = messages[2:]
-    # Each ReAct turn for OSS = 2 messages (assistant tool_call + tool result).
-    # For non-OSS = 2 messages (assistant + user observation).  So multiply by 2.
-    keep_msgs = keep_recent * 2
-    if len(tail) <= keep_msgs:
-        return messages
-    return head + tail[-keep_msgs:]
-
-
-def _compact_old_observations(
-    messages: List[Dict[str, Any]],
-    keep_recent: int = 4,
-    max_chars_when_old: int = 600,
-) -> List[Dict[str, Any]]:
-    """Return a copy of `messages` with OLD observations head-and-tail truncated.
-
-    For Claude (non-OSS) ReAct chains, the prompt grows linearly with iteration
-    count because every prior Thought / Action / Observation triple is kept in
-    full. The `Observation` slot is the chunky one — a `simulate_with_trace`
-    output can be 1k+ tokens. Past iteration ~5 this dominates the prompt.
-
-    Strategy: keep the system prompt + initial user message untouched, keep the
-    `keep_recent` most recent (assistant, observation) pairs verbatim, and for
-    every OLDER observation truncate the content to a head + tail snippet so
-    the model still sees the important markers (SUCCESS / INVALID / final
-    positions sit at the start; any tail summary stays at the end). The
-    assistant turns (Thought / Action / Action Input lines) are NEVER compacted
-    — they're short and load-bearing for the model's reasoning chain.
-
-    This is purely a prompt-builder transform; the in-memory `messages` list
-    and the saved trajectory are untouched, so the per-iteration JSON dump
-    retains full fidelity for offline analysis.
-    """
-    if len(messages) <= 2:
-        return messages
-    head = messages[:2]
-    tail = messages[2:]
-    keep_msgs = keep_recent * 2  # one assistant + one user per turn
-    if len(tail) <= keep_msgs:
-        return messages
-    old, recent = tail[:-keep_msgs], tail[-keep_msgs:]
-
-    compacted: List[Dict[str, Any]] = []
-    for msg in old:
-        # Only compact the OBSERVATION slot (role=user). Assistant Thought/Action
-        # lines stay verbatim — they're the reasoning chain the model relies on.
-        if msg.get("role") == "user" and isinstance(msg.get("content"), str):
-            content = msg["content"]
-            if len(content) > max_chars_when_old:
-                head_len = int(max_chars_when_old * 0.67)
-                tail_len = max_chars_when_old - head_len - 60  # marker overhead
-                elided = len(content) - head_len - tail_len
-                content = (
-                    content[:head_len]
-                    + f"\n  ...[elided {elided} chars to save context]...\n"
-                    + content[-tail_len:]
-                )
-                compacted.append({**msg, "content": content})
-                continue
-        compacted.append(msg)
-    return head + compacted + recent
-
-
-def _detect_tool_mention(text: str, thought: str) -> Optional[str]:
-    """
-    Last-resort tool detection: scan text for known tool names and reconstruct
-    a valid ReAct action.  Called only when all structured patterns have failed.
-    Returns a ReAct-formatted string or None.
-    """
-    # Check for JSON-encoded function call: {"name": "tool", "arguments": {...}}
-    json_fn_m = _JSON_FN_CALL_RE.search(text)
-    if json_fn_m:
-        tool = json_fn_m.group(1)
-        args = json_fn_m.group(2)
-        if tool in _ALL_KNOWN_TOOLS:
-            return f"Thought: {thought}\nAction: {tool}\nAction Input: {args}"
-
-    # Scan text for known tool names — use the *last* match (post-reasoning intent)
-    matches = list(_TOOL_MENTION_RE.finditer(text))
-    if not matches:
-        return None
-
-    tool_name = matches[-1].group(1)
-
-    if tool_name in _KNOWN_TOOLS_NO_ARGS:
-        return f"Thought: {thought}\nAction: {tool_name}\nAction Input: {{}}"
-
-    if tool_name in _KNOWN_TOOLS_WITH_COORDS:
-        # Search nearby text + thought for coordinates
-        nearby = text[max(0, matches[-1].start() - 150):matches[-1].end() + 300]
-        coords_json = _extract_coords_from_thought(nearby + " " + thought)
-        return f"Thought: {thought}\nAction: {tool_name}\nAction Input: {coords_json}"
-
-    if tool_name in _KNOWN_TOOLS_WITH_TRACE:
-        obj_names_m = re.search(r'"object_names"\s*:\s*(\[[^\]]*\])', text)
-        coords_json = _extract_coords_from_thought(thought)
-        try:
-            coords = json.loads(coords_json) if coords_json != "{}" else {}
-        except json.JSONDecodeError:
-            coords = {}
-        obj_part = f'"object_names": {obj_names_m.group(1)}' if obj_names_m else '"object_names": []'
-        coord_part = (
-            f', "x": {coords["x"]}, "y": {coords["y"]}, "radius": {coords.get("radius", 0.5)}'
-            if coords.get("x") is not None else ""
-        )
-        return f"Thought: {thought}\nAction: {tool_name}\nAction Input: {{{obj_part}{coord_part}}}"
-
-    return None
 
 
 def _parse_oss_native(raw: str) -> str:
@@ -270,8 +122,7 @@ def _parse_oss_native(raw: str) -> str:
         # from the thought text (OSS model often reasons about coordinates in
         # the analysis channel but generates empty args in the function call).
         if tool_args.strip() == "{}" and tool_name in (
-            "simulate_action", "validate_action", "simulate_partial",
-            "predict_first_contact",
+            "simulate_action", "validate_action", "simulate_partial"
         ) and thought_text:
             extracted = _extract_coords_from_thought(thought_text)
             if extracted != "{}":
@@ -303,15 +154,7 @@ def _parse_oss_native(raw: str) -> str:
     if json_anywhere and thought_text:
         return f"Thought: {thought_text}\nAction: simulate_action\nAction Input: {json_anywhere.group(1)}"
 
-    # Regex scan for any known tool name mentioned in the cleaned text
-    detected = _detect_tool_mention(cleaned, thought_text)
-    if detected:
-        return detected
-
-    # Absolute fallback: return a safe ReAct that re-inspects the scene rather
-    # than raw text that will cause action_name=None and a wasted retry iteration.
-    safe_thought = thought_text or "(unable to parse model output — re-inspecting scene)"
-    return f"Thought: {safe_thought}\nAction: get_level_state\nAction Input: {{}}"
+    return cleaned
 
 
 def load_qwen_model(model_name: str, temperature: float = 0.3, max_new_tokens: int = 800):
@@ -333,12 +176,9 @@ def load_qwen_model(model_name: str, temperature: float = 0.3, max_new_tokens: i
     tokenizer = AutoTokenizer.from_pretrained(hf_name)
     is_oss = "gpt-oss" in model_name.lower()
     if is_oss:
-        # GptOssForCausalLM does not support SDPA; eager is required.
         model = AutoModelForCausalLM.from_pretrained(
             hf_name,
-            torch_dtype="auto",
             device_map="auto",
-            attn_implementation="eager",
         )
     else:
         model = AutoModelForCausalLM.from_pretrained(
@@ -451,83 +291,6 @@ def load_qwen_model(model_name: str, temperature: float = 0.3, max_new_tokens: i
 
     return generate
 
-def _strip_harmony_tags(text: str) -> str:
-    """
-    Strip gpt-oss harmony response format tags from generated text.
-    The model emits tags like: assistantcommentary, assistantanalysis,
-    <|channel|>...<|message|>, etc. that pollute the ReAct output.
-    """
-    # Remove harmony channel/message markers
-    text = re.sub(r"<\|channel\|>[^<]*<\|message\|>", "", text)
-    # Remove harmony role tags that leak into content
-    text = re.sub(r"assistant(?:commentary|analysis|reasoning)\s*", "", text, flags=re.IGNORECASE)
-    # Remove any remaining special tokens
-    text = re.sub(r"<\|[^|]+\|>", "", text)
-    return text.strip()
-
-
-def _truncate_at_observation(text: str) -> str:
-    """
-    Truncate model output at the first 'Observation:' line.
-    gpt-oss tends to hallucinate entire multi-turn conversations,
-    imagining observations before they happen. We only want
-    the first Thought + Action + Action Input block.
-    """
-    match = re.search(r"\nObservation:", text)
-    if match:
-        text = text[:match.start()]
-    return text.strip()
-
-
-def load_gpt_oss_model(model_name: str, temperature: float = 0.3, max_new_tokens: int = 800):
-    """
-    Load gpt-oss via Transformers with device_map="auto" across all available GPUs (BF16).
-    Parses the harmony response format to extract the final response.
-    """
-    import torch
-    from transformers import AutoModelForCausalLM, AutoTokenizer
-
-    print(f"Loading gpt-oss model: {model_name} ...")
-    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        torch_dtype="auto",
-        device_map="auto",
-    )
-    print(f"Model loaded successfully: {model_name}")
-
-    # Pre-compute stop token IDs for "Observation:" to prevent multi-turn hallucination
-    obs_token_ids = tokenizer.encode("\nObservation:", add_special_tokens=False)
-
-    def generate(messages: List[Dict[str, str]], temp: float = temperature, max_tokens: int = max_new_tokens) -> str:
-        inputs = tokenizer.apply_chat_template(
-            messages,
-            add_generation_prompt=True,
-            return_tensors="pt",
-            return_dict=True,
-        ).to(model.device)
-        with torch.no_grad():
-            outputs = model.generate(
-                **inputs,
-                max_new_tokens=max_tokens,
-                temperature=temp,
-                do_sample=True,
-            )
-        generated_ids = outputs[0][inputs["input_ids"].shape[-1]:]
-        response = tokenizer.decode(generated_ids, skip_special_tokens=False)
-        # Extract final message from harmony format
-        if "<|channel|>final<|message|>" in response:
-            response = response.split("<|channel|>final<|message|>")[-1]
-        response = tokenizer.decode(
-            tokenizer.encode(response, add_special_tokens=False),
-            skip_special_tokens=True,
-        ).strip()
-        # Strip remaining harmony tags and truncate at hallucinated Observation
-        response = _strip_harmony_tags(response)
-        response = _truncate_at_observation(response)
-        return response
-
-    return generate
 
 def load_openai_compatible_model(
     model_name: str,
@@ -555,8 +318,6 @@ def load_openai_compatible_model(
     client = OpenAI(base_url=base_url, api_key=api_key)
     print(f"OpenAI-compatible model ready: {model_name} @ {base_url}")
 
-    is_oss = "gpt-oss" in model_name.lower()
-
     def generate(
         messages: List[Dict[str, str]],
         temp: float = temperature,
@@ -568,11 +329,7 @@ def load_openai_compatible_model(
             temperature=temp,
             max_tokens=max_tokens,
         )
-        content = response.choices[0].message.content.strip()
-        if is_oss:
-            content = _strip_harmony_tags(content)
-            content = _truncate_at_observation(content)
-        return content
+        return response.choices[0].message.content.strip()
 
     return generate
 
@@ -819,27 +576,10 @@ class ReactAgent:
                 print(f"  Iteration {iteration}/{self.max_iterations}")
                 print(f"{'='*60}")
 
-            # Truncate older turns for OSS to bound prefill context.  Prevents
-            # OOM on gpt-oss-120b where eager attention's O(seq²) activation
-            # exceeds the ~20GB headroom left after model weights.
-            #
-            # For Claude (non-OSS), do a softer compaction: keep all turns in
-            # the conversation but truncate OBSERVATION bodies older than the
-            # `keep_recent` most recent turns. This holds the prompt size
-            # roughly flat past iteration ~5 instead of growing linearly with
-            # each verbose simulate_with_trace return. The saved trajectory is
-            # untouched.
-            if self.is_oss:
-                messages_for_model = _truncate_messages(messages, keep_recent=6)
-            else:
-                messages_for_model = _compact_old_observations(
-                    messages, keep_recent=4, max_chars_when_old=600
-                )
-
             # Generate model response
             start_time = time.time()
             raw_response = self.model_fn(
-                messages_for_model,
+                messages,
                 temp=self.temperature,
                 max_tokens=self.max_new_tokens,
             )
@@ -870,8 +610,7 @@ class ReactAgent:
             # or validate_action with {} but previously used valid coords,
             # re-use the last known coordinates.
             if self.is_oss and action_name in (
-                "simulate_action", "validate_action", "simulate_partial",
-                "predict_first_contact",
+                "simulate_action", "validate_action", "simulate_partial"
             ) and (not action_args or not action_args.get("x")):
                 if _last_valid_coords:
                     action_args = dict(_last_valid_coords)
@@ -880,9 +619,8 @@ class ReactAgent:
 
             # Track last valid coordinates for OSS
             if self.is_oss and action_name in (
-                "simulate_action", "validate_action", "simulate_partial",
-                "predict_first_contact",
-            ) and action_args and action_args.get("x") is not None and action_args.get("y") is not None:
+                "simulate_action", "validate_action", "simulate_partial"
+            ) and action_args and action_args.get("x") is not None:
                 _last_valid_coords = {
                     "x": action_args["x"],
                     "y": action_args["y"],
@@ -946,36 +684,6 @@ class ReactAgent:
                 print(observation)
 
             trajectory.append((thought, f"{action_name}({action_args})", observation))
-
-            # Auto-finish: when a simulation tool reports success and we have valid
-            # coords, submit immediately rather than waiting for a new model turn.
-            # Prevents losing solutions found on the last iteration.
-            # simulate_with_trace → "Success: True"; simulate_action → "SUCCESS! ..."
-            _sim_success = (
-                action_name in ("simulate_with_trace", "simulate_action")
-                and ("Success: True" in observation or "SUCCESS" in observation)
-                and action_args
-                and action_args.get("x") is not None
-                and action_args.get("y") is not None
-            )
-            if _sim_success:
-                final_action = (
-                    float(action_args["x"]),
-                    float(action_args["y"]),
-                    float(action_args.get("radius", 0.5)),
-                )
-                if self.verbose:
-                    print(f"\n[Auto-Finish] Simulation returned Success:True → submitting {final_action}")
-                final_observation = self.toolkit.simulate_action(*final_action)
-                success = "SUCCESS" in final_observation
-                trajectory.append(("(auto-finish after Success:True)", f"finish({action_args})", final_observation))
-                return {
-                    "success": success,
-                    "action": final_action,
-                    "iterations": iteration,
-                    "trajectory": trajectory,
-                    "final_observation": final_observation,
-                }
 
             # Append to conversation history — use the model's native tool
             # message format for OSS so the chat template formats it correctly.
