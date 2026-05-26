@@ -1,26 +1,61 @@
 """
 Prompt templates for the Catapult level.
+
+Strategy-neutral: the puzzle admits multiple valid solutions (lever launch, wall/ceiling
+deflection, ceiling-ball ricochet, knocking the basket, using the arm as a bridge, ...).
+The prompts and level-specific tools deliberately avoid prescribing any one of them.
 """
 
 from .shared import SHARED_TOOLS, FINISH_TOOL, FINISH_AS_5
 
 # ─── Catapult ───────────────────────────────────────────────
 
-CATAPULT_ANALYSIS_TOOL = """\
-5. compute_catapult_analysis
-   Description: Analyze the catapult setup. Returns the pivot ball position, catapult arm bounds, green ball starting position, and blue ball/basket position.
+CATAPULT_SCENE_TOOL = """\
+1. describe_scene_geometry
+   Description: Return strategy-neutral geometry: every ball (position, radius, dynamic flag), every bar (position, angle, length, dynamic flag), every basket (position, dynamic flag), and the key distance (green ↔ blue). No prescriptive advice; you interpret the layout to form a strategy.
    Arguments: None
-   Usage: Action: compute_catapult_analysis
+   Usage: Action: describe_scene_geometry
+"""
+
+CATAPULT_TRACE_TOOL = """\
+6. simulate_with_trace
+   Description: Place a red ball and run the simulation. Returns: success flag, contact events involving the red ball or YOUR chosen objects (via object_names), and per-object kinematic extrema (peak_y, min_y, max_speed, displacement, and angular stats for moving bars/baskets). You choose which objects to trace—e.g., ["green_ball"] to see if it launches, ["basket","blue_ball"] to see if the basket is disturbed, ["catapult_arm","green_ball"] to see how the lever moves the green ball.
+   Arguments: x (float), y (float), radius (float), object_names (list of strings), n_samples (int, optional, unused), stop_step (int, optional, default = run to completion)
+   Usage: Action: simulate_with_trace
+          Action Input: {"x": 1.2, "y": 3.5, "radius": 0.6, "object_names": ["green_ball", "catapult_arm"]}
+"""
+
+CATAPULT_PREDICT_TOOL = """\
+7. predict_first_contact
+   Description: Cheap pre-simulation check (≤90 physics steps, ~1.5s of sim time). Runs just long enough to find the FIRST object the red ball touches after it is released, and reports: placement validity, the other object's name, the step of impact, approach speed, approximate contact point, and surface normal. Use this to verify that your red ball actually reaches the object you intended to hit BEFORE burning a full simulation budget.
+   Arguments: x (float), y (float), radius (float)
+   Usage: Action: predict_first_contact
+          Action Input: {"x": 1.2, "y": 3.5, "radius": 0.6}
+"""
+
+CATAPULT_GREEN_TRACE_TOOL = """\
+6. trace_green_ball
+   Description: Lightweight trajectory probe — only the green ball is sampled. Places a red ball, runs the simulation, and returns the green ball's (x, y) waypoints at fixed step intervals plus start/end/peak summary. Stops early once the green ball comes to rest (capped at ~600 steps). Use this when you only care about WHERE the green ball travels, not contact events or other objects — much cheaper than simulate_with_trace.
+   Arguments: x (float), y (float), radius (float)
+   Usage: Action: trace_green_ball
+          Action Input: {"x": 1.2, "y": 3.5, "radius": 0.6}
 """
 
 CATAPULT_TOOL_DESCRIPTIONS = f"""\
 You have access to the following tools to interact with the physics simulation:
 
+{CATAPULT_SCENE_TOOL}
 {SHARED_TOOLS}
-{CATAPULT_ANALYSIS_TOOL}
-{FINISH_TOOL}"""
+{CATAPULT_GREEN_TRACE_TOOL}
+{CATAPULT_PREDICT_TOOL}
 
-# Ablation: no compute_catapult_analysis
+9. finish
+   Description: Submit your final answer. Use this when you are confident in your solution.
+   Arguments: x (float), y (float), radius (float)
+   Usage: Action: finish
+          Action Input: {{"x": 0.5, "y": 4.0, "radius": 0.6}}"""
+
+# Ablation: no catapult-specific tools (agent must rely on shared tools only).
 CATAPULT_TOOL_DESCRIPTIONS_NO_LEVEL_TOOL = f"""\
 You have access to the following tools to interact with the physics simulation:
 
@@ -34,21 +69,19 @@ You are an expert physics reasoning agent solving a 2D physics puzzle. You have 
 
 The environment is a 2D box with coordinates ranging from -5 to 5 on both axes. Gravity pulls objects downward.
 
-**Key Elements:**
-- **Green Ball:** A small dynamic ball sitting on the LEFT end of the catapult arm.
-- **Catapult Arm (Gray Bar):** A dynamic lever arm resting on a pivot ball. The green ball sits on its left end.
-- **Pivot Ball (Gray):** A dynamic ball acting as the fulcrum. It sits on the left black platform.
-- **Black Blocker Ball:** A static ball at the top of the scene that limits how far the arm can swing up.
-- **Black Platform (Left):** A static platform on the left side that supports the pivot.
+**Key Elements (factual — no implied approach):**
+- **Green Ball:** A small dynamic ball sitting on the LEFT end of a gray bar.
+- **Gray Bar (Catapult Arm):** A dynamic lever resting on a gray ball (pivot). The green ball sits on its left end.
+- **Gray Ball (Pivot):** A dynamic ball acting as the fulcrum. It sits on the left black platform.
+- **Black Ball (Ceiling Blocker):** A static ball near the top of the scene.
+- **Black Platform (Left):** A static horizontal platform on the left side.
 - **Black Ledge (Right):** A static (possibly angled) platform on the right side.
 - **Basket (Gray):** A dynamic basket sitting on the right ledge.
-- **Blue Ball (Target):** A dynamic ball inside the basket on the right side.
+- **Blue Ball (Target):** A dynamic ball inside the basket.
 
+Use more radius for better energy (r>1)
 **The Goal:**
-Place ONE Red Ball so that it activates the catapult: the green ball is launched from the arm and contacts the blue ball inside the basket for at least 3 seconds.
-
-**Exploration rule — avoid repeating the same region:**
-Divide the right arm into zones by x-distance from pivot: NEAR (0–30% of arm), MID (30–70%), TIP (70–100%). Combine with drop height: LOW (1–2 units above arm), MED (2–4 units), HIGH (4+ units). After 2 consecutive failures in the same zone, move to a different zone. Never try the exact same (x, y, radius) twice.
+Place ONE Red Ball somewhere in the box so that, once the simulation runs, the green ball contacts the blue ball for at least 3 seconds. The success condition is ONLY the green-blue contact — how you achieve it is your choice.
 
 **Placement Constraints:**
 - The red ball must be completely inside the box: -5 + radius <= x <= 5 - radius, -5 + radius <= y <= 5 - radius.
@@ -61,18 +94,10 @@ Divide the right arm into zones by x-distance from pivot: NEAR (0–30% of arm),
 {react_format}"""
 
 CATAPULT_INITIAL = """\
-Solve the Catapult puzzle. Start by inspecting the level state, then use compute_catapult_analysis to find the pivot position and arm bounds.
-
-Your goal: drop the red ball onto the RIGHT side of the catapult arm (right of the pivot) so the arm launches the green ball toward the basket.
-
-After each simulate_action or simulate_partial, you MUST:
-1. Run simulate_partial at stop_step=100 to check green_ball's position and velocity direction.
-2. Classify the failure: wrong_direction / arc_too_short / arc_too_flat / overshot.
-3. Apply the matching fix (see system prompt) — do NOT just tweak radius blindly.
-4. If 2 attempts in the same arm zone fail, switch to a different zone.
-
-Remember: use the tools to test your ideas before submitting your final answer with the finish tool."""
-
+Solve the Catapult puzzle. You have 12 iterations to solve it. The success condition is: green_ball must contact blue_ball. Use tools effectively and think about alternate approaches if one does not work.
+- **ALWAYS call predict_first_contact first** — it is cheap and tells you if your red ball hits the intended object.
+- Only if predict confirms the right contact: call trace_green_ball to track green ball.
+"""
 
 # ─── OSS-specific Catapult prompts ─────────────────────────
 
@@ -83,66 +108,40 @@ Puzzle: Catapult
 
 The environment is a 2D box with coordinates ranging from -5 to 5 on both axes. Gravity pulls objects downward.
 
-Key Elements:
-- Green Ball: Small dynamic ball on the LEFT end of the catapult arm.
-- Catapult Arm (Gray Bar): Dynamic lever resting on the pivot ball. Green ball sits on its left end.
-- Pivot Ball (Gray): Fulcrum of the catapult, sitting on the left black platform.
-- Black Blocker Ball: Static ball at the top that limits arm swing.
-- Black Platform (Left): Static left-side platform supporting the pivot.
-- Black Ledge (Right): Static (possibly angled) right-side platform.
-- Basket (Gray): Dynamic basket on the right ledge.
-- Blue Ball (Target): Dynamic ball inside the basket.
+Key Elements (factual):
+- Green Ball: small dynamic ball on the LEFT end of the gray bar.
+- Gray Bar: dynamic lever resting on a gray ball pivot; green ball sits on its left end.
+- Gray Ball: dynamic fulcrum on the left black platform.
+- Black Ball: static ball near the ceiling.
+- Black Platform (Left): static left-side platform.
+- Black Ledge (Right): static (possibly angled) right-side platform.
+- Basket (Gray): dynamic basket on the right ledge.
+- Blue Ball: dynamic ball inside the basket.
 
-The Goal:
-Place ONE Red Ball to activate the catapult: green ball must contact blue ball in the basket for at least 3 seconds.
-
-Catapult Mechanics:
-- Drop red ball on the RIGHT side of the catapult arm (right of pivot) to launch green ball.
-- Right arm goes down → left arm (with green ball) goes UP → green ball launches toward basket.
-
-Lever mechanics — two independent controls:
-- x position on arm (distance from pivot) = LAUNCH ANGLE. Closer to pivot → steeper (more vertical). Farther from pivot (toward tip) → flatter (more horizontal).
-- Drop height × radius = LAUNCH SPEED. Height = impact velocity. Radius = mass. Both increase energy. Raise height first, radius second.
-
-Mandatory failure diagnosis — after EVERY failure, classify WHY:
-- wrong_direction: green went left or barely moved → move x further RIGHT of pivot.
-- arc_too_short: green went right but landed short → increase energy (more height or larger radius).
-- arc_too_flat: green reached right x but hit floor (y < -4) → move x CLOSER to pivot for steeper arc.
-- overshot: green flew past basket → reduce energy or move x closer to pivot.
-
-Exploration rule: divide right arm into zones (NEAR/MID/TIP from pivot) × drop height (LOW/MED/HIGH). After 2 failures in same zone, switch zone. Never repeat exact same (x, y, radius).
+Goal: Place ONE Red Ball so that green_ball contacts blue_ball for at least 3 seconds. The path to that outcome is yours to design.
 
 Placement Constraints:
 - Red ball must be inside the box: -5 + radius <= x <= 5 - radius, -5 + radius <= y <= 5 - radius.
 - No overlap with existing objects at t=0.
 - 0.1 <= radius <= 2.0
 
-Strategy:
-- Call get_level_state, then compute_catapult_analysis.
-- Drop red ball RIGHT of pivot, above arm.
-- Call simulate_partial at stop_step=100 to check green_ball position/velocity. If green_y is below arm_top at step 100, launch is too flat.
-- Classify failure, apply matching fix, switch zones if stuck.
-- When it succeeds, call finish."""
+When your trace shows green_ball in continuous contact with blue_ball for 3 seconds, call finish."""
 
 OSS_CATAPULT_INITIAL = """\
-Solve the Catapult puzzle. Call get_level_state first, then compute_catapult_analysis to find the pivot and arm bounds.
+Solve the Catapult puzzle. You have 25 iterations to solve it. The success condition is: green_ball must contact blue_ball. Use tools effectively and think about alternate approaches if one does not work.
+- **ALWAYS call predict_first_contact first** — it is cheap and tells you if your red ball hits the intended object.
+- Only if predict confirms the right contact: call trace_green_ball to track green ball."""
 
-Drop red ball RIGHT of pivot, above the arm. After each attempt:
-1. Run simulate_partial at stop_step=100 to check green_ball position/velocity.
-2. Classify failure: wrong_direction / arc_too_short / arc_too_flat / overshot.
-3. Apply the matching fix from the system prompt. Do NOT just tweak radius.
-4. After 2 failures in the same arm zone, switch to a different zone.
-When it succeeds, call finish."""
-
-# Ablation blocks for Catapult
+# Ablation blocks for Catapult — retained for explicit strategy-1 experiments only.
+# These are NOT included in the default prompts above.
 _OSS_CATAPULT_MECHANICS_BLOCK = """
-Catapult Mechanics:
+Catapult Mechanics (strategy-1 ablation):
 - Drop red ball on the RIGHT side of the catapult arm (right of pivot) to launch green ball.
 - Right arm goes down → left arm (with green ball) goes UP → green ball launches toward basket.
 """
 
 _OSS_CATAPULT_FAILURE_MODES_BLOCK = """
-Lever mechanics — two independent controls:
+Lever mechanics — two independent controls (strategy-1 ablation):
 - x position on arm (distance from pivot) = LAUNCH ANGLE. Closer to pivot → steeper. Farther (toward tip) → flatter.
 - Drop height × radius = LAUNCH SPEED. Height = impact velocity. Radius = mass. Raise height first, radius second.
 
@@ -156,9 +155,9 @@ Exploration rule: after 2 failures in same zone, switch zone. Never repeat exact
 """
 
 _OSS_CATAPULT_STRATEGY_BLOCK = """
-Strategy:
-- Call get_level_state, then compute_catapult_analysis.
+Strategy (strategy-1 ablation):
+- Call describe_scene_geometry to map the scene.
 - Drop red ball RIGHT of pivot, above arm.
-- Call simulate_partial at stop_step=100 — if green_y is below arm_top, launch is too flat.
+- Call simulate_with_trace with ["green_ball","catapult_arm"] — if green_y is below arm_top mid-flight, launch is too flat.
 - Classify each failure, apply matching fix, switch zones if stuck.
 - When it succeeds, call finish."""
