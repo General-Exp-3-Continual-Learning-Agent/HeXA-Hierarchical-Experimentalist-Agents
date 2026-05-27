@@ -48,8 +48,6 @@ LEVEL_DESCRIPTIONS = {
         "straight down and never meet. The agent must place a red ball so "
         "that it falls onto the green ball and pushes it horizontally into "
         "the blue ball. Success requires green-blue contact for 3+ seconds. "
-        "Key physics: collision angle (along center-to-center line), "
-        "horizontal offset controls push direction, radius controls mass."
     ),
     "catapult": (
         "A lever (bar) rests on a pivot with a green ball on one end. "
@@ -57,25 +55,19 @@ LEVEL_DESCRIPTIONS = {
         "a red ball onto the other end of the lever to catapult the green "
         "ball through an arc into the basket where the blue ball is. "
         "Success requires green-blue contact for 3+ seconds. Key physics: "
-        "lever arm ratio controls launch angle, drop position relative to "
-        "pivot matters more than ball mass/radius, arc height vs distance "
-        "tradeoff."
     ),
     "falling_into_place": (
         "A green ball sits on a platform and a blue jar is positioned above, "
         "ready to fall. The agent must place a red ball to push the green "
         "ball across a gap so it intercepts the falling blue jar. Success "
         "requires green-blue contact for 3+ seconds. Key physics: timing "
-        "the horizontal push to match the jar's vertical fall, intercept "
-        "geometry, gap crossing."
     ),
     "basket_case": (
         "A green ball is positioned above a basket. The agent must place a "
         "red ball to deflect the green ball so it MISSES the basket and "
         "lands on the ground instead. Success requires the green ball to "
-        "touch the ground for 3+ seconds. Key physics: deflection angle, "
-        "collision timing before the ball enters the basket, push direction "
-        "away from basket opening."
+        "touch the ground for 3+ seconds. "
+
     ),
     "pass_the_parcel": (
         "A green ball sits on/in an inverted basket on a platform, with a "
@@ -83,8 +75,7 @@ LEVEL_DESCRIPTIONS = {
         "must place a red ball to knock the green ball out of the top "
         "basket and guide it down (via ramp or direct fall) into the bottom "
         "basket where the blue ball is. Success requires green-blue contact "
-        "for 3+ seconds. Key physics: dislodging from inverted basket, "
-        "ramp trajectory, multi-stage chain of events."
+
     ),
 }
 

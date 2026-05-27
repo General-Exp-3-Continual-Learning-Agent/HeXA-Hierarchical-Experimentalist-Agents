@@ -12,9 +12,10 @@ Forwards every flag to ``skillrl.loops.offline_loop``. Help:
 Example:
 
     python scripts/run_hexa_offline.py \\
-        --level pass_the_parcel \\
-        --initial-traj-dir Initial_trajectories/pass_the_parcel \\
-        --eval-seeds 6 7 8 9 10 11 12 13 14 15
+        --level catapult \\
+        --initial-traj-dir Initial_trajectories/catapult \\
+        --output-dir Hexa_catapult_offline/
+        --seeds 6 
 """
 import os, sys
 

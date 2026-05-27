@@ -24,10 +24,7 @@ Example:
         --initial-traj-dir Initial_trajectories/Pass_the_parcel \\
         --num-rounds 3 --seeds-per-round 3 --start-seed 6
 
-    python scripts/run_hexa_skills_only.py \\
-        --level catapult \\
-        --initial-traj-dir Initial_trajectories/catapult \\
-        --num-rounds 3 --seeds-per-round 3 --start-seed 6
+    python scripts/run_hexa_skills_only.py --level catapult --initial-traj-dir Initial_trajectories/catapult --num-rounds 3 --seeds-per-round 3 --start-seed 6
 """
 import os, sys
 
