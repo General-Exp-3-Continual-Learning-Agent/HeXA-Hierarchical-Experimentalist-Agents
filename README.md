@@ -89,6 +89,8 @@ MIT. See [LICENSE](LICENSE).
 ## Citation
 
 ```bibtex
+
+{
 @article{hexa2026,
   title  = {HeXA: Hierarchical Experimentalist Agents},
   author = {Abhranil Chandra and Sankaran Vaidyanathan and Utsav Dhanuka and Varun Gandhi and Scott Niekum},
