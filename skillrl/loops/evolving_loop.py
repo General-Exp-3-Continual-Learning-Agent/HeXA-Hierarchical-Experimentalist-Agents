@@ -132,6 +132,14 @@ def run_evolving_loop(
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    if level_name == "catapult":
+        from skillrl.distillation import teacher_prompts_catapult as _tpc
+        _tpc.patch()
+        print(
+            "  [Prompts] Patched distill + evolving_distill with the catapult-specific "
+            "factual-block variants (no strategy hints leaked to teacher)."
+        )
+
     # ── Resume detection ─────────────────────────────────────────
     progress_path = output_dir / "progress_evolving.json"
     resume_from_round = 0

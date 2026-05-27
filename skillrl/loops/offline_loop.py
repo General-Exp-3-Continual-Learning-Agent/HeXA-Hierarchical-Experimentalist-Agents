@@ -1,10 +1,7 @@
 """Offline (static) skill bank variant.
 
 Usage:
-    python -m skillrl.offline_loop \
-        --level pass_the_parcel \
-        --initial-traj-dir results/pass_the_parcel \
-        --seeds 6 7 8 9 10 11 12 13 14 15
+    python -m skillrl.loops.offline_loop --level catapult --initial-traj-dir Initial_trajectories/catapult/ --seeds 6 --output-dir skillrl/data/Hexa_offline_catapult
 
 Distills a skill bank ONCE from initial trajectories, then runs ALL seeds
 with that same fixed bank. No evolution, no re-distillation between rounds.
@@ -60,6 +57,14 @@ def run_offline(
     """
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    if level_name == "catapult":
+        from skillrl.distillation import teacher_prompts_catapult as _tpc
+        _tpc.patch()
+        print(
+            "  [Prompts] Patched distill + evolving_distill with the catapult-specific "
+            "factual-block variants (no strategy hints leaked to teacher)."
+        )
 
     progress_path = output_dir / "progress_offline.json"
     skill_bank_path = output_dir / "skill_bank_offline.json"
