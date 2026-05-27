@@ -53,7 +53,7 @@ HeXA/
 | Script | Underlying module | What it runs |
 |---|---|---|
 | `scripts/run_hexa.py` | `skillrl.loops.evolving_loop` | **HeXA** (offline→online evolving) — headline method, generic prompts |
-| `scripts/run_hexa_catapult.py` | `skillrl.distillation.teacher_prompts_catapult` | HeXA on `catapult` with the catapult-specific FACTUAL prompts (no strategy hints leaked to teacher) |
+| `scripts/run_hexa_catapult.py` | `skillrl.distillation.teacher_prompts_catapult` | HeXA on `catapult` with the catapult-specific scene description provided to the teacher without leaking any oracle information |
 | `scripts/run_hexa_iterative.py` | `skillrl.loops.iterative_loop` | Off2On with re-distillation each round |
 | `scripts/run_hexa_offline.py` | `skillrl.loops.offline_loop` | Distill once, evaluate against fixed bank |
 | `scripts/run_hexa_online_evolving.py` | `skillrl.loops.online_evolving_loop` | Online start, then evolve |
