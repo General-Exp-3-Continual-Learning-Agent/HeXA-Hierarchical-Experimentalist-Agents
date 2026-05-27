@@ -1,6 +1,8 @@
 # HeXA: Hierarchical Experimentalist Agents
 
-**HeXA** is a skill-evolution framework that turns failed and successful agent rollouts into a curated bank of physics skills the agent reads at solve time. On the [InterPhyre](https://github.com/sankaranv/interphyre) suite of 2D physics puzzles, HeXA more than doubles single-shot ReAct's success rate using the same actor model.
+**HeXA** is a skill-evolution framework that turns failed and successful agent rollouts into a curated bank of physics skills the agent reads at solve time. On our [InterPhyre](https://github.com/General-Exp-3-Continual-Learning-Agent/HeXA-Hierarchical-Experimentalist-Agents/tree/main/interphyre) suite of 2D physics puzzles, HeXA more than doubles single-shot ReAct's success rate using the same actor model. We also open-source [InterPhyre](https://github.com/General-Exp-3-Continual-Learning-Agent/HeXA-Hierarchical-Experimentalist-Agents/tree/main/interphyre) as one of the first experimentation centric benchmark as a Testbed for Learning through Experimentation and Hypothesis generations and refinement. Please see more details of our environment and benchmark [InterPhyre](https://github.com/sankaranv/interphyre) here.
+
+
 
 This repository contains the HeXA implementation, **five configuration variants** (Init × Update rule), **two ablations** (reward, skills-only), **three ReAct-style baselines**, and a cross-level meta-transfer pipeline. Everything runs through the [Claude Code CLI](https://claude.ai/code) — no API keys, no Anthropic SDK.
 
@@ -87,6 +89,8 @@ MIT. See [LICENSE](LICENSE).
 ## Citation
 
 ```bibtex
+
+{
 @article{hexa2026,
   title  = {HeXA: Hierarchical Experimentalist Agents},
   author = {Abhranil Chandra and Sankaran Vaidyanathan and Utsav Dhanuka and Varun Gandhi and Scott Niekum},
