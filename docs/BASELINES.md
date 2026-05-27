@@ -43,7 +43,7 @@ python scripts/run_reflexion.py \
     --k-trials 2 --eval-dir results/reflexion_catapult --resume
 ```
 
-**Pass-the-parcel result:** 17.1 % (6/35 seeds; partial 35-of-50 run), avg 17.9 iterations across both trials, 12.50 h. The partial number is unusually low for Reflexion-style baselines because PtP rewards persistence on the first trial — re-run with `scripts/run_reflexion.py` (and `--resume` if interrupted) to regenerate per-seed summaries with the trial-of-success breakdown.
+**Pass-the-parcel result:** 16.0 % (8/50 seeds; full 50-seed grid, seeds 6–55), avg 18.3 total iterations per seed across both trials. Of the 8 successes, 4 solved on trial 1 (avg 9.2 iters) and 4 recovered on trial 2 after a reflection (avg ≈ 19 iters total: trial 1 hits the 12-iter cap, trial 2 solves in ≈ 7). Configuration: K=2 trials, 12-iter cap per trial, reflection memory cap 3.
 
 The Reflexion plan and reproduction notes are in [skillrl/SKILLRL_SUMMARY.md](../skillrl/SKILLRL_SUMMARY.md) and the in-package docstring in `react_agent/run_react_claude_reflexion.py`.
 
@@ -70,7 +70,5 @@ python scripts/run_direct.py \
 |---|---:|---:|---|---:|
 | Direct | 1 | 2 | none | 0 % |
 | ReAct (Claude) | 1 | up to 25 | none | 24 % |
-| Reflexion (K=2) | up to 2 | up to 2×25 | verbal reflection between trials | 17.1 %\* |
+| Reflexion (K=2) | up to 2 | up to 2×12 | verbal reflection between trials | 16.0 % |
 | HeXA | n/a (per-round eval) | up to 25 | distilled skill bank evolved across rounds | **60 %** |
-
-\* on 35/50 seeds (the rest will be filled in once the run completes).
