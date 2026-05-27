@@ -41,24 +41,6 @@ Off2On = "offline-to-online": round 1 distills from initial offline trajectories
 - Round 1: no skill bank
 - Rounds 2+: re-distill from the latest round's trajectories + carry-over successes (no bank context to teacher)
 
-## Headline numbers (`pass_the_parcel`, 50 seeds)
-
-From the paper's main table:
-
-| Init | Update | Acc. | Succ. | Fail | Avg Iter | Time (h) |
-|---|---|---:|---:|---:|---:|---:|
-| Off2On | Evolving (x=3) | **60.0** | 30 | 20 | 17.3 | 3.43 |
-| Online | Evolving (x=3) | 58.0 | 29 | 21 | 16.4 | 2.84 |
-| Online | Iterative | 56.0 | 28 | 22 | 18.7 | 3.76 |
-| Off2On | Iterative | 48.0 | 24 | 26 | 17.0 | 3.92 |
-| Offline | Static | 48.0 | 24 | 26 | 18.4 | 4.79 |
-
-## Reading the variants together
-
-- **Init** matters most when you have offline data: Off2On gives round 1 a head start over Online (60 % vs 58 % evolving; 48 % vs 56 % iterative — note the sign flip on iterative, which is genuine).
-- **Update rule** matters most across many rounds: Evolving keeps the bank focused (caps at 10 skills, removes redundancy), Iterative tends to grow the bank monotonically.
-- The **gap to ReAct (24 %) and Direct (0 %)** is large for every variant — the simulator-feedback loop matters even before the skill bank does.
-
 ## Defaults
 
 All loops share a common set of defaults from [skillrl/core/config.py](../skillrl/core/config.py):
