@@ -8,7 +8,7 @@
 #SBATCH --mem=480G
 #SBATCH -o logs/gpt_oss_120b_catapult_%j.out
 #SBATCH -e logs/gpt_oss_120b_catapult_%j.err
-#SBATCH -A pi_sniekum_umass_edu
+#SBATCH -A <your-slurm-account>
 
 # ─── gpt-oss-120b on 4x A100 80GB via HF direct (load_qwen_model OSS path) ─
 # Mirrors the working 20b interactive command, just bigger model + 4 GPUs.
@@ -19,10 +19,10 @@
 #   - _parse_oss_native to convert harmony channels → ReAct format
 # 117B * 2 bytes ≈ 234GB BF16; 4x A100 80GB = 320GB VRAM + overhead → 480G RAM.
 
-GPT_OSS_HF_PATH="${GPT_OSS_HF_PATH:-/datasets/ai/gpt/hub/models--openai--gpt-oss-120b/snapshots/eabf0c518da7584a2e7dab4ab272709785a72126/}"
-REPO_DIR="/home/udhanuka_umass_edu/RL Med/physics-reasoning-agents"
-CONDA_ENV="/home/udhanuka_umass_edu/.conda/envs/phyreagent"
-HF_HOME_DIR="${HF_HOME_DIR:-/scratch4/workspace/svaidyanatha_umass_edu-phyre/hf_cache}"
+GPT_OSS_HF_PATH="${GPT_OSS_HF_PATH:-/path/to/models--openai--gpt-oss-120b/snapshots/<snapshot>/}"
+REPO_DIR="${REPO_DIR:-/path/to/HeXA}"
+CONDA_ENV="${CONDA_ENV:-/path/to/conda/envs/phyreagent}"
+HF_HOME_DIR="${HF_HOME_DIR:-/path/to/hf_cache}"
 
 # ─── Configurable ───────────────────────────────────────────────────────────
 LEVEL="${LEVEL:-falling_into_place}"

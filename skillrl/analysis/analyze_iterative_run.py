@@ -22,7 +22,6 @@ Usage:
         --run-dir skillrl/data/iterative/catapult \\
         --level catapult \\
         --exclude-rounds 7
-        /home/udhanuka_umass_edu/RL Med/physics-reasoning-agents/skillrl/skill_rl_results_passtheparcel/online_iterative/pass_the_parcel/progress.json
 """
 
 from __future__ import annotations

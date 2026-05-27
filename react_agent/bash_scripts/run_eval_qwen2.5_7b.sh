@@ -8,14 +8,14 @@
 
 # Training script for OpenVLA on Interphyre dataset
 
-export HF_HOME="/scratch4/workspace/svaidyanatha_umass_edu-phyre/hf_cache"
+export HF_HOME="${HF_HOME:-/path/to/hf_cache}"
 
 module load conda/latest
-export QWEN_PATH="/datasets/ai/qwen2/hub/models--Qwen--Qwen2.5-7B-Instruct/snapshots/a09a35458c702b33eeacc393d103063234e8bc28/"
+export QWEN_PATH="${QWEN_PATH:-/path/to/models--Qwen--Qwen2.5-7B-Instruct/snapshots/<snapshot>/}"
 
 
 # Set working directory
-cd "/home/udhanuka_umass_edu/RL Med/physics-reasoning-agents"
+cd "${REPO_DIR:-/path/to/HeXA}"
 # Run training with reduced batch size for memory efficiency # batch_size 16 -> 4, accumulation_steps 1 -> 4
 
 # Run training on successes only
@@ -32,4 +32,4 @@ python -m react_agent.run_react \
 python react_agent/plot_eval.py --eval-dir $EVAL_DIR
 
 
-#sbatch -A pi_jensen_umass_edu run.sh
+#sbatch -A <your-slurm-account> run.sh

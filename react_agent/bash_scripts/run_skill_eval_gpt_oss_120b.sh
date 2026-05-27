@@ -8,7 +8,7 @@
 #SBATCH --mem=500G
 #SBATCH -o logs/skilleval_oss120b_catapult_%j.out
 #SBATCH -e logs/skilleval_oss120b_catapult_%j.err
-#SBATCH -A pi_sniekum_umass_edu
+#SBATCH -A <your-slurm-account>
 
 # ─── SkillRL final eval: gpt-oss-120b with a fixed skill bank ────────────────
 # Runs run_skill_agent (augmented_runner) on a held-out seed range using
@@ -29,10 +29,10 @@ on_err() {
 trap 'on_err $LINENO' ERR
 # ────────────────────────────────────────────────────────────────────────────
 
-GPT_OSS_HF_PATH="${GPT_OSS_HF_PATH:-/datasets/ai/gpt/hub/models--openai--gpt-oss-120b/snapshots/eabf0c518da7584a2e7dab4ab272709785a72126/}"
-REPO_DIR="/home/udhanuka_umass_edu/RL Med/physics-reasoning-agents"
-CONDA_ENV="/home/udhanuka_umass_edu/.conda/envs/phyreagent"
-HF_HOME_DIR="${HF_HOME_DIR:-/scratch4/workspace/svaidyanatha_umass_edu-phyre/hf_cache}"
+GPT_OSS_HF_PATH="${GPT_OSS_HF_PATH:-/path/to/models--openai--gpt-oss-120b/snapshots/<snapshot>/}"
+REPO_DIR="${REPO_DIR:-/path/to/HeXA}"
+CONDA_ENV="${CONDA_ENV:-/path/to/conda/envs/phyreagent}"
+HF_HOME_DIR="${HF_HOME_DIR:-/path/to/hf_cache}"
 
 # ─── Configurable ────────────────────────────────────────────────────────────
 LEVEL="${LEVEL:-catapult}"

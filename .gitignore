@@ -21,6 +21,9 @@ env/
 *.swo
 .DS_Store
 
+# Claude Code local settings (per-user, never commit)
+.claude/
+
 # Test / coverage
 .pytest_cache/
 .ruff_cache/

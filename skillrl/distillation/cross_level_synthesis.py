@@ -21,9 +21,9 @@ Usage:
 
     python -m skillrl.distillation.cross_level_synthesis \\
         --target catapult \\
-        --source-bank down_to_earth="/home/udhanuka_umass_edu/RL Med/physics-reasoning-agents/skillrl/cross/down_to_earth.json" \\
-        --source-bank two_body_problem="/home/udhanuka_umass_edu/RL Med/physics-reasoning-agents/skillrl/cross/two_body_problem.json" \\
-        --source-bank pass_the_parcel="/home/udhanuka_umass_edu/RL Med/physics-reasoning-agents/skillrl/cross/pass_the_parcel.json"\\
+        --source-bank down_to_earth=skillrl/cross/down_to_earth.json \\
+        --source-bank two_body_problem=skillrl/cross/two_body_problem.json \\
+        --source-bank pass_the_parcel=skillrl/cross/pass_the_parcel.json \\
         --output-dir skillrl/data/cross_level/catapult
 """
 

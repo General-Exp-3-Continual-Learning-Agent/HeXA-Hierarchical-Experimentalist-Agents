@@ -8,7 +8,7 @@
 #SBATCH --constraint=vram48
 #SBATCH -o logs/qwen14b_two_body_%j.out
 #SBATCH -e logs/qwen14b_two_body_%j.err
-#SBATCH -A pi_sniekum_umass_edu
+#SBATCH -A <your-slurm-account>
 
 # ─── Qwen2.5-14B-Instruct on 1x 48GB GPU (two_body_problem) ───────────────────
 # Loads from a local snapshot to skip HF Hub revalidation.
@@ -28,10 +28,10 @@ on_err() {
 trap 'on_err $LINENO' ERR
 # ──────────────────────────────────────────────────────────────────────────────
 
-REPO_DIR="/home/udhanuka_umass_edu/RL Med/physics-reasoning-agents"
-CONDA_ENV="/home/udhanuka_umass_edu/.conda/envs/phyreagent"
-HF_HOME_DIR="${HF_HOME_DIR:-/scratch4/workspace/svaidyanatha_umass_edu-phyre/hf_cache}"
-QWEN_PATH="${QWEN_PATH:-/datasets/ai/qwen2/hub/models--Qwen--Qwen2.5-14B-Instruct/snapshots/cf98f3b3bbb457ad9e2bb7baf9a0125b6b88caa8/}"
+REPO_DIR="${REPO_DIR:-/path/to/HeXA}"
+CONDA_ENV="${CONDA_ENV:-/path/to/conda/envs/phyreagent}"
+HF_HOME_DIR="${HF_HOME_DIR:-/path/to/hf_cache}"
+QWEN_PATH="${QWEN_PATH:-/path/to/models--Qwen--Qwen2.5-14B-Instruct/snapshots/<snapshot>/}"
 
 # ─── Configurable ─────────────────────────────────────────────────────────────
 LEVEL="${LEVEL:-tipping_point}"

@@ -8,7 +8,7 @@
 #SBATCH --mem=480G
 #SBATCH -o logs/skillrl_oss120b_catapult_%j.out
 #SBATCH -e logs/skillrl_oss120b_catapult_%j.err
-#SBATCH -A pi_sniekum_umass_edu
+#SBATCH -A <your-slurm-account>
 
 # ─── SkillRL evolving loop: gpt-oss-120b agent + Claude Sonnet teacher ──────
 # Agent  : gpt-oss-120b via HF direct (~234GB BF16)
@@ -32,13 +32,13 @@ on_err() {
 trap 'on_err $LINENO' ERR
 # ────────────────────────────────────────────────────────────────────────────
 
-GPT_OSS_HF_PATH="${GPT_OSS_HF_PATH:-/datasets/ai/gpt/hub/models--openai--gpt-oss-120b/snapshots/eabf0c518da7584a2e7dab4ab272709785a72126/}"
-REPO_DIR="/home/udhanuka_umass_edu/RL Med/physics-reasoning-agents"
-CONDA_ENV="/home/udhanuka_umass_edu/.conda/envs/phyreagent"
-HF_HOME_DIR="${HF_HOME_DIR:-/scratch4/workspace/svaidyanatha_umass_edu-phyre/hf_cache}"
+GPT_OSS_HF_PATH="${GPT_OSS_HF_PATH:-/path/to/models--openai--gpt-oss-120b/snapshots/<snapshot>/}"
+REPO_DIR="${REPO_DIR:-/path/to/HeXA}"
+CONDA_ENV="${CONDA_ENV:-/path/to/conda/envs/phyreagent}"
+HF_HOME_DIR="${HF_HOME_DIR:-/path/to/hf_cache}"
 
 # ─── Configurable ───────────────────────────────────────────────────────────
-INITIAL_TRAJ_DIR="${INITIAL_TRAJ_DIR:-"/home/udhanuka_umass_edu/RL Med/physics-reasoning-agents/Initial_trajectories/catapult"}"
+INITIAL_TRAJ_DIR="${INITIAL_TRAJ_DIR:-"${REPO_DIR}/Initial_trajectories/catapult"}"
 NUM_ROUNDS="${NUM_ROUNDS:-17}"
 SEEDS_PER_ROUND="${SEEDS_PER_ROUND:-3}"
 START_SEED="${START_SEED:-6}"

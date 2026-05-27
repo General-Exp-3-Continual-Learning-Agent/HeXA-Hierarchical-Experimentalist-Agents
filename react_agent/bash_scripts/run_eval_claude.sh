@@ -13,12 +13,12 @@ module load conda/latest
 conda activate phyreagent
 
 # Where to save results. On compute nodes $HOME is often read-only; use $SCRATCH so files are visible.
-# After the job, from a login node: cp -r $SCRATCH/physics-reasoning-agents/results_claude_two_body/* ~/RL\ Med/physics-reasoning-agents/results_claude_two_body/
+# After the job, from a login node: cp -r $SCRATCH/hexa/results_claude_two_body/* <REPO_DIR>/results_claude_two_body/
 if [ -n "$SCRATCH" ]; then
-  EVAL_DIR="$SCRATCH/physics-reasoning-agents/results_claude_two_body"
+  EVAL_DIR="$SCRATCH/hexa/results_claude_two_body"
   echo "Saving results to SCRATCH: $EVAL_DIR"
 else
-  EVAL_DIR="/home/udhanuka_umass_edu/RL Med/physics-reasoning-agents/results_claude_two_body"
+  EVAL_DIR="${REPO_DIR:-$PWD}/results_claude_two_body"
 fi
 
 # Run ReAct Agent on 10 seeds (0 to 9)

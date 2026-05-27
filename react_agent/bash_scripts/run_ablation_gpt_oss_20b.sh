@@ -5,15 +5,15 @@
 #SBATCH -c 8
 #SBATCH -t 48:00:00
 #SBATCH --mem=80G
-#SBATCH -o /home/udhanuka_umass_edu/gpt_oss_logs/gpt_oss_20b_%j.out
-#SBATCH -e /home/udhanuka_umass_edu/gpt_oss_logs/gpt_oss_20b_%j.err
-#SBATCH -A pi_hongyu_umass_edu
+#SBATCH -o logs/gpt_oss_20b_%j.out
+#SBATCH -e logs/gpt_oss_20b_%j.err
+#SBATCH -A <your-slurm-account>
 
 # ─── User-configurable ───────────────────────────────────────────────────────
 # HuggingFace model path for GPT-OSS-20B
-GPT_OSS_HF_PATH="${GPT_OSS_HF_PATH:-/datasets/ai/gpt/hub/models--openai--gpt-oss-20b/snapshots/2e8f8052ee2aeee907f76e08c08b9fdde8677ca8/}"
+GPT_OSS_HF_PATH="${GPT_OSS_HF_PATH:-/path/to/models--openai--gpt-oss-20b/snapshots/<snapshot>/}"
 
-REPO_DIR="/home/udhanuka_umass_edu/RL Med/physics-reasoning-agents"
+REPO_DIR="${REPO_DIR:-/path/to/HeXA}"
 CONDA_ENV="phyreagent"
 HF_HOME_DIR="${SCRATCH:-$HOME}/hf_cache"
 # ─────────────────────────────────────────────────────────────────────────────
