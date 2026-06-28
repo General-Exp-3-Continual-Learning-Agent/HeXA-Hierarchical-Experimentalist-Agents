@@ -1,0 +1,7 @@
+variant,total_seeds,successes,failures,accuracy,total_time_hours,avg_time_per_seed,avg_iterations,seeds_per_hour
+O2Oevolving_3seeds,45,27,18,0.600,3.07,245.4,17.29,14.7
+online_evolving,51,30,21,0.588,2.91,205.5,16.51,17.5
+online_iterative,50,28,22,0.560,3.76,270.8,18.66,13.3
+offline,51,24,27,0.471,4.92,347.0,18.49,10.4
+O2Oiterative,45,21,24,0.467,3.59,286.9,16.82,12.5
+O2Oevolving_5seeds,50,21,29,0.420,5.00,359.8,20.26,10.0
