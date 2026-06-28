@@ -9,7 +9,6 @@
 #SBATCH -o logs/train_%j.out
 #SBATCH -e logs/train_%j.err
 #SBATCH -A pi_sniekum_umass_edu
-#SBATCH --reservation=sniekum
 
 # ─── Interphyre Physics Puzzle RL Training on 1x A100 80GB ───────────────────
 # Level: down_to_earth

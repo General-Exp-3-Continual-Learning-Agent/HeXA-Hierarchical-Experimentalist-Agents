@@ -9,7 +9,6 @@
 #SBATCH -o logs/train_%j.out
 #SBATCH -e logs/train_%j.err
 #SBATCH -A pi_sniekum_umass_edu
-#SBATCH --reservation=sniekum
 
 # ─── Continuous-Process Evolving Skill Bank + GRPO Training (DTE) ─────────────
 # Level: down_to_earth

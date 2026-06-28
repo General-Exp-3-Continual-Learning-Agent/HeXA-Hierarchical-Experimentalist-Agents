@@ -9,7 +9,6 @@
 #SBATCH -o logs/vllm_teacher_%j.out
 #SBATCH -e logs/vllm_teacher_%j.err
 #SBATCH -A pi_sniekum_umass_edu
-#SBATCH --reservation=sniekum2
 
 set -euo pipefail
 
