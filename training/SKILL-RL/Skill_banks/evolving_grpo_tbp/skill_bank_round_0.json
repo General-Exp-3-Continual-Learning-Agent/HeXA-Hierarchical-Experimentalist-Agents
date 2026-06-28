@@ -1,0 +1,169 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "two_body_problem": [
+      {
+        "skill_id": "two_sk_000",
+        "title": "Optimal Initial Positioning",
+        "principle": "Placing the red ball at a strategic horizontal offset ensures the green ball is pushed towards the blue ball, facilitating contact.",
+        "when_to_apply": "When the green and blue balls are horizontally separated and falling under gravity.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "contrastive",
+        "source_seeds": [
+          2,
+          3,
+          5
+        ],
+        "generation": 0,
+        "confidence": 0.125
+      },
+      {
+        "skill_id": "two_sk_001",
+        "title": "Consider Mass and Radius",
+        "principle": "The red ball's mass and radius influence its ability to push the green ball effectively; larger mass and radius increase the force and duration of contact.",
+        "when_to_apply": "When the green and blue balls have different sizes and masses, ensuring the red ball is appropriately sized for the task.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "contrastive",
+        "source_seeds": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "generation": 0,
+        "confidence": 0.125
+      },
+      {
+        "skill_id": "two_sk_002",
+        "title": "Utilize Gravity for Timing",
+        "principle": "Using the natural downward acceleration due to gravity allows precise timing of the red ball's placement to ensure sustained contact between the green and blue balls.",
+        "when_to_apply": "When the exact timing of the red ball's placement is critical for maintaining contact for 3 seconds.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "contrastive",
+        "source_seeds": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "generation": 0,
+        "confidence": 0.125
+      },
+      {
+        "skill_id": "two_sk_003",
+        "title": "Relative Position Analysis",
+        "principle": "Analyzing the relative positions and velocities of the green and blue balls helps determine the optimal placement and velocity for the red ball to achieve the desired outcome.",
+        "when_to_apply": "When the initial positions and velocities of the green and blue balls are complex and varied.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "contrastive",
+        "source_seeds": [
+          4
+        ],
+        "generation": 0,
+        "confidence": 0.125
+      },
+      {
+        "skill_id": "two_sk_004",
+        "title": "Avoid Overcomplicating the Solution",
+        "principle": "Simple and direct solutions often outperform overly complex strategies, as they are more likely to be robust and effective.",
+        "when_to_apply": "When multiple attempts with complex strategies fail, simplifying the approach can lead to success.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "contrastive",
+        "source_seeds": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "generation": 0,
+        "confidence": 0.125
+      },
+      {
+        "skill_id": "two_fsk_000",
+        "title": "Relative Position Analysis",
+        "principle": "Using the `compute_relative_positions` tool to understand the relative distances and angles between the green and blue balls helps in determining the correct placement for the red ball.",
+        "when_to_apply": "When the initial positions and velocities of the green and blue balls are known and need to be analyzed for effective interaction.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "failure",
+        "source_seeds": [
+          4
+        ],
+        "generation": 0,
+        "confidence": 0.125
+      },
+      {
+        "skill_id": "two_fsk_001",
+        "title": "Initial Velocity Consideration",
+        "principle": "Considering the initial velocities of the balls when placing the red ball ensures that the push is effective and timely.",
+        "when_to_apply": "When the initial velocities of the green and blue balls are non-zero, and the agent needs to account for their movement.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "failure",
+        "source_seeds": [
+          1,
+          3
+        ],
+        "generation": 0,
+        "confidence": 0.125
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "two_body_problem": [
+      {
+        "mistake_id": "two_err_000",
+        "description": "Placing the red ball too far away horizontally from the green ball.",
+        "why_it_happens": "The agent incorrectly assumes that a large horizontal distance is necessary to generate a significant push, ignoring the importance of timing and vertical alignment.",
+        "how_to_avoid": "Place the red ball closer to the green ball, ensuring it has enough time to interact before the balls fall out of range.",
+        "source_level": "two_body_problem",
+        "source_seeds": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "generation": 0
+      },
+      {
+        "mistake_id": "two_err_001",
+        "description": "Not considering the vertical alignment of the balls when placing the red ball.",
+        "why_it_happens": "The agent focuses solely on horizontal positioning, neglecting the fact that the red ball needs to be at a similar vertical level to effectively push the green ball.",
+        "how_to_avoid": "Ensure the red ball is placed at a similar vertical level as the green ball to maximize the push effect.",
+        "source_level": "two_body_problem",
+        "source_seeds": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "generation": 0
+      },
+      {
+        "mistake_id": "two_err_002",
+        "description": "Incorrectly assuming the red ball will always push the green ball towards the blue ball regardless of its initial velocity.",
+        "why_it_happens": "The agent does not account for the initial velocities and positions of the balls, leading to incorrect placements that fail to achieve the desired outcome.",
+        "how_to_avoid": "Simulate the action first to check if the red ball's placement and initial conditions result in the green ball moving towards the blue ball.",
+        "source_level": "two_body_problem",
+        "source_seeds": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "generation": 0
+      }
+    ]
+  }
+}

@@ -1,0 +1,201 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "two_body_problem": [
+      {
+        "skill_id": "two_sk_000",
+        "title": "Optimal Initial Positioning",
+        "principle": "Place the red ball near the midpoint between the green and blue balls to minimize initial distance.",
+        "when_to_apply": "When the red ball needs to initiate contact with the green ball and push it towards the blue ball.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          10,
+          47,
+          44
+        ],
+        "generation": 82,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "two_ev_55_001",
+        "title": "Adjust Vertical Placement for Contact Duration",
+        "principle": "Lower the red ball to ensure the green and blue balls remain in contact for at least 3 seconds.",
+        "when_to_apply": "When the goal is to maintain contact duration between the green and blue balls.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          10,
+          47,
+          44
+        ],
+        "generation": 82,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "two_ev_59_002",
+        "title": "Balance Horizontal Offsets",
+        "principle": "Place the red ball closer to the blue ball to help bridge the gap between the green and blue balls.",
+        "when_to_apply": "When the red ball needs to push the green ball towards the blue ball.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          10,
+          47,
+          44
+        ],
+        "generation": 82,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "two_ev_67_003",
+        "title": "Strategic Radius Selection",
+        "principle": "Choose a red ball radius that ensures contact duration of at least 3 seconds without causing overlap.",
+        "when_to_apply": "When the red ball's radius affects contact duration and prevents overlap.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          10,
+          47,
+          44
+        ],
+        "generation": 82,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "two_ev_79_004",
+        "title": "Initial Red Ball Velocity Adjustment",
+        "principle": "Adjust the initial velocity of the red ball to ensure it initiates contact and maintains contact duration.",
+        "when_to_apply": "When the initial velocity of the red ball impacts the contact initiation and duration.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          10,
+          47,
+          44
+        ],
+        "generation": 82,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "two_ev_79_006",
+        "title": "Horizontal Push Magnitude Control",
+        "principle": "Control the horizontal push magnitude by adjusting the red ball's initial velocity to ensure the green ball is pushed into the blue ball.",
+        "when_to_apply": "When the horizontal push magnitude needs to be adjusted to ensure the green ball contacts the blue ball.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          10,
+          47,
+          44
+        ],
+        "generation": 82,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "two_ev_82_006",
+        "title": "Vertical Offset for Mid-Air Interaction",
+        "principle": "Place the red ball at a higher vertical position to allow for a mid-air interaction with the green ball.",
+        "when_to_apply": "When the red ball needs to interact with the green ball in mid-air.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          10,
+          47,
+          44
+        ],
+        "generation": 82,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "two_ev_70_005",
+        "title": "Use Center of Blue Ball as Reference",
+        "principle": "Place the red ball relative to the center of the blue ball to ensure proper positioning.",
+        "when_to_apply": "When the red ball needs to be positioned relative to the blue ball's center.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          10,
+          47,
+          44
+        ],
+        "generation": 82,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "two_ev_82_008",
+        "title": "Optimize Red Ball Radius for Contact Duration",
+        "principle": "Select a red ball radius that optimizes contact duration while avoiding overlap.",
+        "when_to_apply": "When the red ball's radius significantly affects contact duration and prevents overlap.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          10,
+          47,
+          44
+        ],
+        "generation": 82,
+        "confidence": 0.95
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "two_body_problem": [
+      {
+        "mistake_id": "two_err_000",
+        "description": "Placing the red ball too far away horizontally from the green ball.",
+        "why_it_happens": "Agents may misjudge the required proximity for initiating contact.",
+        "how_to_avoid": "Ensure the red ball is placed near the midpoint between the green and blue balls.",
+        "source_level": "two_body_problem",
+        "source_seeds": [],
+        "generation": 82
+      },
+      {
+        "mistake_id": "two_evo_001",
+        "description": "Not considering the vertical alignment of the balls when placing the red ball.",
+        "why_it_happens": "Agents may overlook the importance of vertical positioning for mid-air interactions.",
+        "how_to_avoid": "Place the red ball at a higher vertical position to allow for mid-air interactions.",
+        "source_level": "two_body_problem",
+        "source_seeds": [],
+        "generation": 82
+      },
+      {
+        "mistake_id": "two_evo_002",
+        "description": "Incorrectly assuming the red ball will always push the green ball towards the blue ball regardless of its initial velocity.",
+        "why_it_happens": "Agents may underestimate the impact of initial velocity on the push direction.",
+        "how_to_avoid": "Adjust the initial velocity of the red ball to control the push direction.",
+        "source_level": "two_body_problem",
+        "source_seeds": [],
+        "generation": 82
+      },
+      {
+        "mistake_id": "two_err_003",
+        "description": "Incorrect radius selection leading to premature overlap or insufficient contact duration.",
+        "why_it_happens": "Agents may choose a radius that does not optimize contact duration.",
+        "how_to_avoid": "Select a red ball radius that ensures contact duration of at least 3 seconds without causing overlap.",
+        "source_level": "two_body_problem",
+        "source_seeds": [],
+        "generation": 82
+      },
+      {
+        "mistake_id": "two_evo_004",
+        "description": "Red ball placed too high relative to the blue ball.",
+        "why_it_happens": "Agents may place the red ball too high, preventing mid-air interactions.",
+        "how_to_avoid": "Place the red ball at a higher vertical position to allow for mid-air interactions.",
+        "source_level": "two_body_problem",
+        "source_seeds": [],
+        "generation": 82
+      }
+    ]
+  }
+}
