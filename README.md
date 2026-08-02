@@ -77,6 +77,7 @@ Wrappers forward every flag to the underlying module — `python scripts/run_hex
 - [docs/HEXA.md](docs/HEXA.md) — method walkthrough: distil → evolve cycle, bank capacity, evolution rule
 - [docs/CONFIGS.md](docs/CONFIGS.md) — variant matrix: Init × Update rule, mapped to scripts and files
 - [docs/BASELINES.md](docs/BASELINES.md) — ReAct, Reflexion, Direct
+- [docs/MEMORY_BASELINES.md](docs/MEMORY_BASELINES.md) — Episodic RAG and MemRL (cross-episode memory baselines)
 - [docs/CROSS_LEVEL.md](docs/CROSS_LEVEL.md) — meta-transfer (no target trajectories used)
 - [docs/ABLATIONS.md](docs/ABLATIONS.md) — reward ablation (contrastive-only) and skills-only ablation
 

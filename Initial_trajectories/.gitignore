@@ -1,0 +1,5 @@
+# Keep only the trajectory JSONs, matching the shipped catapult/ convention.
+# run_react.py also writes per-seed scene renders and a summary; those are
+# regenerable and not read by --initial-traj-dir.
+*.png
+summary.json
