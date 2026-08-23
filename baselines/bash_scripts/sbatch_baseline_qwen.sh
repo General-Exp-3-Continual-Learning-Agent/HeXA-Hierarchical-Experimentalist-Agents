@@ -11,6 +11,23 @@
 # partition (torch ships no kernels for those; a job there dies at the first
 # tensor op). It is also far less contended: submitting into `gpu` with a 24h
 # walltime sat at Reason=Priority behind ~210 queued jobs.
+#
+# BUT superpod-a100 is capped by MaxGRESPerAccount: once the account's concurrent
+# GPUs are used up (the 4-GPU gpt-oss jobs eat them fast), every other job pends
+# on an otherwise-idle cluster. To spread onto the general partitions, override
+# both directives on the command line -- #SBATCH lines are parsed before this
+# script runs, so the wrapper's own --flags cannot do it:
+#
+#   # Qwen-7B: bf16 weights ~15GB + 25-iteration context -> 40GB card
+#   sbatch -p gpu,gpu-preempt --constraint='sm_80&vram40' \
+#       baselines/bash_scripts/sbatch_baseline_qwen.sh --method memrl --level catapult ...
+#   # Qwen-3B: ~6GB -> 23GB card
+#   sbatch -p gpu,gpu-preempt --constraint='sm_80&vram23' ... --actor-label qwen3b
+#
+# sm_80 is the floor because torch_dtype="auto" resolves Qwen2.5 configs to
+# bfloat16; VRAM alone is not enough (the 48GB Quadro RTX 8000 is sm_75 and
+# fails). gpu-preempt is safe here despite the 24h walltime because runs resume
+# from existing trajectory JSONs, so a preemption costs one episode.
 #SBATCH -A pi_sniekum_umass_edu
 #SBATCH -o logs/baseline_qwen_%j.out
 #SBATCH -e logs/baseline_qwen_%j.err
