@@ -420,11 +420,16 @@ def load_qwen_model(model_name: str, temperature: float = 0.3, max_new_tokens: i
         inputs = tokenizer(text, return_tensors="pt").to(model.device)
         eos_ids = _oss_eos_ids if is_oss else tokenizer.eos_token_id
         with torch.no_grad():
+            # temp == 0 means greedy decoding; HF rejects temperature=0 while
+            # do_sample=True, so switch sampling off rather than passing it.
+            sample_kwargs = (
+                {"do_sample": True, "temperature": temp} if temp and temp > 0
+                else {"do_sample": False}
+            )
             output = model.generate(
                 **inputs,
                 max_new_tokens=max_tokens,
-                do_sample=True,
-                temperature=temp,
+                **sample_kwargs,
                 pad_token_id=tokenizer.eos_token_id,
                 eos_token_id=eos_ids,
             )
@@ -507,11 +512,14 @@ def load_gpt_oss_model(model_name: str, temperature: float = 0.3, max_new_tokens
             return_dict=True,
         ).to(model.device)
         with torch.no_grad():
+            sample_kwargs = (
+                {"do_sample": True, "temperature": temp} if temp and temp > 0
+                else {"do_sample": False}
+            )
             outputs = model.generate(
                 **inputs,
                 max_new_tokens=max_tokens,
-                temperature=temp,
-                do_sample=True,
+                **sample_kwargs,
             )
         generated_ids = outputs[0][inputs["input_ids"].shape[-1]:]
         response = tokenizer.decode(generated_ids, skip_special_tokens=False)

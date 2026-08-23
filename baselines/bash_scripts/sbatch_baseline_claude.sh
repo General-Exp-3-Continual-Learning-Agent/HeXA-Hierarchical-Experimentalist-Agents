@@ -44,7 +44,10 @@ INITIAL_TRAJ_DIR=""
 # instances near-randomly (Spearman rho +0.11 to +0.40, ~10% top-1 overlap), so a
 # text key would make both baselines straw men. Pass a model name here only to
 # run that weaker configuration deliberately as a secondary comparison.
-EMBEDDING_MODEL="jinaai/jina-embeddings-v2-base-en"
+# Empty -> let each runner apply its own default (MemRL: OpenAI
+# text-embedding-3-large, its config's choice; Episodic RAG: jina, the CORE
+# paper's choice for that baseline). Set this to force one key for both.
+EMBEDDING_MODEL=""
 INTENT_MODE="geometry"
 TEACHER_MODEL="claude-sonnet-4-6"
 TAG=""
@@ -94,7 +97,7 @@ echo "  Method       : $METHOD"
 echo "  Level        : $LEVEL"
 echo "  Seeds        : $SEEDS  (rounds of $SEEDS_PER_ROUND)"
 echo "  Actor        : claude ($(claude --version 2>/dev/null || echo '?'))"
-echo "  Embedder     : $EMBEDDING_MODEL"
+echo "  Embedder     : ${EMBEDDING_MODEL:-<runner default>}"
 echo "  Intent mode  : $INTENT_MODE"
 echo "  Offline init : ${INITIAL_TRAJ_DIR:-<none>}"
 echo "  Output       : $OUTPUT_DIR"
@@ -109,11 +112,11 @@ args=(
     --output-dir "$OUTPUT_DIR"
     --cache-dir "$CACHE_DIR"
     --model claude
-    --embedding-model "$EMBEDDING_MODEL"
     --intent-mode "$INTENT_MODE"
     --verbose
 )
 [[ -n "$INITIAL_TRAJ_DIR" ]] && args+=(--initial-traj-dir "$INITIAL_TRAJ_DIR")
+[[ -n "$EMBEDDING_MODEL" ]] && args+=(--embedding-model "$EMBEDDING_MODEL")
 [[ "$METHOD" == "memrl" ]] && args+=(--summarizer claude --teacher-model "$TEACHER_MODEL")
 
 # shellcheck disable=SC2206

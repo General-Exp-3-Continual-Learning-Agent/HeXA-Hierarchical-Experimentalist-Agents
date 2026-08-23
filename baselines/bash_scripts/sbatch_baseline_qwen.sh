@@ -51,8 +51,12 @@ INITIAL_TRAJ_DIR=""
 # instances near-randomly (Spearman rho +0.11 to +0.40, ~10% top-1 overlap), so a
 # text key would make both baselines straw men. Pass a model name here only to
 # run that weaker configuration deliberately as a secondary comparison.
-EMBEDDING_MODEL="jinaai/jina-embeddings-v2-base-en"
+# Empty -> let each runner apply its own default (MemRL: OpenAI
+# text-embedding-3-large, its config's choice; Episodic RAG: jina, the CORE
+# paper's choice for that baseline). Set this to force one key for both.
+EMBEDDING_MODEL=""
 INTENT_MODE="geometry"
+ACTOR_LABEL=""
 TAG=""
 EXTRA=""
 
@@ -67,6 +71,7 @@ while [[ $# -gt 0 ]]; do
         --embedding-model)   EMBEDDING_MODEL="$2";   shift 2 ;;
         --intent-mode)       INTENT_MODE="$2";       shift 2 ;;
         --model)             QWEN_OVERRIDE="$2";     shift 2 ;;
+        --actor-label)       ACTOR_LABEL="$2";       shift 2 ;;
         --tag)               TAG="$2";               shift 2 ;;
         --extra)             EXTRA="$2";             shift 2 ;;
         *) echo "[ERROR] Unknown argument: $1"; exit 1 ;;
@@ -85,7 +90,17 @@ export REPO_DIR
 source "$REPO_DIR/baselines/bash_scripts/_baseline_env.sh"
 ACTOR="${QWEN_OVERRIDE:-$QWEN_PATH}"
 
-RUN_NAME="${METHOD}_${LEVEL}_qwen7b${TAG:+_$TAG}"
+# Derive a short actor label from the model path when not given, so 7B and 3B
+# runs never share an output directory (their stores are not interchangeable).
+if [[ -z "$ACTOR_LABEL" ]]; then
+    case "$ACTOR" in
+        *3B*|*3b*) ACTOR_LABEL="qwen3b" ;;
+        *7B*|*7b*) ACTOR_LABEL="qwen7b" ;;
+        *gpt-oss-120b*) ACTOR_LABEL="gptoss120b" ;;
+        *) ACTOR_LABEL="$(basename "$ACTOR" | tr -cd '[:alnum:]-' | cut -c1-20)" ;;
+    esac
+fi
+RUN_NAME="${METHOD}_${LEVEL}_${ACTOR_LABEL}${TAG:+_$TAG}"
 OUTPUT_DIR="$BASELINE_ROOT/$RUN_NAME"
 mkdir -p "$OUTPUT_DIR"
 
@@ -96,7 +111,8 @@ echo "  Method       : $METHOD"
 echo "  Level        : $LEVEL"
 echo "  Seeds        : $SEEDS  (rounds of $SEEDS_PER_ROUND)"
 echo "  Actor        : $ACTOR"
-echo "  Embedder     : $EMBEDDING_MODEL"
+echo "  Actor label  : $ACTOR_LABEL"
+echo "  Embedder     : ${EMBEDDING_MODEL:-<runner default>}"
 echo "  Intent mode  : $INTENT_MODE"
 echo "  Offline init : ${INITIAL_TRAJ_DIR:-<none>}"
 echo "  Output       : $OUTPUT_DIR"
@@ -113,11 +129,11 @@ args=(
     --output-dir "$OUTPUT_DIR"
     --cache-dir "$CACHE_DIR"
     --model "$ACTOR"
-    --embedding-model "$EMBEDDING_MODEL"
     --intent-mode "$INTENT_MODE"
     --verbose
 )
 [[ -n "$INITIAL_TRAJ_DIR" ]] && args+=(--initial-traj-dir "$INITIAL_TRAJ_DIR")
+[[ -n "$EMBEDDING_MODEL" ]] && args+=(--embedding-model "$EMBEDDING_MODEL")
 # MemRL summarizes with the same local model, at the paper's temperatures.
 [[ "$METHOD" == "memrl" ]] && args+=(--summarizer agent-model)
 

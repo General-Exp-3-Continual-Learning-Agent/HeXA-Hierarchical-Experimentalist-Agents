@@ -109,7 +109,11 @@ def make_summarizer(
         )
         start = time.time()
         text = (call_fn or (lambda p: claude_cli_call(p, model=model)))(prompt)
-        if verbose:
+        if not text.strip():
+            # An empty summary silently produces a memory with an empty SCRIPT /
+            # reflection section, which looks like a working run. Never swallow it.
+            print(f"  [MemRL {kind}] WARNING: summarizer returned empty text", flush=True)
+        elif verbose:
             print(
                 f"  [MemRL {kind}] {len(text)} chars in {time.time() - start:.1f}s",
                 flush=True,
@@ -164,7 +168,13 @@ def make_model_fn_summarizer(
         if isinstance(out, dict):
             out = out.get("content") or ""
         text = str(out).strip()
-        if verbose:
+        if not text:
+            print(
+                f"  [MemRL {kind} @ T={temperature}] WARNING: summarizer returned "
+                f"empty text",
+                flush=True,
+            )
+        elif verbose:
             print(
                 f"  [MemRL {kind} @ T={temperature}] {len(text)} chars in "
                 f"{time.time() - start:.1f}s",

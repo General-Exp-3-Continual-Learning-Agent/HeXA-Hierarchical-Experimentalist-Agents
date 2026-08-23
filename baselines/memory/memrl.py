@@ -72,7 +72,13 @@ class MemRLConfig:
     failure_reward: float = -1.0     # rl_config.failure_reward
     use_shaped_reward: bool = False  # True -> HeXA's iteration-aware reward
     # ── curation ──
-    add_similarity_threshold: float = 0.90   # memory.add_similarity_threshold
+    # memory.add_similarity_threshold. Their ALFWorld/HLE/BCB configs use 0.90;
+    # we use 0.99, the value from their LifelongBench config, because on
+    # InterPhyre 99-100% of scene pairs exceed 0.90 and the bank collapses to one
+    # record per outcome class. Note 0.99 does NOT rescue every level: catapult
+    # (both keys) and the jina levels still have >99% of pairs above it, so check
+    # the store size after a run.
+    add_similarity_threshold: float = 0.99
     novelty_threshold: float = 0.85          # rl_config.novelty_threshold
     reward_merge_gain: float = 0.1           # rl_config.reward_merge_gain
     # ── experience content ──
@@ -308,7 +314,20 @@ class MemRL:
         same_kind = [(r, s) for r, s in nearest if r.kind == kind]
         if same_kind and same_kind[0][1] >= self.cfg.add_similarity_threshold:
             target, sim = same_kind[0]
+            # Adopt the new episode's provenance along with its content. Updating
+            # only `content` leaves seed/iterations/reward describing the episode
+            # that originally created the slot, so the record ends up claiming a
+            # seed that does not match the trajectory it holds.
             target.content = content
+            target.seed = seed
+            target.success = success
+            target.iterations = int(result.get("iterations") or 0)
+            target.simulator_calls = count_simulator_calls(result)
+            target.reward = trajectory_reward(result)
+            # The retrieval key stays as it was, matching the official code's
+            # "keep retrieval key unchanged"; so do memory_id, q and q_visits,
+            # since the utility was learned for this slot rather than for one
+            # episode.
             target.meta.setdefault("merged_seeds", []).append(seed)
             target.meta["last_merge_similarity"] = round(sim, 4)
             return target

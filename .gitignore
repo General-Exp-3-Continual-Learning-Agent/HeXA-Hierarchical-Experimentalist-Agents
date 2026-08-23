@@ -41,3 +41,8 @@ Plots/
 
 # OS thumbnails
 Thumbs.db
+
+# gpt-oss harmony tokenizer vocabs, fetched at job start by the *_gpt_oss / oss
+# sbatch scripts because compute nodes may lack egress. 5.3MB of regenerable
+# binary; see baselines/bash_scripts/sbatch_baseline_oss.sh.
+tiktoken_encodings/

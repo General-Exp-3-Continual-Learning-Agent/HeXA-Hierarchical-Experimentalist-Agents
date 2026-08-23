@@ -77,8 +77,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--k-failure", type=int, default=1)
     p.add_argument("--max-obs-chars", type=int, default=600)
     p.add_argument(
-        "--max-traj-steps", type=int, default=None,
-        help="Truncate stored rollouts to their last N steps (default: keep all)",
+        "--max-traj-steps", type=int, default=12,
+        help="Truncate stored rollouts to their last N steps. Matches MemRL's "
+             "default; the CORE paper stores them verbatim, but untruncated "
+             "blocks OOM gpt-oss-120b (eager attention)",
     )
     p.add_argument(
         "--freeze-after", type=int, default=None,
@@ -182,6 +184,13 @@ def main() -> None:
         "deviations": [
             f"actor is {args.model}; the CORE paper's baselines used gpt-oss-120b",
         ]
+        + (
+            [f"stored rollouts are truncated to their last {args.max_traj_steps} "
+             f"steps; the CORE paper stores them verbatim. Done so the injected "
+             f"block fits gpt-oss-120b's eager attention, and so trajectory "
+             f"length matches MemRL's"]
+            if args.max_traj_steps else []
+        )
         + key_deviations(args),
     }
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2))

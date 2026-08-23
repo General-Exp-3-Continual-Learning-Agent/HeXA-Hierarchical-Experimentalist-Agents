@@ -50,14 +50,18 @@ from baselines.runner.stream import (
 )
 
 
-#: Default retrieval key. `jinaai/jina-embeddings-v2-base-en` is the CORE paper's
-#: choice for Episodic RAG (MemRL's own paper used text-embedding-3-large).
-#: CAVEAT, measured on 105 seeds/level: text embeddings of InterPhyre intents
-#: rank instances near-randomly (Spearman rho +0.11 to +0.40 vs the geometry,
-#: ~10% top-1 overlap), because intents in a level differ only in their numbers.
-#: `--embedding-model numeric` keys on the standardized geometry instead and
-#: gives a well-conditioned retrieval space; see docs/MEMORY_BASELINES.md.
-DEFAULT_KEY = "jinaai/jina-embeddings-v2-base-en"
+#: Default retrieval key: the embedder MemRL's own release specifies
+#: (`configs/rl_alf_config.yaml` -> embedding.model). Needs OPENAI_API_KEY, which
+#: `baselines/bash_scripts/_baseline_env.sh` sources from outside the repo.
+#: Episodic RAG defaults to jina instead, since that is what the CORE paper used
+#: for *that* baseline — so each method runs on the embedder its own source names.
+#: CAVEAT, measured on 105 seeds/level with jina: text embeddings of InterPhyre
+#: intents rank instances near-randomly (Spearman rho +0.11 to +0.45 vs the
+#: geometry) because intents in a level differ only in their numbers, and the
+#: resulting delta made Phase A reject ~2/3 of episodes. Re-check the calibration
+#: output for this embedder before trusting a run; `--embedding-model numeric`
+#: keys on the standardized geometry and is better conditioned.
+DEFAULT_KEY = "openai:text-embedding-3-large"
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -90,9 +94,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument(
         "--embedding-model", default=DEFAULT_KEY,
-        help="Retrieval key: default jina (the CORE paper's choice for these "
-             "baselines), 'openai:text-embedding-3-large' (the official MemRL "
-             "config), or 'numeric' for the standardized geometry",
+        help="Retrieval key: default openai:text-embedding-3-large (MemRL's own "
+             "config), a local sentence-transformers model such as "
+             "jinaai/jina-embeddings-v2-base-en, or 'numeric' for the "
+             "standardized geometry",
     )
     p.add_argument("--cache-dir", default="baselines/data/cache")
     p.add_argument(
@@ -122,7 +127,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--use-shaped-reward", action="store_true",
         help="Use HeXA's iteration-aware reward in [-1,1] instead of +-1",
     )
-    p.add_argument("--add-similarity-threshold", type=float, default=0.90)
+    p.add_argument(
+        "--add-similarity-threshold", type=float, default=0.99,
+        help="Merge-on-write threshold. 0.99 is their LifelongBench value; "
+             "their ALFWorld config uses 0.90, which collapses the bank on "
+             "InterPhyre (99-100%% of scene pairs exceed it)",
+    )
     p.add_argument("--novelty-threshold", type=float, default=0.85)
     p.add_argument("--reward-merge-gain", type=float, default=0.1)
     p.add_argument("--max-traj-steps", type=int, default=12)

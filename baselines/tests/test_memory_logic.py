@@ -173,6 +173,20 @@ m_dup.add_episode(result=episode(30, True, 5), level="lv", seed=30,
                   intent="i30", embedding=unit(1), step_index=9)
 check("near-duplicate folds in place", len(store.records) == n_before, len(store.records))
 check("merged seed recorded", 30 in store.records[0].meta.get("merged_seeds", []))
+# The merged record must describe the episode it now holds, not the one that
+# created the slot — otherwise seed/iterations/reward contradict the content.
+merged = store.records[0]
+check("merge adopts new seed", merged.seed == 30, merged.seed)
+check("merge adopts new outcome", merged.success is True and merged.kind == SUCCESS)
+check("merge adopts new iterations", merged.iterations == 5, merged.iterations)
+check("merge keeps its learned Q", merged.q_visits > 0, merged.q_visits)
+
+# An empty summary must not silently produce a memory with a blank SCRIPT.
+def _blank(kind, intent, traj): return "   "
+m_blank = MemRL(MemoryStore(None), MemRLConfig(), summarizer=_blank)
+rec = m_blank.add_episode(result=episode(70, True, 5), level="lv", seed=70,
+                          intent="i70", embedding=[1.0, 0.0], step_index=0)
+check("blank summary is detectable", "SCRIPT:\n\n\nTRAJECTORY:" in rec.content)
 
 block = format_memrl_block(r2.records)
 check("memrl block shows Q", "utility Q=" in block and "Archived Memories" in block)

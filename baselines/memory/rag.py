@@ -11,9 +11,13 @@ Follows the CORE paper's definition verbatim:
     retrieve similar rollouts without accounting for success."
 
 No summarization, no utility, no consolidation: memory grows monotonically and
-every entry is a raw trajectory.  This is deliberately the context-hungry
-baseline (33.6k added tokens per eval item in the paper, vs 0.92k for CORE) —
-`baselines/memory/blocks.py` measures that on InterPhyre.
+every entry is a raw trajectory.  In the paper this is deliberately the
+context-hungry baseline (33.6k added tokens per eval item, vs 0.92k for CORE);
+`baselines/memory/blocks.py` measures the equivalent on InterPhyre.
+
+One deviation: we keep only the last `max_steps` (default 12) steps of each
+rollout rather than all of them.  The rollouts are still raw — no LLM touches
+them — but they are no longer complete.  See RAGConfig.max_steps for why.
 """
 
 from __future__ import annotations
@@ -37,7 +41,13 @@ class RAGConfig:
     k_success: int = 1
     k_failure: int = 1
     max_obs_chars: int = 600
-    max_steps: Optional[int] = None      # None = keep every step (verbatim)
+    # The CORE paper stores rollouts verbatim (None). We truncate to the last 12
+    # steps, matching MemRL's --max-traj-steps, because gpt-oss-120b must use
+    # eager attention and the untruncated block OOMs a 4x A100 node on the first
+    # episode. Holding trajectory length equal also isolates the axis under test
+    # (summarized vs raw memory) from sheer context volume. Pass
+    # --max-traj-steps 0 or a large value to restore verbatim storage.
+    max_steps: Optional[int] = 12
 
 
 @dataclass
