@@ -1,0 +1,197 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Sequential Transfer Application",
+        "principle": "When a statement says 'X gives N items to Y', immediately subtract N from X's current count and add N to Y's count, updating both counts for subsequent statements.",
+        "when_to_apply": "Whenever a transfer statement of the form 'X gives N items to Y' appears.",
+        "example": "Assuming X's count remains unchanged after giving N items to Y, leading to an incorrect total.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_1"
+        ],
+        "generation": 3,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Signed Interpretation of \"has K more than\"",
+        "principle": "Interpret 'A has K more than B' as the signed equation A\u00a0\u2212\u00a0B\u00a0=\u00a0K (or A\u00a0=\u00a0B\u00a0+\u00a0K), preserving the order of A and B, regardless of the sign of K.",
+        "when_to_apply": "When a comparative statement with a numeric difference appears.",
+        "example": "Treating 'A has K more than B' as B\u00a0=\u00a0A\u00a0+\u00a0K, swapping the direction.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_1"
+        ],
+        "generation": 3,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Signed Equality for Difference Statements",
+        "principle": "For statements like 'The number of items that A has more than B is equal to the difference between the number of items that C and D have', interpret as (A\u00a0\u2212\u00a0B)\u00a0=\u00a0(C\u00a0\u2212\u00a0D), preserving the order on each side.",
+        "when_to_apply": "When a difference\u2011equality statement appears.",
+        "example": "Treating the equality as |A\u00a0\u2212\u00a0B|\u00a0=\u00a0|C\u00a0\u2212\u00a0D|, ignoring sign.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_1"
+        ],
+        "generation": 3,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Current\u2011Count Constraint for \"has N\"",
+        "principle": "A statement 'A has N items' fixes A's count at that point in the narrative, after any earlier transfers or updates.",
+        "when_to_apply": "When a direct count statement appears.",
+        "example": "Assuming the count is an immutable initial value and not updating it after later transfers.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_1"
+        ],
+        "generation": 3,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Iterative Substitution and Propagation",
+        "principle": "Whenever a variable's value becomes known, substitute it into all pending equations and simplify, propagating constraints throughout the system.",
+        "when_to_apply": "After solving any variable, update all other equations that involve it.",
+        "example": "Leaving a known variable unchanged in later equations, missing simplifications.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_1"
+        ],
+        "generation": 3,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "mat_ev_1_007",
+        "title": "Consistency Check After Solving",
+        "principle": "After assigning values to all variables, verify each original statement\u2014including transfers, direct counts, and difference equalities\u2014to ensure the solution satisfies all constraints.",
+        "when_to_apply": "At the end of solving, before outputting the answer.",
+        "example": "Accepting a solution that violates a previously stated equality.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_1"
+        ],
+        "generation": 3,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "mat_ev_2_008",
+        "title": "Chronological Evaluation of Comparative Statements",
+        "principle": "Interpret comparative statements using the counts as they exist at that point in the narrative, after any earlier transfers or updates, not using initial counts.",
+        "when_to_apply": "When processing statements in order, especially those that compare variables whose values may have changed.",
+        "example": "Using a person's initial count for a later comparison after they have given away items.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_1"
+        ],
+        "generation": 3,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_2_009",
+        "title": "Query\u2011Focused Subsystem Extraction",
+        "principle": "Identify the subset of equations and statements that involve the queried person directly or through other variables, and solve only that subsystem to reduce unnecessary complexity.",
+        "when_to_apply": "When the problem contains many irrelevant statements.",
+        "example": "Attempting to solve the entire system of equations, including unrelated variables, leading to confusion.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_1"
+        ],
+        "generation": 3,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_3_009",
+        "title": "Equal Redistribution Handling",
+        "principle": "When a statement says 'X and Y redistribute their items to ensure each has an equal amount', pool their current counts and assign each half of the total.",
+        "when_to_apply": "When a redistribution statement between two persons appears.",
+        "example": "Leaving the original counts unchanged after a redistribution, missing the equal split.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_1"
+        ],
+        "generation": 3,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "mat_ev_4_009",
+        "title": "Equal Split Handling",
+        "principle": "When a statement says 'X splits all the items they own equally among Y and Z', set X's count to zero and add half of X's previous count to each of Y and Z (assuming the total is divisible by two).",
+        "when_to_apply": "When a split operation where one person distributes all their items equally to multiple recipients appears.",
+        "example": "Treating the split as a simple transfer of the whole amount to one recipient, or forgetting to zero out the splitter's count.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_1"
+        ],
+        "generation": 4,
+        "confidence": 0.65
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Swapped direction in \"has K more than\" statements",
+        "why_it_happens": "The model may focus on the phrase \"more than\" and mistakenly place the difference on the wrong side of the equation.",
+        "how_to_avoid": "Always map the statement to A\u00a0\u2212\u00a0B\u00a0=\u00a0K, preserving the order of A and B as they appear.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 3
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Treating differences as absolute values",
+        "why_it_happens": "The model assumes \"difference\" means magnitude, ignoring the signed nature required by the puzzle.",
+        "how_to_avoid": "Interpret \"difference between C and D\" as the signed expression (C\u00a0\u2212\u00a0D), preserving order.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 3
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Ignoring the chronological order of transfers",
+        "why_it_happens": "The model may treat all statements as simultaneous constraints rather than a sequence of events.",
+        "how_to_avoid": "Process statements sequentially, updating counts after each transfer before evaluating later statements.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 3
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Treating \"has N\" as an initial count regardless of position",
+        "why_it_happens": "The model assumes a \"has N\" clause defines a fixed value that never changes.",
+        "how_to_avoid": "Interpret \"has N\" as fixing the count at that point in the narrative, after any earlier updates.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 3
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Assuming all \"more than\" differences must be positive",
+        "why_it_happens": "The model expects natural\u2011language \"more than\" to indicate a positive difference.",
+        "how_to_avoid": "Treat \"has more than\" as a signed equation without imposing positivity; the sign may be negative if the narrative forces it.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 3
+      }
+    ]
+  }
+}

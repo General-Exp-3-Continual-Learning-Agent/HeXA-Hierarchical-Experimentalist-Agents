@@ -1,0 +1,173 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Balance by numeric difference and single\u2011stick transformation",
+        "principle": "Compute the integer values of both sides, find the numeric difference, and look for a single\u2011stick move that changes a numeral or operator by exactly that amount.",
+        "when_to_apply": "When the equation is false and you need to adjust the numeric values, first calculate the difference and then search for a single\u2011stick transformation that accounts for that difference.",
+        "example": "Moving a stick arbitrarily without checking if the resulting numeric values match, e.g., changing 'I' to 'V' without balancing the equation.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_012"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Convert V to X to add 5",
+        "principle": "If the numeric imbalance is exactly\u202f5 and a V appears, relocate one of V\u2019s diagonal sticks to cross the other, turning V into X (adds 5).",
+        "when_to_apply": "When the equation is off by 5 and a V can be turned into an X without breaking other characters.",
+        "example": "Turning a V into an X by moving a diagonal stick but leaving the original V incomplete.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 5,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Swap I and V in IV to make VI (adds 2)",
+        "principle": "If the imbalance is exactly\u202f2 and the pattern\u202fIV\u202fappears, move the vertical stick of the I onto the V to form VI (adds 2).",
+        "when_to_apply": "When the equation is off by 2 and you have an IV that can be changed to VI by moving the I\u2019s vertical stick.",
+        "example": "Moving the vertical stick from I in 'IV' to V, resulting in an invalid 'V' and missing I.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 5,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_2_003",
+        "title": "Change + to - and add I",
+        "principle": "If a plus sign is present and the numeric imbalance can be corrected by decreasing the right\u2011hand side, move the vertical stick from the plus sign to form an I (or part of IV) and thereby turn the plus into a minus sign.",
+        "when_to_apply": "When a plus sign exists and the equation can be fixed by reducing the RHS by 1 or 4, relocate its vertical stick to create a new I (or IV) while converting '+' to '-'.",
+        "example": "Changing '+' to '-' by removing its vertical stick but not using that stick to form a new numeral, leaving the stick unused.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_012"
+        ],
+        "generation": 5,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_2_004",
+        "title": "Transfer I stick between numerals",
+        "principle": "When the equation is off by\u202f1 and there are isolated I\u2019s, relocate a vertical stick from one I to another numeral, ensuring both source and destination remain valid.",
+        "when_to_apply": "When the numeric difference is 1 and you have at least one I that can donate its vertical stick without becoming invalid.",
+        "example": "Taking a vertical stick from an isolated I and attaching it to a numeral, but forgetting to adjust the source I, resulting in an invalid numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 5,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_3_005",
+        "title": "Preserve equality sign; never move its sticks",
+        "principle": "Never relocate any matchsticks that belong to the '=' sign; altering it would break the equality operator.",
+        "when_to_apply": "Always; the equality sign must remain unchanged throughout the transformation.",
+        "example": "Moving a horizontal stick from the '=' sign to another character, breaking the equality operator.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_012"
+        ],
+        "generation": 5,
+        "confidence": 0.48
+      },
+      {
+        "skill_id": "mat_ev_4_006",
+        "title": "Change - to = by adding a horizontal stick from a numeral",
+        "principle": "If a minus sign appears and the numeric imbalance is large, move a horizontal stick from a numeral onto the minus sign to turn it into an equals sign.",
+        "when_to_apply": "When a '-' is present and the equation requires the '-' to become '=', typically to increase the left side or decrease the right side by the value of a horizontal stick.",
+        "example": "Adding a horizontal stick to a '-' to make '=', but removing the stick from a numeral and leaving that numeral invalid.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 5,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_5_007",
+        "title": "Relocate minus sign to a different position",
+        "principle": "When a minus sign is present, consider moving its single horizontal stick to a new location in the equation to change the subtraction target or operator.",
+        "when_to_apply": "When the equation contains a '-' and moving that horizontal stick could balance the equation by altering which numbers are subtracted.",
+        "example": "Moving the '-' sign's horizontal stick to a random location that does not form a valid operator or numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 5,
+        "confidence": 0.42
+      },
+      {
+        "skill_id": "mat_ev_5_008",
+        "title": "When converting - to +, also move a vertical stick to form a valid plus sign",
+        "principle": "If you need to change a minus sign into a plus sign, you must also relocate a vertical stick from somewhere else to complete the plus sign.",
+        "when_to_apply": "When a '-' must become '+' to fix the equation; ensure you supply the missing vertical stick.",
+        "example": "Changing '-' to '+' by adding a horizontal stick but forgetting to add the required vertical stick, resulting in an incomplete plus sign.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 5,
+        "confidence": 0.42
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Moving a stick from a numeral that cannot lose a stick without becoming invalid (e.g., X, V)",
+        "why_it_happens": "The model focuses on achieving the needed numeric change and overlooks the structural integrity of the source numeral, leading to illegal transformations.",
+        "how_to_avoid": "Only relocate sticks from characters that can lose a stick while remaining a valid numeral or operator (e.g., I, the vertical part of '+', the horizontal part of '-') and verify that the source character stays valid after the move.",
+        "source_level": "matchstick",
+        "source_seeds": [
+          "matchstick_013"
+        ],
+        "generation": 6
+      },
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Moving a stick from the equality sign",
+        "why_it_happens": "The model may treat the '=' sign as a regular collection of sticks and forget the rule that it must stay unchanged.",
+        "how_to_avoid": "Never select any stick belonging to the '=' sign for relocation; treat the equality operator as immutable.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Providing an incomplete equation after moving a stick",
+        "why_it_happens": "The model sometimes removes an operator or numeral without replacing it, leaving the expression syntactically incomplete.",
+        "how_to_avoid": "After moving a stick, ensure the resulting string still contains a complete left side, an '=', and a complete right side with valid Roman numerals and operators.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Changing \u2013 to + without adding the required vertical stick (resulting in an incomplete plus sign)",
+        "why_it_happens": "The model adds the horizontal component of a plus sign but forgets that a plus also needs a vertical stick.",
+        "how_to_avoid": "When converting a minus to a plus, always supply both the existing horizontal stick and an additional vertical stick from elsewhere.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Using an angled stick as a vertical stick (or vice versa), creating an invalid numeral or operator",
+        "why_it_happens": "The model may treat any stick as interchangeable, ignoring the orientation constraints of Roman numerals and operators.",
+        "how_to_avoid": "Respect stick orientations: only use vertical sticks for I or the vertical part of '+', and only use diagonal sticks for V and X; never substitute one orientation for another.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 5
+      }
+    ]
+  }
+}

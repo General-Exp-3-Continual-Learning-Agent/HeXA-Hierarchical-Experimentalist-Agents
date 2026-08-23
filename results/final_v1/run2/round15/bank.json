@@ -1,0 +1,200 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Compute numeric values and discrepancy",
+        "principle": "Convert each Roman numeral in the equation to its integer value and compute the difference between the left\u2011hand side and the right\u2011hand side. This tells you how much the total must increase or decrease to achieve equality.",
+        "when_to_apply": "At the start of solving a matchstick puzzle, before enumerating any stick moves.",
+        "example": "Failing to compute that XIV = 14 and XVIII\u202f+\u202fI = 19, so the solver never knows the required numeric change.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_030",
+          "matchstick_031"
+        ],
+        "generation": 10,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "List possible single\u2011stick transformations",
+        "principle": "Enumerate all ways a single stick can be moved from any character to any *different* character, ensuring that both source and destination remain valid Roman numerals or operators after the move.",
+        "when_to_apply": "Immediately after computing the numeric discrepancy, to generate candidate moves.",
+        "example": "Only considering inter\u2011character moves and missing the valid intra\u2011character reshaping of V into X.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_030",
+          "matchstick_031"
+        ],
+        "generation": 10,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_2_002",
+        "title": "Match numeric difference to value change",
+        "principle": "For each candidate stick move, calculate how the numeric values of the involved symbols change and check whether the overall equation balances the previously computed discrepancy.",
+        "when_to_apply": "After generating candidate moves, filter those that achieve the needed numeric change.",
+        "example": "Choosing a move that changes V (5) to X (10) without matching the required +5 discrepancy, leaving the equation unbalanced.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_030",
+          "matchstick_031"
+        ],
+        "generation": 10,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_2_005",
+        "title": "Operator modification via equals",
+        "principle": "Treat '=' as two stacked horizontal sticks; moving one of them can turn it into '-' (single horizontal) or, with an added stick, into '+'.",
+        "when_to_apply": "When the numeric discrepancy suggests that the equality sign itself should be altered.",
+        "example": "Removing a horizontal from '=', turning it into '-', but forgetting to adjust the other operator, so the equation loses its equality sign.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_030"
+        ],
+        "generation": 10,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_2_006",
+        "title": "Operator modification via plus",
+        "principle": "A '+' consists of one vertical and one horizontal stick; removing the vertical yields '-', removing the horizontal yields 'I', and adding a stick can turn it into other operators.",
+        "when_to_apply": "When the discrepancy can be addressed by changing a plus sign.",
+        "example": "Removing the vertical from '+' and not fixing the surrounding expression, resulting in a missing operand.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_030"
+        ],
+        "generation": 10,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_3_008",
+        "title": "Operator\u2011to\u2011operator stick relocation",
+        "principle": "A stick can be transferred directly from one operator to another, simultaneously changing both operators (e.g., moving a horizontal from '=' to '-' to swap them).",
+        "when_to_apply": "When a single stick move can adjust two operators to balance the equation.",
+        "example": "Moving a horizontal from '=' to '-', but not updating the '-' to become '=', leaving an invalid operator configuration.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_030"
+        ],
+        "generation": 10,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_9_009",
+        "title": "Operator\u2011to\u2011numeral stick relocation",
+        "principle": "If the needed numeric change matches the value increase obtainable by adding a stick to a numeral (e.g., turning I into V), move a stick from an operator to that numeral.",
+        "when_to_apply": "When the discrepancy can be resolved by increasing a numeral\u2019s value using a stick taken from an operator.",
+        "example": "Adding a stick from '+' to an 'I' to make 'V' while leaving '+' as an invalid operator.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_030"
+        ],
+        "generation": 10,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "mat_ev_10_007",
+        "title": "Inter\u2011character stick relocation (source may become empty)",
+        "principle": "When moving a stick from one character to another, ensure the source remains a valid numeral/operator (or becomes empty only if it was a single\u2011stick numeral like I).",
+        "when_to_apply": "During candidate generation for moves between distinct characters.",
+        "example": "Taking a stick from V, leaving a single diagonal that is not a valid numeral, and placing it elsewhere.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_031"
+        ],
+        "generation": 10,
+        "confidence": 0.35
+      },
+      {
+        "skill_id": "mat_ev_10_008",
+        "title": "Numeral elimination via stick removal",
+        "principle": "A numeral consisting of a single stick (I) can be eliminated by moving its stick elsewhere; the rest of the equation must stay syntactically valid.",
+        "when_to_apply": "When the discrepancy suggests removing a value of\u202f1.",
+        "example": "Removing the only stick from an I on the RHS without fixing the dangling '+' operator, producing an incomplete expression.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_031"
+        ],
+        "generation": 10,
+        "confidence": 0.35
+      },
+      {
+        "skill_id": "mat_ev_11_009",
+        "title": "Intra\u2011character stick relocation",
+        "principle": "Consider moving a stick within the same numeral or operator to change its shape (e.g., reposition a diagonal stick in V to form X) while keeping the character count unchanged.",
+        "when_to_apply": "If no inter\u2011character move resolves the discrepancy, check whether reshaping a single character by relocating one of its sticks yields a valid new character.",
+        "example": "Missing the move that repositions a stick inside V to turn it into X, leading to an incorrect attempt that only tries inter\u2011character moves.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_031"
+        ],
+        "generation": 11,
+        "confidence": 0.44999999999999996
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Leaving a character invalid after moving a stick",
+        "why_it_happens": "The model removes a stick without ensuring the source character still forms a valid Roman numeral or operator.",
+        "how_to_avoid": "After each move, verify that both the source and destination characters are valid symbols according to the matchstick definitions.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Failing to verify numeric equality after transformation",
+        "why_it_happens": "The model assumes the move will work and skips the final arithmetic check.",
+        "how_to_avoid": "Always recompute the numeric values of both sides after applying a stick move and confirm the equality holds.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Dropping or omitting parts of the equation",
+        "why_it_happens": "When a stick is moved from a character that disappears (e.g., an I), the surrounding operators may lose required operands.",
+        "how_to_avoid": "Ensure the overall syntactic structure (operand\u2011operator\u2011operand) remains intact after any elimination.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Ignoring the numeric impact of operator sign change",
+        "why_it_happens": "Changing an operator (e.g., '=' to '-') alters the arithmetic relationship, but the model does not adjust the numeric balance accordingly.",
+        "how_to_avoid": "When an operator changes, recalculate the expression using the new operator and check if the discrepancy is resolved.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Incorrect number of sticks moved",
+        "why_it_happens": "The model accidentally adds or removes a stick instead of relocating exactly one.",
+        "how_to_avoid": "Track the stick count: the total number of sticks before and after the move must be identical.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 10
+      }
+    ]
+  }
+}

@@ -1,0 +1,429 @@
+{
+  "task_name": "tower-of-hanoi",
+  "n_base": 10,
+  "n_problems": 20,
+  "n_usable": 20,
+  "mean_b_q": 0.305,
+  "baselines": {
+    "tower-of-hanoi-state-train-n5-s0": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s0",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 7,
+      "b_q": 0.7,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987462,
+        233417871,
+        186848280,
+        140278689,
+        93709098,
+        47139507,
+        569916,
+        2101483972,
+        2054914381,
+        2008344790
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s11": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s11",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 2,
+      "b_q": 0.2,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987463,
+        233417872,
+        186848281,
+        140278690,
+        93709099,
+        47139508,
+        569917,
+        2101483973,
+        2054914382,
+        2008344791
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s121": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s121",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 5,
+      "b_q": 0.5,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987464,
+        233417873,
+        186848282,
+        140278691,
+        93709100,
+        47139509,
+        569918,
+        2101483974,
+        2054914383,
+        2008344792
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s122": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s122",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 3,
+      "b_q": 0.3,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987465,
+        233417874,
+        186848283,
+        140278692,
+        93709101,
+        47139510,
+        569919,
+        2101483975,
+        2054914384,
+        2008344793
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s127": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s127",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 1,
+      "b_q": 0.1,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987466,
+        233417875,
+        186848284,
+        140278693,
+        93709102,
+        47139511,
+        569920,
+        2101483976,
+        2054914385,
+        2008344794
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s139": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s139",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 1,
+      "b_q": 0.1,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987467,
+        233417876,
+        186848285,
+        140278694,
+        93709103,
+        47139512,
+        569921,
+        2101483977,
+        2054914386,
+        2008344795
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s147": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s147",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 3,
+      "b_q": 0.3,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987468,
+        233417877,
+        186848286,
+        140278695,
+        93709104,
+        47139513,
+        569922,
+        2101483978,
+        2054914387,
+        2008344796
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s183": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s183",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 1,
+      "b_q": 0.1,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987469,
+        233417878,
+        186848287,
+        140278696,
+        93709105,
+        47139514,
+        569923,
+        2101483979,
+        2054914388,
+        2008344797
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s19": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s19",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 2,
+      "b_q": 0.2,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987470,
+        233417879,
+        186848288,
+        140278697,
+        93709106,
+        47139515,
+        569924,
+        2101483980,
+        2054914389,
+        2008344798
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s201": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s201",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 4,
+      "b_q": 0.4,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987471,
+        233417880,
+        186848289,
+        140278698,
+        93709107,
+        47139516,
+        569925,
+        2101483981,
+        2054914390,
+        2008344799
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s208": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s208",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 2,
+      "b_q": 0.2,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987472,
+        233417881,
+        186848290,
+        140278699,
+        93709108,
+        47139517,
+        569926,
+        2101483982,
+        2054914391,
+        2008344800
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s228": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s228",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 2,
+      "b_q": 0.2,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987473,
+        233417882,
+        186848291,
+        140278700,
+        93709109,
+        47139518,
+        569927,
+        2101483983,
+        2054914392,
+        2008344801
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s231": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s231",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 1,
+      "b_q": 0.1,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987474,
+        233417883,
+        186848292,
+        140278701,
+        93709110,
+        47139519,
+        569928,
+        2101483984,
+        2054914393,
+        2008344802
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s232": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s232",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 4,
+      "b_q": 0.4,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987475,
+        233417884,
+        186848293,
+        140278702,
+        93709111,
+        47139520,
+        569929,
+        2101483985,
+        2054914394,
+        2008344803
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s233": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s233",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 7,
+      "b_q": 0.7,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987476,
+        233417885,
+        186848294,
+        140278703,
+        93709112,
+        47139521,
+        569930,
+        2101483986,
+        2054914395,
+        2008344804
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s241": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s241",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 4,
+      "b_q": 0.4,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987477,
+        233417886,
+        186848295,
+        140278704,
+        93709113,
+        47139522,
+        569931,
+        2101483987,
+        2054914396,
+        2008344805
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s41": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s41",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 4,
+      "b_q": 0.4,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987478,
+        233417887,
+        186848296,
+        140278705,
+        93709114,
+        47139523,
+        569932,
+        2101483988,
+        2054914397,
+        2008344806
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s72": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s72",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 2,
+      "b_q": 0.2,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987479,
+        233417888,
+        186848297,
+        140278706,
+        93709115,
+        47139524,
+        569933,
+        2101483989,
+        2054914398,
+        2008344807
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s92": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s92",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 3,
+      "b_q": 0.3,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987480,
+        233417889,
+        186848298,
+        140278707,
+        93709116,
+        47139525,
+        569934,
+        2101483990,
+        2054914399,
+        2008344808
+      ]
+    },
+    "tower-of-hanoi-state-train-n5-s94": {
+      "problem_id": "tower-of-hanoi-state-train-n5-s94",
+      "task_name": "tower-of-hanoi",
+      "n_base": 10,
+      "successes": 3,
+      "b_q": 0.3,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987481,
+        233417890,
+        186848299,
+        140278708,
+        93709117,
+        47139526,
+        569935,
+        2101483991,
+        2054914400,
+        2008344809
+      ]
+    }
+  }
+}

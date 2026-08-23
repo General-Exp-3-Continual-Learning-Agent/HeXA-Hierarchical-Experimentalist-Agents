@@ -1,0 +1,207 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "tower-of-hanoi": [
+      {
+        "skill_id": "tow_ev_7_001",
+        "title": "Validate move legality",
+        "principle": "Before adding a move, check that the chosen disk is the topmost on its source peg and that the destination peg is empty or its top disk is larger. This guarantees that no size\u2011ordering or top\u2011disk violations occur.",
+        "when_to_apply": "Every time you generate a move, verify source\u2011top and destination\u2011top constraints.",
+        "example": "Attempting to move disk\u202f3 from a peg where disk\u202f2 is on top, or moving disk\u202f4 onto a peg whose top disk is disk\u202f2.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s72",
+          "tower-of-hanoi-state-train-n5-s74"
+        ],
+        "generation": 16,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "tow_ev_3_004",
+        "title": "Use smallest disk as temporary buffer",
+        "principle": "The smallest disk can be placed on any peg without breaking the size rule, so use it to occupy pegs temporarily and free larger disks for movement.",
+        "when_to_apply": "When a larger disk is blocked by a smaller one, move the smallest disk to another peg first.",
+        "example": "Using disk\u202f3 as a temporary buffer, which later blocks moving disk\u202f2 because the smaller disk is no longer available.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s72",
+          "tower-of-hanoi-state-train-n5-s74"
+        ],
+        "generation": 16,
+        "confidence": 0.42
+      },
+      {
+        "skill_id": "tow_ev_3_007",
+        "title": "Treat existing larger disks on target as base",
+        "principle": "If the goal peg already contains some of the largest disks in the correct order, keep them untouched and build the rest of the tower on top of that partial stack.",
+        "when_to_apply": "When the destination peg already holds a correctly ordered sub\u2011tower of larger disks.",
+        "example": "Moving a correctly placed large disk (e.g., disk\u202f5) off the goal peg, breaking the partial correct stack.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s72",
+          "tower-of-hanoi-state-train-n5-s74"
+        ],
+        "generation": 16,
+        "confidence": 0.4
+      },
+      {
+        "skill_id": "tow_ev_5_007",
+        "title": "Iterative descending placement",
+        "principle": "Place disks onto the goal peg in descending order (largest to smallest), moving each disk only after all larger disks are already correctly positioned.",
+        "when_to_apply": "When constructing the final tower, handle the next largest disk after the larger ones are in place.",
+        "example": "Attempting to place disk\u202f3 onto the goal peg before disk\u202f4 is already there, resulting in an incorrect order.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s72",
+          "tower-of-hanoi-state-train-n5-s74"
+        ],
+        "generation": 16,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "tow_ev_6_009",
+        "title": "Output move list as final parseable list",
+        "principle": "Ensure that the last syntactically correct list of moves in the response is the complete move sequence; avoid any trailing text that could be parsed as part of the list.",
+        "when_to_apply": "After generating the solution, place the move list as the very last element of the response.",
+        "example": "Including explanatory text after the move list, causing the parser to stop at an incomplete list.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s72",
+          "tower-of-hanoi-state-train-n5-s74"
+        ],
+        "generation": 16,
+        "confidence": 0.35
+      },
+      {
+        "skill_id": "tow_ev_9_009",
+        "title": "Limit move list length to stay within token limits",
+        "principle": "Generate a concise solution, preferably using the optimal or near\u2011optimal sequence of moves, so the total output fits within the token budget.",
+        "when_to_apply": "When the move list starts to become long; look for shortcuts or combine moves to keep the output short.",
+        "example": "Producing a 31\u2011move solution that exceeds the token limit, leading to truncation and an incomplete move list.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s72",
+          "tower-of-hanoi-state-train-n5-s74"
+        ],
+        "generation": 16,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "tow_ev_12_007",
+        "title": "Verify final configuration matches goal before outputting",
+        "principle": "Mentally simulate each move from the initial configuration to ensure the final state exactly matches the goal configuration before publishing the move list.",
+        "when_to_apply": "After constructing the move list, double\u2011check the resulting tower against the goal.",
+        "example": "Assuming the final configuration is correct without checking, resulting in a mismatch between the final state and the goal.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s72",
+          "tower-of-hanoi-state-train-n5-s74"
+        ],
+        "generation": 16,
+        "confidence": 0.62
+      },
+      {
+        "skill_id": "tow_ev_13_008",
+        "title": "Recursive sub\u2011tower transfer",
+        "principle": "To move a stack of\u202fk\u202fdisks from a source peg to a destination peg using the third peg, recursively move the top\u202fk\u20111\u202fdisks to the auxiliary peg, move the largest disk, then move the\u202fk\u20111\u202fdisks onto the destination.",
+        "when_to_apply": "When you need to relocate a contiguous sub\u2011tower of multiple disks.",
+        "example": "Trying to move disks\u202f3,\u202f2,\u202f1 as a single block instead of recursively moving the top two, then the largest, then the two again.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s72",
+          "tower-of-hanoi-state-train-n5-s74"
+        ],
+        "generation": 16,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "tow_ev_15_009",
+        "title": "Avoid blocking future moves with temporary placements",
+        "principle": "When using a disk as a temporary buffer, place it on a peg that will not need to be cleared for later moves of larger disks.",
+        "when_to_apply": "Before moving a disk to a temporary peg, consider whether that peg will later need to be empty for a larger disk.",
+        "example": "Placing the smallest disk on the same peg where a larger disk will later need to be moved, forcing extra shuffling.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s72",
+          "tower-of-hanoi-state-train-n5-s74"
+        ],
+        "generation": 16,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "tow_ev_16_009",
+        "title": "Clear target peg of smaller disks before moving larger disk onto it",
+        "principle": "Before moving a larger disk onto a peg, ensure the peg is empty or its top disk is larger than the moving disk; otherwise the move would violate the size rule.",
+        "when_to_apply": "Whenever you plan to place a larger disk onto a peg that currently holds smaller disks.",
+        "example": "Attempting to move disk\u202f5 onto a peg whose top disk is disk\u202f2.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s72",
+          "tower-of-hanoi-state-train-n5-s74"
+        ],
+        "generation": 16,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "tower-of-hanoi": [
+      {
+        "mistake_id": "tow_evo_000",
+        "description": "Omitting the move list (empty output)",
+        "why_it_happens": "The model may stop generation early or forget to include the move list after reasoning.",
+        "how_to_avoid": "Always produce a move list and place it as the final part of the response.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 16
+      },
+      {
+        "mistake_id": "tow_evo_001",
+        "description": "Moving a larger disk onto a smaller disk (size ordering violation)",
+        "why_it_happens": "The model may not check the destination peg's top disk before moving.",
+        "how_to_avoid": "Validate move legality: ensure the destination top disk is larger or the peg is empty.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 16
+      },
+      {
+        "mistake_id": "tow_err_002",
+        "description": "Moving a non\u2011top disk",
+        "why_it_happens": "The model may lose track of which disk is on top of a peg.",
+        "how_to_avoid": "Check that the chosen disk is the topmost on its source peg before moving.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 16
+      },
+      {
+        "mistake_id": "tow_evo_003",
+        "description": "Truncated move list (incomplete output)",
+        "why_it_happens": "The model may exceed token limits or stop generation prematurely.",
+        "how_to_avoid": "Limit move list length and ensure the list is fully output before any other text.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 16
+      },
+      {
+        "mistake_id": "tow_evo_004",
+        "description": "Moving a disk from a peg where it is not present",
+        "why_it_happens": "The model may lose track of disk locations during multi\u2011step reasoning.",
+        "how_to_avoid": "Maintain a mental (or written) representation of each peg's stack and update it after every move.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 16
+      }
+    ]
+  }
+}

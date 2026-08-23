@@ -1,0 +1,206 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Compute numeric values and discrepancy",
+        "principle": "Convert each Roman numeral to its integer value and compute the difference between the left\u2011hand side and the right\u2011hand side. This numeric gap tells you how the values must change to achieve equality.",
+        "when_to_apply": "Before generating any stick moves, calculate the integer values of both sides of the equation.",
+        "example": "Leaving the equation unchanged without first noticing that 16\u202f\u2260\u202f32, i.e. never computing the numeric discrepancy.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_055",
+          "matchstick_052"
+        ],
+        "generation": 18,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "List possible single\u2011stick transformations",
+        "principle": "Enumerate every way a single matchstick can be removed from one character and added to another while keeping both source and destination symbols valid.",
+        "when_to_apply": "When searching for candidate moves, systematically generate all single\u2011stick relocations before pruning.",
+        "example": "Treating the whole character \u2018X\u2019 (two sticks) as a single removable piece, which violates the one\u2011stick rule.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_055",
+          "matchstick_052"
+        ],
+        "generation": 18,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_2_002",
+        "title": "Match numeric difference to value change",
+        "principle": "For each candidate stick move, compute how the numeric values of the affected numerals change and compare the net change to the required discrepancy.",
+        "when_to_apply": "After listing a candidate move, evaluate its numeric impact and keep only those that can close the gap.",
+        "example": "Moving a stick that turns V into X (+5) when the needed adjustment is +16, so the move cannot solve the puzzle.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_055",
+          "matchstick_052"
+        ],
+        "generation": 18,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_2_006",
+        "title": "Operator modification via plus",
+        "principle": "A \u2018+\u2019 consists of one vertical and one horizontal stick; removing the vertical stick turns it into \u2018\u2011\u2019, and adding a vertical stick to \u2018\u2011\u2019 turns it into \u2018+\u2019.",
+        "when_to_apply": "When the numeric gap suggests that addition should become subtraction (or vice\u2011versa), consider modifying the plus/minus sign.",
+        "example": "Changing \u2018+\u2019 to \u2018\u2011\u2019 but forgetting that the sign reversal flips the contribution of the operand.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_055",
+          "matchstick_052"
+        ],
+        "generation": 18,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_9_009",
+        "title": "Operator\u2011to\u2011numeral stick relocation",
+        "principle": "If adding a stick to a numeral yields the exact value change needed, look for a source stick on an operator (e.g., \u2018+\u2019 or \u2018\u2011\u2019) that can be moved there.",
+        "when_to_apply": "When the required numeric adjustment matches a known single\u2011stick numeral transformation, search for a suitable operator stick to donate.",
+        "example": "Moving a vertical stick from \u2018+\u2019 to an \u2018I\u2019 to make \u2018II\u2019, but forgetting that the \u2018+\u2019 becomes \u2018\u2011\u2019 and the sign of the term changes.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_055",
+          "matchstick_052"
+        ],
+        "generation": 18,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "mat_ev_12_009",
+        "title": "Equation structure preservation",
+        "principle": "After moving a stick, the expression must still contain exactly one \u2018=\u2019, at least one valid numeral on each side, and all operators must remain legal symbols.",
+        "when_to_apply": "Immediately after applying a candidate move, verify that the overall layout still forms a complete equation.",
+        "example": "Dropping the \u2018=\u2019 sign and outputting \u2018X + III\u2019, which is not an equation at all.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_055",
+          "matchstick_052"
+        ],
+        "generation": 18,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_13_008",
+        "title": "Known single\u2011stick numeral transformations",
+        "principle": "Use a lookup of common one\u2011stick numeral changes (e.g., I\u2192II\u202f(+1), I\u2192IV\u202f(+3), V\u2194X\u202f(+5), I\u2194V\u202f(+4), I\u2194X\u202f(+9)) to quickly assess feasible numeral modifications.",
+        "when_to_apply": "When evaluating how adding or removing a single stick could alter a numeral\u2019s value.",
+        "example": "Trying to turn I into V by adding a single diagonal stick, even though V requires two diagonals.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_055",
+          "matchstick_052"
+        ],
+        "generation": 18,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "mat_ev_16_009",
+        "title": "Operator sign change impact",
+        "principle": "If a stick move changes an operator (e.g., \u2018+\u2019 to \u2018\u2011\u2019), recompute the affected term with the new sign; the sign reversal can flip the contribution to the total.",
+        "when_to_apply": "Whenever a candidate move modifies an operator, recalculate the right\u2011hand side using the new operator.",
+        "example": "Changing \u2018+\u2019 to \u2018\u2011\u2019 but still adding the operand values as if they were being added.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_055",
+          "matchstick_052"
+        ],
+        "generation": 18,
+        "confidence": 0.4
+      },
+      {
+        "skill_id": "mat_ev_17_009",
+        "title": "Single\u2011stick move feasibility",
+        "principle": "When proposing a stick relocation, ensure the source character can lose exactly one stick and remain a valid numeral or operator, and that the destination can accept the stick and become a valid symbol.",
+        "when_to_apply": "During candidate generation, filter out moves that would leave the source or destination invalid.",
+        "example": "Removing a diagonal from V, leaving a lone diagonal which is not a valid Roman numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_055",
+          "matchstick_052"
+        ],
+        "generation": 18,
+        "confidence": 0.4
+      },
+      {
+        "skill_id": "mat_ev_19_009",
+        "title": "Single\u2011stick relocation constraint",
+        "principle": "A matchstick move must involve exactly one individual stick; you cannot remove an entire character that consists of multiple sticks (e.g., X or V) or transfer more than one stick at once.",
+        "when_to_apply": "When enumerating possible moves, restrict the source to a single stick of a character, not the whole character.",
+        "example": "Attempting to delete the whole \u2018X\u2019 (two sticks) from \u2018XVI\u2019 to obtain \u2018VI\u2019, which moves two sticks instead of one.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_055"
+        ],
+        "generation": 19,
+        "confidence": 0.4
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Leaving a character invalid after moving a stick",
+        "why_it_happens": "The model removes a stick from a numeral or operator without checking that the remaining shape corresponds to a legal Roman numeral or operator.",
+        "how_to_avoid": "After removing a stick, verify that the source symbol still matches a known valid character; discard moves that produce invalid shapes.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Failing to verify numeric equality after transformation",
+        "why_it_happens": "The model proposes a stick move but does not recompute the left\u2011 and right\u2011hand side values to confirm the equation holds.",
+        "how_to_avoid": "Always recompute the integer values of both sides after applying a candidate move and accept only those that make the equality true.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Dropping or omitting parts of the equation",
+        "why_it_happens": "In the rush to produce an answer, the model truncates or deletes symbols such as \u2018=\u2019 or entire operands, yielding an incomplete expression.",
+        "how_to_avoid": "After any transformation, check that the output still contains exactly one \u2018=\u2019 and at least one numeral on each side.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Ignoring the numeric impact of operator sign change",
+        "why_it_happens": "When a stick move turns \u2018+\u2019 into \u2018\u2011\u2019 (or vice\u2011versa), the model forgets that the sign of the affected term flips, leading to an incorrect total.",
+        "how_to_avoid": "Whenever an operator is altered, recompute the expression using the new operator sign before accepting the move.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Incorrect number of sticks moved",
+        "why_it_happens": "The model sometimes removes or adds whole characters (e.g., deleting an entire \u2018X\u2019) or changes the equality sign, effectively moving more than one stick.",
+        "how_to_avoid": "Enforce the rule that exactly one individual stick is relocated; validate that both source and destination change by a single stick only.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 18
+      }
+    ]
+  }
+}

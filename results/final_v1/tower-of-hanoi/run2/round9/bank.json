@@ -1,0 +1,197 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "tower-of-hanoi": [
+      {
+        "skill_id": "tow_ev_1_001",
+        "title": "Determine descending placement order",
+        "principle": "The final stack on any peg must be built from the largest disk at the bottom to the smallest at the top; therefore disks must be placed onto the goal peg in strictly decreasing size.",
+        "when_to_apply": "Whenever you are planning the order of moves that will build the final configuration.",
+        "example": "If the goal is all disks on peg\u202f2, you must first place disk\u202f5 (if not already there), then disk\u202f4, then disk\u202f3, then disk\u202f2, then disk\u202f1.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s92"
+        ],
+        "generation": 5,
+        "confidence": 0.63
+      },
+      {
+        "skill_id": "tow_ev_5_001",
+        "title": "Clear blocking disks for a larger move",
+        "principle": "Before moving a larger disk, ensure that no smaller disks sit above it on its source peg, and that the destination peg does not have smaller disks that would block the placement of the larger disk.",
+        "when_to_apply": "When a desired move involves a disk that is not currently the topmost on its peg, or when the destination peg's top disk is smaller.",
+        "example": "To move disk\u202f4 from peg\u202f0, first move disk\u202f2 (the blocker) to another peg.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s92"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "tow_ev_5_002",
+        "title": "Use auxiliary peg for temporary storage",
+        "principle": "When a disk cannot be moved directly to its target because the target peg is occupied by a smaller disk, place the disk onto the third (auxiliary) peg, choosing the peg that keeps the move legal and does not block later moves.",
+        "when_to_apply": "Whenever a direct move is illegal due to a smaller disk on the destination peg.",
+        "example": "If peg\u202f2 holds disk\u202f1 and you need to move disk\u202f4 there, first move disk\u202f1 to peg\u202f0 (the auxiliary peg).",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s92"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "tow_ev_3_004",
+        "title": "Avoid premature placement on goal peg",
+        "principle": "Never place a smaller disk onto the final destination peg until all larger disks that must be below it have already been placed; otherwise the smaller disk will block the larger one.",
+        "when_to_apply": "When deciding whether to move a small disk onto the goal peg.",
+        "example": "Do not move disk\u202f1 onto peg\u202f2 before disks\u202f4,\u202f3, and\u202f2 have been placed there.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s92"
+        ],
+        "generation": 5,
+        "confidence": 0.63
+      },
+      {
+        "skill_id": "tow_ev_1_005",
+        "title": "Re\u2011stack displaced smaller disks after larger ones",
+        "principle": "After a larger disk has been moved to its final position, move any smaller disks that were temporarily displaced onto the goal peg, respecting descending order.",
+        "when_to_apply": "Immediately after placing a larger disk onto its final peg, before moving on to the next larger disk.",
+        "example": "After moving disk\u202f4 onto peg\u202f2, move disk\u202f2 (which was on peg\u202f0) onto peg\u202f2 before moving disk\u202f3.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s92"
+        ],
+        "generation": 5,
+        "confidence": 0.63
+      },
+      {
+        "skill_id": "tow_ev_1_006",
+        "title": "Track top disks and legality of each move",
+        "principle": "Maintain an up\u2011to\u2011date view of the topmost disk on each peg and verify that a proposed move respects the rule that a larger disk cannot be placed on a smaller one.",
+        "when_to_apply": "Before committing any move in the sequence.",
+        "example": "If peg\u202f1\u2019s top is disk\u202f3, you cannot move disk\u202f4 onto peg\u202f1.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s92"
+        ],
+        "generation": 5,
+        "confidence": 0.63
+      },
+      {
+        "skill_id": "tow_ev_1_007",
+        "title": "Simulate and verify final configuration",
+        "principle": "After constructing the full move list, replay the moves from the initial state to ensure every move is legal and that the resulting configuration matches the goal exactly.",
+        "when_to_apply": "After you have written the complete move list, before submitting.",
+        "example": "Run through the moves step\u2011by\u2011step; if the final peg\u202f2 stack is [5,4,3,2,1] and the other pegs are empty, the solution is valid.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s92"
+        ],
+        "generation": 5,
+        "confidence": 0.63
+      },
+      {
+        "skill_id": "tow_ev_2_008",
+        "title": "Recursive Hanoi move decomposition",
+        "principle": "To move n disks from a source peg to a destination peg, first recursively move the top n\u20111 disks to the auxiliary peg, then move the nth (largest) disk directly, and finally recursively move the n\u20111 disks from the auxiliary peg onto the destination peg.",
+        "when_to_apply": "When you need to move a stack of several disks and want a systematic, optimal sequence.",
+        "example": "Moving disks\u202f1\u20113 from peg\u202f0 to peg\u202f2 uses the pattern: move 1\u20112 to peg\u202f1, move 3 to peg\u202f2, move 1\u20112 from peg\u202f1 to peg\u202f2.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s92"
+        ],
+        "generation": 5,
+        "confidence": 0.48
+      },
+      {
+        "skill_id": "tow_ev_5_008",
+        "title": "Two\u2011phase gathering strategy",
+        "principle": "First gather all non\u2011largest disks onto a single auxiliary peg in correct descending order, then move the remaining larger disks to the goal peg, and finally move the gathered stack onto the goal peg, preserving order.",
+        "when_to_apply": "When the initial configuration is scattered across pegs and you need to consolidate disks before building the final stack.",
+        "example": "Collect disks\u202f1\u20114 onto peg\u202f0 in order 4\u20113\u20112\u20111, then move disk\u202f5 (if needed) to peg\u202f2, then transfer the stack from peg\u202f0 to peg\u202f2.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s92"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "tow_ev_6_009",
+        "title": "Smallest-disk buffer technique",
+        "principle": "Treat the smallest disk as a flexible buffer: move it repeatedly to free larger disks and to keep auxiliary pegs usable, ensuring it ends on the goal peg only after all larger disks are placed.",
+        "when_to_apply": "Whenever the smallest disk blocks the movement of a larger disk or occupies a peg needed as temporary storage.",
+        "example": "Move disk\u202f1 from peg\u202f1 to peg\u202f2, then to peg\u202f0, then back to peg\u202f1 as needed while arranging disks\u202f2\u20114, finally placing disk\u202f1 on the goal peg last.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s92"
+        ],
+        "generation": 6,
+        "confidence": 0.65
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "tower-of-hanoi": [
+      {
+        "mistake_id": "tow_evo_000",
+        "description": "Placing a larger disk onto a smaller one",
+        "why_it_happens": "The model may forget the rule that larger disks cannot be placed on top of smaller ones, especially when focusing on moving a specific disk.",
+        "how_to_avoid": "Always compare the size of the moving disk with the top disk of the destination peg; only proceed if the destination is empty or its top disk is larger.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "tow_evo_001",
+        "description": "Moving a disk that is not the topmost on its peg",
+        "why_it_happens": "The model may overlook that only the top disk of a peg can be moved, especially when a disk is buried under smaller ones.",
+        "how_to_avoid": "Before issuing a move, check that the chosen disk is the current top of its source peg.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "tow_evo_002",
+        "description": "Temporarily placing a small disk on the goal peg before a larger disk that must be below it",
+        "why_it_happens": "The model may aim to reduce the number of moves by putting a small disk on the goal peg early, forgetting that it will block larger disks later.",
+        "how_to_avoid": "Reserve the goal peg for larger disks until all larger disks that belong below the small one have been placed.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "tow_evo_003",
+        "description": "Leaving blocking disks on the target peg when moving a larger disk",
+        "why_it_happens": "The model may move a larger disk onto a peg that still has smaller disks on top, violating the placement rule.",
+        "how_to_avoid": "Ensure the destination peg is empty or its top disk is larger than the moving disk before executing the move.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "tow_evo_004",
+        "description": "Failing to verify that the final configuration matches the goal",
+        "why_it_happens": "The model may generate a move list that seems plausible but does not end in the exact target arrangement.",
+        "how_to_avoid": "After writing the move list, replay the moves from the initial state and compare the resulting configuration with the goal; adjust any mismatches.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 5
+      }
+    ]
+  }
+}

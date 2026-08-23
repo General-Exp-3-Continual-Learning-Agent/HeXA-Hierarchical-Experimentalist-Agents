@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_087",
+  "run": 1,
+  "item_idx": 87,
+  "seed": 1843041497,
+  "is_correct": false,
+  "verifier_score": 0.0,
+  "prediction": "XVIII = XVII + XVII",
+  "finish_reason": "length",
+  "raw_chars": 125073,
+  "reasoning_chars": 125073,
+  "final_chars": 0,
+  "elapsed_s": 393.54093050956726,
+  "usage": {
+    "completion_tokens": 32768,
+    "prompt_tokens": 460,
+    "total_tokens": 33228,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "564af965bfb1f31d900ac140f2651eed97fc44412cd1d25433ca9686da0f5a1e"
+}

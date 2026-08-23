@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_072",
+  "run": 1,
+  "item_idx": 72,
+  "seed": 1843041482,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "VIII = XV - VII",
+  "finish_reason": "stop",
+  "raw_chars": 84672,
+  "reasoning_chars": 84624,
+  "final_chars": 48,
+  "elapsed_s": 252.91547346115112,
+  "usage": {
+    "completion_tokens": 20194,
+    "prompt_tokens": 459,
+    "total_tokens": 20653,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "26753752e44503891710525fba035db1af5339fda780dfa780b61c014b66ce8a"
+}

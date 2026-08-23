@@ -1,0 +1,197 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Sequential processing of transfers",
+        "principle": "When a transfer statement appears, immediately adjust the giver's and receiver's counts before processing subsequent statements. This ensures later statements see the updated counts.",
+        "when_to_apply": "Whenever a statement of the form \"X gives K items to Y\" is encountered.",
+        "example": "Adding K to Y without subtracting K from X, leaving X unchanged.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_17"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Signed difference equality",
+        "principle": "Translate statements of the form \"the number of items that A has more than B is equal to the difference between the number of items that C and D have\" into the equation (A\u202f\u2212\u202fB)\u202f=\u202f(C\u202f\u2212\u202fD), preserving the order of names on each side.",
+        "when_to_apply": "When encountering a comparison\u2011transfer statement that mentions \"more than\" on both sides.",
+        "example": "Interpreting \"A has more than B\" as |A\u202f\u2212\u202fB| or swapping C and D on the right\u2011hand side.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_17"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Direct count assignment at point of mention",
+        "principle": "When a statement directly gives a count, set the person's current count to that number at that moment, before any later transfers or updates.",
+        "when_to_apply": "When encountering a statement like \"Person has N items\".",
+        "example": "Assuming the count is final after all later transfers, ignoring subsequent changes.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_17"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_003",
+        "title": "Update both parties in a transfer",
+        "principle": "For a transfer \"X gives K items to Y\", subtract K from X's current count and add K to Y's current count.",
+        "when_to_apply": "When processing a transfer statement.",
+        "example": "Only adding K to Y while leaving X unchanged.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_17"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Accumulate net change for multiple transfers",
+        "principle": "If a person appears in several transfer statements, sum all gains and losses to compute their net change, ensuring the final count reflects every transfer.",
+        "when_to_apply": "When a person participates in more than one transfer statement.",
+        "example": "Counting only the first transfer and ignoring later ones.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_17"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Systematic linear solving",
+        "principle": "After translating all statements into linear equations, solve the system using substitution or elimination to find each person's count.",
+        "when_to_apply": "After extracting all constraints and before producing the final answer.",
+        "example": "Leaving equations unsolved and guessing the answer.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_17"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Non\u2011negative integer check",
+        "principle": "All derived counts must be non\u2011negative integers; if any equation yields a negative or fractional value, the solution is invalid and a mistake has been made.",
+        "when_to_apply": "After solving the system, before committing to the final answer.",
+        "example": "Accepting a fractional count as a valid solution.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_17"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_2_007",
+        "title": "Multiplicative update handling",
+        "principle": "When a statement says a person's count \"increases by K times\" (or by a fractional factor), multiply the current count by that factor instead of adding it.",
+        "when_to_apply": "When encountering statements like \"X's count increases by 2 times\" or \"by 3/2 times\".",
+        "example": "Treating \"increase by 2 times\" as adding 2 rather than doubling the count.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_8"
+        ],
+        "generation": 2,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "mat_ev_2_008",
+        "title": "Split operation handling",
+        "principle": "When a person splits all their items equally among two recipients, set the giver's count to zero and give each recipient half of the original amount (assuming integer division).",
+        "when_to_apply": "When encountering statements like \"X splits all the items she owns equally among Y and Z\".",
+        "example": "Giving each recipient the full original amount and leaving the giver unchanged.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_8"
+        ],
+        "generation": 2,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "mat_ev_2_009",
+        "title": "Conditional transfer handling",
+        "principle": "When a statement includes a condition (e.g., \"If X has more than N items, X will transfer their items to Y\"), evaluate the condition based on X's current count at that point; if true, move all of X's items to Y (X becomes 0, Y gains the amount).",
+        "when_to_apply": "When processing conditional transfer statements.",
+        "example": "Executing the transfer regardless of whether the condition holds true.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_8"
+        ],
+        "generation": 2,
+        "confidence": 0.5499999999999999
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Treating signed difference statements as absolute differences",
+        "why_it_happens": "The model often interprets \"A has more than B\" as a magnitude without regard to sign, ignoring that the order matters.",
+        "how_to_avoid": "Translate such statements into signed equations (A\u202f\u2212\u202fB)\u202f=\u202f... preserving the order of names on both sides.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Ignoring the sequential order of transfers",
+        "why_it_happens": "The model may treat all transfers as simultaneous, missing that later statements depend on updated counts.",
+        "how_to_avoid": "Process each transfer in the order it appears, updating counts immediately before handling subsequent statements.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Assuming explicit counts are final after all transfers",
+        "why_it_happens": "The model may think a direct count assignment overrides any later changes.",
+        "how_to_avoid": "Treat explicit counts as setting the current count at that point; later transfers can modify it.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Updating only the receiver in a transfer",
+        "why_it_happens": "The model may forget to subtract the transferred amount from the giver.",
+        "how_to_avoid": "When processing a transfer, subtract the amount from the giver and add it to the receiver.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_err_004",
+        "description": "Reversing the direction in \"X has N more than Y\" statements",
+        "why_it_happens": "The model may misinterpret \"X has N more than Y\" as Y\u202f\u2212\u202fX\u202f=\u202fN.",
+        "how_to_avoid": "Interpret \"X has N more than Y\" as X\u202f\u2212\u202fY\u202f=\u202fN.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      }
+    ]
+  }
+}

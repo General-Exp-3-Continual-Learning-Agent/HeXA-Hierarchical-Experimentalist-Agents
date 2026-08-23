@@ -1,0 +1,36 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "tower-of-hanoi": [
+      {
+        "skill_id": "tow_ev_1_000",
+        "title": "Output move list as final answer",
+        "principle": "After constructing the solution, explicitly output the move list in the required [[disk, from, to], ...] format as the final part of the response; without this, the model may produce an empty move list, leading to rejection.",
+        "when_to_apply": "Whenever you have generated a sequence of moves for a Tower of Hanoi problem.",
+        "example": "Providing no moves or an empty list [] as the final answer.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s1",
+          "tower-of-hanoi-state-train-n5-s0"
+        ],
+        "generation": 1,
+        "confidence": 0.475
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "tower-of-hanoi": [
+      {
+        "mistake_id": "tow_evo_000",
+        "description": "Empty move list (no moves provided)",
+        "why_it_happens": "The model forgets to include the computed moves in the final answer, often due to truncation or placing the list before other text that the parser later ignores.",
+        "how_to_avoid": "Ensure the move list is printed as the last parseable list in the response, after any explanatory text, and verify it is non\u2011empty.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_16_000",
+        "title": "Signed 'has more than' interpretation",
+        "principle": "Interpret any phrase of the form 'X has more than Y' (including 'X has N more than Y') as a signed difference X\u00a0\u2212\u00a0Y\u00a0=\u00a0N, preserving the order presented.",
+        "when_to_apply": "When a statement describes one person having more (or fewer) items than another, possibly with a numeric offset.",
+        "example": "Treating 'Alice has more than Bob' as an absolute difference or ignoring the sign, leading to an incorrect equation.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_3-l_200-idx_14"
+        ],
+        "generation": 21,
+        "confidence": 0.45
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Model transfers as net changes",
+        "principle": "When a transfer 'X gives N to Y' occurs, subtract N from X and add N to Y, updating each person's count accordingly.",
+        "when_to_apply": "Whenever the problem includes a statement that one person gives a number of items to another.",
+        "example": "Adding N to both X and Y, or subtracting from Y instead of X, resulting in wrong counts.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_3-l_200-idx_14",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_8"
+        ],
+        "generation": 21,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Systematic equation solving",
+        "principle": "Introduce a distinct variable for each person and translate every relevant statement into a linear equation, building a complete system of constraints.",
+        "when_to_apply": "After extracting all relevant statements, before attempting to solve for unknowns.",
+        "example": "Failing to create a variable for a person mentioned only in a transfer, causing an incomplete system.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_3-l_200-idx_14",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_8"
+        ],
+        "generation": 21,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Signed difference phrasing",
+        "principle": "Interpret 'difference between X and Y' as the signed difference X\u00a0\u2212\u00a0Y, preserving the order as presented.",
+        "when_to_apply": "When a statement refers to the difference between two persons' counts.",
+        "example": "Treating 'difference between X and Y' as an absolute value, losing sign information.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_3-l_200-idx_14",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_8"
+        ],
+        "generation": 21,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_12_008",
+        "title": "Include transfers as constraints before solving relational equations",
+        "principle": "Apply all transfer statements first, updating each person's count, and then use those updated counts when interpreting relational equations.",
+        "when_to_apply": "Immediately after parsing transfer statements and before handling any difference or 'has more than' equations.",
+        "example": "Using a person's pre\u2011transfer count in a later difference equation, leading to an incorrect relationship.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_3-l_200-idx_14",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_8"
+        ],
+        "generation": 21,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_14_009",
+        "title": "Direct counts as initial constraints",
+        "principle": "Treat statements that give an explicit count (e.g., 'X has N items') as the initial amount before any transfers.",
+        "when_to_apply": "When encountering a direct count statement in the problem description.",
+        "example": "Assuming the given count is the final count after transfers, causing mismatched totals.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_3-l_200-idx_14",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_8"
+        ],
+        "generation": 21,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_15_009",
+        "title": "Answer formatting",
+        "principle": "Output the final answer using the exact required format: 'The final answer is \\boxed{<integer>}'",
+        "when_to_apply": "After computing the answer, before returning the response.",
+        "example": "Omitting the LaTeX box or using a different phrasing, causing the verifier to reject the answer.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_3-l_200-idx_14",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_8"
+        ],
+        "generation": 21,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_20_008",
+        "title": "Aggregate multiple transfers per person",
+        "principle": "Sum all incoming and outgoing transfer amounts for each person to obtain a net change, then apply that net change to the person's count.",
+        "when_to_apply": "When a person is involved in more than one transfer statement.",
+        "example": "Applying each transfer sequentially without aggregating, leading to double\u2011counting or missed updates.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_3-l_200-idx_14",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_8"
+        ],
+        "generation": 21,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_21_009",
+        "title": "Complete system solving",
+        "principle": "After translating all constraints into linear equations, actually solve the system (or directly isolate the target variable) to obtain the numeric answer.",
+        "when_to_apply": "Once the full set of equations is assembled, before outputting the answer.",
+        "example": "Leaving the system unsolved and guessing a value, resulting in an incorrect answer.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_3-l_200-idx_14",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_8"
+        ],
+        "generation": 21,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_22_009",
+        "title": "Filter relevant statements",
+        "principle": "When parsing the problem, only translate statements that involve the target object (e.g., grapes, raspberries) into constraints; ignore statements about ages, personalities, marriage years, etc., as they do not affect the counts.",
+        "when_to_apply": "During the initial extraction phase, before building equations.",
+        "example": "Including a person's age as a numeric constraint on their raspberry count, leading to an inconsistent system.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_60-idx_8"
+        ],
+        "generation": 22,
+        "confidence": 0.4
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Treating direct count statements as final counts after transfers",
+        "why_it_happens": "The model assumes that the given explicit counts already include any later transfers, ignoring the order of events.",
+        "how_to_avoid": "Interpret explicit count statements as initial amounts before any transfers, and apply transfers afterwards.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 21
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Applying transfers in the wrong direction",
+        "why_it_happens": "The model misreads 'X gives N to Y' and adds N to X or subtracts from Y.",
+        "how_to_avoid": "When a transfer is described, subtract N from the giver and add N to the receiver.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 21
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Misinterpreting signed difference statements as absolute differences",
+        "why_it_happens": "The model treats 'difference between X and Y' as |X\u00a0\u2212\u00a0Y|, losing sign information.",
+        "how_to_avoid": "Interpret difference statements as signed differences preserving the order presented.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 21
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Applying relational equations before applying transfers",
+        "why_it_happens": "The model uses pre\u2011transfer counts in equations that should reflect post\u2011transfer values.",
+        "how_to_avoid": "First apply all transfers to update counts, then translate relational statements.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 21
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Incomplete solving: failing to derive the answer from the constraints, leading to a guess",
+        "why_it_happens": "The model stops before solving the full system, often due to complexity or oversight.",
+        "how_to_avoid": "Ensure all extracted constraints are assembled into a solvable system and solve for the target variable before answering.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 21
+      }
+    ]
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_5_000",
+        "title": "Move vertical I-stick between numerals",
+        "principle": "When the numeric discrepancy is a multiple of\u202f1, try moving a single vertical stick (the I) from one numeral to another, turning the source numeral into a lower\u2011value symbol (e.g., II\u2192I) and the target into a higher\u2011value symbol (e.g., I\u2192II).",
+        "when_to_apply": "If the equation is off by\u202f\u00b11,\u202f\u00b12,\u202f\u00b13,\u202for\u202f\u00b14 and a vertical stick can be transferred without breaking either numeral.",
+        "example": "Removing a vertical stick from a numeral that becomes empty (e.g., turning I into nothing) or leaving the source numeral invalid.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_034",
+          "matchstick_035"
+        ],
+        "generation": 9,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_5_001",
+        "title": "Prefer intra-character stick relocation",
+        "principle": "First attempt to fix the equation by moving a stick within the same character; common intra\u2011character changes include turning X into V (or V into X) by repositioning a diagonal stick, or converting L into I by removing a horizontal, etc.",
+        "when_to_apply": "When the equation is close to correct and a single\u2011character transformation could adjust the value by 5, 10, or 50.",
+        "example": "Removing a diagonal from X and discarding it, leaving a single diagonal stick (invalid).",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_034"
+        ],
+        "generation": 9,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_5_002",
+        "title": "Validate symbols after stick move",
+        "principle": "After relocating a stick, check that every resulting character is a recognized Roman numeral or allowed operator; any stray diagonal or isolated vertical that does not match a symbol invalidates the solution.",
+        "when_to_apply": "Immediately after proposing a stick relocation, before arithmetic verification.",
+        "example": "Leaving a single diagonal stick after taking one from X, which is not a valid numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_034",
+          "matchstick_035"
+        ],
+        "generation": 9,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_5_003",
+        "title": "Avoid single angled sticks",
+        "principle": "A solitary diagonal stick does not represent any Roman numeral; when moving a diagonal from X or V, ensure the remaining shape stays a valid numeral (e.g., X\u2192V) rather than leaving a lone diagonal.",
+        "when_to_apply": "Whenever a diagonal stick is removed from a character that originally contained diagonals.",
+        "example": "Taking one diagonal from X and not repositioning it, resulting in a single diagonal.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_034",
+          "matchstick_035"
+        ],
+        "generation": 9,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_5_004",
+        "title": "Convert plus to minus by removing vertical stick",
+        "principle": "A plus sign consists of a vertical and a horizontal stick; removing the vertical stick turns it into a minus sign, which is a valid operator. The removed vertical stick can then be used elsewhere.",
+        "when_to_apply": "If the equation needs a subtraction instead of addition, or if a vertical stick is needed for another numeral.",
+        "example": "Removing the vertical from '+' and discarding it, leaving a stray stick.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_034",
+          "matchstick_035"
+        ],
+        "generation": 9,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_5_005",
+        "title": "Create new numeral by reordering stick",
+        "principle": "A detached stick can be placed as a separate character to form a new valid Roman numeral (e.g., moving a vertical stick to create an extra I) provided the source character remains valid.",
+        "when_to_apply": "When the equation is off by a small amount and there is a spare stick that can become a new numeral without breaking the source.",
+        "example": "Moving a vertical stick from an I and leaving the source empty, which is not allowed.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_034",
+          "matchstick_035"
+        ],
+        "generation": 9,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_5_006",
+        "title": "Consider inter-character stick relocation",
+        "principle": "If intra\u2011character moves fail, explore moving a stick from one character to a different character, ensuring both source and destination remain valid symbols.",
+        "when_to_apply": "After exhausting intra\u2011character options and the equation is still incorrect.",
+        "example": "Moving a vertical stick from '+' to an I but forgetting to change '+' to '-' (leaving an invalid operator).",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_034",
+          "matchstick_035"
+        ],
+        "generation": 9,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_5_009",
+        "title": "Augment numeral with vertical stick from operator",
+        "principle": "After converting '+' to '-', the freed vertical stick can be attached to a nearby numeral to increase its value (e.g., turning I into II).",
+        "when_to_apply": "When a subtraction operator is needed and a numeral could benefit from an extra vertical stick.",
+        "example": "Removing the vertical from '+' but not attaching it to any numeral, leaving the stick unused.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_034",
+          "matchstick_035"
+        ],
+        "generation": 9,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_6_009",
+        "title": "Verify arithmetic after stick move",
+        "principle": "Compute the numeric values of the left\u2011hand side and right\u2011hand side after any transformation; the equality must hold in standard Roman\u2011numeral arithmetic.",
+        "when_to_apply": "After a candidate transformation passes symbol validation.",
+        "example": "Accepting a visually valid equation that actually computes 12\u202f=\u202f13\u202f+\u202f4, which is false.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_034",
+          "matchstick_035"
+        ],
+        "generation": 9,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_10_009",
+        "title": "Do not modify the equals sign",
+        "principle": "The equals sign must remain exactly two horizontal sticks; moving a stick from it either destroys the operator or creates a different operator, and you cannot recreate a proper '=' elsewhere with a single stick. Therefore, keep the '=' unchanged.",
+        "when_to_apply": "At the start of solving; treat the '=' as immutable unless you can simultaneously create a new '=' elsewhere, which is impossible with a single stick.",
+        "example": "Removing one horizontal from '=' to turn it into '-' and not forming a new '=' elsewhere, resulting in an equation with no equals sign.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_034",
+          "matchstick_035"
+        ],
+        "generation": 10,
+        "confidence": 0.35
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Overlooking intra\u2011character transformations (e.g., X\u2192V) before inter\u2011character moves",
+        "why_it_happens": "The model tends to consider moving sticks between characters first, missing simpler intra\u2011character changes that can fix the equation with a single modification.",
+        "how_to_avoid": "Systematically check each character for possible single\u2011stick transformations (X\u2192V, V\u2192X, L\u2192I, etc.) before exploring inter\u2011character moves.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 9
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Leaving a single angled stick after moving a diagonal from X or V (invalid numeral)",
+        "why_it_happens": "The model removes a diagonal stick without ensuring the remaining shape stays a valid numeral, creating an isolated diagonal that doesn't correspond to any Roman numeral.",
+        "how_to_avoid": "When removing a diagonal from a character, immediately decide how to reposition it so that the source character stays valid (e.g., turn X into V) or avoid removing it altogether.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Not evaluating the arithmetic result after each candidate transformation",
+        "why_it_happens": "The model focuses on visual validity of symbols but forgets to verify that the numeric equality holds.",
+        "how_to_avoid": "After any valid symbol transformation, compute the numeric values of both sides and confirm the equality before finalizing the answer.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 9
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Assuming operator swaps (e.g., converting '=' to '-' or vice versa) automatically solve the puzzle, without ensuring a single '=' remains",
+        "why_it_happens": "The model changes the equals sign or other operators without checking that the equation still contains exactly one equals sign.",
+        "how_to_avoid": "Treat the equals sign as immutable; if you modify it, you must simultaneously create a new equals sign elsewhere, which is impossible with a single stick, so avoid modifying it.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 9
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Forgetting to place the removed stick after modifying an operator (e.g., converting plus to minus) and leaving it unused",
+        "why_it_happens": "The model removes a stick from an operator but doesn't reuse it, violating the rule that the stick must be relocated.",
+        "how_to_avoid": "After converting '+' to '-', immediately attach the freed vertical stick to a numeral or use it to form a new valid character.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 9
+      }
+    ]
+  }
+}

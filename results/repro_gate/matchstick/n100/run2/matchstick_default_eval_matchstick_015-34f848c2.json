@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_015",
+  "run": 2,
+  "item_idx": 15,
+  "seed": 1796471834,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "XIX - XVII = II",
+  "finish_reason": "stop",
+  "raw_chars": 28725,
+  "reasoning_chars": 28677,
+  "final_chars": 48,
+  "elapsed_s": 74.57314944267273,
+  "usage": {
+    "completion_tokens": 6864,
+    "prompt_tokens": 460,
+    "total_tokens": 7324,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "90f1dbd13aa16a9dbd7fcb9341314cf33ab593556a78e3aa17ff9ba0ddd74be3"
+}

@@ -1,0 +1,143 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_1_000",
+        "title": "Consolidate Direct Equivalences",
+        "principle": "When a clue equates two attributes (e.g., 'the person with auburn hair is the person who loves the stew'), treat them as a single combined attribute and propagate that equality throughout the puzzle; without this, the solver may assign conflicting values and produce an inconsistent grid.",
+        "when_to_apply": "Whenever a clue states that two descriptors refer to the same individual.",
+        "example": "Treating 'auburn hair = stew' as two independent constraints, leading to a house with auburn hair but a different food.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_1_001",
+        "title": "Assign Fixed Positions Immediately",
+        "principle": "If a clue fixes an attribute to a specific house number (e.g., 'the person who loves white is in the fifth house'), assign that attribute to that house right away; without this, the solver may waste search and place the attribute incorrectly.",
+        "when_to_apply": "When a clue mentions a house index (first, second, \u2026 fifth, sixth) for an attribute.",
+        "example": "Ignoring the clue that white color belongs to house\u202f5, allowing white to be placed elsewhere.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_1_002",
+        "title": "Translate 'N houses between' to Exact Distance",
+        "principle": "Interpret 'there are N houses between X and Y' as a distance constraint |pos(X)\u202f\u2212\u202fpos(Y)|\u202f=\u202fN\u202f+\u202f1; without this, the solver may treat it as a vague ordering and violate the exact spacing.",
+        "when_to_apply": "When a clue mentions a specific number of houses separating two items.",
+        "example": "Reading 'two houses between green and Bob' as merely 'green is left of Bob', allowing them to be adjacent.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_1_003",
+        "title": "Enforce Adjacency for 'next to' and Ordered Left",
+        "principle": "Convert 'next to each other' into an adjacency constraint (|pos(A)\u202f\u2212\u202fpos(B)|\u202f=\u202f1) and 'directly left of' into ordered adjacency (pos(A)\u202f=\u202fpos(B)\u202f\u2212\u202f1); without this, the solver may place the items non\u2011adjacent and break the puzzle logic.",
+        "when_to_apply": "When a clue uses 'next to', 'adjacent', or 'directly left of'.",
+        "example": "Allowing the baseball lover and the red\u2011color person to be separated by another house despite the clue that they are next to each other.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_1_004",
+        "title": "Treat Consecutive Chains as a Block",
+        "principle": "When several clues together create a sequence of ordered adjacency (e.g., volleyball left of baseball and baseball directly left of brown hair), treat the whole chain as a block of consecutive houses and place it as a unit; without this, the solver may scatter the elements and miss the only viable arrangement.",
+        "when_to_apply": "When multiple adjacency clues link three or more attributes in a linear order.",
+        "example": "Placing volleyball, baseball, and brown hair in houses\u202f1,\u202f3,\u202f5 despite clues that force them to occupy three consecutive houses.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_1_005",
+        "title": "Propagate Linked Attribute Pairs",
+        "principle": "Whenever two attributes are linked by a clue (e.g., 'red hair = white color'), propagate that link to all other constraints so that any assignment of one automatically assigns the other; without this, the solver may assign red hair without white color, violating the link.",
+        "when_to_apply": "When a clue equates two different categories (color \u2194 hair, food \u2194 drink, etc.).",
+        "example": "Assigning red hair to house\u202f5 but leaving the color as yellow, ignoring the red\u2011hair\u202f=\u202fwhite\u2011color relationship.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_1_006",
+        "title": "Output Solution in Expected JSON Table Format",
+        "principle": "Present the final grid as a JSON object with keys 'header' (list of column names) and 'rows' (list of house rows) and place it as the last output; without this, the verifier cannot locate or parse the answer, leading to rejection.",
+        "when_to_apply": "At the end of every zebralogic solution.",
+        "example": "Returning the solution as a plain text list or wrapping it inside extra keys, causing the verifier to miss the answer.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19",
+          "zebralogic-lgp-test-6x6-28"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_1_007",
+        "title": "Keep Reasoning Concise to Avoid Token Truncation",
+        "principle": "Limit explanatory text and place the final answer near the end so the total output stays within the model's token budget; without this, the answer may be cut off and the verifier sees an incomplete solution.",
+        "when_to_apply": "When the puzzle has many clues or categories that could lead to long reasoning.",
+        "example": "Including a multi\u2011paragraph reasoning block before the answer, causing the JSON to be truncated and rejected.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-28"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_evo_000",
+        "description": "Generating overly long reasoning before the final answer, causing the output to exceed the token limit and truncate the answer.",
+        "why_it_happens": "The model tries to be exhaustive in its explanation and does not account for the fixed token budget of the response.",
+        "how_to_avoid": "Keep reasoning brief, and ensure the final answer appears near the end of the output within the token limit.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "zeb_evo_001",
+        "description": "Providing the solution in a format not recognized by the verifier (e.g., missing 'header'/'rows' keys or adding extra wrapper fields).",
+        "why_it_happens": "The model follows generic instructions rather than the specific output schema required by the zebralogic verifier.",
+        "how_to_avoid": "Always output a JSON object with exactly the keys 'header' and 'rows' as shown in accepted examples, and place no additional text after it.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 1
+      }
+    ]
+  }
+}

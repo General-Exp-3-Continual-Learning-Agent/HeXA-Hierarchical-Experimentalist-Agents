@@ -1,0 +1,201 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Signed Difference Interpretation",
+        "principle": "Interpret any phrase of the form 'the difference between the number of X and Y' as the signed subtraction X - Y, preserving the order of the names, rather than as an absolute value.",
+        "when_to_apply": "Whenever a statement uses the phrase 'difference between the number of X and Y' (or similar), treat it as X - Y.",
+        "example": "Interpreting 'the difference between the number of oranges that Twila and Tasha have' as Twila - Tasha, not |Twila - Tasha|.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-idx_18",
+          "mathgap_num_20-seed_0-d_6-l_200-idx_8"
+        ],
+        "generation": 14,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_3_001",
+        "title": "Directed More-Than Interpretation",
+        "principle": "Translate statements like 'A has N more (or fewer) items than B' into the equation A = B + N (or A = B - N), using signed addition/subtraction.",
+        "when_to_apply": "When encountering a phrase 'has N more/fewer' comparing two persons.",
+        "example": "'Dee has 7 more oranges than Elisabeth' becomes Dee = Elisabeth + 7.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-idx_18",
+          "mathgap_num_20-seed_0-d_6-l_200-idx_8"
+        ],
+        "generation": 14,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_3_003",
+        "title": "Immediate Direct Assignment Update",
+        "principle": "When a direct count statement 'A has N items' appears, set A's current count to N at that moment, overriding any previous value for A.",
+        "when_to_apply": "On encountering a direct count statement.",
+        "example": "'Tasha has 16 oranges' sets Tasha = 16 even if Tasha previously had a symbolic value.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-idx_18",
+          "mathgap_num_20-seed_0-d_6-l_200-idx_8"
+        ],
+        "generation": 14,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_9_009",
+        "title": "Temporal Consistency of Transfers and Relational Statements",
+        "principle": "Process statements in the order given; apply each transfer immediately before evaluating any later relational statements, so later statements see the updated counts.",
+        "when_to_apply": "Whenever a transfer statement appears before subsequent relational statements.",
+        "example": "After 'Tatyana gives 8 oranges to Aden', Tatyana's count is reduced by 8 and Aden's increased by 8 before any later equations.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-idx_18",
+          "mathgap_num_20-seed_0-d_6-l_200-idx_8"
+        ],
+        "generation": 14,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Full Difference Equality Interpretation",
+        "principle": "For statements equating one difference to another, translate them into (A - B) = (C - D), preserving the order of names on each side.",
+        "when_to_apply": "When a statement says 'the number of X that Y has more than Z is equal to the difference between the number of A and B'.",
+        "example": "'The number of oranges that Elisabeth has more than Dee is equal to the difference between the number of oranges that Twila and Tasha have' becomes (Elisabeth - Dee) = (Twila - Tasha).",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-idx_18",
+          "mathgap_num_20-seed_0-d_6-l_200-idx_8"
+        ],
+        "generation": 14,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_10_009",
+        "title": "Quantity Modification (Multiplication and Subtraction)",
+        "principle": "When a statement modifies a count by a numeric operation other than direct assignment or transfer (e.g., 'eats N', 'gives away half'), apply the corresponding arithmetic to the person's count.",
+        "when_to_apply": "On statements that describe subtraction, multiplication, or other arithmetic changes to a count.",
+        "example": "'Jessie eats 2 oranges' reduces Jessie's count by 2.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 14,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_11_009",
+        "title": "Temporal Snapshot for Relational Statements",
+        "principle": "Treat each relational statement (differences, comparisons) as a constraint on the counts at the moment it appears, using the current values after any prior transfers.",
+        "when_to_apply": "Whenever a relational statement is processed.",
+        "example": "When processing 'The number of oranges that Oral has more than Tyrell is equal to the difference between the number of oranges that Terrill and Jaime have', use the current values of Oral and Tyrell after earlier transfers.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-idx_18",
+          "mathgap_num_20-seed_0-d_6-l_200-idx_8"
+        ],
+        "generation": 14,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_12_008",
+        "title": "Conditional Transfer of All Items",
+        "principle": "If a transfer statement says a person gives all their items to another, set the giver\u2019s count to zero and add that amount to the receiver.",
+        "when_to_apply": "When a transfer uses phrasing like 'gives all' or 'gives everything'.",
+        "example": "'A gives all his oranges to B' results in A = 0 and B = B + previous A.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 14,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_13_009",
+        "title": "Complete Statement Extraction",
+        "principle": "Identify and extract every statement that mentions the target item (direct counts, differences, transfers, equality of differences) to build the full system of equations.",
+        "when_to_apply": "At the start of solving, scan the problem text for any clause that references the item.",
+        "example": "From the oranges problem, extract statements like 'Dee has 7 more oranges than Elisabeth' and 'Tatyana gives 8 oranges to Aden'.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-idx_18",
+          "mathgap_num_20-seed_0-d_6-l_200-idx_8"
+        ],
+        "generation": 14,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "mat_ev_14_009",
+        "title": "Transfer with Unconstrained Giver",
+        "principle": "When a transfer involves a giver whose count is not otherwise constrained, treat the giver\u2019s count as an unknown variable and adjust both sides accordingly, rather than assuming zero.",
+        "when_to_apply": "On a transfer where the giver has no prior numeric constraints.",
+        "example": "If 'Traci gives 1 orange to Jay' and Traci\u2019s count is unknown, represent Traci as T and update: T = T - 1, Jay = Jay + 1.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-idx_18",
+          "mathgap_num_20-seed_0-d_6-l_200-idx_8"
+        ],
+        "generation": 14,
+        "confidence": 0.7
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Treating \u2018difference between the number of X and Y\u2019 as absolute value instead of signed subtraction.",
+        "why_it_happens": "The model assumes \u2018difference\u2019 refers to magnitude rather than directional subtraction.",
+        "how_to_avoid": "Always interpret \u2018difference between X and Y\u2019 as X - Y, preserving the order of names.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 14
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Delaying the effect of transfer statements until after all other statements have been processed.",
+        "why_it_happens": "The model treats transfers as post\u2011processing steps rather than as events occurring in order.",
+        "how_to_avoid": "Apply each transfer immediately when it appears, before processing any later relational statements.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 14
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Considering a direct count as a fixed initial value that cannot be changed by later transfers.",
+        "why_it_happens": "The model treats direct counts as immutable base values.",
+        "how_to_avoid": "Allow direct counts to be updated by subsequent transfers; treat them as the current count at that moment.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 14
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Misinterpreting a difference equality as a direct assignment to a single variable, ignoring the second term.",
+        "why_it_happens": "The model drops the subtraction on one side and equates a single variable to a difference.",
+        "how_to_avoid": "Translate equality of differences fully as (A - B) = (C - D), keeping both terms on each side.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 14
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Incomplete processing of problem statements: stopping after a subset of constraints or ignoring many statements.",
+        "why_it_happens": "The model may give up early or miss statements that appear later in the text.",
+        "how_to_avoid": "Systematically extract and incorporate every statement about the target item before solving.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 14
+      }
+    ]
+  }
+}

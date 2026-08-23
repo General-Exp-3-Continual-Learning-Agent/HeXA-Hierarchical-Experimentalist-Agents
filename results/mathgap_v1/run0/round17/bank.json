@@ -1,0 +1,197 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Signed difference equality",
+        "principle": "When a statement equates one signed difference to another, translate it directly as (A - B) = (C - D), preserving the order of terms on each side.",
+        "when_to_apply": "Whenever a statement uses phrasing like \"the number of X that A has more than B is equal to the difference between the number of Y that C and D have\".",
+        "example": "Incorrect: Interpreting the equality as |A - B| = |C - D| or swapping the order of C and D.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 13,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Direct count assignment at point of mention",
+        "principle": "When a statement directly gives a count for a person (e.g., \"X has N tomatoes\"), set that person's current count to N at that point in the narrative.",
+        "when_to_apply": "Whenever a statement provides an explicit numeric count for a person.",
+        "example": "Incorrect: Ignoring the assignment and leaving the variable undefined.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 13,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_7_009",
+        "title": "Directionality of more/fewer statements",
+        "principle": "Interpret \"X has N more items than Y\" as X = Y + N, and \"X has N fewer items than Y\" as X = Y - N.",
+        "when_to_apply": "Whenever a statement uses \"more\" or \"fewer\" to compare two persons.",
+        "example": "Incorrect: Treating \"X has N more than Y\" as X - Y = -N.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 13,
+        "confidence": 1.0
+      },
+      {
+        "skill_id": "mat_ev_11_005",
+        "title": "Split\u2011all handling",
+        "principle": "When a statement says a person splits all their items equally among two recipients, set each recipient's count to half of the original amount and set the splitter's count to zero.",
+        "when_to_apply": "Whenever a statement uses phrasing like \"splits all the X she owns equally among A and B\".",
+        "example": "Incorrect: Adding half to each recipient but forgetting to zero the original holder.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 13,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_9_009",
+        "title": "Targeted constraint extraction for queried variable",
+        "principle": "When the goal is to find a specific person's count, first gather all equations and statements that involve that person, directly or indirectly, before solving.",
+        "when_to_apply": "At the start of solving a problem where a single person's count is queried.",
+        "example": "Incorrect: Solving the entire system without focusing on the target, leading to unnecessary complexity.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 13,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_10_009",
+        "title": "Sequential transfer handling with updated counts",
+        "principle": "When a transfer statement appears, immediately subtract the transferred amount from the giver and add it to the receiver, updating their current counts for any subsequent statements.",
+        "when_to_apply": "Whenever a \"X gives N items to Y\" statement is encountered.",
+        "example": "Incorrect: Applying all transfers after processing all other statements, ignoring the order.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 13,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_11_009",
+        "title": "Substitution of known signed differences into signed difference equalities",
+        "principle": "If a signed difference on one side of an equality is already known from a direct statement or previous equation, substitute its value into the other side to simplify and solve.",
+        "when_to_apply": "When solving a system that includes signed difference equalities.",
+        "example": "Incorrect: Treating the unknown difference as a new variable instead of substituting the known value.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 13,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_12_009",
+        "title": "Chronological evaluation of statements",
+        "principle": "Process the statements in the order given, updating counts after each step; later statements refer to the updated counts.",
+        "when_to_apply": "Throughout solving, especially when transfers or dependent statements appear.",
+        "example": "Incorrect: Using a count from before a transfer when a later statement references that person.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 13,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "mat_ev_13_009",
+        "title": "Increase\u2011by\u2011times handling",
+        "principle": "When a statement says a person's count \"increases by N times\", interpret it as multiplication by N (new count = old count * N), not addition.",
+        "when_to_apply": "Whenever a statement uses the phrase \"increases by N times\" or similar.",
+        "example": "Incorrect: Interpreting \"increases by 2 times\" as adding 2 to the count.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 13,
+        "confidence": 0.4
+      },
+      {
+        "skill_id": "mat_ev_14_009",
+        "title": "Preserve order in signed difference statements",
+        "principle": "When a statement mentions the \"difference between X and Y\", treat it as the signed difference X - Y, preserving the order as presented; do not take absolute value or swap the terms.",
+        "when_to_apply": "Whenever a statement equates a signed difference to another, or uses phrasing like \"the difference between A and B\" in any context.",
+        "example": "Incorrect: Interpreting \"the difference between A and B\" as |A - B| or as (B - A).",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 14,
+        "confidence": 0.85
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Treating signed difference statements as absolute differences or swapping term order",
+        "why_it_happens": "Model assumes \"difference\" denotes magnitude only, or believes the order of terms is irrelevant for signed differences.",
+        "how_to_avoid": "Always keep the sign and preserve the exact order of terms when translating difference statements; interpret \"difference between A and B\" as (A - B).",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 13
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Ignoring the sequential order of transfers",
+        "why_it_happens": "Model treats transfers as independent of chronology, applying them out of order or after all other statements.",
+        "how_to_avoid": "Process transfers in the exact order they appear, updating counts immediately for subsequent statements.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 13
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Assuming explicit counts are final after all transfers",
+        "why_it_happens": "Model treats initial assignments as immutable, overlooking later modifications.",
+        "how_to_avoid": "Remember that explicit counts are current at that point; subsequent transfers can change them.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 13
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Misinterpreting \"increase by N times\" as addition rather than multiplication",
+        "why_it_happens": "Confusion between additive and multiplicative phrasing leads to treating the phrase as a simple increment.",
+        "how_to_avoid": "Interpret \"increase by N times\" as new = old * N.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 13
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Ignoring conditional transfer statements",
+        "why_it_happens": "Model overlooks the conditional clause and either applies or skips the transfer indiscriminately.",
+        "how_to_avoid": "Check the condition; only apply the transfer if the condition holds true at that point.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 13
+      }
+    ]
+  }
+}

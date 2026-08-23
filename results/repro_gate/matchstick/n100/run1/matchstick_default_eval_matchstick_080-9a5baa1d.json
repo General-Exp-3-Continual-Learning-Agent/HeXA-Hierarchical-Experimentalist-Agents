@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_080",
+  "run": 1,
+  "item_idx": 80,
+  "seed": 1843041490,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "XV = XIX - IV",
+  "finish_reason": "stop",
+  "raw_chars": 91288,
+  "reasoning_chars": 91238,
+  "final_chars": 50,
+  "elapsed_s": 272.7567093372345,
+  "usage": {
+    "completion_tokens": 21741,
+    "prompt_tokens": 459,
+    "total_tokens": 22200,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "dc101c906db3e297b10d6ca6b2c517bc8210f3317558ce5b7b82a29e793cc076"
+}

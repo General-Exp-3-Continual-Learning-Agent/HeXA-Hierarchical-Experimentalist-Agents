@@ -1,0 +1,1263 @@
+{
+  "task_name": "matchstick",
+  "schedule": {
+    "n_train": 60,
+    "rounds": 30,
+    "problems_per_round": 4,
+    "attempts_per_problem": 5,
+    "visits_per_problem": 2,
+    "problem_visits": 120,
+    "budget": 600,
+    "solve_budget": 600,
+    "admission_reserve": 0,
+    "admission_cap_per_round": 0,
+    "total_calls": 600,
+    "total_planned": 600,
+    "slack": 0
+  },
+  "rounds": [
+    {
+      "round": 0,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_006",
+        "matchstick:default:train:matchstick_013",
+        "matchstick:default:train:matchstick_018",
+        "matchstick:default:train:matchstick_020"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 2,
+        "accuracy": 0.1,
+        "mean_reward": -0.8,
+        "mean_utility": 0.05,
+        "mean_added_tokens": 0.0,
+        "n_truncated": 18,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          0
+        ]
+      },
+      "n_skills_before": 0,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 10,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 10,
+        "unjudged_reasons": {
+          "gate-disabled": 10
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 0
+    },
+    {
+      "round": 1,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_022",
+        "matchstick:default:train:matchstick_027",
+        "matchstick:default:train:matchstick_032",
+        "matchstick:default:train:matchstick_033"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 1,
+        "accuracy": 0.05,
+        "mean_reward": -0.9,
+        "mean_utility": 0.0,
+        "mean_added_tokens": 990.0,
+        "n_truncated": 9,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          1
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 2,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_039",
+        "matchstick:default:train:matchstick_044",
+        "matchstick:default:train:matchstick_052",
+        "matchstick:default:train:matchstick_055"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 0,
+        "accuracy": 0.0,
+        "mean_reward": -1.0,
+        "mean_utility": 0.0,
+        "mean_added_tokens": 980.0,
+        "n_truncated": 13,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          2
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 3,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_056",
+        "matchstick:default:train:matchstick_031",
+        "matchstick:default:train:matchstick_034",
+        "matchstick:default:train:matchstick_035"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 8,
+        "accuracy": 0.4,
+        "mean_reward": -0.2,
+        "mean_utility": 0.0,
+        "mean_added_tokens": 985.0,
+        "n_truncated": 13,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          3
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 4,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_049",
+        "matchstick:default:train:matchstick_057",
+        "matchstick:default:train:matchstick_061",
+        "matchstick:default:train:matchstick_078"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 16,
+        "accuracy": 0.8,
+        "mean_reward": 0.6,
+        "mean_utility": 0.25,
+        "mean_added_tokens": 982.0,
+        "n_truncated": 1,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          4
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 0,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 0,
+        "unjudged_reasons": {},
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 5,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_006",
+        "matchstick:default:train:matchstick_013",
+        "matchstick:default:train:matchstick_018",
+        "matchstick:default:train:matchstick_020"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 0,
+        "accuracy": 0.0,
+        "mean_reward": -1.0,
+        "mean_utility": -0.05,
+        "mean_added_tokens": 1012.0,
+        "n_truncated": 17,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          5
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 6,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_022",
+        "matchstick:default:train:matchstick_027",
+        "matchstick:default:train:matchstick_032",
+        "matchstick:default:train:matchstick_033"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 4,
+        "accuracy": 0.2,
+        "mean_reward": -0.6,
+        "mean_utility": 0.15,
+        "mean_added_tokens": 944.0,
+        "n_truncated": 13,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          6
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 7,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_039",
+        "matchstick:default:train:matchstick_044",
+        "matchstick:default:train:matchstick_052",
+        "matchstick:default:train:matchstick_055"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 0,
+        "accuracy": 0.0,
+        "mean_reward": -1.0,
+        "mean_utility": 0.0,
+        "mean_added_tokens": 959.0,
+        "n_truncated": 17,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          7
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 2,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 2,
+        "unjudged_reasons": {
+          "gate-disabled": 2
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 8,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_056",
+        "matchstick:default:train:matchstick_015",
+        "matchstick:default:train:matchstick_029",
+        "matchstick:default:train:matchstick_037"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 11,
+        "accuracy": 0.55,
+        "mean_reward": 0.1,
+        "mean_utility": -0.10000000000000002,
+        "mean_added_tokens": 996.0,
+        "n_truncated": 6,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          8
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 9,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_046",
+        "matchstick:default:train:matchstick_063",
+        "matchstick:default:train:matchstick_072",
+        "matchstick:default:train:matchstick_075"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 16,
+        "accuracy": 0.8,
+        "mean_reward": 0.6,
+        "mean_utility": 0.09999999999999999,
+        "mean_added_tokens": 1014.0,
+        "n_truncated": 4,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          9
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 10,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_031",
+        "matchstick:default:train:matchstick_034",
+        "matchstick:default:train:matchstick_035",
+        "matchstick:default:train:matchstick_049"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 12,
+        "accuracy": 0.6,
+        "mean_reward": 0.2,
+        "mean_utility": 0.1,
+        "mean_added_tokens": 1014.0,
+        "n_truncated": 8,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          10
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 11,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_057",
+        "matchstick:default:train:matchstick_061",
+        "matchstick:default:train:matchstick_078",
+        "matchstick:default:train:matchstick_006"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 10,
+        "accuracy": 0.5,
+        "mean_reward": 0.0,
+        "mean_utility": 0.1,
+        "mean_added_tokens": 970.0,
+        "n_truncated": 5,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          11
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 0,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 0,
+        "unjudged_reasons": {},
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 12,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_013",
+        "matchstick:default:train:matchstick_018",
+        "matchstick:default:train:matchstick_020",
+        "matchstick:default:train:matchstick_022"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 4,
+        "accuracy": 0.2,
+        "mean_reward": -0.6,
+        "mean_utility": 0.1,
+        "mean_added_tokens": 993.0,
+        "n_truncated": 15,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          12
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 0,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 0,
+        "unjudged_reasons": {},
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 13,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_027",
+        "matchstick:default:train:matchstick_032",
+        "matchstick:default:train:matchstick_033",
+        "matchstick:default:train:matchstick_039"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 0,
+        "accuracy": 0.0,
+        "mean_reward": -1.0,
+        "mean_utility": 0.0,
+        "mean_added_tokens": 993.0,
+        "n_truncated": 18,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          13
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 14,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_044",
+        "matchstick:default:train:matchstick_052",
+        "matchstick:default:train:matchstick_055",
+        "matchstick:default:train:matchstick_056"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 4,
+        "accuracy": 0.2,
+        "mean_reward": -0.6,
+        "mean_utility": 0.15,
+        "mean_added_tokens": 1019.0,
+        "n_truncated": 16,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          14
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 2,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 2,
+        "unjudged_reasons": {
+          "gate-disabled": 2
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 15,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_000",
+        "matchstick:default:train:matchstick_001",
+        "matchstick:default:train:matchstick_002",
+        "matchstick:default:train:matchstick_003"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 19,
+        "accuracy": 0.95,
+        "mean_reward": 0.9,
+        "mean_utility": -0.05,
+        "mean_added_tokens": 1014.0,
+        "n_truncated": 1,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          15
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 0,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 0,
+        "unjudged_reasons": {},
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 16,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_004",
+        "matchstick:default:train:matchstick_005",
+        "matchstick:default:train:matchstick_007",
+        "matchstick:default:train:matchstick_008"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 19,
+        "accuracy": 0.95,
+        "mean_reward": 0.9,
+        "mean_utility": -0.05,
+        "mean_added_tokens": 995.0,
+        "n_truncated": 1,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          16
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 17,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_009",
+        "matchstick:default:train:matchstick_010",
+        "matchstick:default:train:matchstick_011",
+        "matchstick:default:train:matchstick_012"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 20,
+        "accuracy": 1.0,
+        "mean_reward": 1.0,
+        "mean_utility": 0.0,
+        "mean_added_tokens": 966.0,
+        "n_truncated": 0,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          17
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 0,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 0,
+        "unjudged_reasons": {},
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 18,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_014",
+        "matchstick:default:train:matchstick_016",
+        "matchstick:default:train:matchstick_017",
+        "matchstick:default:train:matchstick_019"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 18,
+        "accuracy": 0.9,
+        "mean_reward": 0.8,
+        "mean_utility": -0.1,
+        "mean_added_tokens": 1025.0,
+        "n_truncated": 1,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          18
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 19,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_021",
+        "matchstick:default:train:matchstick_023",
+        "matchstick:default:train:matchstick_024",
+        "matchstick:default:train:matchstick_025"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 18,
+        "accuracy": 0.9,
+        "mean_reward": 0.8,
+        "mean_utility": -0.1,
+        "mean_added_tokens": 978.0,
+        "n_truncated": 1,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          19
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 20,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_026",
+        "matchstick:default:train:matchstick_028",
+        "matchstick:default:train:matchstick_030",
+        "matchstick:default:train:matchstick_036"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 20,
+        "accuracy": 1.0,
+        "mean_reward": 1.0,
+        "mean_utility": 0.0,
+        "mean_added_tokens": 1004.0,
+        "n_truncated": 0,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          20
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 11,
+      "admission": {
+        "candidates": 2,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 2,
+        "unjudged_reasons": {
+          "gate-disabled": 2
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 21,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_038",
+        "matchstick:default:train:matchstick_040",
+        "matchstick:default:train:matchstick_041",
+        "matchstick:default:train:matchstick_043"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 18,
+        "accuracy": 0.9,
+        "mean_reward": 0.8,
+        "mean_utility": -0.1,
+        "mean_added_tokens": 979.0,
+        "n_truncated": 1,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          21
+        ]
+      },
+      "n_skills_before": 11,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 0,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 0,
+        "unjudged_reasons": {},
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 22,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_045",
+        "matchstick:default:train:matchstick_048",
+        "matchstick:default:train:matchstick_050",
+        "matchstick:default:train:matchstick_051"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 20,
+        "accuracy": 1.0,
+        "mean_reward": 1.0,
+        "mean_utility": 0.0,
+        "mean_added_tokens": 971.0,
+        "n_truncated": 0,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          22
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 23,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_058",
+        "matchstick:default:train:matchstick_015",
+        "matchstick:default:train:matchstick_029",
+        "matchstick:default:train:matchstick_037"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 16,
+        "accuracy": 0.8,
+        "mean_reward": 0.6,
+        "mean_utility": -0.05000000000000003,
+        "mean_added_tokens": 1017.0,
+        "n_truncated": 4,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          23
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 2,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 2,
+        "unjudged_reasons": {
+          "gate-disabled": 2
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 24,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_046",
+        "matchstick:default:train:matchstick_063",
+        "matchstick:default:train:matchstick_072",
+        "matchstick:default:train:matchstick_075"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 14,
+        "accuracy": 0.7,
+        "mean_reward": 0.4,
+        "mean_utility": -1.1102230246251566e-17,
+        "mean_added_tokens": 999.0,
+        "n_truncated": 7,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          24
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 25,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_031",
+        "matchstick:default:train:matchstick_034",
+        "matchstick:default:train:matchstick_035",
+        "matchstick:default:train:matchstick_049"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 11,
+        "accuracy": 0.55,
+        "mean_reward": 0.1,
+        "mean_utility": 0.05,
+        "mean_added_tokens": 1009.0,
+        "n_truncated": 9,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          25
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 26,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_006",
+        "matchstick:default:train:matchstick_057",
+        "matchstick:default:train:matchstick_061",
+        "matchstick:default:train:matchstick_078"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 12,
+        "accuracy": 0.6,
+        "mean_reward": 0.2,
+        "mean_utility": 0.2,
+        "mean_added_tokens": 980.0,
+        "n_truncated": 5,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          26
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 27,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_013",
+        "matchstick:default:train:matchstick_018",
+        "matchstick:default:train:matchstick_020",
+        "matchstick:default:train:matchstick_022"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 5,
+        "accuracy": 0.25,
+        "mean_reward": -0.5,
+        "mean_utility": 0.15,
+        "mean_added_tokens": 985.0,
+        "n_truncated": 11,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          27
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 28,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_027",
+        "matchstick:default:train:matchstick_032",
+        "matchstick:default:train:matchstick_033",
+        "matchstick:default:train:matchstick_039"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 0,
+        "accuracy": 0.0,
+        "mean_reward": -1.0,
+        "mean_utility": 0.0,
+        "mean_added_tokens": 927.0,
+        "n_truncated": 19,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          28
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 2,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 2,
+        "unjudged_reasons": {
+          "gate-disabled": 2
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    },
+    {
+      "round": 29,
+      "problem_ids": [
+        "matchstick:default:train:matchstick_044",
+        "matchstick:default:train:matchstick_052",
+        "matchstick:default:train:matchstick_055",
+        "matchstick:default:train:matchstick_056"
+      ],
+      "summary": {
+        "n": 20,
+        "n_correct": 4,
+        "accuracy": 0.2,
+        "mean_reward": -0.6,
+        "mean_utility": 0.15,
+        "mean_added_tokens": 1017.0,
+        "n_truncated": 14,
+        "n_with_baseline": 20,
+        "task_names": [
+          "matchstick"
+        ],
+        "rounds": [
+          29
+        ]
+      },
+      "n_skills_before": 10,
+      "n_skills_after": 10,
+      "admission": {
+        "candidates": 1,
+        "judged": 0,
+        "admitted_of_judged": 0,
+        "accept_rate_judged": null,
+        "unjudged": 1,
+        "unjudged_reasons": {
+          "gate-disabled": 1
+        },
+        "admission_rollouts": 0
+      },
+      "excluded_parent": 0,
+      "starved_injections": 0,
+      "budget_bound_injections": 20
+    }
+  ],
+  "n_attempted_problems": 60,
+  "excluded_parent_total": 0,
+  "streaming_leak": false,
+  "starved_injections_total": 0,
+  "rounds_completed": 30,
+  "stopped_early": null,
+  "eval_accuracy": 0.78,
+  "eval_truncated": 18,
+  "eval_accuracy_no_memory": 0.73,
+  "eval_truncated_no_memory": 24,
+  "eval_delta": 0.05,
+  "baselines_stamped": 600,
+  "baselines_missing": 0,
+  "eval_n": 100,
+  "budget": {
+    "training_rollouts": 600,
+    "max_train": 600,
+    "train_remaining": 0,
+    "train_solve": 600,
+    "admission": 0,
+    "baseline": 0,
+    "eval": 200,
+    "max_eval": null,
+    "all_in_total": 800
+  }
+}

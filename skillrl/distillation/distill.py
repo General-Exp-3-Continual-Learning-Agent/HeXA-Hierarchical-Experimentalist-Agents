@@ -53,8 +53,30 @@ def call_teacher(prompt: str, model: str = TEACHER_MODEL) -> str:
 
     Dispatches based on model name:
       - names starting with "claude-"  → Claude CLI subprocess
+      - "vllm:<name>", or a gpt-oss name with an endpoint configured
+                                       → local vLLM, OpenAI-compatible, no API key
       - anything else                  → local HuggingFace model (Qwen by default)
+
+    The vLLM branch returns the **final channel only**, not the harmony
+    reasoning+final concatenation the actor is scored on. That asymmetry is
+    deliberate and load-bearing: the JSON parsers below fall back to a *greedy*
+    ``re.search(r"\\[.*\\]")``, which would span from a draft bracket in the analysis
+    channel to the real closing bracket and fail to parse, yielding zero skills with
+    only a printed warning. See ``hexa_core.llm.teacher`` for the demonstration.
     """
+    # Imported lazily, mirroring _get_hf_teacher's local import of react_agent:
+    # hexa_core imports skillrl (hexa_bridge patches it), so a module-level import
+    # here would be circular.
+    from hexa_core.llm.teacher import get_vllm_teacher, resolve_teacher_model
+
+    served_name = resolve_teacher_model(model)
+    if served_name is not None:
+        try:
+            return get_vllm_teacher(served_name)(prompt)
+        except Exception as e:
+            print(f"[Teacher Error] vLLM model '{served_name}' — {type(e).__name__}: {e}")
+            return ""
+
     if model.startswith("claude-"):
         try:
             result = subprocess.run(

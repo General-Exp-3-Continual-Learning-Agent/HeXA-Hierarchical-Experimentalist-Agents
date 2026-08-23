@@ -1,0 +1,177 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_3_000",
+        "title": "PreserveExactCase",
+        "principle": "Copy every attribute value exactly as it appears in the puzzle, preserving case, spacing, and punctuation. Any alteration of the original text can cause a mismatch with the reference solution.",
+        "when_to_apply": "Whenever copying attribute values into the final solution JSON.",
+        "example": "Writing \"alice\" instead of \"Alice\" or changing \"Stir Fry\" to \"stir fry\" in the output.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-39",
+          "zebralogic-lgp-test-6x4-36"
+        ],
+        "generation": 8,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "zeb_ev_3_001",
+        "title": "DirectAdjacency",
+        "principle": "When a clue says \"X is directly left/right of Y\", enforce that the house numbers differ by exactly one in the indicated direction (X = Y\u202f\u2212\u202f1 for left, X = Y\u202f+\u202f1 for right).",
+        "when_to_apply": "Processing clues that contain the phrase \"directly left of\" or \"directly right of\".",
+        "example": "Treating \"X is directly left of Y\" as merely \"X is somewhere left of Y\", allowing a gap of more than one house.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-36"
+        ],
+        "generation": 8,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_002",
+        "title": "RelativeOrdering",
+        "principle": "When a clue says \"X is somewhere to the left/right of Y\", enforce a strict ordering (X\u202f<\u202fY or X\u202f>\u202fY) without requiring adjacency.",
+        "when_to_apply": "Processing clues that contain \"somewhere left of\" or \"somewhere right of\".",
+        "example": "Interpreting \"X is somewhere left of Y\" as \"X must be directly left of Y\", which would incorrectly forbid valid placements with a gap.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-39",
+          "zebralogic-lgp-test-6x4-36"
+        ],
+        "generation": 8,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_005",
+        "title": "EquivalenceLinking",
+        "principle": "When a clue equates two attribute values (e.g., \"the person whose child is Alice loves cooking\"), assign both values to the same house.",
+        "when_to_apply": "Processing clues that state two attributes refer to the same entity.",
+        "example": "Assigning the child name \"Alice\" to one house and the cooking hobby to a different house, breaking the equivalence.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-39",
+          "zebralogic-lgp-test-6x4-36"
+        ],
+        "generation": 8,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_006",
+        "title": "FixedHouseAssignment",
+        "principle": "If a clue fixes an attribute to a specific house number (e.g., \"the doctorate is in house\u202f1\"), place that attribute in the indicated house and treat it as immutable.",
+        "when_to_apply": "Processing clues that specify an exact house number for an attribute.",
+        "example": "Ignoring the clue that the doctorate must be in house\u202f1 and allowing it to appear elsewhere.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-39",
+          "zebralogic-lgp-test-6x4-36"
+        ],
+        "generation": 8,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "zeb_ev_4_009",
+        "title": "ValidateJSONStructureAndSyntax",
+        "principle": "Before final output, ensure the JSON object is syntactically valid: proper brackets, commas, quotes, and matching keys/values.",
+        "when_to_apply": "Immediately before emitting the final answer.",
+        "example": "Producing JSON with a missing closing bracket or an extra trailing comma, causing a parse error.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-39",
+          "zebralogic-lgp-test-6x4-36"
+        ],
+        "generation": 8,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "zeb_ev_6_009",
+        "title": "CompactFinalAnswer",
+        "principle": "Place the solution JSON as the very last part of the response, with any reasoning before it, so the verifier can reliably extract the answer.",
+        "when_to_apply": "When constructing the final response after all reasoning is complete.",
+        "example": "Appending explanatory text after the JSON, which may be cut off by the token limit and hide the solution from the verifier.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-39",
+          "zebralogic-lgp-test-6x4-36"
+        ],
+        "generation": 8,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "zeb_ev_7_009",
+        "title": "OverlappingCategoryDisambiguation",
+        "principle": "When a value appears in multiple categories (e.g., a name also used as a child), treat each occurrence as belonging to its own category and keep the categories distinct.",
+        "when_to_apply": "Whenever a clue mentions a value that could belong to more than one attribute set.",
+        "example": "Treating the child name \"Alice\" as the same entity as the person named Alice, leading to duplicate assignments.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-39"
+        ],
+        "generation": 8,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "zeb_ev_8_009",
+        "title": "TransitiveEquivalenceLinking",
+        "principle": "When multiple equivalence clues form a chain (A\u202f=\u202fB, B\u202f=\u202fC), propagate the links so all linked attributes share the same house.",
+        "when_to_apply": "After processing all equivalence clues, run a transitive closure to merge linked groups.",
+        "example": "Linking child\u202f=\u202fAlice to cooking but forgetting that cooking is also linked to tennis, leaving tennis unconnected.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-39"
+        ],
+        "generation": 8,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_9_009",
+        "title": "ExactHouseDistance",
+        "principle": "When a clue says there are N houses between two entities, enforce that the absolute difference in their house numbers equals N\u202f+\u202f1.",
+        "when_to_apply": "Processing clues that specify a numeric gap, such as \"two houses between A and B\".",
+        "example": "Interpreting \"two houses between A and B\" as a difference of 2 (placing them two houses apart) instead of the required difference of 3.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-36",
+          "zebralogic-lgp-test-6x6-39"
+        ],
+        "generation": 9,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_evo_000",
+        "description": "Misinterpreting \"N houses between\" as \"N houses apart\" (using a difference of N instead of N+1).",
+        "why_it_happens": "The phrasing \"two houses between\" is often read as a simple offset, ignoring the houses that lie in between.",
+        "how_to_avoid": "When a clue mentions a number of houses between two entities, add one to that number to obtain the required absolute house-number difference.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 9
+      },
+      {
+        "mistake_id": "zeb_evo_001",
+        "description": "Placing the solution JSON before the end of the response or adding excessive text after it, causing truncation or the verifier to miss the answer.",
+        "why_it_happens": "The model continues generating reasoning after the JSON, exceeding the token limit or pushing the JSON out of the parser's view.",
+        "how_to_avoid": "Keep reasoning concise and ensure the JSON object is the very last output, with no trailing characters.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 9
+      }
+    ]
+  }
+}

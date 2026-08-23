@@ -1,0 +1,53 @@
+{
+  "manifest": {
+    "task": "maze",
+    "task_cfg": {
+      "env_id": "maze",
+      "max_turns_per_episode": 9,
+      "shortest_path_max_length": 8,
+      "shortest_path_min_length": 7,
+      "total_step_cap": 45,
+      "test_size": 256,
+      "inner_env_class": "envs.maze_env_adapter.MazeEnvAdapter",
+      "shapes": [
+        [
+          6,
+          6
+        ],
+        [
+          7,
+          6
+        ],
+        [
+          7,
+          7
+        ],
+        [
+          6,
+          7
+        ]
+      ]
+    },
+    "global_seed": 42,
+    "episodes_per_instance": 3,
+    "max_turns_per_episode": 9,
+    "system_prompt": "You are solving the same task across multiple episodes with a fixed total step budget. Each episode resets the environment but keeps the task identical. Leverage information gathered from earlier episodes to succeed faster. Think briefly and respond with actions inside \\boxed{} each turn. Overlong responses will be penalized.",
+    "orbit_repo": "/home/udhanuka_umass_edu/Scalar_Research/ORBIT",
+    "orbit_git_revision": "9b5d0e7",
+    "rllm": "shim"
+  },
+  "pools": {
+    "n_train": 512,
+    "n_eval": 256,
+    "distinct_train_mazes": 459,
+    "distinct_eval_mazes": 243,
+    "eval_seeds_walked": 181,
+    "n_eval_leaked": 49,
+    "n_eval_clean": 207,
+    "leaked_fraction": 0.19140625,
+    "eval_shortest_path_lens": {
+      "7": 166,
+      "8": 90
+    }
+  }
+}

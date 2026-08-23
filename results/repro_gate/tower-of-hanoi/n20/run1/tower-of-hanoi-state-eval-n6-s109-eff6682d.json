@@ -1,0 +1,24 @@
+{
+  "problem_id": "tower-of-hanoi-state-eval-n6-s109",
+  "run": 1,
+  "item_idx": 4,
+  "seed": 1843041414,
+  "is_correct": false,
+  "verifier_score": 0.0,
+  "prediction": "[]",
+  "finish_reason": "stop",
+  "raw_chars": 38190,
+  "reasoning_chars": 37399,
+  "final_chars": 791,
+  "elapsed_s": 160.8570728302002,
+  "usage": {
+    "completion_tokens": 15248,
+    "prompt_tokens": 581,
+    "total_tokens": 15829,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "029a032083ffbf7b06570f2041e5e364b0653ecc35ae826c3e2275a303d3b272"
+}

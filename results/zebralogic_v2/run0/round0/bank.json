@@ -1,0 +1,186 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_1_000",
+        "title": "Preserve exact case of attribute values",
+        "principle": "Output attribute values using the same spelling and case as listed in the problem; any deviation (e.g., capitalizing a color) will cause a mismatch with the expected answer.",
+        "when_to_apply": "When generating the final JSON answer for a zebra\u2011logic puzzle.",
+        "example": "Writing \"Green\" instead of \"green\" for a color attribute.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19",
+          "zebralogic-lgp-test-6x6-28"
+        ],
+        "generation": 1,
+        "confidence": 0.525
+      },
+      {
+        "skill_id": "zeb_ev_1_001",
+        "title": "Direct adjacency (directly left of)",
+        "principle": "Treat \"X is directly left of Y\" as X's house = Y's house - 1, preserving left\u2011right orientation.",
+        "when_to_apply": "When processing clues that specify \"directly left of\".",
+        "example": "Placing X two houses left of Y because the clue was misread as \"somewhere left of\".",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "zeb_ev_1_002",
+        "title": "Relative ordering (somewhere left of)",
+        "principle": "Treat \"X is somewhere to the left of Y\" as X's house < Y's house, without requiring adjacency.",
+        "when_to_apply": "When processing clues that use \"somewhere to the left/right of\".",
+        "example": "Assuming X must be immediately left of Y, placing them adjacent when they could be farther apart.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "zeb_ev_1_003",
+        "title": "Adjacency without orientation (next to each other)",
+        "principle": "Interpret \"X and Y are next to each other\" as |X - Y| = 1, with no implied left/right order.",
+        "when_to_apply": "When a clue says two items are next to each other.",
+        "example": "Fixing X left of Y when the clue only says they are adjacent.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "zeb_ev_1_004",
+        "title": "Exact distance (houses between)",
+        "principle": "When a clue says \"There are N houses between X and Y\", enforce |X - Y| = N + 1.",
+        "when_to_apply": "When processing clues that specify a number of houses between two items.",
+        "example": "Treating \"two houses between\" as distance 2 instead of 3.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "zeb_ev_1_005",
+        "title": "Combine consecutive adjacency constraints into a block",
+        "principle": "If clues create a chain like A left of B and B left of C, treat A\u2011B\u2011C as three consecutive houses in that order.",
+        "when_to_apply": "When multiple adjacency clues involve overlapping items.",
+        "example": "Placing volleyball, baseball, brown hair in non\u2011consecutive houses despite clues linking them consecutively.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "zeb_ev_1_006",
+        "title": "Equivalence linking",
+        "principle": "When a clue states \"X is the same as Y\" (e.g., \"the person with red hair is the person who loves white\"), assign both attributes to the same house.",
+        "when_to_apply": "When processing clues that equate two attributes.",
+        "example": "Assigning red hair to a different house than the white color.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "zeb_ev_1_007",
+        "title": "Fixed house assignment",
+        "principle": "If a clue fixes an attribute to a specific house (e.g., \"the person who loves white is in the fifth house\"), place that attribute in that house immediately.",
+        "when_to_apply": "When a clue gives an absolute house number.",
+        "example": "Leaving the white color unassigned to house 5 despite the clue.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "zeb_ev_1_008",
+        "title": "Exclusion constraints",
+        "principle": "Respect clues that forbid an attribute from a specific house (e.g., \"the person who loves tennis is not in the fifth house\") by eliminating that house from consideration.",
+        "when_to_apply": "When a clue contains \"not in\" or similar negation.",
+        "example": "Placing tennis in house 5 despite the restriction.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "zeb_ev_1_009",
+        "title": "Multi\u2011attribute equivalence",
+        "principle": "When a clue links several attributes together (e.g., \"the person who has auburn hair is the person who loves the stew\"), assign all linked attributes to the same house.",
+        "when_to_apply": "When a clue ties two or more attributes to the same person.",
+        "example": "Assigning auburn hair to a house with a different food.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_evo_000",
+        "description": "Capitalization mismatch for attribute values",
+        "why_it_happens": "The model defaults to title case when generating text, forgetting that the puzzle expects the exact case used in the problem statement.",
+        "how_to_avoid": "Copy attribute values verbatim from the problem description, preserving lower case (or the exact case shown).",
+        "source_level": "zebralogic",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-19"
+        ],
+        "generation": 1
+      },
+      {
+        "mistake_id": "zeb_evo_001",
+        "description": "Capitalization mismatch for phone model values",
+        "why_it_happens": "Brand names are treated as proper nouns and are automatically capitalized, which differs from the lower\u2011case strings given in the puzzle.",
+        "how_to_avoid": "Refer to the exact spelling of phone model strings as listed in the problem (usually all lower case) and output them unchanged.",
+        "source_level": "zebralogic",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-28"
+        ],
+        "generation": 1
+      },
+      {
+        "mistake_id": "zeb_evo_002",
+        "description": "Missing or ignoring constraints",
+        "why_it_happens": "The model may stop after satisfying a subset of clues, especially when the clue set is large and complex, leading to an apparently plausible but invalid grid.",
+        "how_to_avoid": "After constructing a candidate solution, systematically verify every clue; if any clue is unsatisfied, backtrack and adjust the assignments.",
+        "source_level": "zebralogic",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-28"
+        ],
+        "generation": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,198 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_1_000",
+        "title": "Consolidate Direct Equivalences",
+        "principle": "When a clue directly equates two attribute values, treat them as a linked group and propagate all related constraints across the puzzle.",
+        "when_to_apply": "Whenever a clue states that two specific values belong to the same house (e.g., \"Arnold's birthday is January\").",
+        "example": "Ignoring the equivalence and assigning Arnold without linking him to the January birthday, leading to duplicate or missing assignments.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-11",
+          "zebralogic-lgp-test-5x5-8"
+        ],
+        "generation": 16,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_1_001",
+        "title": "Assign Fixed Positions Immediately",
+        "principle": "If a clue pins an attribute to a specific house number, place it at once and propagate any other attributes tied to that value.",
+        "when_to_apply": "When a clue gives an exact house index for a value (e.g., \"Eric is in the fifth house\").",
+        "example": "Delaying the placement of Eric and later assigning him to a different house, causing contradictions with other clues.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-11",
+          "zebralogic-lgp-test-5x5-8"
+        ],
+        "generation": 16,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_1_003",
+        "title": "Enforce Adjacency for 'next to' and Ordered Left",
+        "principle": "Clues using \"next to\", \"directly left of\", or \"directly right of\" require the referenced houses to be consecutive in the specified direction.",
+        "when_to_apply": "When a clue mentions adjacency or direct ordering between two attributes.",
+        "example": "Treating \"directly left of\" as a non\u2011adjacent ordering and leaving a gap between the two houses.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-11",
+          "zebralogic-lgp-test-5x5-8"
+        ],
+        "generation": 16,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_1_006",
+        "title": "Output Solution in Expected JSON Table Format",
+        "principle": "The verifier expects a JSON object with a \"header\" array and a \"rows\" array; any deviation (missing keys, wrong ordering) will be rejected.",
+        "when_to_apply": "At the very end, before returning the answer.",
+        "example": "Returning a plain\u2011text table or a JSON object with a different key name, causing the parser to fail.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-11",
+          "zebralogic-lgp-test-5x5-8"
+        ],
+        "generation": 16,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "zeb_ev_1_007",
+        "title": "Keep Reasoning Concise to Avoid Token Truncation",
+        "principle": "Limit explanatory text before the final answer so the response stays within the model's token budget; excess text can truncate the solution.",
+        "when_to_apply": "During the reasoning phase, keep explanations brief and avoid unnecessary repetition.",
+        "example": "Writing an overly long step\u2011by\u2011step narrative that pushes the final JSON beyond the token limit, resulting in a missing or incomplete answer.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-11",
+          "zebralogic-lgp-test-5x5-8"
+        ],
+        "generation": 16,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_2_008",
+        "title": "Preserve Original Attribute Tokens (Case and Spelling)",
+        "principle": "Copy attribute values exactly as they appear in the prompt, preserving capitalization, spacing, and spelling.",
+        "when_to_apply": "When constructing the final JSON rows, use the exact strings from the puzzle description.",
+        "example": "Changing \"jan\" to \"January\" or altering \"high school\" to \"High School\", causing a mismatch with the reference solution.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-11",
+          "zebralogic-lgp-test-5x5-8"
+        ],
+        "generation": 16,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_7_009",
+        "title": "Interpret Directional Ordering Correctly",
+        "principle": "Distinguish between \"somewhere to the left of\" (non\u2011adjacent ordering) and \"directly left of\" (adjacent ordering) and map them to house indices accordingly.",
+        "when_to_apply": "When a clue mentions left/right positioning, check whether it specifies adjacency or just relative order.",
+        "example": "Interpreting \"somewhere to the left of\" as requiring immediate adjacency, eliminating valid placements.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-11",
+          "zebralogic-lgp-test-5x5-8"
+        ],
+        "generation": 16,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_5_009",
+        "title": "Enforce Exclusion Constraints for Specific House Numbers",
+        "principle": "When a clue forbids an attribute from a particular house, enforce that exclusion throughout the deduction process.",
+        "when_to_apply": "Whenever a clue explicitly states that a value cannot be in a given house (e.g., \"Bob cannot be house1\").",
+        "example": "Allowing Bob to be placed in house1 despite a clue that forbids it, leading to an invalid solution.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-11",
+          "zebralogic-lgp-test-5x5-8"
+        ],
+        "generation": 16,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "zeb_ev_15_009",
+        "title": "Enforce Exact Distance Constraints",
+        "principle": "When a clue specifies an exact number of houses between two attributes (including zero for adjacency), enforce that precise offset.",
+        "when_to_apply": "When a clue mentions a specific distance (e.g., \"There is one house between X and Y\" or \"directly left of\" which is distance zero).",
+        "example": "Ignoring a \"one house between\" clue and placing the two attributes adjacent, violating the constraint.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-11",
+          "zebralogic-lgp-test-5x5-8"
+        ],
+        "generation": 16,
+        "confidence": 0.68
+      },
+      {
+        "skill_id": "zeb_ev_16_009",
+        "title": "Disambiguate Overlapping Attribute References",
+        "principle": "When the same word appears in multiple attribute categories, determine which category a clue refers to before applying the constraint.",
+        "when_to_apply": "If a clue contains a term that could belong to more than one category (e.g., \"high school\" could be education or a hobby name).",
+        "example": "Mistaking \"high school\" as a hobby and assigning it to the hobby column, causing a conflict with the education column.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-11",
+          "zebralogic-lgp-test-5x5-8"
+        ],
+        "generation": 16,
+        "confidence": 0.55
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_err_000",
+        "description": "Generating overly long reasoning before the final answer, causing token truncation.",
+        "why_it_happens": "The model keeps elaborating on deductions without accounting for the token limit, pushing the final JSON out of the response.",
+        "how_to_avoid": "Limit the reasoning to essential steps and place the final JSON early enough to stay within the token budget.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 16
+      },
+      {
+        "mistake_id": "zeb_err_001",
+        "description": "Misinterpreting directional ordering clues (left/right).",
+        "why_it_happens": "Confusing \"left of\" with \"right of\" or swapping the direction when converting natural language to house indices.",
+        "how_to_avoid": "Map \"left\" to a lower house number and \"right\" to a higher house number consistently; double\u2011check each directional clue.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 16
+      },
+      {
+        "mistake_id": "zeb_err_003",
+        "description": "Treating adjacency clues as non\u2011adjacent ordering, leading to placement errors.",
+        "why_it_happens": "Assuming \"next to\" or \"directly left of\" only indicates relative order, not that the houses must be consecutive.",
+        "how_to_avoid": "Enforce that adjacent clues require house indices to differ by exactly one in the specified direction.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 16
+      },
+      {
+        "mistake_id": "zeb_evo_004",
+        "description": "Misinterpreting exact distance clues (e.g., \"one house between\") as adjacency or ignoring the distance.",
+        "why_it_happens": "Overlooking the numeric gap specified, treating the two attributes as adjacent or unrelated.",
+        "how_to_avoid": "Translate distance clues into a concrete offset (e.g., \"one house between\" means index difference of 2) and enforce it.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 16
+      }
+    ]
+  }
+}

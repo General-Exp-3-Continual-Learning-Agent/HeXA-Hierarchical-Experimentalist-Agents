@@ -1,0 +1,222 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Preserve stick orientation",
+        "principle": "When moving a matchstick, keep its original orientation (vertical, horizontal, or diagonal); sticks cannot be rotated.",
+        "when_to_apply": "Before relocating a stick, note its orientation and ensure the destination uses the same orientation.",
+        "example": "Moving a vertical stick from an I and placing it as a diagonal in a V, creating an invalid shape.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_072",
+          "matchstick_046",
+          "matchstick_075",
+          "matchstick_063"
+        ],
+        "generation": 18,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_003",
+        "title": "No addition or removal of sticks",
+        "principle": "Exactly one existing stick may be moved; you cannot create a new stick or discard a stick without placing it elsewhere.",
+        "when_to_apply": "Track the stick you take and make sure you add it to another character, keeping the total stick count unchanged.",
+        "example": "Removing a diagonal from a V to turn it into I without adding that diagonal to another symbol.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_072",
+          "matchstick_046",
+          "matchstick_075",
+          "matchstick_063"
+        ],
+        "generation": 18,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Maintain valid characters",
+        "principle": "After moving a stick, every symbol must still be a legal Roman numeral (I, V, X, L, C, D, M) or a valid operator (+, -, =).",
+        "when_to_apply": "Check each character after the move to confirm it matches a known numeral or operator shape.",
+        "example": "Leaving a V with only one diagonal, which is not a recognized Roman numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_072",
+          "matchstick_046",
+          "matchstick_075",
+          "matchstick_063"
+        ],
+        "generation": 18,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Verify arithmetic correctness",
+        "principle": "Convert the Roman numerals on both sides of the equation to Arabic numbers and ensure the equality holds.",
+        "when_to_apply": "After finding a candidate stick move, compute the numeric values to confirm the equation is true.",
+        "example": "Changing IV to IX but forgetting to recalculate, resulting in a false equality.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_072",
+          "matchstick_046",
+          "matchstick_075",
+          "matchstick_063"
+        ],
+        "generation": 18,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_007",
+        "title": "Do not break X or V",
+        "principle": "X and V each consist of exactly two diagonal sticks; after moving a stick, each must still contain two diagonals forming a valid shape.",
+        "when_to_apply": "When relocating a diagonal from a V or X, ensure the remaining diagonal and the moved one together still form a proper V or X.",
+        "example": "Removing one diagonal from V without repositioning it, leaving a single diagonal.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_072",
+          "matchstick_046",
+          "matchstick_075",
+          "matchstick_063"
+        ],
+        "generation": 18,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_7_009",
+        "title": "Answer formatting",
+        "principle": "The final response must end with a line exactly matching 'Correct version of the equation: <equation>'.",
+        "when_to_apply": "After solving, output the answer line in the required format, with uppercase letters and collapsed whitespace.",
+        "example": "Omitting the required line or using a different phrasing, causing the answer to be ignored.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_072",
+          "matchstick_046",
+          "matchstick_075",
+          "matchstick_063"
+        ],
+        "generation": 18,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_12_009",
+        "title": "Do not break I",
+        "principle": "When moving the only stick from an I (a single vertical stick), the I character must be removed entirely; you cannot leave a half\u2011I.",
+        "when_to_apply": "If you take the vertical stick from an I, delete the I symbol from the equation.",
+        "example": "Removing the vertical stick from I and leaving a stray placeholder that is not a valid character.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_072",
+          "matchstick_046",
+          "matchstick_075",
+          "matchstick_063"
+        ],
+        "generation": 18,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "mat_ev_18_008",
+        "title": "Diagonal stick reposition for V\u2194X",
+        "principle": "When a V or X appears, you can change it to the other by moving one of its diagonal sticks to a new location, preserving diagonal orientation.",
+        "when_to_apply": "If the equation can be balanced by converting a V to X (or X to V), reposition a diagonal stick accordingly.",
+        "example": "Attempting to turn V into X by removing a diagonal without placing it, leaving an invalid V.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_072",
+          "matchstick_046",
+          "matchstick_075",
+          "matchstick_063"
+        ],
+        "generation": 18,
+        "confidence": 0.48
+      },
+      {
+        "skill_id": "mat_ev_18_009",
+        "title": "Vertical stick transfer from I to V/X to create VI or XI",
+        "principle": "If the equation can be balanced by adding an I after a V or X, move a vertical stick from an existing I to that numeral, forming VI or XI.",
+        "when_to_apply": "When a V or X needs an extra I to become a valid numeral that balances the equation.",
+        "example": "Moving a vertical stick from I to V but leaving the original I unchanged, resulting in an extra stick.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 18,
+        "confidence": 0.48
+      },
+      {
+        "skill_id": "mat_ev_19_009",
+        "title": "Preserve exactly one equals sign",
+        "principle": "After moving a stick, the equation must still contain exactly one '=' operator; you cannot remove it or turn it into another operator without replacing it elsewhere.",
+        "when_to_apply": "Before finalizing a move, verify that a single '=' remains in the equation.",
+        "example": "Moving a horizontal stick from the '=' sign to a minus sign, leaving the equation without any '='.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_072",
+          "matchstick_046",
+          "matchstick_075",
+          "matchstick_063"
+        ],
+        "generation": 19,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Failing to verify arithmetic correctness",
+        "why_it_happens": "The model focuses on the visual stick move and forgets to check the numeric result.",
+        "how_to_avoid": "After each candidate transformation, convert both sides to Arabic numbers and confirm the equality.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Incorrect answer format",
+        "why_it_happens": "The model omits or mis\u2011phrases the required final line.",
+        "how_to_avoid": "Always end the response with the exact line 'Correct version of the equation: <equation>'.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Discarded stick (failed to relocate)",
+        "why_it_happens": "The model treats the operation as removal rather than relocation of a stick.",
+        "how_to_avoid": "Track the stick you take and ensure you place it onto another character.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Breaking a numeral by moving a stick away, leaving an invalid shape",
+        "why_it_happens": "The model ignores the structural composition of Roman numerals.",
+        "how_to_avoid": "After moving a stick, verify that each numeral still matches its standard stick pattern.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Creating invalid Roman numeral (e.g., IIII, invalid ordering)",
+        "why_it_happens": "The model treats characters as arbitrary stick collections without respecting numeral rules.",
+        "how_to_avoid": "Check that each resulting numeral follows standard Roman numeral syntax (no four repeats, correct subtractive forms).",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 18
+      }
+    ]
+  }
+}

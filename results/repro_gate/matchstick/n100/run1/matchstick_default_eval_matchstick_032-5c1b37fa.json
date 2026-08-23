@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_032",
+  "run": 1,
+  "item_idx": 32,
+  "seed": 1843041442,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "XII - II = X",
+  "finish_reason": "stop",
+  "raw_chars": 78139,
+  "reasoning_chars": 78090,
+  "final_chars": 49,
+  "elapsed_s": 233.5017852783203,
+  "usage": {
+    "completion_tokens": 19140,
+    "prompt_tokens": 460,
+    "total_tokens": 19600,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "7f450ced2abd9c75ea6ed494741ae68db697922864fc2bf207f4c72a06403211"
+}

@@ -1,0 +1,64 @@
+{
+  "level": "catapult",
+  "model": "unknown",
+  "seeds": [
+    24,
+    25,
+    26
+  ],
+  "total_seeds": 3,
+  "successes": 1,
+  "success_rate": 0.3333333333333333,
+  "avg_iterations": 21.333333333333332,
+  "results": [
+    {
+      "seed": 24,
+      "success": false,
+      "action": null,
+      "iterations": 25,
+      "elapsed_time": 210.62938924971968,
+      "skills_used": [
+        "Efficient 3-Step Workflow: predict \u2192 trace \u2192 simulate",
+        "Verify Green Ball Reaches Basket X AND Y Range via trace_green_ball",
+        "Canonical Default Starting Placement: x=0.65, y=0.0, r=1.4",
+        "Adaptive X Fallback When Canonical Placement is Invalid",
+        "Incremental Radius Tuning as First Response to Short Landing",
+        "When Radius Tuning Plateaus, Shift Strike X from 0.65 to 0.0"
+      ]
+    },
+    {
+      "seed": 25,
+      "success": true,
+      "action": [
+        -0.3,
+        0.0,
+        1.4
+      ],
+      "iterations": 14,
+      "elapsed_time": 83.55966257303953,
+      "skills_used": [
+        "Efficient 3-Step Workflow: predict \u2192 trace \u2192 simulate",
+        "Verify Green Ball Reaches Basket X AND Y Range via trace_green_ball",
+        "Canonical Default Starting Placement: x=0.65, y=0.0, r=1.4",
+        "Adaptive X Fallback When Canonical Placement is Invalid",
+        "Incremental Radius Tuning as First Response to Short Landing",
+        "When Radius Tuning Plateaus, Shift Strike X from 0.65 to 0.0"
+      ]
+    },
+    {
+      "seed": 26,
+      "success": false,
+      "action": null,
+      "iterations": 25,
+      "elapsed_time": 386.62756767030805,
+      "skills_used": [
+        "Efficient 3-Step Workflow: predict \u2192 trace \u2192 simulate",
+        "Verify Green Ball Reaches Basket X AND Y Range via trace_green_ball",
+        "Canonical Default Starting Placement: x=0.65, y=0.0, r=1.4",
+        "Adaptive X Fallback When Canonical Placement is Invalid",
+        "Incremental Radius Tuning as First Response to Short Landing",
+        "When Radius Tuning Plateaus, Shift Strike X from 0.65 to 0.0"
+      ]
+    }
+  ]
+}

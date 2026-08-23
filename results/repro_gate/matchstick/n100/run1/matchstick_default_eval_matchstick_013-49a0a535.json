@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_013",
+  "run": 1,
+  "item_idx": 13,
+  "seed": 1843041423,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "XII = XV - III",
+  "finish_reason": "stop",
+  "raw_chars": 28465,
+  "reasoning_chars": 27510,
+  "final_chars": 955,
+  "elapsed_s": 68.27302718162537,
+  "usage": {
+    "completion_tokens": 6549,
+    "prompt_tokens": 459,
+    "total_tokens": 7008,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "bc48ed2cf7ee8dd9bac339359f8c8f5cdd4ae70cd3d32571b95ea2ad0bc84483"
+}

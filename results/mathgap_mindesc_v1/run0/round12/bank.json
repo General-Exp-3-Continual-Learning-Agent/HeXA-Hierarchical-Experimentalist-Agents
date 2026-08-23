@@ -1,0 +1,197 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Signed 'has N more than'",
+        "principle": "When a statement says 'X has N more than Y', translate it to X = Y + N (add N to Y).",
+        "when_to_apply": "Whenever a statement directly specifies a numeric difference using the phrase 'has N more than'.",
+        "example": "Interpreting 'Alice has 3 more apples than Bob' as Alice = Bob - 3 (subtracting instead of adding).",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 8,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_003",
+        "title": "Allow negative differences",
+        "principle": "When a statement explicitly refers to a signed difference, such as 'the difference between A and B is N', interpret it as A - B = N, allowing the result to be negative.",
+        "when_to_apply": "When a statement uses the phrase 'difference between X and Y' without qualifiers like 'absolute'.",
+        "example": "Treating 'the difference between A and B is 5' as |A - B| = 5, ignoring the sign.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 8,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Model transfers as net changes",
+        "principle": "For a transfer statement 'X gives N to Y', subtract N from X's current count and add N to Y's current count; apply both changes to the current state.",
+        "when_to_apply": "Whenever a statement describes a person giving a number of items to another.",
+        "example": "For 'X gives 2 to Y', adding 2 to both X and Y instead of moving the items.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 8,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Systematic equation solving",
+        "principle": "Introduce a variable for each person, translate every statement into a linear equation (or inequality), and solve the resulting system simultaneously.",
+        "when_to_apply": "When the problem contains multiple interrelated statements that together determine the unknowns.",
+        "example": "Solving each equation in isolation without considering the whole system, leading to inconsistent values.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 8,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_2_008",
+        "title": "Combined sum interpretation",
+        "principle": "For statements like 'X has N more than Y and Z combined', first sum Y and Z, then add N: X = (Y + Z) + N.",
+        "when_to_apply": "When a statement compares a person's count to the combined total of two or more others plus an offset.",
+        "example": "Interpreting 'X has 5 more than Y and Z combined' as X = Y + 5 and X = Z + 5 separately.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 8,
+        "confidence": 0.45
+      },
+      {
+        "skill_id": "mat_ev_2_009",
+        "title": "Increase by factor interpretation",
+        "principle": "When a statement says 'the number of X increases by k times', multiply the original amount by k: new X = old X * k.",
+        "when_to_apply": "When a statement describes a multiplicative increase rather than an additive one.",
+        "example": "Interpreting 'X increases by 3 times' as X = X + 3 instead of X = 3 * X.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 8,
+        "confidence": 0.45
+      },
+      {
+        "skill_id": "mat_ev_4_009",
+        "title": "Equal split and redistribution handling",
+        "principle": "If a person splits all their items equally among a set of recipients, set the splitter's count to zero and give each recipient an equal share of the original total.",
+        "when_to_apply": "When a statement says someone splits all of their items equally among others.",
+        "example": "When A splits all items among B and C, incorrectly keeping A's count unchanged.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 8,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "mat_ev_6_009",
+        "title": "Absolute difference for 'has more than' in relational equations",
+        "principle": "In equations of the form 'the number of X that Y has more than Z equals \u2026', interpret the left side as a non\u2011negative absolute difference |Y \u2212 Z|.",
+        "when_to_apply": "When a relational statement uses the phrase 'has more than' without an explicit number and equates it to another difference.",
+        "example": "Treating the left side as a signed difference Y - Z, which can be negative, instead of the absolute value.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 8,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Signed difference phrasing",
+        "principle": "When a statement uses the phrase 'difference between X and Y' (without qualifiers like 'absolute'), interpret it as a signed difference X - Y, allowing negative results.",
+        "when_to_apply": "Whenever a statement mentions 'difference between' without specifying absolute.",
+        "example": "Interpreting 'the difference between A and B' as |A - B|, ignoring sign.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 8,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_9_009",
+        "title": "Sequential statement processing",
+        "principle": "Process the statements in the order given: direct count statements set the current count at that point, transfer statements adjust those counts, and relational equations refer to the current counts after previous updates. Do not treat all counts as final simultaneously.",
+        "when_to_apply": "Whenever the problem mixes direct counts, transfers, and relational equations, especially when a direct count precedes a transfer involving the same person.",
+        "example": "Keeping Penelope at 2 grapes after she gives 5 grapes to Julious, ignoring the later transfer.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 9,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Treating 'X has N' as an initial count before transfers",
+        "why_it_happens": "The model assumes all direct counts are final and ignores later transfer statements that modify those counts.",
+        "how_to_avoid": "Apply statements sequentially; treat direct counts as the current state before any subsequent transfers.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 8
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Misinterpreting split/redistribute statements",
+        "why_it_happens": "The model keeps the splitter's items instead of setting them to zero after an equal split.",
+        "how_to_avoid": "When a person splits all items equally among others, set the splitter's count to zero and distribute the total equally.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 8
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Applying transfers in the wrong direction",
+        "why_it_happens": "The model adds the transferred amount to the giver instead of subtracting it.",
+        "how_to_avoid": "For 'X gives N to Y', subtract N from X and add N to Y.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 8
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Treating 'has more than' in relational equations as signed difference, leading to negative values",
+        "why_it_happens": "The model interprets the phrase as a signed difference, which can be negative, contradicting the intended non\u2011negative absolute difference.",
+        "how_to_avoid": "Interpret the left side of such relational equations as an absolute difference (non\u2011negative).",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 8
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Misinterpreting 'difference between X and Y' as absolute difference, leading to ambiguous solutions",
+        "why_it_happens": "The model assumes the difference is always non\u2011negative, losing sign information needed for the system.",
+        "how_to_avoid": "Treat 'difference between X and Y' as a signed difference X - Y, allowing negative results.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 8
+      }
+    ]
+  }
+}

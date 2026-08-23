@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_098",
+  "run": 1,
+  "item_idx": 98,
+  "seed": 1843041508,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "IV = XX - XVI",
+  "finish_reason": "stop",
+  "raw_chars": 30736,
+  "reasoning_chars": 29594,
+  "final_chars": 1142,
+  "elapsed_s": 92.37850522994995,
+  "usage": {
+    "completion_tokens": 7291,
+    "prompt_tokens": 459,
+    "total_tokens": 7750,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "7da34fd6ae6f0e6cd6df48514cc8f14c0eec47fc5c1e50a578269f3e3d76c75a"
+}

@@ -1,0 +1,170 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_16_000",
+        "title": "Signed 'has more than' interpretation",
+        "principle": "Interpret any phrase of the form 'X has more than Y' as a signed difference X\u00a0\u2212\u00a0Y\u00a0=\u00a0N, preserving the order given.",
+        "when_to_apply": "When a statement explicitly says that one person has more than another.",
+        "example": "Treating 'X has more than Y' as an absolute difference |X\u2212Y| = N instead of X\u2212Y = N.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 19,
+        "confidence": 0.45
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Model transfers as net changes",
+        "principle": "When a transfer 'X gives N to Y' occurs, subtract N from X and add N to Y, updating each person's count.",
+        "when_to_apply": "Whenever a transfer statement appears in the problem.",
+        "example": "Adding N to both X and Y when X gives N to Y, instead of subtracting from X and adding to Y.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 19,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Systematic equation solving",
+        "principle": "Introduce a distinct variable for each person and translate every relevant statement into a linear equation, then solve the resulting system.",
+        "when_to_apply": "After all constraints (counts, differences, transfers) have been expressed as equations.",
+        "example": "Ignoring one of the equations and solving with insufficient constraints, leading to multiple possible solutions.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 19,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Signed difference phrasing",
+        "principle": "Interpret 'difference between X and Y' as the signed difference X\u00a0\u2212\u00a0Y, preserving the order presented.",
+        "when_to_apply": "When a statement refers to the 'difference between' two quantities.",
+        "example": "Interpreting 'difference between X and Y' as Y\u00a0\u2212\u00a0X instead of X\u00a0\u2212\u00a0Y.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 19,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_12_008",
+        "title": "Include transfers as constraints before solving relational equations",
+        "principle": "Apply all transfer statements first, updating each person's count, and then use those updated counts when translating relational equations.",
+        "when_to_apply": "Whenever a problem contains both transfer statements and relational/difference statements.",
+        "example": "Using a relational equation that involves a person before applying the transfer that changes that person's count.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 19,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_14_009",
+        "title": "Direct counts as initial constraints",
+        "principle": "Treat statements that give an explicit count (e.g., 'X has N items') as the initial amount before any transfers.",
+        "when_to_apply": "When a problem provides a direct count for a person who may also be involved in transfers.",
+        "example": "Treating a direct count as the final amount after transfers, without adjusting for the transfer effect.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 19,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_15_009",
+        "title": "Answer formatting",
+        "principle": "Output the final answer using the exact required format: 'The final answer is \\boxed{<integer>}'.",
+        "when_to_apply": "When producing the final answer for any mathgap problem.",
+        "example": "Writing just the number or using a different LaTeX command instead of \\boxed{}.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 19,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_20_007",
+        "title": "Direct counts with transfers",
+        "principle": "Treat explicit count statements as describing the initial amount before any transfers. After applying all transfers, compute each person's final count (initial count plus net transfer change) and use these final counts in all relational equations.",
+        "when_to_apply": "Whenever a problem includes both explicit counts and transfer statements involving the same individuals.",
+        "example": "Assuming a person\u2019s given count remains unchanged after they give or receive items, ignoring the transfer effect.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_7",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_3"
+        ],
+        "generation": 20,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_20_008",
+        "title": "Aggregate multiple transfers per person",
+        "principle": "Sum all incoming and outgoing transfer amounts for each person to obtain a net change, then apply that net change to the person's initial count before using it in relational equations.",
+        "when_to_apply": "When a problem contains several transfer statements that involve the same person.",
+        "example": "Applying each transfer sequentially and forgetting to account for one of them, resulting in an incorrect net change.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_3"
+        ],
+        "generation": 20,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Treating direct count statements as final counts after transfers",
+        "why_it_happens": "The model assumes the given count already reflects any later transfers, ignoring that transfers modify the initial amount.",
+        "how_to_avoid": "Interpret direct counts as initial amounts; apply all transfers first, then adjust those counts before using them in equations.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 19
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Applying transfers in the wrong direction",
+        "why_it_happens": "The model reverses the giver/receiver roles, adding to the giver and subtracting from the receiver.",
+        "how_to_avoid": "Remember that 'X gives N to Y' means X loses N and Y gains N; update X\u00a0\u2190\u00a0X\u00a0\u2212\u00a0N, Y\u00a0\u2190\u00a0Y\u00a0+\u00a0N.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 19
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Misinterpreting signed difference statements as absolute differences",
+        "why_it_happens": "The model drops the order information and treats 'difference between X and Y' as |X\u2212Y|.",
+        "how_to_avoid": "Preserve the order given: translate 'difference between X and Y' to X\u00a0\u2212\u00a0Y, not the absolute value.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 19
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Misinterpreting multiplicative increase statements as addition",
+        "why_it_happens": "The model reads 'increases by N times' as 'adds N' instead of multiplying.",
+        "how_to_avoid": "When a statement says 'increases by N times', multiply the original amount by N (or by (1+N) if phrased as 'N times more').",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 19
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Applying relational equations before applying transfers",
+        "why_it_happens": "The model uses pre\u2011transfer counts in difference equations that are meant to hold after all transfers have occurred.",
+        "how_to_avoid": "First apply every transfer (regardless of where it appears in the text), then translate all relational statements using the resulting final counts.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 20
+      }
+    ]
+  }
+}

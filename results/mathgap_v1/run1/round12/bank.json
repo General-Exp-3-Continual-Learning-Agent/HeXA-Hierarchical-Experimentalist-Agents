@@ -1,0 +1,198 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Signed Difference Interpretation",
+        "principle": "Interpret any phrase of the form \"the difference between the number of X and Y\" as the signed subtraction X\u202f\u2212\u202fY, preserving the order of the names, not as an absolute value.",
+        "when_to_apply": "Whenever a statement mentions \"the difference between the number of ... and ...\" in a peach/grape puzzle.",
+        "example": "Treating \"the difference between Alice's and Bob's oranges\" as |Alice\u202f\u2212\u202fBob| instead of Alice\u202f\u2212\u202fBob.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 12,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_3_001",
+        "title": "Directed More-Than Interpretation",
+        "principle": "Translate statements like \"A has N more (or fewer) items than B\" into the equation A = B + N (or A = B \u2212 N), handling combined forms that mention multiple comparisons.",
+        "when_to_apply": "When encountering \"has N more than\" or \"has N fewer than\" phrasing.",
+        "example": "Interpreting \"Taylor has 5 more oranges than Adolfo\" as Taylor = Adolfo + 5, but mistakenly discarding solutions where the result would be negative.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 12,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_3_003",
+        "title": "Immediate Direct Assignment Update",
+        "principle": "When a direct count statement \"A has N items\" appears, set A\u2019s current count to N at that moment, overwriting any previous value; later transfers may change it.",
+        "when_to_apply": "On a direct count statement.",
+        "example": "Assuming a later statement \"A has N items\" fixes A\u2019s count forever and ignoring subsequent transfers that change A\u2019s amount.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 12,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_9_009",
+        "title": "Temporal Consistency of Transfers and Relational Statements",
+        "principle": "Process statements in the given order; apply each transfer immediately before evaluating any later relational statement, so that later equations see the updated counts.",
+        "when_to_apply": "Whenever a transfer statement appears before a relational statement involving the same persons.",
+        "example": "Delaying a transfer until after all other statements, causing a later relational equation to use stale counts.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 12,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Full Difference Equality Interpretation",
+        "principle": "For statements equating one difference to another, translate them into (A\u202f\u2212\u202fB)\u202f=\u202f(C\u202f\u2212\u202fD), preserving the order on each side; do not collapse to a single\u2011variable assignment.",
+        "when_to_apply": "When encountering \"the number of X that A has more than B is equal to the difference between the number of X that C and D have.\"",
+        "example": "Misreading \"(A - B) = (C - D)\" as \"A = C - D\" and dropping B.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 12,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_10_007",
+        "title": "Switch (Swap)",
+        "principle": "When a statement says two persons \"switch\" or \"exchange\" their items, exchange their current counts without altering the total number of items.",
+        "when_to_apply": "When encountering a \"switch\" or \"exchange\" phrasing.",
+        "example": "Interpreting \"A and B switch their oranges\" as both keeping their original counts instead of swapping them.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 12,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_10_009",
+        "title": "Quantity Modification (Multiplication and Subtraction)",
+        "principle": "When a statement says a person \"eats N\" of an item, subtract N from their count; when it says they \"multiply\" or \"double\" their items, apply the arithmetic operation to their current count.",
+        "when_to_apply": "On consumption, addition, subtraction, or multiplication statements.",
+        "example": "Forgetting to subtract the eaten amount from the person's count.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 12,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_11_009",
+        "title": "Temporal Snapshot for Relational Statements",
+        "principle": "Treat each relational statement as a constraint on the counts at the moment it appears; later changes (e.g., transfers) do not retroactively alter that constraint.",
+        "when_to_apply": "When processing any relational equation after earlier statements.",
+        "example": "Adjusting a previously satisfied difference equality after a later transfer, thereby violating the snapshot rule.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 12,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_12_008",
+        "title": "Conditional Transfer of All Items",
+        "principle": "If a transfer statement says a person gives all their items to another, set the giver\u2019s count to zero and add that amount to the receiver immediately.",
+        "when_to_apply": "When a transfer phrase includes \"all\" or \"everything\".",
+        "example": "Misinterpreting \"X gives all oranges to Y\" as a fixed\u2011number transfer rather than moving the entire current amount.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 12,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_13_009",
+        "title": "Complete Statement Extraction",
+        "principle": "Extract every statement about the target item (direct counts, differences, transfers, equality of differences) and translate each into an equation before solving; missing any statement leaves the system underdetermined and leads to incorrect answers.",
+        "when_to_apply": "At the start of solving a mathgap problem, before any algebraic manipulation.",
+        "example": "Ignoring a transfer statement or stopping after a few equations and guessing the answer.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 13,
+        "confidence": 0.75
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Treating \u2018difference between the number of X and Y\u2019 as absolute value instead of signed subtraction.",
+        "why_it_happens": "The word \u201cdifference\u201d is often colloquially taken to mean magnitude, causing loss of sign information.",
+        "how_to_avoid": "Always keep the order of the two names and translate to X\u202f\u2212\u202fY, preserving sign.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Delaying the effect of transfer statements until after all other statements have been processed.",
+        "why_it_happens": "Model treats transfers as separate from the timeline, forgetting that later equations need the updated counts.",
+        "how_to_avoid": "Process statements sequentially; when a transfer appears, update giver and receiver counts before any subsequent statements.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Considering a direct count as a fixed initial value that cannot be changed by later transfers.",
+        "why_it_happens": "Belief that \u201chas N items\u201d sets a static baseline that never changes.",
+        "how_to_avoid": "Recognize that direct counts set the current count at that moment; later transfers can modify it.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Misinterpreting a difference equality as a direct assignment to a single variable, ignoring the second term.",
+        "why_it_happens": "Over\u2011simplifying \u201c(A\u202f\u2212\u202fB) = (C\u202f\u2212\u202fD)\u201d to \u201cA = C\u202f\u2212\u202fD\u201d.",
+        "how_to_avoid": "Translate the whole equality preserving both differences: (A\u202f\u2212\u202fB)\u202f=\u202f(C\u202f\u2212\u202fD).",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Incomplete processing of problem statements: stopping after a subset of constraints or ignoring many statements.",
+        "why_it_happens": "Model may assume early deductions are sufficient or run out of time/space, leading to an underdetermined system.",
+        "how_to_avoid": "Systematically parse the entire problem, extract every relevant statement, and include all resulting equations before solving.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 13
+      }
+    ]
+  }
+}

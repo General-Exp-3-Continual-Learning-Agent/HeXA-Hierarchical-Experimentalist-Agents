@@ -1,0 +1,181 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Signed 'has N more than'",
+        "principle": "When a statement directly says 'X has N more than Y', translate it to X = Y + N (add N to Y).",
+        "when_to_apply": "Whenever a sentence explicitly states that one person has a specific number more than another.",
+        "example": "Interpreting 'X has 2 more than Y' as X = Y - 2 instead of X = Y + 2.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_0-idx_13"
+        ],
+        "generation": 11,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Model transfers as net changes",
+        "principle": "For a transfer statement 'X gives N to Y', subtract N from X's current count and add N to Y's current count.",
+        "when_to_apply": "Whenever the problem contains a sentence of the form 'X gives N to Y'.",
+        "example": "Adding N to the giver and subtracting N from the receiver.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_0-idx_13"
+        ],
+        "generation": 11,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Systematic equation solving",
+        "principle": "Introduce a variable for each person, translate every statement into a linear equation (or inequality).",
+        "when_to_apply": "When the problem contains multiple relational statements that can be expressed as linear equations.",
+        "example": "Leaving variables undefined and not forming equations for each statement.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_0-idx_13"
+        ],
+        "generation": 11,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_2_009",
+        "title": "Increase by factor interpretation",
+        "principle": "When a statement says 'the number of X increases by k times', multiply the original amount by k to get the new amount.",
+        "when_to_apply": "When a sentence mentions a multiplicative increase such as 'doubles' or 'triples'.",
+        "example": "Treating 'increases by 2 times' as adding 2 instead of multiplying by 2.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 11,
+        "confidence": 0.45
+      },
+      {
+        "skill_id": "mat_ev_4_009",
+        "title": "Equal split and redistribution handling",
+        "principle": "If a person splits all their items equally among a set of recipients, set the splitter's count to zero and add the appropriate share to each recipient.",
+        "when_to_apply": "When a sentence says someone splits all of their items equally among other people.",
+        "example": "Giving each recipient the full amount instead of dividing equally.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_3-l_200-diverse-idx_10"
+        ],
+        "generation": 11,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Signed difference phrasing",
+        "principle": "When a statement uses the phrase 'difference between X and Y' (without qualifiers like 'absolute'), interpret it as X - Y (signed difference).",
+        "when_to_apply": "Whenever a sentence mentions the 'difference between' two quantities without specifying absolute value.",
+        "example": "Interpreting 'difference between X and Y' as |X - Y| instead of X - Y.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_0-idx_13"
+        ],
+        "generation": 11,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_9_009",
+        "title": "Sequential statement processing",
+        "principle": "Process the statements in the order given: direct count statements set the current count at that point.",
+        "when_to_apply": "When the problem description presents statements that could affect each other and order matters.",
+        "example": "Applying a relational equation before processing a preceding transfer that changes the involved counts.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_0-idx_13"
+        ],
+        "generation": 11,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_11_008",
+        "title": "Signed 'has more than' in relational equations",
+        "principle": "When a relational statement says 'the number of X that Y has more than Z' (or similar) without a number, interpret it as a signed difference X - Y = ...",
+        "when_to_apply": "Whenever a sentence equates a 'has more than' difference to another difference without giving a numeric offset.",
+        "example": "Treating 'X has more than Y' in such an equation as X = Y + N instead of using the signed difference X - Y.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_0-idx_13"
+        ],
+        "generation": 11,
+        "confidence": 0.78
+      },
+      {
+        "skill_id": "mat_ev_12_008",
+        "title": "Include transfers as constraints before solving relational equations",
+        "principle": "Treat each transfer as an equation linking the giver's and receiver's final counts, and incorporate these equations into the linear system before solving any relational difference equations, ensuring that counts used in relational statements reflect post\u2011transfer values.",
+        "when_to_apply": "Whenever the problem contains both transfer statements and relational equations involving the transferred persons.",
+        "example": "Solving relational equations using a person's original count while ignoring a later 'gives N to' statement that changes that person's amount.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_0-idx_13"
+        ],
+        "generation": 12,
+        "confidence": 0.95
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Treating 'X has N' as an initial count before transfers",
+        "why_it_happens": "The model assumes that a direct count statement fixes the amount before any subsequent transfer statements, ignoring that the count may refer to the final state after transfers.",
+        "how_to_avoid": "Treat direct count statements as constraints on the final count and apply all transfer adjustments before using those counts in other equations.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 11
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Misinterpreting split/redistribute statements",
+        "why_it_happens": "The model may give each recipient the whole amount or compute shares incorrectly, treating the splitter's total as unchanged.",
+        "how_to_avoid": "When a person splits all items equally, set the splitter's count to zero and distribute the total equally among the recipients.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 11
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Applying transfers in the wrong direction",
+        "why_it_happens": "The model adds the transferred amount to the giver and subtracts it from the receiver, reversing the intended flow.",
+        "how_to_avoid": "Subtract the given amount from the giver and add it to the receiver.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 11
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Treating 'has more than' in relational equations as absolute difference",
+        "why_it_happens": "The model drops the sign information and uses the magnitude of the difference, losing the direction of the relationship.",
+        "how_to_avoid": "Keep the signed difference (X - Y) as is when it appears in relational equations.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 11
+      },
+      {
+        "mistake_id": "mat_err_004",
+        "description": "Misinterpreting 'difference between X and Y' as absolute difference",
+        "why_it_happens": "The model assumes the phrase denotes |X - Y|, ignoring the order of the terms.",
+        "how_to_avoid": "Interpret 'difference between X and Y' as the signed expression X - Y.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 11
+      }
+    ]
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_3_001",
+        "title": "Directed More-Than Interpretation",
+        "principle": "Translate comparative statements of the form 'A has N more (or fewer) items than B' into the equation A = B + N (or A = B - N) preserving the direction.",
+        "when_to_apply": "Whenever a statement explicitly says one person has more or fewer items than another.",
+        "example": "A statement like 'Taylor has 5 more oranges than Adolfo' should not be read as an absolute difference; it must be encoded as Taylor = Adolfo + 5.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_19"
+        ],
+        "generation": 21,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_3_003",
+        "title": "Immediate Direct Assignment Update",
+        "principle": "A direct count statement (e.g., 'A has N items') sets the current value of A to N at that point in the sequence, and later operations may modify it.",
+        "when_to_apply": "When encountering a plain assignment of a quantity to a person.",
+        "example": "Reading 'Myles has 15 oranges' as setting Myles = 15, not as a permanent initial value.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_19"
+        ],
+        "generation": 21,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_9_009",
+        "title": "Temporal Consistency of Transfers and Relational Statements",
+        "principle": "Process statements in the given order; apply each transfer, split, or redistribution immediately before interpreting later statements that refer to the updated counts.",
+        "when_to_apply": "For any transfer, conditional transfer, split, or redistribution clause.",
+        "example": "If 'Robert gives 3 oranges to Myles' appears before a comparison involving Myles, the comparison must use Myles' updated count.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_19"
+        ],
+        "generation": 21,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Full Difference Equality Interpretation",
+        "principle": "Translate sentences equating two differences into the signed form (A - B) = (C - D), preserving the order of names on each side.",
+        "when_to_apply": "When a statement says 'the number of X has more than Y is equal to the difference between the number of C and D'.",
+        "example": "The phrase 'X has more than Y is equal to the difference between C and D' becomes X - Y = C - D.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_19"
+        ],
+        "generation": 21,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_21_004",
+        "title": "Quantity Modification (Multiplication and Subtraction) \u2013 Correct Interpretation",
+        "principle": "When a statement modifies a count by multiplication (e.g., 'X increases by N times'), treat it as a multiplicative scaling, not as addition or division.",
+        "when_to_apply": "Whenever a phrase like 'increases by N times' or 'decreases by N times' appears.",
+        "example": "For 'The number of apples that Sam has increases by 3 times', compute new = old \u00d7 3.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_19"
+        ],
+        "generation": 21,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_15_009",
+        "title": "Redistribute Equally Among Group",
+        "principle": "If a group of people redistributes their items so that each ends up with an equal amount, compute the average of the group's total and assign that to every member.",
+        "when_to_apply": "When a statement says two or more people 'redistribute' to ensure equal amounts.",
+        "example": "If Alice and Bob have 4 and 6 oranges and they redistribute equally, each ends with (4+6)/2 = 5.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_19"
+        ],
+        "generation": 21,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_16_008",
+        "title": "Comprehensive Constraint Extraction",
+        "principle": "Gather every constraint implied by each statement, even those that do not directly involve the queried person, to keep the full system of equations consistent.",
+        "when_to_apply": "For every statement in the problem, extract the algebraic relationship it imposes.",
+        "example": "A sentence about a transfer between two unrelated people still affects later constraints and must be recorded.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_19"
+        ],
+        "generation": 21,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_21_007",
+        "title": "Signed Difference Interpretation",
+        "principle": "Treat both 'the number of X has more than Y' and 'the difference between the number of X and Y' as signed subtraction, preserving the order of names.",
+        "when_to_apply": "Whenever a difference is mentioned, keep the sign according to the phrasing.",
+        "example": "'The number of oranges that A has more than B' translates to A - B, not |A - B|.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_19"
+        ],
+        "generation": 21,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "mat_ev_20_009",
+        "title": "Difference Equality Numeric Evaluation",
+        "principle": "When a difference equality (A - B = C - D) involves variables whose values are already known, compute the numeric result directly and propagate it.",
+        "when_to_apply": "After enough information is gathered to evaluate a difference equality numerically.",
+        "example": "If we know A=8, B=3, C=5, then D = A - B - C = 0.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_19"
+        ],
+        "generation": 21,
+        "confidence": 1.0
+      },
+      {
+        "skill_id": "mat_ev_22_009",
+        "title": "Fractional Increase Interpretation",
+        "principle": "Interpret statements of the form 'the number of X increases by N/D times' as multiplying the current count by (1\u202f+\u202fN/D), not by N/D alone.",
+        "when_to_apply": "Whenever a phrase uses a fractional multiplier after 'increases by' (e.g., '7/4 times').",
+        "example": "Wrong: treating 'The number of cucumbers that Austen has increases by 7/4 times' as new\u202f=\u202fold\u202f\u00d7\u202f7/4. Correct: new\u202f=\u202fold\u202f\u00d7\u202f(1\u202f+\u202f7/4)\u202f=\u202fold\u202f\u00d7\u202f11/4.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_19"
+        ],
+        "generation": 22,
+        "confidence": 0.65
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Treating \u2018difference between the number of X and Y\u2019 as absolute value instead of signed subtraction.",
+        "why_it_happens": "The model assumes differences are always non\u2011negative and drops the order of the names.",
+        "how_to_avoid": "Translate 'difference between X and Y' to the signed expression X\u202f-\u202fY, preserving the given order.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 21
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Delaying the effect of transfer statements until after all other statements.",
+        "why_it_happens": "The model processes transfers as if they were simultaneous or later, ignoring temporal order.",
+        "how_to_avoid": "Apply each transfer, split, or redistribution immediately when the statement is encountered, updating counts before any later reference.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 21
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Considering a direct count as a fixed initial value that cannot be changed by later transfers.",
+        "why_it_happens": "The model treats an assignment as immutable, forgetting that later operations can modify the same variable.",
+        "how_to_avoid": "Allow later transfers, splits, or multiplicative updates to overwrite the current value of a person.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 21
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Misinterpreting a difference equality as a direct assignment to a single variable, ignoring the second term (including assuming positivity).",
+        "why_it_happens": "The model simplifies (A\u202f-\u202fB)\u202f=\u202fC\u202f-\u202fD to A\u202f=\u202fB\u202f+\u202fC, discarding D and any sign information.",
+        "how_to_avoid": "Keep the full equation (A\u202f-\u202fB)\u202f=\u202f(C\u202f-\u202fD) and solve for the unknowns while preserving both sides.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 21
+      },
+      {
+        "mistake_id": "mat_err_004",
+        "description": "Misinterpreting 'increases by N times' (including fractional N) as addition, division, or incorrect multiplication factor (e.g., using N/D instead of 1+N/D).",
+        "why_it_happens": "The model confuses the phrase with simple scaling or additive increase, especially when a fraction is involved.",
+        "how_to_avoid": "For integer N, treat 'increases by N times' as multiplication by (1\u202f+\u202fN). For a fraction N/D, multiply by (1\u202f+\u202fN/D).",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 21
+      }
+    ]
+  }
+}

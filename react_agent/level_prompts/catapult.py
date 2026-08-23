@@ -94,7 +94,7 @@ Place ONE Red Ball somewhere in the box so that, once the simulation runs, the g
 {react_format}"""
 
 CATAPULT_INITIAL = """\
-Solve the Catapult puzzle. You have 12 iterations to solve it. The success condition is: green_ball must contact blue_ball. Use tools effectively and think about alternate approaches if one does not work.
+Solve the Catapult puzzle. You have 25 iterations to solve it. The success condition is: green_ball must contact blue_ball. Use tools effectively and think about alternate approaches if one does not work.
 - **ALWAYS call predict_first_contact first** — it is cheap and tells you if your red ball hits the intended object.
 - Only if predict confirms the right contact: call trace_green_ball to track green ball.
 """
@@ -132,32 +132,4 @@ Solve the Catapult puzzle. You have 25 iterations to solve it. The success condi
 - **ALWAYS call predict_first_contact first** — it is cheap and tells you if your red ball hits the intended object.
 - Only if predict confirms the right contact: call trace_green_ball to track green ball."""
 
-# Ablation blocks for Catapult — retained for explicit strategy-1 experiments only.
-# These are NOT included in the default prompts above.
-_OSS_CATAPULT_MECHANICS_BLOCK = """
-Catapult Mechanics (strategy-1 ablation):
-- Drop red ball on the RIGHT side of the catapult arm (right of pivot) to launch green ball.
-- Right arm goes down → left arm (with green ball) goes UP → green ball launches toward basket.
-"""
 
-_OSS_CATAPULT_FAILURE_MODES_BLOCK = """
-Lever mechanics — two independent controls (strategy-1 ablation):
-- x position on arm (distance from pivot) = LAUNCH ANGLE. Closer to pivot → steeper. Farther (toward tip) → flatter.
-- Drop height × radius = LAUNCH SPEED. Height = impact velocity. Radius = mass. Raise height first, radius second.
-
-Mandatory failure diagnosis — after EVERY failure, classify WHY:
-- wrong_direction: green went left → move x further RIGHT of pivot.
-- arc_too_short: green fell short → increase energy (more height or larger radius).
-- arc_too_flat: green reached right x but hit floor → move x CLOSER to pivot for steeper arc.
-- overshot: green flew past basket → reduce energy or move x closer to pivot.
-
-Exploration rule: after 2 failures in same zone, switch zone. Never repeat exact (x, y, radius).
-"""
-
-_OSS_CATAPULT_STRATEGY_BLOCK = """
-Strategy (strategy-1 ablation):
-- Call describe_scene_geometry to map the scene.
-- Drop red ball RIGHT of pivot, above arm.
-- Call simulate_with_trace with ["green_ball","catapult_arm"] — if green_y is below arm_top mid-flight, launch is too flat.
-- Classify each failure, apply matching fix, switch zones if stuck.
-- When it succeeds, call finish."""

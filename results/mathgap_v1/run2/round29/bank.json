@@ -1,0 +1,198 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_5_008",
+        "title": "Distinct Name Disambiguation",
+        "principle": "Treat each capitalized name as a distinct variable, even if names differ by only one character. This prevents accidental merging of separate individuals.",
+        "when_to_apply": "Whenever a capitalized token appears as a name, treat it as a separate variable, regardless of similarity to other names.",
+        "example": "Merging 'John' and 'Jon' into a single variable and combining their counts.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_60-idx_2",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_6_009",
+        "title": "Preserve Order in \"Difference Between\" Phrases",
+        "principle": "Interpret 'difference between A and B' as the signed subtraction A\u202f\u2212\u202fB, preserving the order given. Misinterpreting it as absolute value loses sign information.",
+        "when_to_apply": "When a phrase 'difference between X and Y' appears, translate it to X\u202f\u2212\u202fY, keeping the order.",
+        "example": "Treating 'difference between A and B' as |A\u202f\u2212\u202fB| instead of A\u202f\u2212\u202fB.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_60-idx_2",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_7_007",
+        "title": "Direct Count Handling with Overrides",
+        "principle": "A direct count statement sets the person's count at that moment, overwriting any previous value. Later relational statements must use this updated count.",
+        "when_to_apply": "When a statement directly gives a count for a person, assign that value immediately, overwriting any earlier value for that person.",
+        "example": "Ignoring a later statement 'X has 7 items' and keeping the earlier value for X.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_60-idx_2",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_19_003",
+        "title": "Chronological Transfer Application with Symbolic Handling",
+        "principle": "Apply transfers immediately using the current counts; if a count is unknown, treat it as a symbolic variable and adjust it, rather than assuming zero. This maintains consistency across equations.",
+        "when_to_apply": "When a transfer 'X gives K items to Y' appears, adjust X and Y using their current counts; if a count is unknown, treat it symbolically and modify it accordingly.",
+        "example": "Assuming a giver with unknown count has zero before a transfer and subtracting K from zero.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_60-idx_2",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_15"
+        ],
+        "generation": 19,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Iterative Substitution and Propagation",
+        "principle": "Whenever a variable's exact numeric value is known, replace it everywhere it appears in remaining equations. This propagates information and simplifies the system.",
+        "when_to_apply": "As soon as a variable\u2019s value becomes known, substitute that value into all other statements and equations that reference it.",
+        "example": "Leaving a known variable unchanged in later equations, preventing further deductions.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_60-idx_2",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_18_005",
+        "title": "Chronological Comparative Interpretation",
+        "principle": "Convert comparative statements ('X has K more/fewer than Y') into signed equations reflecting the direction (X\u202f\u2212\u202fY\u202f=\u202fK or X\u202f\u2212\u202fY\u202f=\u202f\u2011K). Preserve sign to avoid swapping sides.",
+        "when_to_apply": "When a statement compares two persons using 'more' or 'fewer', translate it into a signed equation with the correct direction.",
+        "example": "Translating 'X has 5 more than Y' as Y\u202f=\u202fX\u202f+\u202f5 instead of X\u202f=\u202fY\u202f+\u202f5.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_60-idx_2",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "mat_ev_18_006",
+        "title": "Signed Difference Equality Handling",
+        "principle": "When equating two differences, keep the subtraction order on each side exactly as stated. Swapping terms changes the sign and leads to incorrect equations.",
+        "when_to_apply": "When a statement sets one signed difference equal to another, preserve the order of subtraction on both sides.",
+        "example": "Treating (A\u202f\u2212\u202fB)\u202f=\u202f(C\u202f\u2212\u202fD) as (B\u202f\u2212\u202fA)\u202f=\u202f(C\u202f\u2212\u202fD).",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_60-idx_2",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "mat_ev_18_007",
+        "title": "Equal Distribution Operations",
+        "principle": "For a redistribution between two persons, combine their current counts, divide by two, and assign the result to each. This ensures the total remains constant.",
+        "when_to_apply": "When a statement says two people redistribute their items equally, sum their counts, halve the total, and give that amount to each.",
+        "example": "Assigning the full combined total to each person instead of halving it.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 18,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "mat_ev_18_008",
+        "title": "Conditional Transfer Handling",
+        "principle": "Before applying a conditional transfer, evaluate the condition using the current count; only execute the transfer if the condition holds.",
+        "when_to_apply": "When a transfer is described as occurring only if a certain condition about a person's count is true.",
+        "example": "Executing a transfer even though the required condition (e.g., having more than K items) is not met.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 18,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "mat_ev_18_009",
+        "title": "Multiplicative Increase Handling",
+        "principle": "When a count increases by a factor p/q, multiply the current count by (1\u202f+\u202fp/q) if it's an increase, or apply the factor directly if the statement specifies a multiplicative change.",
+        "when_to_apply": "When a statement says a person's count increases by a fractional multiple of its current value.",
+        "example": "Multiplying the count by the factor and then adding the original amount, instead of just multiplying.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 18,
+        "confidence": 0.65
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Swapped direction in 'has K more than' statements",
+        "why_it_happens": "The model may misread the phrasing and reverse the subtraction order.",
+        "how_to_avoid": "Always map 'X has K more than Y' to the equation X\u202f\u2212\u202fY\u202f=\u202fK, preserving the order of X and Y.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Treating differences as absolute values",
+        "why_it_happens": "The model assumes differences are always non\u2011negative and drops sign information.",
+        "how_to_avoid": "Preserve the order in 'difference between' phrases and treat them as signed subtraction.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Ignoring chronological order of transfers",
+        "why_it_happens": "The model treats transfers as commutative and independent of timing.",
+        "how_to_avoid": "Apply each transfer immediately when encountered, using the current counts at that point.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Incorrect handling of split operation",
+        "why_it_happens": "The model may misinterpret 'split' as duplication rather than division.",
+        "how_to_avoid": "Sum the two persons' counts, divide by two, and assign that amount to each.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Incorrect handling of conditional transfer",
+        "why_it_happens": "The model may overlook the conditional clause and apply the transfer unconditionally.",
+        "how_to_avoid": "Check the condition using the current count before applying the transfer.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      }
+    ]
+  }
+}

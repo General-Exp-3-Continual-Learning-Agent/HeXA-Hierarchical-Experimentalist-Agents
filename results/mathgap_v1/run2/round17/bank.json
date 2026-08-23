@@ -1,0 +1,197 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Signed Equality for Difference Statements",
+        "principle": "When a statement equates two differences, treat both sides as signed equations preserving the order; i.e., interpret 'A has more than B equals C has more than D' as (A - B) = (C - D).",
+        "when_to_apply": "Whenever a statement says the number of tomatoes that X has more than Y equals the difference between the number of tomatoes that U and V have.",
+        "example": "Interpreting such a statement as |A - B| = |C - D| or swapping sides, which loses the sign and yields incorrect equations.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 11,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Iterative Substitution and Propagation",
+        "principle": "Whenever a variable's value becomes known (through a direct count, a solved equation, or a transfer), substitute that value into all other equations and update dependent variables, repeating until no further propagation is possible.",
+        "when_to_apply": "After any equation or count is resolved, propagate the known value throughout the system.",
+        "example": "Failing to substitute a newly known count into other equations, leaving them unsolved or using outdated values.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 11,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_2_008",
+        "title": "Chronological Evaluation of Comparative Statements",
+        "principle": "Evaluate each comparative statement using the counts as they exist at that point in the text, after applying any earlier direct counts, transfers, or other updates.",
+        "when_to_apply": "When processing a 'has K more/fewer than' or difference equality statement, use the current values of the involved persons at that moment.",
+        "example": "Treating a comparative statement as if it referred to the initial counts, ignoring earlier transfers that changed the counts.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 11,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_2_009",
+        "title": "Query\u2011Focused Subsystem Extraction",
+        "principle": "Identify the minimal subset of equations and variables that are directly or indirectly connected to the queried person, and ignore unrelated statements.",
+        "when_to_apply": "Before solving, trace connections from the query target through all statements to isolate the relevant subsystem.",
+        "example": "Attempting to solve the entire large system, including many irrelevant variables, leading to confusion or misapplied constraints.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 11,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_5_008",
+        "title": "Distinct Name Disambiguation",
+        "principle": "Treat each unique name as a separate variable, even if names differ by only a single character; avoid conflating them.",
+        "when_to_apply": "When parsing statements, ensure that similarly spelled names are not merged.",
+        "example": "Confusing 'Chester' with 'Chest' or merging 'Susanna' and 'Susana' into one variable, causing incorrect equations.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 11,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_6_009",
+        "title": "Preserve Order in \"Difference Between\" Phrases",
+        "principle": "When a phrase says 'the difference between the number of X that A and B have', interpret it as A - B, preserving the order of the named persons.",
+        "when_to_apply": "Whenever a statement references 'the difference between' two persons.",
+        "example": "Interpreting 'the difference between A and B' as B - A, reversing the sign.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 11,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_7_006",
+        "title": "General Comparative Interpretation (more/fewer)",
+        "principle": "Interpret 'A has K more tomatoes than B' as A - B = K, and 'A has K fewer tomatoes than B' as A - B = -K, preserving the sign.",
+        "when_to_apply": "Whenever a comparative statement with 'more' or 'fewer' appears.",
+        "example": "Swapping the direction and writing B - A = K for 'A has K more than B', leading to sign errors.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 11,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_7_007",
+        "title": "Direct Count Handling with Overrides",
+        "principle": "When a statement says 'X has N items', set X's count to N at that point, overriding any previous value (including those derived from transfers or earlier counts).",
+        "when_to_apply": "Whenever a direct count statement appears, update the variable's value immediately.",
+        "example": "Treating a later 'X has N' as an initial count and ignoring earlier transfers that changed X's count.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 11,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_8_008",
+        "title": "Chronological Transfer Application",
+        "principle": "Apply each transfer statement in the order given, subtracting the specified amount from the giver and adding it to the receiver at that moment.",
+        "when_to_apply": "Whenever a 'X gives K items to Y' statement appears.",
+        "example": "Applying a later transfer before an earlier one, or ignoring the order, resulting in incorrect final counts.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 11,
+        "confidence": 1.0
+      },
+      {
+        "skill_id": "mat_ev_12_009",
+        "title": "Multiplicative Increase Interpretation (Factor)",
+        "principle": "When a statement says 'The number of X that Y has increases by K times', interpret it as a multiplication: new count = old count * K. For fractional K, multiply accordingly. Similarly, 'decreases by K times' means new count = old count / K.",
+        "when_to_apply": "Whenever a statement uses the phrase 'increases by K times' or 'decreases by K times' for a count.",
+        "example": "Treating 'increases by 9/5 times' as adding 9/5 to the count (old + 9/5) instead of multiplying, leading to wrong values.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_17"
+        ],
+        "generation": 12,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Swapped direction in 'has K more than' statements",
+        "why_it_happens": "The model often interprets 'A has K more than B' as B - A = K, reversing the intended sign.",
+        "how_to_avoid": "Always map 'has K more than' to A - B = K and 'has K fewer than' to A - B = -K.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 11
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Treating differences as absolute values",
+        "why_it_happens": "The model drops the sign when interpreting difference statements, using |A - B| instead of signed difference.",
+        "how_to_avoid": "Preserve the sign and order when converting 'difference between' phrases into equations.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 11
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Ignoring the chronological order of transfers",
+        "why_it_happens": "The model applies transfers out of order or treats them as simultaneous, missing the effect of earlier overrides.",
+        "how_to_avoid": "Apply transfers strictly in the order they appear in the text.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 11
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Treating 'has N' as an initial count regardless of position",
+        "why_it_happens": "The model assumes direct counts are initial values and does not override them when later statements provide new counts.",
+        "how_to_avoid": "When a direct count appears later, update the variable's value, overriding any previous value.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 11
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Misinterpreting multiplicative increase statements",
+        "why_it_happens": "The model interprets 'increases by K times' as addition rather than multiplication, or uses the wrong factor.",
+        "how_to_avoid": "Interpret 'increases by K times' as multiplication by K; for 'decreases by K times', divide by K.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 11
+      }
+    ]
+  }
+}

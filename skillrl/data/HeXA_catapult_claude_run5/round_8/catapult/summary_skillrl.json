@@ -1,0 +1,72 @@
+{
+  "level": "catapult",
+  "model": "unknown",
+  "seeds": [
+    27,
+    28,
+    29
+  ],
+  "total_seeds": 3,
+  "successes": 3,
+  "success_rate": 1.0,
+  "avg_iterations": 14.333333333333334,
+  "results": [
+    {
+      "seed": 27,
+      "success": true,
+      "action": [
+        0.05,
+        0.0,
+        1.4
+      ],
+      "iterations": 10,
+      "elapsed_time": 51.09186366992071,
+      "skills_used": [
+        "Efficient 3-Step Workflow: predict \u2192 trace \u2192 simulate",
+        "Verify Green Ball Reaches Basket X AND Y Range via trace_green_ball",
+        "Canonical Default Starting Placement: x=0.65, y=0.0, r=1.4",
+        "Adaptive X Fallback When Canonical Placement is Invalid",
+        "When Radius Tuning Plateaus, Shift Strike X: 0.65 \u2192 0.0 \u2192 -0.3",
+        "Incremental Radius Tuning as First Response to Short Landing"
+      ]
+    },
+    {
+      "seed": 28,
+      "success": true,
+      "action": [
+        1.1,
+        1.05,
+        2.0
+      ],
+      "iterations": 20,
+      "elapsed_time": 174.89396448712796,
+      "skills_used": [
+        "Efficient 3-Step Workflow: predict \u2192 trace \u2192 simulate",
+        "Verify Green Ball Reaches Basket X AND Y Range via trace_green_ball",
+        "Canonical Default Starting Placement: x=0.65, y=0.0, r=1.4",
+        "Adaptive X Fallback When Canonical Placement is Invalid",
+        "When Radius Tuning Plateaus, Shift Strike X: 0.65 \u2192 0.0 \u2192 -0.3",
+        "Incremental Radius Tuning as First Response to Short Landing"
+      ]
+    },
+    {
+      "seed": 29,
+      "success": true,
+      "action": [
+        -0.3,
+        2.5,
+        1.4
+      ],
+      "iterations": 13,
+      "elapsed_time": 64.13371043093503,
+      "skills_used": [
+        "Efficient 3-Step Workflow: predict \u2192 trace \u2192 simulate",
+        "Verify Green Ball Reaches Basket X AND Y Range via trace_green_ball",
+        "Canonical Default Starting Placement: x=0.65, y=0.0, r=1.4",
+        "Adaptive X Fallback When Canonical Placement is Invalid",
+        "When Radius Tuning Plateaus, Shift Strike X: 0.65 \u2192 0.0 \u2192 -0.3",
+        "Incremental Radius Tuning as First Response to Short Landing"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,207 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_3_002",
+        "title": "RelativeOrdering",
+        "principle": "When a clue says X is somewhere to the left (or right) of Y, enforce that the house index of X is less (or greater) than that of Y.",
+        "when_to_apply": "Whenever a clue contains phrases like 'to the left of', 'somewhere left of', 'to the right of', or 'somewhere right of'.",
+        "example": "If the model treats 'X is left of Y' as X being to the right of Y, the ordering constraint is violated.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-2",
+          "zebralogic-lgp-test-5x6-15"
+        ],
+        "generation": 20,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_005",
+        "title": "EquivalenceLinking",
+        "principle": "When a clue equates two attribute values (e.g., 'the person who loves beach vacations is the same as the person whose mother is Sarah'), treat them as a single entity and assign both attributes to the same house.",
+        "when_to_apply": "Whenever a clue contains words like 'is the same as', 'is the person who', or any phrasing that indicates equality between two attributes.",
+        "example": "Linking Vacation=beach with Mother=Sarah; without this, the model could place them in different houses.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-2"
+        ],
+        "generation": 20,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_006",
+        "title": "FixedHouseAssignment",
+        "principle": "If a clue fixes an attribute to a specific house number (e.g., 'the cultural vacation is in house 4'), enforce that exact placement.",
+        "when_to_apply": "When a clue mentions a house number explicitly.",
+        "example": "Assigning Vacation=cultural to house 4; without this, the model might locate it elsewhere.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-2"
+        ],
+        "generation": 20,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_6_009",
+        "title": "CompactFinalAnswer",
+        "principle": "The solution JSON must be the very last part of the response with no extra characters after it; any trailing text causes the verifier to miss the answer.",
+        "when_to_apply": "When outputting the final answer.",
+        "example": "Appending commentary after the JSON leads to a rejected answer because the verifier cannot parse the solution.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-2"
+        ],
+        "generation": 20,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "zeb_ev_11_009",
+        "title": "NegativeHouseAssignment",
+        "principle": "When a clue explicitly forbids an attribute from being in a particular house (e.g., 'the beach vacation is not in house 2'), enforce that the attribute cannot occupy that house.",
+        "when_to_apply": "When a clue contains 'not in house' or similar negation.",
+        "example": "Placing Vacation=beach in house 2 violates the clue; without this, the model may ignore the prohibition.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-2"
+        ],
+        "generation": 20,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_14_009",
+        "title": "TransitiveEquivalencePropagation",
+        "principle": "When multiple equivalence clues form a chain (A = B and B = C), propagate the equivalence so all involved attributes are linked to the same house.",
+        "when_to_apply": "When there are several equality clues that connect more than two attributes.",
+        "example": "If Mother=Sarah \u2194 Vacation=city and Vacation=city \u2194 Name=Bob, then Mother=Sarah, Vacation=city, and Name=Bob must all share a house; without this, they could be split.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-2"
+        ],
+        "generation": 20,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "zeb_ev_15_009",
+        "title": "ExactAttributeValueMatching",
+        "principle": "Copy attribute values exactly as they appear in the problem statement, preserving spelling, case, and punctuation; any deviation leads to mismatched values.",
+        "when_to_apply": "When writing the final JSON.",
+        "example": "Writing 'Historical Fiction' instead of 'historical fiction' causes a mismatch; without exact matching, the verifier rejects the answer.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-2"
+        ],
+        "generation": 20,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "zeb_ev_16_009",
+        "title": "LimitReasoningLength",
+        "principle": "Keep reasoning concise enough to stay within the model's token budget; avoid overly verbose explanations that risk truncation.",
+        "when_to_apply": "During the reasoning portion before the final answer.",
+        "example": "Providing a multi\u2011page step\u2011by\u2011step that exceeds the token limit leads to the final JSON being cut off; without this, the answer may be incomplete.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-2"
+        ],
+        "generation": 20,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_20_009",
+        "title": "ExactDistanceConstraint",
+        "principle": "When a clue specifies that there is exactly N houses between X and Y, enforce that the absolute difference of their house indices is N+1.",
+        "when_to_apply": "When a clue contains 'exactly N houses between' or 'there are N houses between'.",
+        "example": "For 'one house between X and Y', enforce |pos(X)\u2011pos(Y)| = 2; without this, the model may treat it as adjacent.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-2"
+        ],
+        "generation": 20,
+        "confidence": 1.0
+      },
+      {
+        "skill_id": "zeb_ev_21_009",
+        "title": "DerivedEntityResolutionInConstraints",
+        "principle": "When a clue mentions a derived entity such as 'the mother of X', 'the father of X', or 'the child of Y' in an ordering or distance constraint, first resolve that entity to the appropriate attribute value by linking the base entity (X or Y) to its counterpart in the same house, then apply the ordering/distance constraint to the resolved house.",
+        "when_to_apply": "Applicable whenever a positional clue (left/right, between, exact distance) refers to a relational phrase (mother/father/child of someone).",
+        "example": "Treating 'the mother of Timothy' as Timothy itself leads to an incorrect distance calculation; without proper resolution, the model placed Eric two houses away instead of one.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-2"
+        ],
+        "generation": 21,
+        "confidence": 0.75
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_err_000",
+        "description": "Misinterpreting 'N houses between' as 'N houses apart'",
+        "why_it_happens": "The model confuses the phrase 'houses between' with direct distance, forgetting to add one to the specified number.",
+        "how_to_avoid": "Add one to the specified number when converting to an absolute house-index difference.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 20
+      },
+      {
+        "mistake_id": "zeb_err_001",
+        "description": "Placing the solution JSON before the end of the response or adding excessive text after it, causing the verifier to miss the answer",
+        "why_it_happens": "The model continues to elaborate after the answer, so the verifier cannot locate the JSON.",
+        "how_to_avoid": "Terminate the response with the JSON and nothing else.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 20
+      },
+      {
+        "mistake_id": "zeb_err_002",
+        "description": "Exceeding token limit causing the verifier to truncate",
+        "why_it_happens": "Verbose explanations exceed the model's output limit, leading to truncation before the JSON.",
+        "how_to_avoid": "Keep reasoning concise; prioritize essential deductions.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 20
+      },
+      {
+        "mistake_id": "zeb_err_003",
+        "description": "Ignoring negative house constraints (placing an attribute in a house that a clue explicitly forbids)",
+        "why_it_happens": "The model forgets to enforce 'not in house' constraints during assignment.",
+        "how_to_avoid": "Track forbidden placements and exclude them when assigning attributes.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 20
+      },
+      {
+        "mistake_id": "zeb_evo_004",
+        "description": "Missing final solution JSON",
+        "why_it_happens": "The model stops after reasoning and does not output the required JSON.",
+        "how_to_avoid": "Always include the solution JSON as the last part of the output.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 20
+      },
+      {
+        "mistake_id": "zeb_evo_005",
+        "description": "Misinterpreting derived entity references (e.g., 'the mother of X') as the base entity X",
+        "why_it_happens": "The model parses the phrase superficially and does not resolve the relational link before applying ordering or distance constraints.",
+        "how_to_avoid": "First resolve the derived entity to its actual attribute (e.g., find the mother attribute of the house where child = X) and then apply any positional constraints.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 21
+      }
+    ]
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Single\u2011stick numeral reduction",
+        "principle": "If two Roman numerals differ by exactly one stick, you can move that stick to change one numeral into the other while keeping both characters valid.",
+        "when_to_apply": "When you notice that a numeral could become another valid numeral by adding or removing a single stick.",
+        "example": "Removing a diagonal from a V and leaving the V as a single diagonal line (invalid numeral).",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_039",
+          "matchstick_044",
+          "matchstick_052"
+        ],
+        "generation": 2,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Preserve stick orientation",
+        "principle": "Never rotate a stick; its orientation (vertical, horizontal, diagonal) must stay the same after moving.",
+        "when_to_apply": "Whenever you relocate a stick, keep its original orientation.",
+        "example": "Treating a diagonal stick as a vertical stick when moving it to form an I.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_039",
+          "matchstick_044",
+          "matchstick_052"
+        ],
+        "generation": 2,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_003",
+        "title": "No addition or removal of sticks",
+        "principle": "You must move exactly one existing stick; you cannot create a new stick or discard a stick.",
+        "when_to_apply": "At the start of planning a move, verify you are only relocating a stick.",
+        "example": "Adding an extra vertical stick to an I to make II without removing any stick elsewhere.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_039"
+        ],
+        "generation": 2,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Maintain valid characters",
+        "principle": "After the move, each symbol must still be a legal Roman numeral or an allowed operator (+, -, =).",
+        "when_to_apply": "After any stick relocation, check every character for validity.",
+        "example": "Turning a V into a single diagonal line, which is not a Roman numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_039",
+          "matchstick_044",
+          "matchstick_052"
+        ],
+        "generation": 2,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Verify arithmetic correctness",
+        "principle": "Compute the Arabic values of both sides of the equation and ensure they are equal.",
+        "when_to_apply": "After you have a candidate transformed equation, before finalizing the answer.",
+        "example": "Accepting 'XV - XV = XVI' without noticing that 15\u202f\u2212\u202f15\u202f\u2260\u202f16.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_039",
+          "matchstick_044",
+          "matchstick_052"
+        ],
+        "generation": 2,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Operator swap via stick exchange",
+        "principle": "You may move a stick from one operator to another, changing both operators, as long as the resulting symbols are still valid operators.",
+        "when_to_apply": "When the equation contains two operators (e.g., '=' and '-') and a stick can be transferred between them.",
+        "example": "Moving a horizontal from '=' to '-' and ending up with a single '-' (invalid) on the left side.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_039",
+          "matchstick_044",
+          "matchstick_052"
+        ],
+        "generation": 2,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_007",
+        "title": "Do not break X or V",
+        "principle": "Never remove a stick from X or V, because the remaining single diagonal is not a valid Roman numeral.",
+        "when_to_apply": "Before removing a stick from any X or V, verify that the resulting shape is still a valid numeral.",
+        "example": "Removing one diagonal from X, leaving a lone diagonal line.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_039",
+          "matchstick_044",
+          "matchstick_052"
+        ],
+        "generation": 2,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_008",
+        "title": "Cross\u2011numeral stick transfer",
+        "principle": "A stick can be moved from one numeral to another, provided both the source and destination remain valid numerals.",
+        "when_to_apply": "When you need to adjust the values of two numerals by transferring a stick.",
+        "example": "Taking a diagonal from a V and adding it to an X, leaving the V as a single diagonal (invalid).",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_039",
+          "matchstick_044",
+          "matchstick_052"
+        ],
+        "generation": 2,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_2_009",
+        "title": "Within\u2011numeral stick repositioning",
+        "principle": "A stick may be repositioned within the same numeral (e.g., moving a diagonal in V to create X) as long as its orientation stays the same and the resulting numeral is valid.",
+        "when_to_apply": "When a single numeral can be changed by moving one of its sticks internally.",
+        "example": "Moving a diagonal of a V to cross the other diagonal but placing it incorrectly, resulting in an invalid shape.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_039",
+          "matchstick_044",
+          "matchstick_052"
+        ],
+        "generation": 2,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_3_009",
+        "title": "Equality sign preservation",
+        "principle": "The equation must contain exactly one '=' sign after the move; you cannot turn it into another operator or remove one of its horizontal bars.",
+        "when_to_apply": "Whenever you consider moving a stick that belongs to the '=' sign.",
+        "example": "Moving one of the two horizontal sticks from '=' to '-' and ending up with a single '-' instead of an equality sign.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_039",
+          "matchstick_044",
+          "matchstick_052"
+        ],
+        "generation": 3,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Rotating sticks (treating a diagonal as vertical or vice\u2011versa)",
+        "why_it_happens": "The model assumes sticks are interchangeable regardless of orientation.",
+        "how_to_avoid": "Keep the original orientation of each stick; you may only relocate it without rotating.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 2
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Adding or removing sticks instead of moving exactly one",
+        "why_it_happens": "The model confuses moving with creating or deleting sticks.",
+        "how_to_avoid": "Ensure exactly one existing stick is relocated; no sticks are added or removed.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 2
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Creating invalid numerals after a move",
+        "why_it_happens": "The model focuses on arithmetic change without checking character validity.",
+        "how_to_avoid": "After moving a stick, verify each numeral is a recognized Roman numeral.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 2
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Failing to verify arithmetic correctness",
+        "why_it_happens": "The model stops after finding a plausible\u2011looking transformation.",
+        "how_to_avoid": "Always compute the Arabic values of both sides and confirm equality.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 2
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Changing operators to disallowed symbols (e.g., turning \u2018=\u2019 into \u2018\u2260\u2019)",
+        "why_it_happens": "The model tries to modify operators without remembering the allowed set.",
+        "how_to_avoid": "Only use the permitted operators (+, -, =) after any stick move.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 2
+      }
+    ]
+  }
+}

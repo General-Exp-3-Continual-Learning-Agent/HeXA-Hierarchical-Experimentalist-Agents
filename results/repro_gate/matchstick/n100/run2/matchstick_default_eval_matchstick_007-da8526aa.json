@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_007",
+  "run": 2,
+  "item_idx": 7,
+  "seed": 1796471826,
+  "is_correct": false,
+  "verifier_score": 0.0,
+  "prediction": "V + VI",
+  "finish_reason": "length",
+  "raw_chars": 139344,
+  "reasoning_chars": 139344,
+  "final_chars": 0,
+  "elapsed_s": 380.3993537425995,
+  "usage": {
+    "completion_tokens": 32768,
+    "prompt_tokens": 459,
+    "total_tokens": 33227,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "bd53fc72d1e474b6f7018124228a3337a87a697d3d686af738c74101cfc3c354"
+}

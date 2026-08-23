@@ -1,0 +1,197 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Signed difference equality",
+        "principle": "When a statement equates one signed difference to another, translate it directly as (A - B) = (C - D). Preserve the order of terms as stated.",
+        "when_to_apply": "Whenever a sentence contains an equality between differences, e.g., \"the number of apples that X has more than Y equals the difference between Z and W\".",
+        "example": "Treating \"X has more than Y\" as an absolute difference |X\u2011Y| or swapping X and Y, losing the sign.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Direct count assignment at point of mention",
+        "principle": "When a statement directly gives a count for a person, set that person's current count to the given number at that point in the narrative.",
+        "when_to_apply": "Whenever a sentence states \"X has N apples\" (or a similar direct count).",
+        "example": "Assuming the count stays unchanged even after later transfers that modify it.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_7_009",
+        "title": "Directionality of more/fewer statements",
+        "principle": "Interpret \"X has N more items than Y\" as X = Y + N, and \"X has N fewer items than Y\" as X = Y - N.",
+        "when_to_apply": "When a sentence uses the words \"more\" or \"fewer\" to compare two persons.",
+        "example": "Writing Y = X + N instead of X = Y + N, thereby reversing the relationship.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 1.0
+      },
+      {
+        "skill_id": "mat_ev_11_005",
+        "title": "Split\u2011all handling",
+        "principle": "When a statement says a person splits all their items equally among two recipients, give each recipient half of the giver's items and set the giver's count to zero.",
+        "when_to_apply": "When a sentence contains \"splits all the apples she owns equally among A and B\" (or similar).",
+        "example": "Dividing the apples but forgetting to zero\u2011out the original holder.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_10_009",
+        "title": "Sequential transfer handling with updated counts",
+        "principle": "When a transfer statement appears, immediately subtract the transferred amount from the giver and add it to the receiver, using the current counts at that moment.",
+        "when_to_apply": "Whenever a sentence says \"X gives N apples to Y\" (or a similar transfer).",
+        "example": "Using the giver's original count instead of the count after earlier transfers, leading to an incorrect amount transferred.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_11_009",
+        "title": "Substitution of known signed differences into signed difference equalities",
+        "principle": "If a signed difference on one side of an equality is already known, substitute its numeric value into the equation to simplify and solve for the remaining unknowns.",
+        "when_to_apply": "When solving equations that involve signed differences and some of those differences have been previously determined.",
+        "example": "Leaving an equation like (A\u2011B) = (C\u2011D) unsolved even though (A\u2011B) is already known from an earlier statement.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_12_009",
+        "title": "Chronological evaluation of statements",
+        "principle": "Process the statements in the order given, updating counts after each step; later statements refer to the updated counts, not the initial ones.",
+        "when_to_apply": "For any problem where the order of operations (transfers, splits, conditionals) matters.",
+        "example": "Using a person's initial count for a later statement that should reflect earlier transfers.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "mat_ev_14_009",
+        "title": "Preserve order in signed difference statements",
+        "principle": "When a statement mentions the \"difference between X and Y\", treat it as the signed difference X\u00a0\u2212\u00a0Y, preserving the order as stated.",
+        "when_to_apply": "Whenever a sentence describes a difference, e.g., \"the difference between X and Y\".",
+        "example": "Swapping the terms and interpreting it as Y\u00a0\u2212\u00a0X, which changes the sign of the difference.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_16_008",
+        "title": "Multiplicative increase interpretation",
+        "principle": "When a statement says \"The number of apples that X has increases by a/b times\", interpret it as a multiplication: X = X\u00a0\u00d7\u00a0(a/b). Do not add the fraction of the original amount.",
+        "when_to_apply": "Whenever a sentence uses the phrase \"increases by \u2026 times\" with a fractional factor.",
+        "example": "Treating \"increases by 3/2 times\" as X = X\u00a0+\u00a0(3/2)X = (5/2)X instead of X = (3/2)X.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 16,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_16_009",
+        "title": "Conditional transfer handling",
+        "principle": "When a conditional transfer statement appears (e.g., \"If X has more than N apples, X will transfer their apples to Y\"), evaluate the condition using X's current count at that point; if true, move all of X's apples to Y (X becomes 0, Y gains those apples).",
+        "when_to_apply": "Whenever a statement includes an \"if\" clause that governs a transfer of all apples.",
+        "example": "Always transferring X's apples to Y regardless of X's count, or never transferring even when the condition is satisfied.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 16,
+        "confidence": 0.6
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Treating signed difference statements as absolute differences or swapping term order",
+        "why_it_happens": "The model confuses signed differences with absolute differences and may reverse the order of terms, losing the sign.",
+        "how_to_avoid": "Preserve the order and treat \"difference between X and Y\" as X\u00a0\u2212\u00a0Y.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 15
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Ignoring sequential order of transfers",
+        "why_it_happens": "The model processes transfers out of order, using outdated counts instead of the most recent values.",
+        "how_to_avoid": "Follow chronological evaluation; apply each transfer as it appears in the text.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 15
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Assuming explicit counts are final after all transfers",
+        "why_it_happens": "The model treats initial counts as immutable, overlooking later statements that modify them.",
+        "how_to_avoid": "Update counts after each transfer or split; treat explicit counts as starting values only.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 15
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Ignoring conditional transfer statements",
+        "why_it_happens": "The model overlooks the condition and either always or never applies the transfer.",
+        "how_to_avoid": "Evaluate the condition based on the current count before applying the transfer.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 15
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Misinterpreting \"increase by a/b times\" as additive rather than multiplicative",
+        "why_it_happens": "The phrasing is ambiguous; models may think \"increase by\" means adding the fraction of the original amount.",
+        "how_to_avoid": "Treat \"increases by a/b times\" as multiplication: X = X\u00a0\u00d7\u00a0(a/b).",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 16
+      }
+    ]
+  }
+}

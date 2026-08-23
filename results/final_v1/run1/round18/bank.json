@@ -1,0 +1,209 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Check arithmetic validity",
+        "principle": "After proposing a transformed equation, compute the integer values of both sides using standard Roman numeral conversion and verify they are equal. Without this check, you may accept an equation that looks syntactically correct but is numerically false.",
+        "when_to_apply": "Whenever you have a candidate transformed equation before finalizing the answer.",
+        "example": "Accepting 'II = V - III' without confirming that 2 = 5 - 3, leading to a false equality.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_024",
+          "matchstick_025",
+          "matchstick_026"
+        ],
+        "generation": 16,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Match\u2011stick orientation matters",
+        "principle": "A stick\u2019s orientation (vertical, horizontal, diagonal) is fixed; you may only place it where the same orientation is required. Ignoring orientation can produce characters that are not valid Roman numerals or operators.",
+        "when_to_apply": "When relocating a stick, ensure the destination expects the stick\u2019s original orientation.",
+        "example": "Turning a vertical stick into a diagonal to form an X, resulting in an invalid numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_024",
+          "matchstick_025",
+          "matchstick_026"
+        ],
+        "generation": 16,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_007",
+        "title": "Limit changes to two characters",
+        "principle": "A single stick move can affect at most the source character (which loses a stick) and the destination character (which gains a stick). Violating this rule changes more than two characters and breaks the one\u2011stick constraint.",
+        "when_to_apply": "During any stick relocation, track which characters lose and gain sticks.",
+        "example": "Moving a stick from '+' to 'I' but also unintentionally altering the '=' sign, affecting three characters.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_024",
+          "matchstick_025",
+          "matchstick_026"
+        ],
+        "generation": 16,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_6_008",
+        "title": "Transform numerals via single stick moves",
+        "principle": "Use known one\u2011stick transformations (e.g., I\u2194II, V\u2194X) that keep both source and destination characters valid Roman numerals. Without this, you may create shapes that are not recognized as numerals.",
+        "when_to_apply": "When considering moving a stick between numerals, check if the resulting shapes correspond to a valid numeral.",
+        "example": "Removing a diagonal from V and leaving a single diagonal, which is not a valid numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_024",
+          "matchstick_025",
+          "matchstick_026"
+        ],
+        "generation": 16,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_5_009",
+        "title": "Answer formatting",
+        "principle": "The final output must be a single line that starts with \u2018Correct version of the equation:\u2019 followed by the transformed equation, with uppercase letters and collapsed whitespace. Missing this format causes the answer to be rejected even if the equation is correct.",
+        "when_to_apply": "When writing the final answer to the puzzle.",
+        "example": "Providing the solution without the required prefix or using lower\u2011case letters, so the scorer cannot parse the answer.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_024",
+          "matchstick_025",
+          "matchstick_026"
+        ],
+        "generation": 16,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_14_007",
+        "title": "Accurate parsing of the original equation",
+        "principle": "Read the given equation carefully and record each numeral and operator exactly as they appear before any transformation. Mis\u2011parsing leads to moving sticks from the wrong character.",
+        "when_to_apply": "At the start of solving the puzzle, before any stick moves.",
+        "example": "Misreading \u2018XV\u2019 as \u2018X V\u2019 and moving a stick from the wrong character.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_024",
+          "matchstick_025",
+          "matchstick_026"
+        ],
+        "generation": 16,
+        "confidence": 0.42
+      },
+      {
+        "skill_id": "mat_ev_12_009",
+        "title": "Within\u2011character diagonal repositioning",
+        "principle": "You may relocate a diagonal stick within the same numeral, effectively turning X into V (or V into X) while preserving the total stick count. Ignoring this possibility can miss solutions that involve internal diagonal shifts.",
+        "when_to_apply": "When a transformation seems to require changing a diagonal\u2019s position within a numeral.",
+        "example": "Attempting to turn V into X by moving a diagonal to a new crossing point but forgetting that the orientation must stay diagonal.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 16,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_13_009",
+        "title": "Operator conversion via vertical stick relocation",
+        "principle": "Adding a vertical stick to a \u2018\u2011\u2019 creates a \u2018+\u2019, and removing the vertical stick from a \u2018+\u2019 yields a \u2018\u2011\u2019. This enables simple operator changes using a single vertical stick.",
+        "when_to_apply": "When you need to change a plus to a minus (or vice versa) by moving a vertical stick.",
+        "example": "Leaving a \u2018+\u2019 unchanged after moving its vertical stick, resulting in an invalid operator.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_024",
+          "matchstick_025"
+        ],
+        "generation": 16,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_16_009",
+        "title": "Vertical stick transfer from '+' to numeral (adds I)",
+        "principle": "When moving a vertical stick from a \u2018+\u2019 operator, the \u2018+\u2019 becomes \u2018\u2011\u2019, and the removed stick can be added to a numeral to form an extra \u2018I\u2019. This pattern often balances the equation by decreasing the operator value and increasing a numeral.",
+        "when_to_apply": "When a plus sign is present and a numeral could benefit from an additional I.",
+        "example": "Moving the vertical stick from \u2018+\u2019 but adding it to a non\u2011vertical position, creating an invalid character.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_024",
+          "matchstick_025"
+        ],
+        "generation": 16,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "mat_ev_17_009",
+        "title": "Vertical stick transfer between numerals (adds I, removes I)",
+        "principle": "A vertical stick can be moved from one numeral that contains an I (e.g., IV, VI) to another numeral, effectively deleting the I from the source and adding an I to the destination; both resulting numerals must remain valid. This enables solutions where an I is shifted between numerals to balance the equation.",
+        "when_to_apply": "When the equation contains numerals with an I that could be removed and another numeral that could accept an extra I.",
+        "example": "Removing the I from IV but failing to add it to another numeral, leaving the source as an invalid shape or missing the opportunity to balance the equation.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_026"
+        ],
+        "generation": 17,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Skipping arithmetic verification",
+        "why_it_happens": "The model focuses on making the characters look valid and forgets to check whether the resulting equation is numerically correct.",
+        "how_to_avoid": "Always compute the integer values of both sides after a transformation and confirm they are equal before finalizing the answer.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 16
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Creating invalid numeral shapes",
+        "why_it_happens": "When moving a stick, the solver may ignore the set of allowed Roman numeral glyphs, producing shapes that do not correspond to any numeral.",
+        "how_to_avoid": "Refer to the list of valid Roman numeral constructions (I, II, III, IV, V, VI, VII, VIII, IX, X, etc.) and ensure each character matches one of them after the move.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 16
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Incorrect operator composition",
+        "why_it_happens": "The model may add or remove sticks from operators without preserving a valid operator shape, e.g., turning \u2018+\u2019 into a non\u2011existent symbol.",
+        "how_to_avoid": "Remember the only allowed operators are \u2018+\u2019, \u2018\u2011\u2019, and \u2018=\u2019; any stick change must result in one of these shapes.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 16
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Missing destination for moved stick (effective removal)",
+        "why_it_happens": "The model sometimes removes a stick from a character but does not place it elsewhere, violating the rule that the stick must be relocated.",
+        "how_to_avoid": "Track the stick\u2019s source and explicitly choose a destination character that can accept the stick while staying valid.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 16
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Incorrect answer formatting",
+        "why_it_happens": "The model may omit the required prefix, use wrong case, or include extra whitespace, causing the scorer to miss the answer.",
+        "how_to_avoid": "Produce a single line that exactly starts with \u2018Correct version of the equation:\u2019 followed by the corrected equation, using uppercase letters and collapsing whitespace.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 16
+      }
+    ]
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Signed Difference Interpretation",
+        "principle": "When a statement mentions 'the difference between the number of X and Y', interpret it as the signed subtraction X - Y, preserving the order as written.",
+        "when_to_apply": "Whenever a relational statement uses the phrase 'difference between' to compare two persons.",
+        "example": "Treating 'the difference between Alice and Bob' as |Alice - Bob| (absolute value) instead of Alice - Bob.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_3"
+        ],
+        "generation": 5,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_3_001",
+        "title": "Directed More-Than Interpretation",
+        "principle": "Translate statements of the form 'A has N more than B' (including combined forms) into the equation A = B + N, using the exact order and sign of N.",
+        "when_to_apply": "When encountering a direct comparison that states one person has a certain number more (or fewer) than another.",
+        "example": "Reversing the equation to B = A + N for 'A has N more than B'.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_3"
+        ],
+        "generation": 5,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Sequential Transfer Application",
+        "principle": "When processing a transfer statement, immediately subtract the transferred amount from the giver and add it to the receiver, using the current counts at that point.",
+        "when_to_apply": "Whenever a statement of the form 'X gives N items to Y' appears.",
+        "example": "Delaying the transfer until after all other statements, thus using outdated counts for the giver and receiver.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_3"
+        ],
+        "generation": 5,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_3_003",
+        "title": "Immediate Direct Assignment Update",
+        "principle": "When encountering a direct count statement, set the person's count to the given number at that point, overwriting any previous value.",
+        "when_to_apply": "When a statement explicitly says 'Person has N items'.",
+        "example": "Treating a later direct count as an initial value and ignoring earlier updates that already changed the person's count.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_3"
+        ],
+        "generation": 5,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_3_004",
+        "title": "Preserve Difference Order",
+        "principle": "When equating a 'has more than' difference to a 'difference between' two persons, preserve the order of subtraction on both sides (i.e., X - Y = A - B).",
+        "when_to_apply": "In statements that set a 'more than' difference equal to another difference.",
+        "example": "Interpreting 'difference between A and B' as B - A, thereby reversing the intended order.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_3"
+        ],
+        "generation": 5,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_3_007",
+        "title": "Temporal Evaluation of Relational Statements",
+        "principle": "When evaluating a relational statement, use the current counts of the persons at that point in the text, reflecting any prior transfers or updates.",
+        "when_to_apply": "When a relational equation refers to persons whose counts may have changed earlier in the sequence.",
+        "example": "Using a person's initial count for a later relational statement after a transfer has already altered that count.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_3"
+        ],
+        "generation": 5,
+        "confidence": 0.72
+      },
+      {
+        "skill_id": "mat_ev_4_008",
+        "title": "Conditional Transfer Application",
+        "principle": "When encountering a conditional transfer, first evaluate the condition using the current counts, and only apply the transfer if the condition holds.",
+        "when_to_apply": "When a transfer statement includes a condition such as 'if X has at least N items, X gives N to Y'.",
+        "example": "Applying the transfer without checking the condition, leading to an impossible negative count for the giver.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 5,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_4_009",
+        "title": "Combined Sum Equality Interpretation",
+        "principle": "When a statement gives a combined total for several persons, interpret it as the sum of those persons' counts equals the given total.",
+        "when_to_apply": "When encountering phrasing like 'The total number of items that A, B, and C have is N'.",
+        "example": "Treating the combined total as each person having N items individually, rather than the sum of their counts.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 5,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "mat_ev_5_009",
+        "title": "Split Equally Among Recipients (Additive)",
+        "principle": "When a person splits all their items equally among recipients, set the donor's count to 0 and add an equal share to each recipient.",
+        "when_to_apply": "When a statement says 'Person gives all their items equally to X and Y' or similar.",
+        "example": "Leaving the donor's count unchanged after the split, instead of setting it to zero.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 5,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "mat_ev_6_009",
+        "title": "Multiplicative Increase Interpretation",
+        "principle": "When a statement says 'the number of X that Y has increases by p/q times', treat it as a scaling operation: multiply Y's current count by the factor p/q (do not add p/q times the count).",
+        "when_to_apply": "When encountering phrasing like 'increases by N times' or 'increases by a fraction times'.",
+        "example": "Interpreting 'increases by 8/7 times' as adding 8/7 of the current count (resulting in a factor of 15/7) instead of multiplying by 8/7.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_9-l_200-diverse-idx_12"
+        ],
+        "generation": 6,
+        "confidence": 0.45
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Interpreting 'difference between X and Y' as absolute value instead of signed subtraction.",
+        "why_it_happens": "The model defaults to treating 'difference' as a magnitude, forgetting that the order of names determines the sign.",
+        "how_to_avoid": "Always keep the order as stated and compute X - Y, not |X - Y|.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Applying all transfers after processing other statements, ignoring their sequential effect.",
+        "why_it_happens": "The model tends to batch updates, treating transfers as a separate phase rather than as they appear.",
+        "how_to_avoid": "Apply each transfer immediately when it is encountered, updating both giver and receiver before processing subsequent statements.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Assuming 'A has N more than B' implies A > B and discarding solutions where the computed difference is negative.",
+        "why_it_happens": "The phrasing suggests a positive difference, leading the model to reject equations that yield a negative result.",
+        "how_to_avoid": "Translate 'A has N more than B' directly to A = B + N; the sign of N encodes the direction, and the equation may be valid even if N is negative.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Treating a direct count statement as an immutable initial value and not updating it after earlier transfers.",
+        "why_it_happens": "The model treats direct assignments as fixed facts rather than mutable state that can change via later transfers.",
+        "how_to_avoid": "When a direct count appears, set the count at that point, but allow later transfer statements to modify it.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Evaluating relational statements using outdated counts (e.g., initial values) instead of the current counts after prior statements.",
+        "why_it_happens": "The model may keep a snapshot of counts from the start and fail to incorporate earlier updates.",
+        "how_to_avoid": "Always use the most recent values of all persons when processing a relational statement, reflecting any prior transfers or assignments.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 5
+      }
+    ]
+  }
+}

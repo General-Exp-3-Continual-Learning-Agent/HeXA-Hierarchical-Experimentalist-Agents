@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_055",
+  "run": 1,
+  "item_idx": 55,
+  "seed": 1843041465,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "XVII = XV + II",
+  "finish_reason": "stop",
+  "raw_chars": 110084,
+  "reasoning_chars": 108635,
+  "final_chars": 1449,
+  "elapsed_s": 326.46063899993896,
+  "usage": {
+    "completion_tokens": 26449,
+    "prompt_tokens": 460,
+    "total_tokens": 26909,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "a298ad848d1221ee641d25cb7683aea87847a1148f73edde46f1cbe71107d0ac"
+}

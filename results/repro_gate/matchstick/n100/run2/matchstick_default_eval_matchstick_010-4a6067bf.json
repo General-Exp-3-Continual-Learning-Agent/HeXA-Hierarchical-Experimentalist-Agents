@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_010",
+  "run": 2,
+  "item_idx": 10,
+  "seed": 1796471829,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "VI = IX - III",
+  "finish_reason": "stop",
+  "raw_chars": 27416,
+  "reasoning_chars": 26319,
+  "final_chars": 1097,
+  "elapsed_s": 64.14314317703247,
+  "usage": {
+    "completion_tokens": 6473,
+    "prompt_tokens": 459,
+    "total_tokens": 6932,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "3c3a6d0d94d4928c5d7bd41fe2bab3d3b5ae1a651a1aed6fe36c8b45aba5b88b"
+}

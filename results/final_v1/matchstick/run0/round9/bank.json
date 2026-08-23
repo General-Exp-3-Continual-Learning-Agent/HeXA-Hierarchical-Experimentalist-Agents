@@ -1,0 +1,197 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_3_000",
+        "title": "Vertical sticks only in I, II, III, L",
+        "principle": "Only the numerals I, II, III, and L are built from vertical matchsticks; all other Roman numerals (V, X, C, D, M) consist solely of diagonal sticks, so vertical sticks cannot be taken from or added to them.",
+        "when_to_apply": "Whenever a move involves a vertical stick, restrict both source and destination tokens to I, II, III, or L.",
+        "example": "You cannot move a vertical stick from V to another numeral because V has no vertical sticks.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_037"
+        ],
+        "generation": 4,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_2_001",
+        "title": "Preserve token validity",
+        "principle": "After relocating a stick, both the token that lost a stick and the token that gained a stick must still form a valid Roman numeral or a permitted operator (+, -, =).",
+        "when_to_apply": "Immediately after any stick relocation, check that each affected token remains a legal symbol.",
+        "example": "Removing the only vertical from I would leave an empty token, which is invalid.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_037"
+        ],
+        "generation": 4,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_2_002",
+        "title": "Use numeric difference to guide moves",
+        "principle": "Compute the integer values of the left\u2011hand side and right\u2011hand side; the numeric gap indicates how much the total must increase or decrease, focusing the search on moves that adjust values by that amount.",
+        "when_to_apply": "At the start of solving, calculate the difference between the two sides to decide which numerals need to be increased or decreased.",
+        "example": "If LHS=7 and RHS=12, you need a net increase of 5 on the left or a net decrease of 5 on the right.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_037"
+        ],
+        "generation": 4,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_3_003",
+        "title": "I\u2011V order swap changes value by 2",
+        "principle": "Swapping the order of I and V within a numeral (IV \u2194 VI) changes its value by exactly two (IV=4, VI=6).",
+        "when_to_apply": "When the numeric gap is a multiple of two and a numeral contains the substring IV or VI, consider swapping the order.",
+        "example": "Changing IV to VI adds 2 to the numeral\u2019s value.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_037"
+        ],
+        "generation": 4,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_2_004",
+        "title": "Vertical stick transfer between numerals",
+        "principle": "Moving a vertical stick from a numeral that has at least two vertical sticks (II, III, L) to another numeral that can accept a vertical (I, II, III, L) decreases the source value by 1 and increases the destination value by 1, while keeping both tokens valid.",
+        "when_to_apply": "When you need to adjust two numerals by \u00b11 each and both contain vertical sticks, transfer a vertical from the larger to the smaller.",
+        "example": "Transfer a vertical from II (2) to I (1): II becomes I (value\u202f1) and I becomes II (value\u202f2).",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_037"
+        ],
+        "generation": 4,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Never take sticks from V or X",
+        "principle": "V and X consist solely of diagonal sticks; removing any diagonal leaves an invalid shape (a single stick), so they must never be used as a source for a stick move.",
+        "when_to_apply": "Whenever a candidate move would take a diagonal from V or X, discard it.",
+        "example": "Taking a diagonal from X would leave a lone diagonal, which is not a Roman numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_037"
+        ],
+        "generation": 4,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_2_006",
+        "title": "Maintain operator validity",
+        "principle": "Operators may only be +, -, or = after a move; any other shape (e.g., a single diagonal, a three\u2011line symbol) is invalid.",
+        "when_to_apply": "After moving a stick that touches an operator, verify that the resulting shape is still one of the allowed operators.",
+        "example": "Removing the only horizontal from '-' would leave no operator, which is invalid.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_037"
+        ],
+        "generation": 4,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_2_008",
+        "title": "Vertical stick from '+' to numeral",
+        "principle": "Moving the vertical component of a '+' operator to a numeral turns '+' into '-' (since it loses its vertical) and adds a vertical to the numeral, potentially increasing its value.",
+        "when_to_apply": "When a '+' appears and you need an extra vertical stick, consider transferring its vertical part to a numeral.",
+        "example": "Transfer the vertical from '+' to I, turning '+' into '-' and I into II.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_037"
+        ],
+        "generation": 4,
+        "confidence": 0.49
+      },
+      {
+        "skill_id": "mat_ev_3_009",
+        "title": "Horizontal stick transfer between operators",
+        "principle": "Moving a horizontal stick from '=' to '-' (or vice versa) swaps the two operators: the source loses a horizontal (changing '='\u2192'-' or '-'\u2192'=') and the destination gains one (changing '-'\u2192'=' or '='\u2192'-').",
+        "when_to_apply": "When the numeric gap suggests that changing subtraction to equality (or the reverse) could resolve the equation, consider swapping a horizontal between the two operators.",
+        "example": "Transfer a horizontal from '=' to '-' to turn \"A = B - C\" into \"A - B = C\".",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_037"
+        ],
+        "generation": 4,
+        "confidence": 0.53
+      },
+      {
+        "skill_id": "mat_ev_5_009",
+        "title": "Reorient diagonal within V to create X",
+        "principle": "By relocating one diagonal stick of a V shape so that it crosses the other diagonal, the token changes from V (value\u202f5) to X (value\u202f10) without affecting any other token; this move preserves token validity and adjusts the numeral\u2019s value by\u202f+5.",
+        "when_to_apply": "When a V appears in the equation and the numeric gap is exactly\u202f+5 (or \u20135), consider converting that V into an X by moving one of its diagonals to intersect the other.",
+        "example": "Turning the V in VII into X yields XII, changing 7 to 12 and satisfying \"XII = XVIII - VI\".",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_037"
+        ],
+        "generation": 5,
+        "confidence": 0.21666666666666667
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Taking a stick from V or X, leaving an invalid shape",
+        "why_it_happens": "The model assumes any stick can be removed, forgetting that V and X consist only of diagonal sticks; removing one leaves a single diagonal, which is not a valid Roman numeral.",
+        "how_to_avoid": "Never consider V or X as a source for a stick move; only take sticks from numerals that contain vertical sticks (I, II, III, L).",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 4
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Changing an operator to an invalid one",
+        "why_it_happens": "The model may move a stick that destroys the shape of an operator, producing a symbol that is not +, -, or =.",
+        "how_to_avoid": "After any stick move involving an operator, verify that the resulting shape is still one of the allowed operators.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 4
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Assuming a single stick can change a numeral's value arbitrarily",
+        "why_it_happens": "The model treats any stick relocation as capable of any numeric change, ignoring the limited value adjustments each stick can cause.",
+        "how_to_avoid": "Use the numeric difference heuristic and known value changes (e.g., vertical \u00b11, IV\u2194VI \u00b12, V\u2194X \u00b15) to evaluate whether a move can bridge the gap.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 4
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Neglecting to recompute the arithmetic after the move",
+        "why_it_happens": "The model sometimes proposes a move but does not verify that the resulting equation is numerically correct.",
+        "how_to_avoid": "Always recalculate the integer values of both sides after a proposed move before finalizing the answer.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 4
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Treating diagonal sticks as interchangeable with vertical sticks",
+        "why_it_happens": "The model confuses stick orientation, moving a diagonal where a vertical is required (or vice versa).",
+        "how_to_avoid": "Respect the orientation constraints: vertical sticks can only be used in I, II, III, L; diagonal sticks only in V, X, etc.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 4
+      }
+    ]
+  }
+}

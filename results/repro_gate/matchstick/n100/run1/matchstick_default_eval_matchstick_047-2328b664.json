@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_047",
+  "run": 1,
+  "item_idx": 47,
+  "seed": 1843041457,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "XI = XIV - III",
+  "finish_reason": "stop",
+  "raw_chars": 108644,
+  "reasoning_chars": 108597,
+  "final_chars": 47,
+  "elapsed_s": 321.36689043045044,
+  "usage": {
+    "completion_tokens": 25961,
+    "prompt_tokens": 459,
+    "total_tokens": 26420,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "dad0449333385da9730c39421ce6eace4eb19c3ebb09d44f7cc50aec7ecb0de9"
+}

@@ -1,0 +1,21 @@
+{
+  "base_url": "http://gpu013:8000/v1",
+  "model": "openai/gpt-oss-120b",
+  "reasoning_effort": "high",
+  "strict": false,
+  "reasoning_chars": 363,
+  "final_chars": 0,
+  "finish_reason": "length",
+  "reasoning_parser": true,
+  "effort_transport": "top_level",
+  "reasoning_field": "reasoning",
+  "garbage_value_rejected": true,
+  "differential": {
+    "low": 43,
+    "high": 1023,
+    "ratio": 23.791,
+    "min_ratio": 1.5
+  },
+  "ignored_signals": [],
+  "effort_verified": "yes"
+}

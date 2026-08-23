@@ -1,0 +1,192 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Signed Equality for Difference Statements",
+        "principle": "When a statement equates two differences, interpret both sides as signed equations preserving the order of names (e.g., (A - B) = (C - D)).",
+        "when_to_apply": "Whenever you encounter a sentence of the form 'the number of X that A has more than B is equal to the difference between the number of X that C and D have' or any equality of differences.",
+        "example": "Treating 'the number of peaches that A has more than B equals the difference between C and D' as |A - B| = |C - D| (absolute values) would be wrong.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13",
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 9,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Iterative Substitution and Propagation",
+        "principle": "Whenever a variable's value becomes known, substitute it into all pending equations and simplify, repeatedly propagating known values until no further simplifications are possible.",
+        "when_to_apply": "After each direct count, transfer, or solved equation, update all other equations that involve the same variable.",
+        "example": "Leaving an equation like A - B = 5 unchanged after learning A = 10, instead of substituting to get B = 5, leads to missed deductions.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13",
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 9,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_2_008",
+        "title": "Chronological Evaluation of Comparative Statements",
+        "principle": "Interpret comparative statements using the counts as they exist at that point in the text, after applying any earlier transfers or overrides.",
+        "when_to_apply": "When processing a 'has K more/fewer than' or similar comparative sentence, ensure all prior statements (including transfers) have been applied.",
+        "example": "Evaluating 'A has 3 more than B' before processing a prior transfer that gave B additional items would give the wrong relationship.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13",
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 9,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_2_009",
+        "title": "Query\u2011Focused Subsystem Extraction",
+        "principle": "Identify the minimal subset of equations that involve the queried person directly or indirectly, and solve only that subsystem to avoid unnecessary complexity.",
+        "when_to_apply": "Before solving the whole system, trace connections from the query variable through equations to isolate relevant variables.",
+        "example": "Including unrelated equations about people who never appear in any chain leading to the query wastes effort and can cause confusion.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13",
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 9,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_5_008",
+        "title": "Distinct Name Disambiguation",
+        "principle": "Treat each unique name as a separate variable, even if names differ by only a single character; avoid conflating similarly spelled names.",
+        "when_to_apply": "When parsing the text, map each distinct name token to its own variable.",
+        "example": "Merging 'Kaila' and 'Kaila' (typo) or treating 'James' and 'Jamess' as the same would cause incorrect equations.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13",
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 9,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_6_009",
+        "title": "Preserve Order in \"Difference Between\" Phrases",
+        "principle": "When a phrase says 'the difference between the number of X that A and B have', interpret it as the signed difference A - B, preserving the order of the names as given.",
+        "when_to_apply": "Any time you see 'difference between ... A and B' or similar, do not take absolute value; keep the sign.",
+        "example": "Interpreting 'difference between A and B' as |A - B| would lose sign information.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13",
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 9,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_7_006",
+        "title": "General Comparative Interpretation (more/fewer)",
+        "principle": "Interpret 'A has K more than B' as A - B = K, and 'A has K fewer than B' as A - B = -K, preserving the direction of the comparison.",
+        "when_to_apply": "Whenever a sentence contains 'more' or 'fewer' between two names.",
+        "example": "Swapping the sides and writing B - A = K would invert the relationship.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13",
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 9,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "mat_ev_7_007",
+        "title": "Direct Count Handling with Overrides",
+        "principle": "When a statement says 'X has N items', set X's count to N at that point, overriding any previous value for X.",
+        "when_to_apply": "Whenever a direct count appears, replace the current value of that variable, even if it was previously derived from other equations.",
+        "example": "Treating a later 'X has 10' as an additional constraint rather than overriding the earlier value would cause inconsistency.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13",
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 9,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "mat_ev_8_008",
+        "title": "Chronological Transfer Application",
+        "principle": "Apply each transfer statement in the order given, subtracting the specified amount from the giver and adding it to the receiver, updating their counts before processing subsequent statements.",
+        "when_to_apply": "Whenever a 'X gives K items to Y' sentence appears.",
+        "example": "Treating transfers as simultaneous constraints without order would ignore the effect on later comparative statements.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13",
+          "mathgap_num_20-seed_0-d_9-l_200-idx_12"
+        ],
+        "generation": 9,
+        "confidence": 1.0
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Swapped direction in 'has K more than' statements",
+        "why_it_happens": "The model often reverses the subtraction order, interpreting 'A has K more than B' as B - A = K instead of A - B = K.",
+        "how_to_avoid": "Remember that 'has K more than' defines a signed difference with the subject on the left: write A - B = K.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 9
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Treating differences as absolute values",
+        "why_it_happens": "The model drops the sign when encountering 'difference between' or equality-of-differences, using |A - B| instead of A - B.",
+        "how_to_avoid": "Preserve the order of names and keep the signed difference; do not take absolute values.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 9
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Ignoring the chronological order of transfers",
+        "why_it_happens": "The model treats all transfers as simultaneous constraints, failing to update counts before later statements.",
+        "how_to_avoid": "Apply each transfer in the order it appears, updating giver and receiver counts before processing subsequent statements.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 9
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Treating 'has N' as an initial count regardless of position",
+        "why_it_happens": "The model assumes direct counts are fixed initial values and does not override them when later statements provide a new count.",
+        "how_to_avoid": "When a direct count appears, set the variable to that value at that point, overriding any previous value.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 9
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Misinterpreting multiplicative increase statements",
+        "why_it_happens": "The model sometimes reads phrases like 'twice as many' as addition rather than multiplication.",
+        "how_to_avoid": "Identify multiplicative language (e.g., 'twice', 'double') and translate it into multiplication, not addition.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 9
+      }
+    ]
+  }
+}

@@ -1,0 +1,209 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_6_001",
+        "title": "Interpret adjacency and ordering clues correctly",
+        "principle": "When a clue uses terms like 'directly left of', 'directly right of', or similar, enforce that the two houses are adjacent in the specified order.",
+        "when_to_apply": "Whenever a clue mentions direct adjacency or ordering between two attributes.",
+        "example": "Treating 'directly left of' as a non\u2011adjacent ordering and placing the houses apart.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-31"
+        ],
+        "generation": 12,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "zeb_ev_1_003",
+        "title": "Interpret distance clues correctly",
+        "principle": "When a clue says 'N houses between X and Y', enforce that exactly N houses separate X and Y (|pos(X) - pos(Y)| = N+1).",
+        "when_to_apply": "When a clue specifies a numeric distance between two attributes.",
+        "example": "Interpreting 'one house between' as the houses being adjacent.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-31"
+        ],
+        "generation": 12,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_2_004",
+        "title": "Treat 'somewhere left/right of' as inequality",
+        "principle": "Interpret phrases like 'X is somewhere left of Y' (or right of) as a strict ordering constraint (pos(X) < pos(Y) or >), without requiring adjacency.",
+        "when_to_apply": "When a clue uses 'somewhere left/right of' without the word 'directly'.",
+        "example": "Treating 'somewhere left of' as adjacency and placing X immediately left of Y.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-31"
+        ],
+        "generation": 12,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_1_007",
+        "title": "Enforce uniqueness across each attribute category",
+        "principle": "Each value in a category must appear exactly once across all houses; no two houses may share the same value.",
+        "when_to_apply": "During assignment, ensure no duplicate values within a category.",
+        "example": "Assigning the same color to two different houses.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-31",
+          "zebralogic-lgp-test-5x5-1"
+        ],
+        "generation": 12,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_2_008",
+        "title": "Preserve original case of attribute values",
+        "principle": "When outputting the final grid, copy each attribute value exactly as it appears in the problem statement, preserving capitalization.",
+        "when_to_apply": "During final output formatting.",
+        "example": "Changing 'Bob' to 'bob' or 'RED' to 'red'.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-31"
+        ],
+        "generation": 12,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_11_006",
+        "title": "Bidirectional equivalence for name\u2011attribute clues",
+        "principle": "When a clue directly links a specific name to an attribute, enforce both directions (name \u2194 attribute).",
+        "when_to_apply": "When a clue says 'X is the Y' or 'Y belongs to X'.",
+        "example": "Only enforcing 'Bob is the desert\u2011smoothie lover' in one direction, allowing Bob to have a different smoothie.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-31"
+        ],
+        "generation": 12,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "zeb_ev_11_007",
+        "title": "Bidirectional equivalence for attribute\u2011attribute clues",
+        "principle": "When a clue links two non\u2011name attributes, enforce both directions (attribute A \u2194 attribute B).",
+        "when_to_apply": "When a clue says 'The cat lover is the person whose mother is Sarah' or similar.",
+        "example": "Only applying the link one way, leaving the other attribute unconstrained.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-31"
+        ],
+        "generation": 12,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "zeb_ev_11_009",
+        "title": "Apply direct placement constraints",
+        "principle": "When a clue explicitly places an attribute in a specific house, enforce that placement.",
+        "when_to_apply": "When a clue mentions a house number or position.",
+        "example": "Ignoring 'The lime smoothie drinker lives in house 2' and allowing lime elsewhere.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-31",
+          "zebralogic-lgp-test-5x5-1"
+        ],
+        "generation": 12,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "zeb_ev_12_009",
+        "title": "Output solution JSON with exact schema and no extra text",
+        "principle": "When finalizing the answer, emit only the JSON object with the required keys and structure, without any explanatory text or stray characters.",
+        "when_to_apply": "At the very end of the response.",
+        "example": "Including a narrative before the JSON, causing parsing failure.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x6-31",
+          "zebralogic-lgp-test-5x5-1"
+        ],
+        "generation": 12,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_13_009",
+        "title": "Disambiguate overlapping attribute categories",
+        "principle": "When multiple attribute categories contain overlapping values (e.g., 'cat' appears in both Pet and Animal), determine which category a clue refers to and keep each category's values separate; never assign a value from one category to the other.",
+        "when_to_apply": "Whenever a clue mentions a value that exists in more than one category, or when filling the solution grid, ensure each column receives values from its own category.",
+        "example": "Assigning the pet 'cat' to the Animal column because a clue said 'cat lover', leading to swapped categories.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x5-1"
+        ],
+        "generation": 13,
+        "confidence": 0.45
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_err_001",
+        "description": "Interpreting 'N houses between' as distance N",
+        "why_it_happens": "The model treats the number in the clue as the total gap rather than the number of houses separating the two positions.",
+        "how_to_avoid": "When a clue says 'N houses between X and Y', enforce that the absolute position difference equals N+1.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "zeb_evo_002",
+        "description": "Ignoring equivalence clues that bind two attributes to the same house",
+        "why_it_happens": "The model fails to propagate bidirectional constraints, treating the link as one\u2011way.",
+        "how_to_avoid": "Whenever a clue links two attributes, enforce both directions so they occupy the same house.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "zeb_evo_003",
+        "description": "Violating the one\u2011per\u2011category uniqueness rule",
+        "why_it_happens": "The model may assign the same value to multiple houses within a category, overlooking the uniqueness constraint.",
+        "how_to_avoid": "Track used values per category and prevent duplicates during assignment.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "zeb_err_003",
+        "description": "Altering attribute values (spelling/casing) instead of copying them verbatim",
+        "why_it_happens": "The model normalizes text or makes typographical changes during generation.",
+        "how_to_avoid": "Copy attribute strings exactly as given, preserving case and spelling.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "zeb_evo_004",
+        "description": "Including extra explanatory text or stray characters outside the required JSON solution",
+        "why_it_happens": "The model adds commentary or formatting before/after the JSON, breaking the parser.",
+        "how_to_avoid": "Output only the JSON object with the required keys, no surrounding text.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "zeb_evo_005",
+        "description": "Confusing overlapping attribute categories (e.g., swapping values between 'Pet' and 'Animal')",
+        "why_it_happens": "When categories share the same literal values, the model may not keep track of which column each value belongs to, leading to cross\u2011category assignment.",
+        "how_to_avoid": "Maintain separate lists for each category and always assign values from the correct list to the corresponding column; resolve ambiguous clues by context.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 13
+      }
+    ]
+  }
+}

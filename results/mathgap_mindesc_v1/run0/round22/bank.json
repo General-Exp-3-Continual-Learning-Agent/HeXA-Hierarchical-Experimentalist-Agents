@@ -1,0 +1,203 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_16_000",
+        "title": "Signed 'has more than' interpretation",
+        "principle": "Interpret any phrase of the form 'X has more than Y' as a signed difference X\u00a0\u2212\u00a0Y\u00a0=\u00a0N, preserving the order given.",
+        "when_to_apply": "Whenever a statement says 'X has N more than Y', including when the phrase appears inside a larger clause.",
+        "example": "Reversing the sign and writing Ashlynn\u00a0=\u00a0Zelda\u00a0+\u00a058 for 'Zelda has 58 more broccolis than Ashlynn'.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_0",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_11"
+        ],
+        "generation": 17,
+        "confidence": 0.45
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Model transfers as net changes",
+        "principle": "When a transfer 'X gives N to Y' occurs, subtract N from X and add N to Y, updating each person's count accordingly.",
+        "when_to_apply": "Whenever a statement explicitly says that one person gives a number of items to another.",
+        "example": "Subtracting 3 from Myles and adding 3 to Robert when the text says 'Robert gives 3 oranges to Myles'.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_0",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_11"
+        ],
+        "generation": 17,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Systematic equation solving",
+        "principle": "Introduce a distinct variable for each person and translate every relevant statement into a linear equation, then solve the resulting system.",
+        "when_to_apply": "After all statements have been parsed into equations, before extracting the answer.",
+        "example": "Leaving a relational statement untranslated and trying to guess the value directly.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_0",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_11"
+        ],
+        "generation": 17,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Signed difference phrasing",
+        "principle": "Interpret 'difference between X and Y' as the signed difference X\u00a0\u2212\u00a0Y, preserving the order as presented.",
+        "when_to_apply": "Whenever a statement mentions the 'difference between' two persons.",
+        "example": "Treating 'difference between A and B' as |A\u00a0\u2212\u00a0B| instead of A\u00a0\u2212\u00a0B.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_0",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_11"
+        ],
+        "generation": 17,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_12_008",
+        "title": "Include transfers as constraints before solving relational equations",
+        "principle": "Apply all transfer statements first, updating each person's count, and then use those updated counts when translating relational equations.",
+        "when_to_apply": "Immediately after parsing direct counts, before handling any 'has more than' or 'difference' relations.",
+        "example": "Solving difference equations using the original counts and only later adjusting for transfers.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_0",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_11"
+        ],
+        "generation": 17,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_14_009",
+        "title": "Direct counts as initial constraints",
+        "principle": "Treat statements that give an explicit count (e.g., 'X has N items') as the initial amount before any transfers are applied.",
+        "when_to_apply": "When a statement provides a concrete number for a person's items.",
+        "example": "Assuming a directly given count already includes the effect of later transfers.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_0",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_11"
+        ],
+        "generation": 17,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_15_009",
+        "title": "Answer formatting",
+        "principle": "Output the final answer using the exact required format: 'The final answer is $\\boxed{<integer>}$'.",
+        "when_to_apply": "When writing the final response.",
+        "example": "Writing 'The answer is 23' instead of the required boxed format.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_0"
+        ],
+        "generation": 17,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_17_009",
+        "title": "Cluster independent sub-systems",
+        "principle": "Identify groups of variables that are only linked among themselves (no equations or transfers connecting them to other groups) and solve each cluster separately.",
+        "when_to_apply": "When the system of equations is large and contains disconnected subsets.",
+        "example": "Attempting to solve the whole system at once without recognizing that some variables are unrelated to the target.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_0"
+        ],
+        "generation": 17,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_17_010",
+        "title": "Complex difference phrasing handling",
+        "principle": "For statements like 'the number of X that Y has more than Z is equal to the difference between the number of A and B', translate them as (Y\u00a0\u2212\u00a0Z)\u00a0=\u00a0(A\u00a0\u2212\u00a0B), preserving the order on both sides.",
+        "when_to_apply": "Whenever a relational statement combines 'has more than' with 'difference between' in a single sentence.",
+        "example": "Misreading 'the number of oranges that Adolfo has more than Taylor is equal to the difference between the number of oranges that James and Myles have' as Adolfo\u00a0=\u00a0Taylor\u00a0+\u00a0James\u00a0+\u00a0Myles.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_0"
+        ],
+        "generation": 17,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_18_009",
+        "title": "Transfer with unknown counts handling",
+        "principle": "When a transfer involves a person whose count is not directly given, introduce a separate variable for their pre\u2011transfer amount, apply the transfer to define a post\u2011transfer variable, and use the post\u2011transfer variable in all subsequent relational equations.",
+        "when_to_apply": "Whenever a transfer statement mentions a giver or receiver without an explicit count.",
+        "example": "Treating Henry's final count as an unknown and directly using it in equations without accounting for the 52\u2011item transfer he gave away.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_1-s_0-idx_11"
+        ],
+        "generation": 18,
+        "confidence": 0.1
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Treating direct count statements as final counts after transfers",
+        "why_it_happens": "The model assumes that a given count already reflects any later transfers, ignoring that transfers modify the amounts.",
+        "how_to_avoid": "Record direct counts as initial values, then apply all transfer adjustments before using those numbers in relational equations.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 17
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Applying transfers in the wrong direction",
+        "why_it_happens": "The model confuses the giver and receiver, subtracting from the receiver or adding to the giver.",
+        "how_to_avoid": "When a statement says 'X gives N to Y', subtract N from X's count and add N to Y's count.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 17
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Misapplying conditional transfers",
+        "why_it_happens": "The model treats conditional phrasing as unconditional, or fails to enforce the condition.",
+        "how_to_avoid": "Identify the condition explicitly; only apply the transfer if the condition holds, otherwise leave counts unchanged.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 17
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Misinterpreting signed difference statements as absolute differences",
+        "why_it_happens": "The model drops the sign and treats 'difference between X and Y' as |X\u00a0\u2212\u00a0Y|, losing the order information.",
+        "how_to_avoid": "Preserve the order given: translate 'difference between X and Y' to X\u00a0\u2212\u00a0Y, not the absolute value.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 17
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Failing to introduce pre\u2011 and post\u2011transfer variables for persons with unknown counts in transfers",
+        "why_it_happens": "When a giver or receiver lacks a direct count, the model tries to use a single variable for both pre\u2011 and post\u2011transfer amounts, mixing the two stages.",
+        "how_to_avoid": "Create two variables (pre\u2011transfer and post\u2011transfer) for such persons; link them with the transfer amount, and use the post\u2011transfer variable in all later equations.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      }
+    ]
+  }
+}

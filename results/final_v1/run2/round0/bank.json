@@ -1,0 +1,111 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Compute numeric values and discrepancy",
+        "principle": "Before moving any matchstick, calculate the integer values of both sides of the equation (including any subtractions or additions) to determine the numeric discrepancy that must be corrected.",
+        "when_to_apply": "Immediately after reading the equation, before considering any stick moves.",
+        "example": "Moving a stick arbitrarily without first checking the numeric values, resulting in a move that does not fix the equality.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_000",
+          "matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "List possible single\u2011stick transformations",
+        "principle": "Identify all single\u2011stick changes that turn one Roman numeral or operator into another valid symbol (e.g., I\u2194II, V\u2194X, =\u2194\u2011, +\u2194\u2011). This provides the set of candidate moves.",
+        "when_to_apply": "After the numeric discrepancy is known, when planning which stick to move.",
+        "example": "Attempting to remove a diagonal from V and leaving a single diagonal line, which is not a valid Roman numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_000",
+          "matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Match numeric difference to value change of a single\u2011stick move",
+        "principle": "Choose a stick move whose effect on the numeric values (increase or decrease) equals the computed discrepancy, possibly by moving a stick from one numeral to another to adjust both sides simultaneously.",
+        "when_to_apply": "After enumerating possible transformations, compare their numeric impact to the needed difference.",
+        "example": "Moving a stick that changes the right side by +1 while the left side stays the same, leaving a remaining discrepancy of 1.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_000",
+          "matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_003",
+        "title": "Validate resulting characters are legal Roman symbols or operators",
+        "principle": "After a proposed stick relocation, ensure every character (numerals and operators) remains a recognized Roman numeral or a valid operator; discard moves that produce invalid shapes such as a lone diagonal line.",
+        "when_to_apply": "Immediately after hypothesizing a stick move, before accepting it as a solution.",
+        "example": "Leaving a single diagonal stick after removing one from V, which does not correspond to any Roman numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_000",
+          "matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Consider intra\u2011character stick repositioning",
+        "principle": "A single stick can be moved within the same character to change its shape (e.g., reposition a diagonal of V to cross the other diagonal, turning V into X) without affecting other characters.",
+        "when_to_apply": "When the needed numeric adjustment matches a transformation achievable by reshaping a single numeral.",
+        "example": "Ignoring the possibility of turning V into X by moving one of its sticks, thereby missing a valid solution.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Explore operator modification via the equals sign",
+        "principle": "A stick can be taken from the equals sign to turn it into a minus sign (or vice versa), but the equation must still contain an equals sign somewhere else; this can adjust the arithmetic relationship when numeral changes alone are insufficient.",
+        "when_to_apply": "If adjusting numerals does not resolve the discrepancy, consider altering operators.",
+        "example": "Removing one horizontal bar from '=', leaving a single bar (\u2011) and no remaining equals sign, which makes the expression not an equation.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_000"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Explore operator modification via the plus sign",
+        "principle": "Moving the vertical stick of a plus sign can turn it into a minus sign (or vice versa), changing the operation while preserving validity; ensure the resulting arithmetic still balances.",
+        "when_to_apply": "When changing the operation might resolve the numeric discrepancy after checking numeral moves.",
+        "example": "Changing '+' to '-' by removing its vertical stick without adjusting the surrounding numbers, leading to a false equality.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_000"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {}
+}

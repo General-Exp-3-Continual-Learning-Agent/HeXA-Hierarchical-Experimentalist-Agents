@@ -1,0 +1,969 @@
+{
+  "task_name": "matchstick",
+  "n_base": 5,
+  "n_problems": 60,
+  "n_usable": 60,
+  "mean_b_q": 0.6799999999999999,
+  "baselines": {
+    "matchstick:default:train:matchstick_000": {
+      "problem_id": "matchstick:default:train:matchstick_000",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 4,
+      "b_q": 0.8,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987462,
+        233417871,
+        186848280,
+        140278689,
+        93709098
+      ]
+    },
+    "matchstick:default:train:matchstick_001": {
+      "problem_id": "matchstick:default:train:matchstick_001",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987463,
+        233417872,
+        186848281,
+        140278690,
+        93709099
+      ]
+    },
+    "matchstick:default:train:matchstick_002": {
+      "problem_id": "matchstick:default:train:matchstick_002",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987464,
+        233417873,
+        186848282,
+        140278691,
+        93709100
+      ]
+    },
+    "matchstick:default:train:matchstick_003": {
+      "problem_id": "matchstick:default:train:matchstick_003",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987465,
+        233417874,
+        186848283,
+        140278692,
+        93709101
+      ]
+    },
+    "matchstick:default:train:matchstick_004": {
+      "problem_id": "matchstick:default:train:matchstick_004",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987466,
+        233417875,
+        186848284,
+        140278693,
+        93709102
+      ]
+    },
+    "matchstick:default:train:matchstick_005": {
+      "problem_id": "matchstick:default:train:matchstick_005",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987467,
+        233417876,
+        186848285,
+        140278694,
+        93709103
+      ]
+    },
+    "matchstick:default:train:matchstick_006": {
+      "problem_id": "matchstick:default:train:matchstick_006",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 1,
+      "b_q": 0.2,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987468,
+        233417877,
+        186848286,
+        140278695,
+        93709104
+      ]
+    },
+    "matchstick:default:train:matchstick_007": {
+      "problem_id": "matchstick:default:train:matchstick_007",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987469,
+        233417878,
+        186848287,
+        140278696,
+        93709105
+      ]
+    },
+    "matchstick:default:train:matchstick_008": {
+      "problem_id": "matchstick:default:train:matchstick_008",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987470,
+        233417879,
+        186848288,
+        140278697,
+        93709106
+      ]
+    },
+    "matchstick:default:train:matchstick_009": {
+      "problem_id": "matchstick:default:train:matchstick_009",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987471,
+        233417880,
+        186848289,
+        140278698,
+        93709107
+      ]
+    },
+    "matchstick:default:train:matchstick_010": {
+      "problem_id": "matchstick:default:train:matchstick_010",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987472,
+        233417881,
+        186848290,
+        140278699,
+        93709108
+      ]
+    },
+    "matchstick:default:train:matchstick_011": {
+      "problem_id": "matchstick:default:train:matchstick_011",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987473,
+        233417882,
+        186848291,
+        140278700,
+        93709109
+      ]
+    },
+    "matchstick:default:train:matchstick_012": {
+      "problem_id": "matchstick:default:train:matchstick_012",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987474,
+        233417883,
+        186848292,
+        140278701,
+        93709110
+      ]
+    },
+    "matchstick:default:train:matchstick_013": {
+      "problem_id": "matchstick:default:train:matchstick_013",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 0,
+      "b_q": 0.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987475,
+        233417884,
+        186848293,
+        140278702,
+        93709111
+      ]
+    },
+    "matchstick:default:train:matchstick_014": {
+      "problem_id": "matchstick:default:train:matchstick_014",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987476,
+        233417885,
+        186848294,
+        140278703,
+        93709112
+      ]
+    },
+    "matchstick:default:train:matchstick_015": {
+      "problem_id": "matchstick:default:train:matchstick_015",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987477,
+        233417886,
+        186848295,
+        140278704,
+        93709113
+      ]
+    },
+    "matchstick:default:train:matchstick_016": {
+      "problem_id": "matchstick:default:train:matchstick_016",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987478,
+        233417887,
+        186848296,
+        140278705,
+        93709114
+      ]
+    },
+    "matchstick:default:train:matchstick_017": {
+      "problem_id": "matchstick:default:train:matchstick_017",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 2,
+      "b_q": 0.4,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987479,
+        233417888,
+        186848297,
+        140278706,
+        93709115
+      ]
+    },
+    "matchstick:default:train:matchstick_018": {
+      "problem_id": "matchstick:default:train:matchstick_018",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 0,
+      "b_q": 0.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987480,
+        233417889,
+        186848298,
+        140278707,
+        93709116
+      ]
+    },
+    "matchstick:default:train:matchstick_019": {
+      "problem_id": "matchstick:default:train:matchstick_019",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987481,
+        233417890,
+        186848299,
+        140278708,
+        93709117
+      ]
+    },
+    "matchstick:default:train:matchstick_020": {
+      "problem_id": "matchstick:default:train:matchstick_020",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 0,
+      "b_q": 0.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987482,
+        233417891,
+        186848300,
+        140278709,
+        93709118
+      ]
+    },
+    "matchstick:default:train:matchstick_021": {
+      "problem_id": "matchstick:default:train:matchstick_021",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987483,
+        233417892,
+        186848301,
+        140278710,
+        93709119
+      ]
+    },
+    "matchstick:default:train:matchstick_022": {
+      "problem_id": "matchstick:default:train:matchstick_022",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 1,
+      "b_q": 0.2,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987484,
+        233417893,
+        186848302,
+        140278711,
+        93709120
+      ]
+    },
+    "matchstick:default:train:matchstick_023": {
+      "problem_id": "matchstick:default:train:matchstick_023",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987485,
+        233417894,
+        186848303,
+        140278712,
+        93709121
+      ]
+    },
+    "matchstick:default:train:matchstick_024": {
+      "problem_id": "matchstick:default:train:matchstick_024",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987486,
+        233417895,
+        186848304,
+        140278713,
+        93709122
+      ]
+    },
+    "matchstick:default:train:matchstick_025": {
+      "problem_id": "matchstick:default:train:matchstick_025",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987487,
+        233417896,
+        186848305,
+        140278714,
+        93709123
+      ]
+    },
+    "matchstick:default:train:matchstick_026": {
+      "problem_id": "matchstick:default:train:matchstick_026",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987488,
+        233417897,
+        186848306,
+        140278715,
+        93709124
+      ]
+    },
+    "matchstick:default:train:matchstick_027": {
+      "problem_id": "matchstick:default:train:matchstick_027",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 0,
+      "b_q": 0.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987489,
+        233417898,
+        186848307,
+        140278716,
+        93709125
+      ]
+    },
+    "matchstick:default:train:matchstick_028": {
+      "problem_id": "matchstick:default:train:matchstick_028",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987490,
+        233417899,
+        186848308,
+        140278717,
+        93709126
+      ]
+    },
+    "matchstick:default:train:matchstick_029": {
+      "problem_id": "matchstick:default:train:matchstick_029",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 4,
+      "b_q": 0.8,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987491,
+        233417900,
+        186848309,
+        140278718,
+        93709127
+      ]
+    },
+    "matchstick:default:train:matchstick_030": {
+      "problem_id": "matchstick:default:train:matchstick_030",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 4,
+      "b_q": 0.8,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987492,
+        233417901,
+        186848310,
+        140278719,
+        93709128
+      ]
+    },
+    "matchstick:default:train:matchstick_031": {
+      "problem_id": "matchstick:default:train:matchstick_031",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 4,
+      "b_q": 0.8,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987493,
+        233417902,
+        186848311,
+        140278720,
+        93709129
+      ]
+    },
+    "matchstick:default:train:matchstick_032": {
+      "problem_id": "matchstick:default:train:matchstick_032",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 0,
+      "b_q": 0.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987494,
+        233417903,
+        186848312,
+        140278721,
+        93709130
+      ]
+    },
+    "matchstick:default:train:matchstick_033": {
+      "problem_id": "matchstick:default:train:matchstick_033",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 0,
+      "b_q": 0.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987495,
+        233417904,
+        186848313,
+        140278722,
+        93709131
+      ]
+    },
+    "matchstick:default:train:matchstick_034": {
+      "problem_id": "matchstick:default:train:matchstick_034",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 0,
+      "b_q": 0.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987496,
+        233417905,
+        186848314,
+        140278723,
+        93709132
+      ]
+    },
+    "matchstick:default:train:matchstick_035": {
+      "problem_id": "matchstick:default:train:matchstick_035",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 1,
+      "b_q": 0.2,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987497,
+        233417906,
+        186848315,
+        140278724,
+        93709133
+      ]
+    },
+    "matchstick:default:train:matchstick_036": {
+      "problem_id": "matchstick:default:train:matchstick_036",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987498,
+        233417907,
+        186848316,
+        140278725,
+        93709134
+      ]
+    },
+    "matchstick:default:train:matchstick_037": {
+      "problem_id": "matchstick:default:train:matchstick_037",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 3,
+      "b_q": 0.6,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987499,
+        233417908,
+        186848317,
+        140278726,
+        93709135
+      ]
+    },
+    "matchstick:default:train:matchstick_038": {
+      "problem_id": "matchstick:default:train:matchstick_038",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987500,
+        233417909,
+        186848318,
+        140278727,
+        93709136
+      ]
+    },
+    "matchstick:default:train:matchstick_039": {
+      "problem_id": "matchstick:default:train:matchstick_039",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 0,
+      "b_q": 0.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987501,
+        233417910,
+        186848319,
+        140278728,
+        93709137
+      ]
+    },
+    "matchstick:default:train:matchstick_040": {
+      "problem_id": "matchstick:default:train:matchstick_040",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 4,
+      "b_q": 0.8,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987502,
+        233417911,
+        186848320,
+        140278729,
+        93709138
+      ]
+    },
+    "matchstick:default:train:matchstick_041": {
+      "problem_id": "matchstick:default:train:matchstick_041",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987503,
+        233417912,
+        186848321,
+        140278730,
+        93709139
+      ]
+    },
+    "matchstick:default:train:matchstick_043": {
+      "problem_id": "matchstick:default:train:matchstick_043",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987504,
+        233417913,
+        186848322,
+        140278731,
+        93709140
+      ]
+    },
+    "matchstick:default:train:matchstick_044": {
+      "problem_id": "matchstick:default:train:matchstick_044",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 2,
+      "b_q": 0.4,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987505,
+        233417914,
+        186848323,
+        140278732,
+        93709141
+      ]
+    },
+    "matchstick:default:train:matchstick_045": {
+      "problem_id": "matchstick:default:train:matchstick_045",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987506,
+        233417915,
+        186848324,
+        140278733,
+        93709142
+      ]
+    },
+    "matchstick:default:train:matchstick_046": {
+      "problem_id": "matchstick:default:train:matchstick_046",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 4,
+      "b_q": 0.8,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987507,
+        233417916,
+        186848325,
+        140278734,
+        93709143
+      ]
+    },
+    "matchstick:default:train:matchstick_048": {
+      "problem_id": "matchstick:default:train:matchstick_048",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987508,
+        233417917,
+        186848326,
+        140278735,
+        93709144
+      ]
+    },
+    "matchstick:default:train:matchstick_049": {
+      "problem_id": "matchstick:default:train:matchstick_049",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 4,
+      "b_q": 0.8,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987509,
+        233417918,
+        186848327,
+        140278736,
+        93709145
+      ]
+    },
+    "matchstick:default:train:matchstick_050": {
+      "problem_id": "matchstick:default:train:matchstick_050",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987510,
+        233417919,
+        186848328,
+        140278737,
+        93709146
+      ]
+    },
+    "matchstick:default:train:matchstick_051": {
+      "problem_id": "matchstick:default:train:matchstick_051",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987511,
+        233417920,
+        186848329,
+        140278738,
+        93709147
+      ]
+    },
+    "matchstick:default:train:matchstick_052": {
+      "problem_id": "matchstick:default:train:matchstick_052",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 0,
+      "b_q": 0.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987512,
+        233417921,
+        186848330,
+        140278739,
+        93709148
+      ]
+    },
+    "matchstick:default:train:matchstick_055": {
+      "problem_id": "matchstick:default:train:matchstick_055",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 2,
+      "b_q": 0.4,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987513,
+        233417922,
+        186848331,
+        140278740,
+        93709149
+      ]
+    },
+    "matchstick:default:train:matchstick_056": {
+      "problem_id": "matchstick:default:train:matchstick_056",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 2,
+      "b_q": 0.4,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987514,
+        233417923,
+        186848332,
+        140278741,
+        93709150
+      ]
+    },
+    "matchstick:default:train:matchstick_057": {
+      "problem_id": "matchstick:default:train:matchstick_057",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 1,
+      "b_q": 0.2,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987515,
+        233417924,
+        186848333,
+        140278742,
+        93709151
+      ]
+    },
+    "matchstick:default:train:matchstick_058": {
+      "problem_id": "matchstick:default:train:matchstick_058",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 5,
+      "b_q": 1.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987516,
+        233417925,
+        186848334,
+        140278743,
+        93709152
+      ]
+    },
+    "matchstick:default:train:matchstick_061": {
+      "problem_id": "matchstick:default:train:matchstick_061",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 1,
+      "b_q": 0.2,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987517,
+        233417926,
+        186848335,
+        140278744,
+        93709153
+      ]
+    },
+    "matchstick:default:train:matchstick_063": {
+      "problem_id": "matchstick:default:train:matchstick_063",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 4,
+      "b_q": 0.8,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987518,
+        233417927,
+        186848336,
+        140278745,
+        93709154
+      ]
+    },
+    "matchstick:default:train:matchstick_072": {
+      "problem_id": "matchstick:default:train:matchstick_072",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 3,
+      "b_q": 0.6,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987519,
+        233417928,
+        186848337,
+        140278746,
+        93709155
+      ]
+    },
+    "matchstick:default:train:matchstick_075": {
+      "problem_id": "matchstick:default:train:matchstick_075",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 3,
+      "b_q": 0.6,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987520,
+        233417929,
+        186848338,
+        140278747,
+        93709156
+      ]
+    },
+    "matchstick:default:train:matchstick_078": {
+      "problem_id": "matchstick:default:train:matchstick_078",
+      "task_name": "matchstick",
+      "n_base": 5,
+      "successes": 0,
+      "b_q": 0.0,
+      "usable": true,
+      "errors": 0,
+      "seeds": [
+        279987521,
+        233417930,
+        186848339,
+        140278748,
+        93709157
+      ]
+    }
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_3_001",
+        "title": "Directed More-Than Interpretation",
+        "principle": "Translate comparative statements of the form 'A has N more (or fewer) items than B' into the equation A = B + N (or A = B - N).",
+        "when_to_apply": "Whenever a statement explicitly says one person has more or fewer items than another.",
+        "example": "Interpreting 'A has 5 more items than B' as A = B + 5, but mistakenly treating it as A = |B + 5|.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_3_003",
+        "title": "Immediate Direct Assignment Update",
+        "principle": "A direct count statement (e.g., 'A has N items') sets the current value of A to N at that point in the narrative, and later transfers can modify it.",
+        "when_to_apply": "When encountering a sentence that gives an explicit number of items for a person.",
+        "example": "Setting A = 5 from 'A has 5 items', but incorrectly treating it as a permanent value that cannot change later.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_9_009",
+        "title": "Temporal Consistency of Transfers and Relational Statements",
+        "principle": "Process the problem sequentially; when a transfer ('X gives N to Y') appears, immediately subtract N from X and add N to Y, and any subsequent relational statements refer to these updated counts.",
+        "when_to_apply": "Whenever a transfer statement is encountered, and for any relational statement that follows it.",
+        "example": "Applying a transfer after all relational constraints, leading to wrong values, instead of updating counts immediately.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Full Difference Equality Interpretation",
+        "principle": "For sentences equating two differences, translate them into the form (A - B) = (C - D), preserving the order of names on each side and treating the differences as signed.",
+        "when_to_apply": "When a statement says 'the number of X that ... is equal to the difference between the number of Y and Z'.",
+        "example": "Misreading 'A - B = C - D' as 'A = B + C - D' (ignoring the signed nature of the left side).",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_10_009",
+        "title": "Quantity Modification (Multiplication and Subtraction)",
+        "principle": "When a statement modifies a count by multiplication, division, or subtraction (e.g., 'X increases by 3 times'), apply the appropriate arithmetic operation to the current value of X.",
+        "when_to_apply": "Whenever a phrase like 'increases by N times' or 'decreases by N' appears.",
+        "example": "Treating 'increases by 3 times' as adding 3 instead of multiplying by 3.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_15_009",
+        "title": "Redistribute Equally Among Group",
+        "principle": "If a group of people redistributes their items so that each ends up with the same amount, compute the total items among them and divide equally, assigning that value to each member.",
+        "when_to_apply": "When a statement says a set of people 'redistribute' or 'share' to have equal amounts.",
+        "example": "Assuming each keeps their original amount after a redistribution, instead of equalizing them.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "mat_ev_16_008",
+        "title": "Comprehensive Constraint Extraction",
+        "principle": "Gather every constraint implied by each statement, even those that do not directly involve the queried person, to build a complete system of equations before solving.",
+        "when_to_apply": "During the initial pass over all statements, before solving for the target variable.",
+        "example": "Ignoring a constraint that indirectly determines the target value, leading to an underdetermined system.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_18_008",
+        "title": "Signed More-Than Difference Equality Interpretation",
+        "principle": "Within a difference equality, treat a phrase like 'the number of X has more than Y' as the signed difference (X - Y), not as an absolute or separate assignment.",
+        "when_to_apply": "When a difference equality includes a sub\u2011phrase stating that one person has more than another.",
+        "example": "Interpreting 'the number of A has more than B' as A = B + k, instead of using the signed difference A - B = k.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_15"
+        ],
+        "generation": 18,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "mat_ev_19_008",
+        "title": "Signed Difference Phrase Interpretation",
+        "principle": "When a phrase contains 'the difference between the number of X and Y' (including within difference equalities), interpret it as the signed subtraction X - Y, preserving the order of the names as they appear, rather than as an absolute value.",
+        "when_to_apply": "Whenever a statement mentions 'the difference between the number of ...' either as a standalone expression or on one side of an equality.",
+        "example": "Misinterpreting 'the difference between the number of A and B' as |A - B| instead of A - B.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_15"
+        ],
+        "generation": 19,
+        "confidence": 0.75
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Treating \u2018difference between the number of X and Y\u2019 as absolute value instead of signed subtraction.",
+        "why_it_happens": "The model defaults to interpreting 'difference' as magnitude, ignoring the order of names.",
+        "how_to_avoid": "Apply the Signed Difference Phrase Interpretation skill to treat the expression as X - Y preserving order.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Delaying the effect of transfer statements until after all other statements.",
+        "why_it_happens": "The model treats transfers as non\u2011sequential, applying them only after gathering constraints.",
+        "how_to_avoid": "Apply the Temporal Consistency of Transfers and Relational Statements skill to update counts immediately when a transfer appears.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Considering a direct count as a fixed initial value that cannot be changed by later transfers.",
+        "why_it_happens": "The model assumes direct assignments are immutable.",
+        "how_to_avoid": "Use the Immediate Direct Assignment Update skill, allowing later transfers to modify the count.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Misinterpreting a difference equality as a direct assignment to a single variable, ignoring the second term (including assuming positivity).",
+        "why_it_happens": "The model simplifies the equality incorrectly, dropping one side of the subtraction.",
+        "how_to_avoid": "Apply the Full Difference Equality Interpretation skill to keep both terms and preserve sign.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Misinterpreting 'increases by N times' as addition or division instead of multiplication.",
+        "why_it_happens": "The phrase 'times' is confused with 'plus' or 'over'.",
+        "how_to_avoid": "Use the Quantity Modification (Multiplication and Subtraction) skill to treat 'increases by N times' as multiplication by N.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      }
+    ]
+  }
+}

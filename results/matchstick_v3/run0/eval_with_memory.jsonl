@@ -1,0 +1,100 @@
+{"problem_id": "matchstick:default:eval:matchstick_000", "seed": 1843041410, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XVII = XIX - II"}
+{"problem_id": "matchstick:default:eval:matchstick_001", "seed": 1843041411, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XIV = XX - VI"}
+{"problem_id": "matchstick:default:eval:matchstick_002", "seed": 1843041412, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XV - IV = XI"}
+{"problem_id": "matchstick:default:eval:matchstick_003", "seed": 1843041413, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XIII = XIX - VI"}
+{"problem_id": "matchstick:default:eval:matchstick_004", "seed": 1843041414, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "II = X - VIII"}
+{"problem_id": "matchstick:default:eval:matchstick_005", "seed": 1843041415, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "IV - III = I"}
+{"problem_id": "matchstick:default:eval:matchstick_006", "seed": 1843041416, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XIV - VII = VII"}
+{"problem_id": "matchstick:default:eval:matchstick_007", "seed": 1843041417, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "V - V = VI"}
+{"problem_id": "matchstick:default:eval:matchstick_008", "seed": 1843041418, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "V - I = IV"}
+{"problem_id": "matchstick:default:eval:matchstick_009", "seed": 1843041419, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "V + IV"}
+{"problem_id": "matchstick:default:eval:matchstick_010", "seed": 1843041420, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VI = IX - III"}
+{"problem_id": "matchstick:default:eval:matchstick_011", "seed": 1843041421, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XVI = III + XIII"}
+{"problem_id": "matchstick:default:eval:matchstick_012", "seed": 1843041422, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XIV = V + IX"}
+{"problem_id": "matchstick:default:eval:matchstick_013", "seed": 1843041423, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XII = XV - III"}
+{"problem_id": "matchstick:default:eval:matchstick_014", "seed": 1843041424, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": ""}
+{"problem_id": "matchstick:default:eval:matchstick_015", "seed": 1843041425, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XIX - XVII = II"}
+{"problem_id": "matchstick:default:eval:matchstick_016", "seed": 1843041426, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XI = XIV - III"}
+{"problem_id": "matchstick:default:eval:matchstick_017", "seed": 1843041427, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "XVII = XVIII - I"}
+{"problem_id": "matchstick:default:eval:matchstick_018", "seed": 1843041428, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XIV = XI + III"}
+{"problem_id": "matchstick:default:eval:matchstick_019", "seed": 1843041429, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "III = XII - IX"}
+{"problem_id": "matchstick:default:eval:matchstick_020", "seed": 1843041430, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "VII - VI = VI"}
+{"problem_id": "matchstick:default:eval:matchstick_021", "seed": 1843041431, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XVIII = XX - II"}
+{"problem_id": "matchstick:default:eval:matchstick_022", "seed": 1843041432, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VI = XVI - X"}
+{"problem_id": "matchstick:default:eval:matchstick_023", "seed": 1843041433, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "III = V - II"}
+{"problem_id": "matchstick:default:eval:matchstick_024", "seed": 1843041434, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XI = XIV - III"}
+{"problem_id": "matchstick:default:eval:matchstick_025", "seed": 1843041435, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XV - V = X"}
+{"problem_id": "matchstick:default:eval:matchstick_026", "seed": 1843041436, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XX - XII = VIII"}
+{"problem_id": "matchstick:default:eval:matchstick_027", "seed": 1843041437, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XVIII - II = XVI"}
+{"problem_id": "matchstick:default:eval:matchstick_028", "seed": 1843041438, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XIV = XI + III"}
+{"problem_id": "matchstick:default:eval:matchstick_029", "seed": 1843041439, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VIII = IV + IV"}
+{"problem_id": "matchstick:default:eval:matchstick_030", "seed": 1843041440, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XVII - XV = II"}
+{"problem_id": "matchstick:default:eval:matchstick_031", "seed": 1843041441, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "IV = IX - V"}
+{"problem_id": "matchstick:default:eval:matchstick_032", "seed": 1843041442, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XII - II = X"}
+{"problem_id": "matchstick:default:eval:matchstick_033", "seed": 1843041443, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VII = XII - V"}
+{"problem_id": "matchstick:default:eval:matchstick_034", "seed": 1843041444, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "IV = VIII - IV"}
+{"problem_id": "matchstick:default:eval:matchstick_035", "seed": 1843041445, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XI = XVI - V"}
+{"problem_id": "matchstick:default:eval:matchstick_036", "seed": 1843041446, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "III = V - II"}
+{"problem_id": "matchstick:default:eval:matchstick_037", "seed": 1843041447, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "X = IIX - X"}
+{"problem_id": "matchstick:default:eval:matchstick_038", "seed": 1843041448, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "II = III - I"}
+{"problem_id": "matchstick:default:eval:matchstick_039", "seed": 1843041449, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "X + I"}
+{"problem_id": "matchstick:default:eval:matchstick_040", "seed": 1843041450, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XIII = XX - VII"}
+{"problem_id": "matchstick:default:eval:matchstick_041", "seed": 1843041451, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "I = XII - XI"}
+{"problem_id": "matchstick:default:eval:matchstick_042", "seed": 1843041452, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VII = IV + III"}
+{"problem_id": "matchstick:default:eval:matchstick_043", "seed": 1843041453, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": ""}
+{"problem_id": "matchstick:default:eval:matchstick_044", "seed": 1843041454, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XVI - II = XIV"}
+{"problem_id": "matchstick:default:eval:matchstick_045", "seed": 1843041455, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XII = II + X"}
+{"problem_id": "matchstick:default:eval:matchstick_046", "seed": 1843041456, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VII = XVII - X"}
+{"problem_id": "matchstick:default:eval:matchstick_047", "seed": 1843041457, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XI = XIV - III"}
+{"problem_id": "matchstick:default:eval:matchstick_048", "seed": 1843041458, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VII = XIV - VII"}
+{"problem_id": "matchstick:default:eval:matchstick_049", "seed": 1843041459, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "XVII = XVI + XV"}
+{"problem_id": "matchstick:default:eval:matchstick_050", "seed": 1843041460, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "II = IV - II"}
+{"problem_id": "matchstick:default:eval:matchstick_051", "seed": 1843041461, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XII = V + VII"}
+{"problem_id": "matchstick:default:eval:matchstick_052", "seed": 1843041462, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XX - X = X"}
+{"problem_id": "matchstick:default:eval:matchstick_053", "seed": 1843041463, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "X = XVI - VI"}
+{"problem_id": "matchstick:default:eval:matchstick_054", "seed": 1843041464, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "XIII - XII = XII"}
+{"problem_id": "matchstick:default:eval:matchstick_055", "seed": 1843041465, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XVII = XV + II"}
+{"problem_id": "matchstick:default:eval:matchstick_056", "seed": 1843041466, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XVI = XII + IV"}
+{"problem_id": "matchstick:default:eval:matchstick_057", "seed": 1843041467, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "XI = XI - XI"}
+{"problem_id": "matchstick:default:eval:matchstick_058", "seed": 1843041468, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VII = XI - IV"}
+{"problem_id": "matchstick:default:eval:matchstick_059", "seed": 1843041469, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XI = XII - I"}
+{"problem_id": "matchstick:default:eval:matchstick_060", "seed": 1843041470, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VIII = XX - XII"}
+{"problem_id": "matchstick:default:eval:matchstick_061", "seed": 1843041471, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XVI - XII = IV"}
+{"problem_id": "matchstick:default:eval:matchstick_062", "seed": 1843041472, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XVII - III = XIV"}
+{"problem_id": "matchstick:default:eval:matchstick_063", "seed": 1843041473, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "IV = XVII - XIII"}
+{"problem_id": "matchstick:default:eval:matchstick_064", "seed": 1843041474, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "XX + XV"}
+{"problem_id": "matchstick:default:eval:matchstick_065", "seed": 1843041475, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "I = VI - V"}
+{"problem_id": "matchstick:default:eval:matchstick_066", "seed": 1843041476, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "V = VI - I"}
+{"problem_id": "matchstick:default:eval:matchstick_067", "seed": 1843041477, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "IV = XIX - XV"}
+{"problem_id": "matchstick:default:eval:matchstick_068", "seed": 1843041478, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "X + IV"}
+{"problem_id": "matchstick:default:eval:matchstick_069", "seed": 1843041479, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "VII = VIII - I"}
+{"problem_id": "matchstick:default:eval:matchstick_070", "seed": 1843041480, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XIV = XVIII - IV"}
+{"problem_id": "matchstick:default:eval:matchstick_071", "seed": 1843041481, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "V - III = II"}
+{"problem_id": "matchstick:default:eval:matchstick_072", "seed": 1843041482, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VIII = XV - VII"}
+{"problem_id": "matchstick:default:eval:matchstick_073", "seed": 1843041483, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "V = XI - VI"}
+{"problem_id": "matchstick:default:eval:matchstick_074", "seed": 1843041484, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XIV - XIII = I"}
+{"problem_id": "matchstick:default:eval:matchstick_075", "seed": 1843041485, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XII = XX - VIII"}
+{"problem_id": "matchstick:default:eval:matchstick_076", "seed": 1843041486, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VII = XV - VIII"}
+{"problem_id": "matchstick:default:eval:matchstick_077", "seed": 1843041487, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XV = XVII - II"}
+{"problem_id": "matchstick:default:eval:matchstick_078", "seed": 1843041488, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VIII - II = VI"}
+{"problem_id": "matchstick:default:eval:matchstick_079", "seed": 1843041489, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XX - V = XV"}
+{"problem_id": "matchstick:default:eval:matchstick_080", "seed": 1843041490, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XV = XIX - IV"}
+{"problem_id": "matchstick:default:eval:matchstick_081", "seed": 1843041491, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "IV = XII - VIII"}
+{"problem_id": "matchstick:default:eval:matchstick_082", "seed": 1843041492, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VII = III + IV"}
+{"problem_id": "matchstick:default:eval:matchstick_083", "seed": 1843041493, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VIII = XI - III"}
+{"problem_id": "matchstick:default:eval:matchstick_084", "seed": 1843041494, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VII = XIII - VI"}
+{"problem_id": "matchstick:default:eval:matchstick_085", "seed": 1843041495, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XIV = XI + III"}
+{"problem_id": "matchstick:default:eval:matchstick_086", "seed": 1843041496, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XIV = III + XI"}
+{"problem_id": "matchstick:default:eval:matchstick_087", "seed": 1843041497, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "XVIII - I"}
+{"problem_id": "matchstick:default:eval:matchstick_088", "seed": 1843041498, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XIII = V + VIII"}
+{"problem_id": "matchstick:default:eval:matchstick_089", "seed": 1843041499, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "IV = XX - XVI"}
+{"problem_id": "matchstick:default:eval:matchstick_090", "seed": 1843041500, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XI = XIX - VIII"}
+{"problem_id": "matchstick:default:eval:matchstick_091", "seed": 1843041501, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XI - IX = II"}
+{"problem_id": "matchstick:default:eval:matchstick_092", "seed": 1843041502, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "XLX - X"}
+{"problem_id": "matchstick:default:eval:matchstick_093", "seed": 1843041503, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "XVII + XVII"}
+{"problem_id": "matchstick:default:eval:matchstick_094", "seed": 1843041504, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "III - I = II"}
+{"problem_id": "matchstick:default:eval:matchstick_095", "seed": 1843041505, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "VII = XI - IV"}
+{"problem_id": "matchstick:default:eval:matchstick_096", "seed": 1843041506, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "XI = VII + IV"}
+{"problem_id": "matchstick:default:eval:matchstick_097", "seed": 1843041507, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "V = XV - XIX"}
+{"problem_id": "matchstick:default:eval:matchstick_098", "seed": 1843041508, "with_memory": true, "correct": true, "added_tokens": 954, "finish_reason": "stop", "parsed_answer": "IV = XX - XVI"}
+{"problem_id": "matchstick:default:eval:matchstick_099", "seed": 1843041509, "with_memory": true, "correct": false, "added_tokens": 954, "finish_reason": "length", "parsed_answer": "IX \u2260 IX - IX"}

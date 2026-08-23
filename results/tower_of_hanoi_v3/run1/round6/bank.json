@@ -1,0 +1,157 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "tower-of-hanoi": [
+      {
+        "skill_id": "tow_ev_1_000",
+        "title": "Output move list as final answer",
+        "principle": "After solving the puzzle, present the complete sequence of moves as a single list in the exact required format, and place it as the last parseable list in the response.",
+        "when_to_apply": "When you have generated the full move sequence and are ready to finalize your answer.",
+        "example": "Providing the move list earlier in the response, followed by additional text, causing the parser to miss the correct list.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s136",
+          "tower-of-hanoi-state-train-n5-s134"
+        ],
+        "generation": 5,
+        "confidence": 0.48
+      },
+      {
+        "skill_id": "tow_ev_2_001",
+        "title": "Free blocked larger disks by moving top smaller disks first",
+        "principle": "If the disk you need to move is not the topmost on its peg, first relocate the smaller disks that are on top of it to another peg, ensuring they are placed on larger disks or empty pegs.",
+        "when_to_apply": "Whenever a required move involves a disk that is blocked by smaller disks on its source peg.",
+        "example": "Attempting to move a larger disk while a smaller disk remains on top of it, resulting in an illegal move.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s136",
+          "tower-of-hanoi-state-train-n5-s134"
+        ],
+        "generation": 5,
+        "confidence": 0.68
+      },
+      {
+        "skill_id": "tow_ev_2_002",
+        "title": "Consolidate all disks onto a single source peg before applying classic Hanoi recursion",
+        "principle": "When the initial configuration spreads disks across multiple pegs, first move the smaller disks so that all disks to be moved are stacked on a single source peg, then apply the classic recursive Hanoi algorithm from that peg to the target.",
+        "when_to_apply": "When the goal is to move a tower of disks and the disks are initially distributed across more than one peg.",
+        "example": "Trying to apply the recursive Hanoi algorithm while the disks are split across pegs, leading to blocked moves.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s136"
+        ],
+        "generation": 5,
+        "confidence": 0.68
+      },
+      {
+        "skill_id": "tow_ev_2_003",
+        "title": "Validate destination peg before each move",
+        "principle": "Before moving a disk, ensure that the destination peg is either empty or its topmost disk is larger than the moving disk; otherwise the move would violate the size rule.",
+        "when_to_apply": "Before executing any move.",
+        "example": "Moving a disk onto a peg where a smaller disk is on top, violating the size constraint.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s136",
+          "tower-of-hanoi-state-train-n5-s134"
+        ],
+        "generation": 5,
+        "confidence": 0.68
+      },
+      {
+        "skill_id": "tow_ev_2_004",
+        "title": "Keep answer concise and place move list at the very end",
+        "principle": "The answer parser reads the last parseable list in the response; any text after the move list is ignored, so the move list must be the final content and the answer should be concise.",
+        "when_to_apply": "During final answer formatting, after the move list.",
+        "example": "Adding explanatory sentences after the move list, causing the parser to ignore the list.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s136",
+          "tower-of-hanoi-state-train-n5-s134"
+        ],
+        "generation": 5,
+        "confidence": 0.68
+      },
+      {
+        "skill_id": "tow_ev_3_005",
+        "title": "Validate source peg before each move",
+        "principle": "Ensure that the disk you intend to move is actually the topmost disk on its source peg; if it is not, the move is illegal.",
+        "when_to_apply": "Before executing any move.",
+        "example": "Attempting to move a disk that is buried under a smaller disk on its source peg.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s136",
+          "tower-of-hanoi-state-train-n5-s134"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "tow_ev_4_006",
+        "title": "Apply classic Hanoi recursion to generate move sequence",
+        "principle": "To move n disks from a source peg to a target peg using an auxiliary peg, recursively move the top n\u20111 disks to the auxiliary peg, move the largest disk to the target, then recursively move the n\u20111 disks from the auxiliary to the target.",
+        "when_to_apply": "When you have a clean tower of n disks on a single peg and need to move it to another peg.",
+        "example": "Attempting to move a tower of several disks without using the recursive pattern, leading to missing or illegal moves.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s136"
+        ],
+        "generation": 5,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "tow_ev_5_007",
+        "title": "Clear destination peg of smaller disks before moving larger disk",
+        "principle": "If the target peg already contains disks that are smaller than the disk you intend to move, first relocate those smaller disks elsewhere so that the larger disk can be placed legally.",
+        "when_to_apply": "When the destination peg's top disk is smaller than the disk you intend to move.",
+        "example": "Moving a larger disk onto a peg where a smaller disk sits on top, violating the size rule.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s136",
+          "tower-of-hanoi-state-train-n5-s134"
+        ],
+        "generation": 5,
+        "confidence": 0.57
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "tower-of-hanoi": [
+      {
+        "mistake_id": "tow_evo_000",
+        "description": "Empty move list (no moves provided)",
+        "why_it_happens": "The model may think the puzzle is already solved or forget to output the moves.",
+        "how_to_avoid": "Always generate and output the full move list, even if the initial state already matches the goal (which is rare).",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "tow_evo_001",
+        "description": "Truncated move list (incomplete solution) due to token limit",
+        "why_it_happens": "The model runs out of space or stops generating before completing the sequence.",
+        "how_to_avoid": "Plan the solution to fit within token limits, or generate a concise move list; ensure the final move list is complete and ends with the closing brackets.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "tow_evo_002",
+        "description": "Moving a non\u2011top disk (source peg top mismatch)",
+        "why_it_happens": "The model may overlook that a smaller disk is on top of the intended disk.",
+        "how_to_avoid": "Before each move, check that the source peg's top disk matches the disk you intend to move.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 5
+      }
+    ]
+  }
+}

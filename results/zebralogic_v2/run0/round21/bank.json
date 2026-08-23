@@ -1,0 +1,213 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_3_001",
+        "title": "DirectAdjacency",
+        "principle": "When a clue states that X is directly left/right of Y (or that X and Y are next to each other), enforce adjacency; if X must be adjacent to multiple distinct entities, infer that X must be placed between them (if possible).",
+        "when_to_apply": "When a clue mentions direct left/right adjacency or a next\u2011to relationship.",
+        "example": "Treating a clue that Peter must be adjacent to both the photography enthusiast and the painting hobbyist as allowing Peter to sit at an end house, rather than placing him between the two.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-6"
+        ],
+        "generation": 14,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_002",
+        "title": "RelativeOrdering",
+        "principle": "When a clue says X is somewhere to the left/right of Y, enforce a strict ordering X\u202f<\u202fY (or X\u202f>\u202fY) without assuming direct adjacency.",
+        "when_to_apply": "When a clue specifies a left/right ordering without specifying distance.",
+        "example": "Interpreting 'X is somewhere left of Y' as X being immediately left of Y, which can conflict with other constraints.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-6"
+        ],
+        "generation": 14,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_005",
+        "title": "EquivalenceLinking",
+        "principle": "When a clue equates an attribute value with another attribute value or a descriptive phrase, bind them; this includes mapping descriptive phrases (e.g., 'many unique blends') to the actual attribute value ('blends').",
+        "when_to_apply": "When a clue directly links two attribute values, even if one is described rather than named.",
+        "example": "Failing to recognize that 'the person who smokes many unique blends' refers to the 'blends' cigar, leaving the cigar unassigned.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-6"
+        ],
+        "generation": 14,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_006",
+        "title": "FixedHouseAssignment",
+        "principle": "When a clue fixes an attribute to a specific house number, assign it directly to that house.",
+        "when_to_apply": "When a clue states that a particular attribute belongs to a given house index.",
+        "example": "Ignoring the clue 'Arnold is in the first house' and placing Arnold elsewhere.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-6"
+        ],
+        "generation": 14,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_4_009",
+        "title": "ValidateJSONStructureAndSyntax",
+        "principle": "Before final output, ensure the JSON object is syntactically valid: proper brackets, commas, double quotes, and no trailing commas.",
+        "when_to_apply": "Just before emitting the final answer.",
+        "example": "Outputting JSON with a missing closing bracket, causing a parse error.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-6",
+          "zebralogic-lgp-test-5x5-13"
+        ],
+        "generation": 14,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "zeb_ev_6_009",
+        "title": "CompactFinalAnswer",
+        "principle": "Place the solution JSON as the very last part of the response, ensuring it is present and not preceded or followed by any other text.",
+        "when_to_apply": "When finalizing the response.",
+        "example": "Putting the solution JSON before the reasoning or omitting it entirely, causing the verifier to miss the answer.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-6",
+          "zebralogic-lgp-test-5x5-13"
+        ],
+        "generation": 14,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "zeb_ev_9_009",
+        "title": "ExactHouseDistance",
+        "principle": "When a clue says there are N houses between X and Y, enforce that the absolute difference in house numbers is N\u202f+\u202f1.",
+        "when_to_apply": "When a clue specifies a numeric distance between two attributes.",
+        "example": "Interpreting 'two houses between X and Y' as |X\u202f\u2212\u202fY|\u202f=\u202f2 instead of 3.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 14,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_11_009",
+        "title": "NegativeHouseAssignment",
+        "principle": "When a clue explicitly forbids an attribute from being in a particular house, ensure that assignment is avoided.",
+        "when_to_apply": "When a clue contains a negative placement (e.g., 'not in house 2').",
+        "example": "Placing the Huawei P50 in house 2 despite the clue that it is not in house 2.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x5-13"
+        ],
+        "generation": 14,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_13_009",
+        "title": "CanonicalCaseMatching",
+        "principle": "When outputting attribute values, match the exact case (capitalization) as given in the problem statement.",
+        "when_to_apply": "During final answer construction.",
+        "example": "Writing 'OnePlus 9' as 'oneplus 9' when the problem uses title case.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 14,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_14_009",
+        "title": "TransitiveEquivalencePropagation",
+        "principle": "When multiple equivalence clues form a chain (e.g., A\u202f=\u202fB and B\u202f=\u202fC), deduce the direct equivalence A\u202f=\u202fC and propagate it.",
+        "when_to_apply": "After processing all equivalence clues.",
+        "example": "Linking A\u202f=\u202fB and B\u202f=\u202fC but failing to infer A\u202f=\u202fC, leaving a variable unassigned.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-6"
+        ],
+        "generation": 14,
+        "confidence": 0.7
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_err_000",
+        "description": "Misinterpreting 'N houses between' as 'N houses apart'",
+        "why_it_happens": "The model treats the numeric distance as the absolute difference rather than the number of houses separating the two positions.",
+        "how_to_avoid": "Remember that 'N houses between X and Y' means |X\u202f\u2212\u202fY|\u202f=\u202fN\u202f+\u202f1.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 14
+      },
+      {
+        "mistake_id": "zeb_err_001",
+        "description": "Placing the solution JSON before the end of the response or adding excessive text after it, causing truncation or the verifier to miss the answer",
+        "why_it_happens": "The model does not respect the required placement of the final answer, either by inserting extra commentary after the JSON or by emitting the JSON too early.",
+        "how_to_avoid": "Emit the solution JSON as the very last token sequence of the response, with no trailing text.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 14
+      },
+      {
+        "mistake_id": "zeb_err_002",
+        "description": "Exceeding token limit causing the final answer to be truncated",
+        "why_it_happens": "The model generates a response that is longer than the allowed limit, so the verifier receives an incomplete JSON.",
+        "how_to_avoid": "Keep reasoning concise and ensure the final JSON fits comfortably within the token budget.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 14
+      },
+      {
+        "mistake_id": "zeb_err_003",
+        "description": "Ignoring negative house constraints (placing an attribute in a house that a clue explicitly forbids)",
+        "why_it_happens": "The model focuses on positive clues and overlooks prohibitive statements.",
+        "how_to_avoid": "Treat negative statements as hard constraints and eliminate any assignments that violate them.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 14
+      },
+      {
+        "mistake_id": "zeb_err_004",
+        "description": "Incorrect case for attribute values",
+        "why_it_happens": "The model normalizes text or guesses a different capitalization than the problem specifies.",
+        "how_to_avoid": "Copy attribute values verbatim, preserving the exact case shown in the prompt.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 14
+      },
+      {
+        "mistake_id": "zeb_err_005",
+        "description": "Failing to propagate transitive equivalence across multiple clues, leading to inconsistent assignments",
+        "why_it_happens": "The model stops after handling pairwise equivalences and does not close the transitive closure.",
+        "how_to_avoid": "After processing all equivalence clues, repeatedly apply them until no new links appear.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 14
+      },
+      {
+        "mistake_id": "zeb_evo_006",
+        "description": "MissingSolutionJSON",
+        "why_it_happens": "The model finishes its reasoning but forgets to output the final solution JSON, often treating the solution as optional or assuming the verifier can infer it.",
+        "how_to_avoid": "Always conclude the response with a correctly formatted solution JSON object, even if reasoning is complete.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 15
+      }
+    ]
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_3_000",
+        "title": "PreserveExactCase",
+        "principle": "Copy every attribute value exactly as it appears in the puzzle, preserving case, spacing, and punctuation.",
+        "when_to_apply": "Whenever an attribute value is mentioned in a clue or placed in the final grid.",
+        "example": "Outputting \"OnePlus 9\" instead of the required \"oneplus 9\" causes a mismatch with the reference solution.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-26",
+          "zebralogic-lgp-test-6x6-9"
+        ],
+        "generation": 5,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "zeb_ev_3_001",
+        "title": "DirectAdjacency",
+        "principle": "Interpret clues stating \"X is directly left of Y\" as X's house number = Y's house number\u202f\u2212\u202f1 (and similarly for \"directly right of\").",
+        "when_to_apply": "When a clue uses the phrase \"directly left of\" or \"directly right of\".",
+        "example": "Treating \"directly left of\" as any leftward position, allowing gaps between the houses.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-26",
+          "zebralogic-lgp-test-6x6-9"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_002",
+        "title": "RelativeOrdering",
+        "principle": "Treat clues that say \"X is somewhere to the left of Y\" as a strict ordering constraint X\u202f<\u202fY (and similarly for \"right of\").",
+        "when_to_apply": "When a clue uses \"somewhere to the left/right of\" without specifying distance.",
+        "example": "Assuming X must be adjacent to Y when the clue only requires X to be somewhere left of Y.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-26",
+          "zebralogic-lgp-test-6x6-9"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_003",
+        "title": "AdjacencyWithoutOrientation",
+        "principle": "Interpret clues that state \"X and Y are next to each other\" as |X\u202f\u2212\u202fY|\u202f=\u202f1, with no implied left/right orientation.",
+        "when_to_apply": "When a clue says two entities are \"next to each other\" or \"adjacent\" without direction.",
+        "example": "Assuming X is left of Y when the clue only says they are adjacent, thereby fixing an orientation that is not given.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-26",
+          "zebralogic-lgp-test-6x6-9"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_004",
+        "title": "ExactDistance",
+        "principle": "For clues stating \"There are N houses between X and Y\", enforce |X\u202f\u2212\u202fY|\u202f=\u202fN\u202f+\u202f1.",
+        "when_to_apply": "When a clue mentions a specific number of houses separating two entities.",
+        "example": "Using |X\u2011Y|\u202f=\u202fN instead of N\u202f+\u202f1, which places the houses one position too close.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-26",
+          "zebralogic-lgp-test-6x6-9"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_005",
+        "title": "EquivalenceLinking",
+        "principle": "When a clue states that two attributes refer to the same entity, treat them as a combined attribute (link them).",
+        "when_to_apply": "Whenever a clue equates two different categories (e.g., \"the person who loves soccer is Carol\").",
+        "example": "Treating \"soccer\" and \"Carol\" as unrelated instead of linking the sport to the name, leading to contradictory assignments.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-26",
+          "zebralogic-lgp-test-6x6-9"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_006",
+        "title": "FixedHouseAssignment",
+        "principle": "If a clue fixes an attribute to a specific house number, assign that attribute to that house immediately.",
+        "when_to_apply": "When a clue mentions an explicit house number (e.g., \"the person who uses a OnePlus 9 is in the second house\").",
+        "example": "Ignoring the explicit house number and treating it as a relative clue, which can place the attribute in the wrong house.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-26",
+          "zebralogic-lgp-test-6x6-9"
+        ],
+        "generation": 5,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "zeb_ev_4_009",
+        "title": "ValidateJSONStructureAndSyntax",
+        "principle": "Ensure the final JSON output is syntactically valid: all arrays and objects are properly closed, keys are quoted, and commas are placed correctly.",
+        "when_to_apply": "Before submitting the answer, check the JSON for any syntax errors.",
+        "example": "Missing a closing bracket in the JSON, causing the verifier to reject the answer.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-26",
+          "zebralogic-lgp-test-6x6-9"
+        ],
+        "generation": 5,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "zeb_ev_5_009",
+        "title": "ChildAttributeLinking",
+        "principle": "When a clue mentions a child's name (e.g., \"the person whose child is named X\"), treat X as the value of the Child attribute and link it to the corresponding parent.",
+        "when_to_apply": "In puzzles that include a separate child\u2011name category.",
+        "example": "Confusing the child's name with the parent's name and linking the wrong attributes, leading to an invalid parent\u2011child pairing.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-9"
+        ],
+        "generation": 5,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_6_009",
+        "title": "CompactFinalAnswer",
+        "principle": "Output the solution JSON as the very last part of the response and keep any preceding reasoning concise, ensuring the answer fits within the token limit and is not truncated.",
+        "when_to_apply": "After completing reasoning, emit only the final JSON and stop generation immediately.",
+        "example": "Including long explanatory text after the JSON, causing the JSON to be cut off or omitted, which leads to an incomplete answer being rejected.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-26",
+          "zebralogic-lgp-test-6x6-9"
+        ],
+        "generation": 6,
+        "confidence": 0.75
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_evo_000",
+        "description": "Capitalization mismatch for attribute values",
+        "why_it_happens": "The model treats attribute strings as case\u2011insensitive and rewrites them, losing the exact spelling required by the verifier.",
+        "how_to_avoid": "Copy each attribute value verbatim from the puzzle statement, preserving case, spacing, and punctuation.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "zeb_evo_002",
+        "description": "Missing or ignoring constraints",
+        "why_it_happens": "A clue is overlooked or misinterpreted, so the resulting assignment violates the puzzle's logic.",
+        "how_to_avoid": "Systematically translate every clue into a concrete constraint before solving, and verify that all constraints are satisfied by the final grid.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "zeb_err_003",
+        "description": "Malformed JSON due to missing closing brackets",
+        "why_it_happens": "The model stops generation early or loses track of nesting, producing an incomplete JSON structure.",
+        "how_to_avoid": "After constructing the JSON, double\u2011check that every opening bracket/brace has a matching closing one before finalising the answer.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "zeb_evo_004",
+        "description": "Incorrect handling of child\u2011parent linking",
+        "why_it_happens": "The child name is treated as a regular attribute or is confused with the parent's name, breaking the parent\u2011child equivalence clues.",
+        "how_to_avoid": "Treat child names as a distinct attribute category and enforce the explicit parent\u2011child equivalence clues before solving other constraints.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "zeb_evo_004",
+        "description": "Generation truncation due to token limit",
+        "why_it_happens": "The model generates too much text (e.g., lengthy reasoning after the solution), exceeding the allowed token budget and cutting off the JSON or the entire answer.",
+        "how_to_avoid": "Keep reasoning concise, place the final JSON at the very end of the response, and stop generation immediately after the JSON so the output stays within the token budget.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 6
+      }
+    ]
+  }
+}

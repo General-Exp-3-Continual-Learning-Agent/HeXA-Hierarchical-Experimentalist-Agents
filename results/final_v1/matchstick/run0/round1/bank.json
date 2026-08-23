@@ -1,0 +1,169 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Movable vertical sticks in simple numerals",
+        "principle": "I, II, III, and L can lose or gain a single vertical matchstick while remaining valid Roman numerals (e.g., III \u2192 II, II \u2192 I, I \u2192 II, I \u2192 L). This enables value adjustments of \u00b11.",
+        "when_to_apply": "When the equation is off by a small amount (typically 1 or 2) and the numerals involved include I, II, III, or L.",
+        "example": "Changing III + I = V to II + II = V by moving one vertical stick from the first III to the I.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_003"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Preserve source and destination validity",
+        "principle": "After removing a stick, the originating character must still be a recognized Roman numeral or operator, and after adding the stick, the target character must also become a valid numeral or operator. Avoid leaving incomplete shapes.",
+        "when_to_apply": "For any candidate stick move, verify both the source and destination remain valid.",
+        "example": "Moving the I from VI to the right\u2011hand I yields V (valid) and II (valid).",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_003"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Guide moves by numeric difference",
+        "principle": "Compute the numeric values of both sides. The difference indicates how much the total must change. Moving a vertical stick changes a numeral by \u00b11 (or \u00b12 when reordering I around V). Use this to target the needed adjustment.",
+        "when_to_apply": "When the equation is false and the numeric gap is small (1\u20132).",
+        "example": "VI = I + III is off by 2; moving the I before V changes VI (6) to IV (4), closing the gap.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_003"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "mat_ev_1_003",
+        "title": "Reordering I around V changes value by 2",
+        "principle": "In Roman numerals, placing I before V (IV) yields 4, while placing I after V (VI) yields 6. Moving a single I across a V therefore changes the value by exactly 2.",
+        "when_to_apply": "When the equation involves VI or IV and the discrepancy is 2.",
+        "example": "VI = I + III \u2192 move the I before V \u2192 IV = I + III (4 = 4).",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_003"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Cross\u2011side vertical stick transfer adjusts both sides by \u00b11",
+        "principle": "Removing an I from a numeral reduces its value by 1; adding that I to a numeral on the opposite side raises its value by 1. This simultaneous \u00b11 change can balance equations where one side exceeds the other by 2.",
+        "when_to_apply": "When the left side is larger by 2 and both sides contain I\u2011type numerals.",
+        "example": "VI = I + III \u2192 move the I from the left side to the right\u2011hand I \u2192 V = II + III (5 = 5).",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_003"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Never take sticks from V or X",
+        "principle": "V and X consist solely of diagonal sticks; removing one leaves a single diagonal stick, which is not a valid Roman numeral. Therefore they cannot serve as sources for a single\u2011stick move.",
+        "when_to_apply": "When considering a source numeral that is V or X.",
+        "example": "Do not try to take a stick from V to turn it into I.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_003"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Operator validity after stick moves",
+        "principle": "Operators must remain one of the allowed symbols (+, -, =). Removing a stick from '+' turns it into '-', and removing a stick from '=' leaves an invalid single line. Ensure any modification leaves a recognized operator.",
+        "when_to_apply": "When a candidate move involves an operator.",
+        "example": "Removing the vertical from '+' would create '-', which is only acceptable if the resulting arithmetic still holds.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_003"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      },
+      {
+        "skill_id": "mat_ev_1_007",
+        "title": "Final verification of numerals and equality",
+        "principle": "After performing a stick move, confirm that each token is a valid Roman numeral (I, II, III, IV, V, VI, VII, VIII, IX, X, etc.) and that the arithmetic equality is true.",
+        "when_to_apply": "As the last step for any proposed move.",
+        "example": "After moving the I from VI to the right side, check that V = II + III (5 = 2+3) holds.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_003"
+        ],
+        "generation": 1,
+        "confidence": 0.5499999999999999
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Taking a stick from V or X, leaving an invalid shape",
+        "why_it_happens": "The model treats any stick as movable without checking that the source numeral stays valid after removal.",
+        "how_to_avoid": "Never use V or X as a source for a single\u2011stick move; only use numerals that can lose a vertical stick while remaining valid.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Changing an operator to an invalid one",
+        "why_it_happens": "The model may move a stick from '+' or '=', forgetting that the resulting shape must still be a recognized operator.",
+        "how_to_avoid": "After any stick move involving an operator, verify that the operator is still '+', '-', or '='.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Assuming a single stick can change a numeral's value arbitrarily",
+        "why_it_happens": "The model overestimates the effect of moving a stick, e.g., thinking it can turn VI into VII directly.",
+        "how_to_avoid": "Remember the exact numeric impact: moving an I changes a numeral by \u00b11; moving an I across a V changes by \u00b12; other moves have limited effects.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Neglecting to recompute the arithmetic after the move",
+        "why_it_happens": "The model proposes a visual transformation but does not verify the resulting equality.",
+        "how_to_avoid": "Always calculate the numeric values of both sides after the move and confirm the equality holds.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Treating diagonal sticks as interchangeable with vertical sticks",
+        "why_it_happens": "The model assumes orientation does not matter and rotates sticks arbitrarily.",
+        "how_to_avoid": "Respect stick orientation: diagonal sticks can only form V or X shapes; vertical sticks form I. Do not substitute one for the other.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 1
+      }
+    ]
+  }
+}

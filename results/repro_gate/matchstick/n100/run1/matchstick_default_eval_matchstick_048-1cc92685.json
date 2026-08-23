@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_048",
+  "run": 1,
+  "item_idx": 48,
+  "seed": 1843041458,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "VII = XIV - VII",
+  "finish_reason": "stop",
+  "raw_chars": 14081,
+  "reasoning_chars": 13048,
+  "final_chars": 1033,
+  "elapsed_s": 39.05515813827515,
+  "usage": {
+    "completion_tokens": 3310,
+    "prompt_tokens": 459,
+    "total_tokens": 3769,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "7cadced153bf3cbdf157e85902787dea464f0d987a65e3df84774f9e48f9a513"
+}

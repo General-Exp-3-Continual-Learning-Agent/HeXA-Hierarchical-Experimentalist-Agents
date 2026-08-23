@@ -1,0 +1,217 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Check arithmetic validity",
+        "principle": "After moving a stick, compute the numeric values of both sides of the equation and verify they are equal; without this, a syntactically correct equation may still be numerically false.",
+        "when_to_apply": "After proposing a stick move, before finalizing the answer.",
+        "example": "Accepting a change that leaves the equation \"XVII = XVII - XVIII\" without noticing that 17 \u2260 -1.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 4,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Preserve valid numeral shapes",
+        "principle": "When a stick is removed from or added to a Roman numeral, the resulting glyph must correspond to a valid Roman numeral; without this, the solver may create symbols like a lone diagonal line that are not Roman numerals.",
+        "when_to_apply": "During any stick move that affects a numeral.",
+        "example": "Removing the only vertical stick from an \"I\" and leaving no character.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 4,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Operator stick composition",
+        "principle": "Know the exact stick count and orientation for each allowed operator (+, -, =); without this, the solver may produce invalid operators such as a plus sign missing its vertical stick.",
+        "when_to_apply": "When moving a stick to or from an operator.",
+        "example": "Adding a diagonal stick to \"-\" and assuming it becomes \"+\".",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 4,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_003",
+        "title": "Allowed operators only",
+        "principle": "The final equation may contain only '+', '-', and '=', and you must not introduce any other symbol; without this, the solver may create a non\u2011allowed operator like \"\u00d7\" or a malformed \"=\".",
+        "when_to_apply": "After any stick move that changes an operator.",
+        "example": "Turning \"-\" into a \"\u2260\" sign by adding a diagonal.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 4,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Match\u2011stick orientation matters",
+        "principle": "A stick\u2019s orientation (vertical, horizontal, diagonal) is fixed; you cannot replace a vertical stick with a diagonal or horizontal one; without this, the solver may reshape symbols incorrectly.",
+        "when_to_apply": "During any stick relocation.",
+        "example": "Moving a diagonal stick onto a horizontal \"-\" and treating the result as \"+\".",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 4,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_007",
+        "title": "Limit changes to two characters",
+        "principle": "A single stick move can affect only the source character (which loses a stick) and the destination character (which gains a stick); without this, the solver may inadvertently add or delete sticks.",
+        "when_to_apply": "When planning a stick move.",
+        "example": "Removing a stick from \"=\" and not adding it elsewhere, effectively deleting a stick.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 4,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_008",
+        "title": "Maintain a valid equality",
+        "principle": "The final equation must contain exactly one \"=\" sign, which must remain the standard two\u2011horizontal\u2011stick form; without this, the solver may break the equality sign or create multiple \"=\" signs.",
+        "when_to_apply": "When considering any stick move involving the \"=\" sign.",
+        "example": "Removing a horizontal stick from \"=\" and turning it into a \"-\" sign.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 4,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_5_007",
+        "title": "Operator source/destination validity",
+        "principle": "When moving a stick from an operator, the source must remain a valid operator (+, -, =); when adding a stick to an operator, the result must be a valid operator and respect orientation; without this, the solver may leave \"-\" empty or create an undefined operator.",
+        "when_to_apply": "During any stick move that touches an operator.",
+        "example": "Removing the only stick from \"-\" and leaving no operator, or adding a diagonal to \"-\" and assuming it becomes \"+\".",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 5,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_4_009",
+        "title": "Transform X\u2194V while preserving numeral validity",
+        "principle": "When converting between X and V, move a diagonal stick appropriately so both characters stay valid (X needs two crossing diagonals, V needs two meeting diagonals); without this, a naive removal creates an invalid shape.",
+        "when_to_apply": "When a stick move involves X or V.",
+        "example": "Removing a diagonal from X and expecting the remainder to be a valid V, ignoring the required meeting\u2011at\u2011bottom geometry.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 4,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_5_009",
+        "title": "Answer formatting",
+        "principle": "Provide the corrected equation as a single line prefixed with \"Correct version of the equation: \", using uppercase and collapsed whitespace; without this, the answer is not recognized by the scorer.",
+        "when_to_apply": "At the end of the solution, before output.",
+        "example": "Outputting just \"XVII - XVII\" instead of the required prefixed line.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 5,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Skipping arithmetic verification",
+        "why_it_happens": "The model focuses on visual changes and forgets to check whether the numeric equality actually holds.",
+        "how_to_avoid": "Always compute the values of both sides after a proposed move and confirm they match.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 4
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Creating invalid numeral shapes",
+        "why_it_happens": "The model moves sticks without ensuring the remaining or resulting glyph matches a Roman numeral.",
+        "how_to_avoid": "Check that both source and destination characters are valid Roman numerals after the move.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 4
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Incorrect operator composition",
+        "why_it_happens": "The model adds or removes sticks from operators without respecting their defined stick patterns.",
+        "how_to_avoid": "Refer to the operator stick composition table before modifying an operator.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 4
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Missing destination for moved stick (effectively removing a stick)",
+        "why_it_happens": "The model removes a stick from a character but does not place it onto another, violating the one\u2011stick\u2011move rule.",
+        "how_to_avoid": "Ensure every stick taken from a source character is added to a destination character.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 4
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Invalid operator after stick move",
+        "why_it_happens": "The model removes a stick from an operator leaving it non\u2011existent or adds a stick of wrong orientation, producing an undefined operator.",
+        "how_to_avoid": "Apply the \"Operator source/destination validity\" skill: verify both source and destination operators remain valid after the move.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 5
+      }
+    ]
+  }
+}

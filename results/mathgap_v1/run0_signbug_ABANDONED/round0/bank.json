@@ -1,0 +1,192 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Initial counts from 'has' statements",
+        "principle": "Treat statements of the form 'X has N potatoes' as the initial count before any transfers; they are not final values.",
+        "when_to_apply": "When a problem contains both 'has' statements and transfer statements.",
+        "example": "Assuming 'Tina has 22 potatoes' is her final amount after receiving potatoes, which creates an inconsistency with the transfer.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Apply transfers correctly",
+        "principle": "For each 'X gives K potatoes to Y' statement, subtract K from X's current count and add K to Y's count after the initial amounts have been set.",
+        "when_to_apply": "Whenever a problem includes any 'gives' statements.",
+        "example": "Ignoring the effect of 'Britt gives 15 potatoes to Tina' and leaving Britt's count unchanged.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Direct comparison 'has K more than'",
+        "principle": "Interpret 'X has K more potatoes than Y' as the directed equation X = Y + K.",
+        "when_to_apply": "When a statement explicitly says one person has a fixed amount more than another.",
+        "example": "Writing Reta = Jonathan - 9 instead of Reta = Jonathan + 9.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_003",
+        "title": "Absolute difference for 'difference between'",
+        "principle": "Treat 'the difference between the number of potatoes that A and B have' as the absolute value |A\u00a0\u2212\u00a0B|, not a directed subtraction.",
+        "when_to_apply": "In any statement that mentions a 'difference between' without specifying order.",
+        "example": "Interpreting 'difference between the number of potatoes that C and D have' as C\u00a0\u2212\u00a0D, leading to sign errors.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Magnitude interpretation for 'has more than' in equality statements",
+        "principle": "When a statement says 'The number of potatoes that X has more than Y is equal to the difference between ...', interpret it as X\u00a0\u2212\u00a0Y\u00a0=\u00a0|C\u00a0\u2212\u00a0D|, even if a prior fact indicates Y\u00a0>\u00a0X.",
+        "when_to_apply": "When a difference\u2011equality uses 'has more than' but the known ordering contradicts the phrasing.",
+        "example": "Using Jonathan\u00a0\u2212\u00a0Reta\u00a0=\u00a0Norene\u00a0\u2212\u00a0Michelle despite Reta\u00a0>\u00a0Jonathan, instead of using |Jonathan\u00a0\u2212\u00a0Reta|\u00a0=\u00a0|Norene\u00a0\u2212\u00a0Michelle|.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Propagate known absolute differences",
+        "principle": "When a statement fixes an absolute difference (e.g., 'has 9 more than'), propagate that as a fixed |A\u00a0\u2212\u00a0B|\u00a0=\u00a09 to all related constraints.",
+        "when_to_apply": "Whenever a problem includes a fixed difference like 'has 9 more' and other constraints involve absolute differences.",
+        "example": "Failing to use Reta\u00a0\u2212\u00a0Jonathan\u00a0=\u00a09 to deduce |Norene\u00a0\u2212\u00a0Michelle|\u00a0=\u00a09, leaving the system under\u2011constrained.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Symbolic substitution over guessing",
+        "principle": "Set up equations for all variables and solve them algebraically; avoid guessing values before the system is fully expressed.",
+        "when_to_apply": "When multiple unknowns appear and the problem forms a linear system of constraints.",
+        "example": "Randomly picking Norene\u00a0=\u00a025 without using the equations, which can violate other statements.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_007",
+        "title": "Final consistency check",
+        "principle": "After obtaining a solution, verify that every original statement (including direction of inequalities) holds with the derived numbers.",
+        "when_to_apply": "Immediately before outputting the answer, once all equations have been solved.",
+        "example": "Accepting a solution that satisfies most equations but violates 'Reta has 9 more potatoes than Jonathan'.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_008",
+        "title": "Use integer bounds to prune solutions",
+        "principle": "All counts are small non\u2011negative integers (typically 10\u201130); discard any solution that falls outside this range.",
+        "when_to_apply": "When solving yields multiple integer possibilities for a variable.",
+        "example": "Obtaining a negative count for a person and still proceeding with that value.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Treating 'has' statements as final counts after transfers",
+        "why_it_happens": "The model assumes the listed amounts already include the effects of later transfers, ignoring that transfers modify the numbers.",
+        "how_to_avoid": "Interpret 'X has N' as the initial amount before any 'gives' actions are applied.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Interpreting 'has K more than' as X = Y - K",
+        "why_it_happens": "A sign reversal occurs because the phrase 'more than' is misunderstood as subtraction rather than addition.",
+        "how_to_avoid": "Remember that 'X has K more than Y' means X = Y + K.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Treating 'difference between' as directed subtraction",
+        "why_it_happens": "The model assumes order matters in the phrase, whereas the wording denotes an absolute difference.",
+        "how_to_avoid": "Always use the absolute value |A\u00a0\u2212\u00a0B| for 'difference between' unless a direction is explicitly given.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Ignoring the effect of transfer statements",
+        "why_it_happens": "The model does not update the giver's and receiver's counts, treating transfers as irrelevant to the final totals.",
+        "how_to_avoid": "Apply each 'X gives K to Y' by subtracting K from X and adding K to Y after establishing initial amounts.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Not checking all constraints after solving",
+        "why_it_happens": "The model stops once a plausible value for the target variable is found, without verifying every original statement.",
+        "how_to_avoid": "Perform a final verification that each statement (including inequalities and absolute differences) is satisfied by the solution.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      }
+    ]
+  }
+}

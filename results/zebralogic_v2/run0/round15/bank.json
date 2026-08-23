@@ -1,0 +1,192 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_3_000",
+        "title": "PreserveExactCase",
+        "principle": "Copy every attribute value exactly as it appears in the puzzle, preserving case, spacing, and punctuation.",
+        "when_to_apply": "When outputting the solution grid, ensure each value matches the original wording.",
+        "example": "Changing 'Blue Master' to 'blue master' or 'BlueMaster', altering case or spacing.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x5-24",
+          "zebralogic-lgp-test-5x5-9"
+        ],
+        "generation": 10,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "zeb_ev_3_001",
+        "title": "DirectAdjacency",
+        "principle": "When a clue says 'X is directly left/right of Y', enforce that the house numbers differ by exactly one in the specified direction.",
+        "when_to_apply": "Whenever a clue contains the phrase 'directly left of' or 'directly right of'.",
+        "example": "Placing X two houses away from Y when the clue says X is directly left of Y.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x5-9"
+        ],
+        "generation": 10,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_002",
+        "title": "RelativeOrdering",
+        "principle": "When a clue says 'X is somewhere to the left/right of Y', enforce a strict ordering (X\u202f<\u202fY or X\u202f>\u202fY) without requiring adjacency.",
+        "when_to_apply": "Whenever a clue contains 'somewhere to the left/right of' or similar ordering language.",
+        "example": "Allowing X to be to the right of Y when the clue says X is somewhere to the left of Y.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x5-24"
+        ],
+        "generation": 10,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_005",
+        "title": "EquivalenceLinking",
+        "principle": "When a clue equates two attribute values (e.g., 'the person who loves pop music is the person who loves romance books'), link those values across categories.",
+        "when_to_apply": "Whenever a clue uses 'is the person who' or 'is the same as' to connect two attributes.",
+        "example": "Treating 'pop music' and 'romance books' as unrelated when a clue says they belong to the same person.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x5-24",
+          "zebralogic-lgp-test-5x5-9"
+        ],
+        "generation": 10,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_006",
+        "title": "FixedHouseAssignment",
+        "principle": "If a clue fixes an attribute to a specific house number (e.g., 'the person who loves science fiction books is in house\u202f5'), place that attribute in that house.",
+        "when_to_apply": "Whenever a clue explicitly mentions a house number for an attribute.",
+        "example": "Assigning the science\u2011fiction book to a house other than house\u202f5 despite the clue.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x5-24",
+          "zebralogic-lgp-test-5x5-9"
+        ],
+        "generation": 10,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "zeb_ev_4_009",
+        "title": "ValidateJSONStructureAndSyntax",
+        "principle": "Before final output, ensure the JSON object is syntactically valid: proper brackets, commas, quotes, and correct ordering of keys.",
+        "when_to_apply": "At the very end of the response, before submitting the answer.",
+        "example": "Missing a closing bracket or using single quotes instead of double quotes.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x5-24",
+          "zebralogic-lgp-test-5x5-9"
+        ],
+        "generation": 10,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "zeb_ev_6_009",
+        "title": "CompactFinalAnswer",
+        "principle": "Place the solution JSON as the very last part of the response, with any reasoning before it, so the verifier extracts the answer correctly.",
+        "when_to_apply": "When constructing the final response.",
+        "example": "Appending extra commentary after the JSON, causing the verifier to miss the answer.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x5-24",
+          "zebralogic-lgp-test-5x5-9"
+        ],
+        "generation": 10,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "zeb_ev_8_009",
+        "title": "TransitiveEquivalenceLinking",
+        "principle": "When multiple equivalence clues form a chain (A\u202f=\u202fB, B\u202f=\u202fC), propagate the links so all linked attributes are unified.",
+        "when_to_apply": "When there are several clues that connect attributes indirectly.",
+        "example": "Failing to deduce that X\u202f=\u202fZ when X\u202f=\u202fY and Y\u202f=\u202fZ.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x5-24",
+          "zebralogic-lgp-test-5x5-9"
+        ],
+        "generation": 10,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_9_009",
+        "title": "ExactHouseDistance",
+        "principle": "When a clue says there are N houses between two entities, enforce that the absolute difference in their house numbers is N\u202f+\u202f1.",
+        "when_to_apply": "Whenever a clue mentions 'N houses between' or 'N houses apart' with a specific number.",
+        "example": "Treating '2 houses between' as a difference of 2 instead of 3.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 10,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_11_009",
+        "title": "NegativeHouseAssignment",
+        "principle": "When a clue states that a particular attribute value is not in a specific house (e.g., 'X is not in house\u202fN'), enforce that the attribute cannot be assigned to that house; without this, the solver may place the value there, violating the clue.",
+        "when_to_apply": "Whenever a clue contains a negation about a house position, such as 'not in the third house', 'cannot be house\u202f2', or 'never in house\u202f5'.",
+        "example": "Placing the 'blends' smoker in house\u202f3 despite the clue 'The person who smokes many unique blends is not in the third house'.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-5x5-24"
+        ],
+        "generation": 11,
+        "confidence": 0.5499999999999999
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_evo_000",
+        "description": "Misinterpreting \"N houses between\" as \"N houses apart\" (using a difference of N instead of N+1).",
+        "why_it_happens": "The model treats the phrase as a direct distance, forgetting that 'between' implies there must be N houses separating the two, resulting in a difference of N+1.",
+        "how_to_avoid": "When parsing such clues, add one to the given number to compute the house index difference.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "zeb_evo_001",
+        "description": "Placing the solution JSON before the end of the response or adding excessive text after it, causing truncation or the verifier to miss the answer.",
+        "why_it_happens": "The model continues to generate explanatory text after the JSON, leading the verifier to stop parsing early or miss the JSON entirely.",
+        "how_to_avoid": "Terminate all reasoning before outputting the JSON and ensure no characters follow the closing bracket.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "zeb_evo_002",
+        "description": "Exceeding token limit causing the final answer to be truncated.",
+        "why_it_happens": "The model generates too much reasoning, exceeding the output token limit, resulting in the JSON being cut off.",
+        "how_to_avoid": "Keep reasoning concise, use length control, and prioritize the final JSON.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "zeb_evo_003",
+        "description": "Ignoring negative house constraints (placing an attribute in a house that a clue explicitly forbids).",
+        "why_it_happens": "The model overlooks or misinterprets negation in clues, treating 'not in house N' as irrelevant, leading to assignments that violate the clue.",
+        "how_to_avoid": "When a clue contains a negation about a house, explicitly mark that attribute as prohibited from that house and enforce the exclusion.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 11
+      }
+    ]
+  }
+}

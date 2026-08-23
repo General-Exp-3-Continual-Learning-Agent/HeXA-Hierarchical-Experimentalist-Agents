@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_096",
+  "run": 1,
+  "item_idx": 96,
+  "seed": 1843041506,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "XII = VII + V",
+  "finish_reason": "stop",
+  "raw_chars": 53146,
+  "reasoning_chars": 53100,
+  "final_chars": 46,
+  "elapsed_s": 158.4572172164917,
+  "usage": {
+    "completion_tokens": 12775,
+    "prompt_tokens": 460,
+    "total_tokens": 13235,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "c0dd970b975b53ba725b5476badaabe9db11e701caed3b7c9c0996e35da7eedd"
+}

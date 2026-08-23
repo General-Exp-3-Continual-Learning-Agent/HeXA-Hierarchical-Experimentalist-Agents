@@ -1,0 +1,105 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "tower-of-hanoi": [
+      {
+        "skill_id": "tow_ev_1_000",
+        "title": "Output move list as final answer",
+        "principle": "After constructing the solution, explicitly output the move list in the required [[disk, from_peg, to_peg], ...] format and make it the last parseable content of the response.",
+        "when_to_apply": "Whenever you have finished generating the sequence of moves for a Tower of Hanoi problem.",
+        "example": "The model prints explanatory text after the move list, causing the parser to miss the list or treat later text as the answer.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s106",
+          "tower-of-hanoi-state-train-n5-s108"
+        ],
+        "generation": 1,
+        "confidence": 0.48
+      },
+      {
+        "skill_id": "tow_ev_2_001",
+        "title": "Free blocked larger disks by moving top smaller disks first",
+        "principle": "If the disk you need to move is not on top of its peg, first relocate the smaller disks that sit above it to other pegs where they can be placed legally. This clears the larger disk for a legal move.",
+        "when_to_apply": "Whenever the target disk is blocked by one or more smaller disks on its source peg.",
+        "example": "Attempting to move disk\u202f5 while disk\u202f1 remains on top of it, which would be illegal or impossible.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s106",
+          "tower-of-hanoi-state-train-n5-s108"
+        ],
+        "generation": 2,
+        "confidence": 0.675
+      },
+      {
+        "skill_id": "tow_ev_2_002",
+        "title": "Consolidate all disks onto a single source peg before applying classic Hanoi recursion",
+        "principle": "When the initial configuration is split across multiple pegs, first move the smaller disks onto the peg that holds the largest disks, creating a single tower. Then apply the standard recursive Hanoi procedure (move n\u20111 to auxiliary, move largest, move n\u20111 to target).",
+        "when_to_apply": "When the start state has disks on more than one peg and the goal is a single stacked tower on a target peg.",
+        "example": "Trying to move the largest disk directly while other pegs still contain smaller disks, which blocks the move and leads to dead\u2011ends.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s106",
+          "tower-of-hanoi-state-train-n5-s108"
+        ],
+        "generation": 2,
+        "confidence": 0.675
+      },
+      {
+        "skill_id": "tow_ev_2_003",
+        "title": "Validate destination peg before each move",
+        "principle": "Before committing a move, ensure the destination peg is either empty or its topmost disk is larger than the moving disk; otherwise the move violates the Tower of Hanoi rule.",
+        "when_to_apply": "For every move you generate in the solution.",
+        "example": "Moving disk\u202f4 onto a peg whose top disk is 3, which is smaller, creating an illegal configuration.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s106",
+          "tower-of-hanoi-state-train-n5-s108"
+        ],
+        "generation": 2,
+        "confidence": 0.675
+      },
+      {
+        "skill_id": "tow_ev_2_004",
+        "title": "Keep answer concise and place move list at the very end",
+        "principle": "Generate the move list directly after any brief reasoning and do not add any extra text after it. This prevents the parser from missing the list and avoids token\u2011limit truncation.",
+        "when_to_apply": "When writing the final response for a Tower of Hanoi problem.",
+        "example": "Including a long explanation after the move list, causing the move list to be cut off by the token limit.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s106",
+          "tower-of-hanoi-state-train-n5-s108"
+        ],
+        "generation": 2,
+        "confidence": 0.675
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "tower-of-hanoi": [
+      {
+        "mistake_id": "tow_evo_000",
+        "description": "Empty move list (no moves provided)",
+        "why_it_happens": "The model finishes its reasoning without emitting any moves, often because it assumes the answer is implicit or forgets to output the list.",
+        "how_to_avoid": "Explicitly generate and print a non\u2011empty move list in the required format before ending the response.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "tow_evo_001",
+        "description": "Truncated move list (incomplete solution) due to token limit",
+        "why_it_happens": "The model spends too many tokens on reasoning or repeats moves, causing the generated answer to be cut off before the move list is finished.",
+        "how_to_avoid": "Limit explanatory text, output the move list directly, and ensure the list fits comfortably within the token budget.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 2
+      }
+    ]
+  }
+}

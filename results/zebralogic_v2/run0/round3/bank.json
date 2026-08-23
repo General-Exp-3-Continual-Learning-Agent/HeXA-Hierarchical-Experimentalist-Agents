@@ -1,0 +1,198 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_1_000",
+        "title": "Preserve exact case of attribute values",
+        "principle": "Copy every attribute value exactly as it appears in the problem statement, preserving case, punctuation, and spacing; any deviation causes a mismatch with the expected answer.",
+        "when_to_apply": "Whenever you output attribute values in the final solution JSON.",
+        "example": "Changing \"Blueberry\" to \"blueberry\" or \"BlueBerry\" leads to a wrong answer.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-33",
+          "zebralogic-lgp-test-6x4-24"
+        ],
+        "generation": 1,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "zeb_ev_1_001",
+        "title": "Direct adjacency (directly left of)",
+        "principle": "Interpret clues that say \"X is directly left of Y\" as X's house number = Y's house number\u202f\u2212\u202f1, enforcing immediate left\u2011right adjacency with orientation.",
+        "when_to_apply": "When a clue contains the phrase \"directly left of\" or \"directly right of\".",
+        "example": "Treating \"X is directly left of Y\" as merely X\u202f<\u202fY (without requiring X\u202f=\u202fY\u20111) places X too far left.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-33",
+          "zebralogic-lgp-test-6x4-24"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_1_002",
+        "title": "Relative ordering (somewhere left of)",
+        "principle": "Treat clues that say \"X is somewhere to the left of Y\" as a strict ordering constraint X\u202f<\u202fY, without requiring adjacency.",
+        "when_to_apply": "When a clue uses \"somewhere left of\", \"somewhere right of\", \"to the left of\", or \"to the right of\" without the word \"directly\".",
+        "example": "Interpreting \"X is somewhere left of Y\" as X\u202f=\u202fY\u20111 would incorrectly restrict possible placements.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-33",
+          "zebralogic-lgp-test-6x4-24"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_1_003",
+        "title": "Adjacency without orientation (next to each other)",
+        "principle": "Interpret clues that say \"X and Y are next to each other\" as |X\u202f\u2212\u202fY|\u202f=\u202f1, with no implied left/right order.",
+        "when_to_apply": "When a clue uses \"next to\", \"adjacent\", or similar wording without specifying direction.",
+        "example": "Assuming X must be left of Y when the clue only says they are next to each other adds an unwarranted ordering constraint.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-33",
+          "zebralogic-lgp-test-6x4-24"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_1_004",
+        "title": "Exact distance (houses between)",
+        "principle": "For clues stating \"There are N houses between X and Y\", enforce |X\u202f\u2212\u202fY|\u202f=\u202fN\u202f+\u202f1.",
+        "when_to_apply": "When a clue mentions a specific number of houses separating two attributes.",
+        "example": "Treating \"one house between X and Y\" as X and Y being adjacent (distance\u202f=\u202f1) violates the clue.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-33",
+          "zebralogic-lgp-test-6x4-24"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_1_006",
+        "title": "Equivalence linking",
+        "principle": "When a clue states that two attributes refer to the same entity (e.g., \"Alice drinks Blueberry smoothies\"), treat it as a bidirectional link binding those attributes to the same house.",
+        "when_to_apply": "Whenever a clue directly equates two attributes, such as a name with a color, a hobby with a flower, etc.",
+        "example": "Failing to link \"Alice drinks Blueberry smoothies\" leaves Alice's smoothie undefined and can break other constraints.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-33",
+          "zebralogic-lgp-test-6x4-24"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_1_007",
+        "title": "Fixed house assignment",
+        "principle": "If a clue fixes an attribute to a specific house number, assign that attribute to that house immediately.",
+        "when_to_apply": "When a clue mentions a house number explicitly (e.g., \"the Cherry smoothie is in house\u202f5\").",
+        "example": "Ignoring \"the Cherry smoothie is in house\u202f5\" leaves the Cherry smoothie ambiguous and may lead to contradictory placements.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-33",
+          "zebralogic-lgp-test-6x4-24"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_1_008",
+        "title": "Exclusion constraints",
+        "principle": "Respect clues that forbid an attribute from a specific house (e.g., \"Bob is not in house\u202f4\").",
+        "when_to_apply": "When a clue contains \"not\" or \"cannot be\" together with a house number.",
+        "example": "Placing Bob in house\u202f4 despite a clue stating he is not there violates the puzzle constraints.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-33",
+          "zebralogic-lgp-test-6x4-24"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_1_009",
+        "title": "Multi\u2011attribute equivalence",
+        "principle": "When a clue links three or more attributes together (e.g., \"the cooking person also loves daffodils\"), treat all those attributes as belonging to the same house.",
+        "when_to_apply": "Whenever a clue mentions multiple attributes that refer to the same entity.",
+        "example": "Missing that \"the cooking person also loves daffodils\" would split the cooking hobby and the daffodil flower across different houses.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-33",
+          "zebralogic-lgp-test-6x4-24"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_2_009",
+        "title": "Equivalence substitution before ordering/adjacency",
+        "principle": "Before applying ordering or adjacency constraints, replace any attribute reference with the concrete entity it is linked to via an equivalence clue, so the constraint operates on known names or houses.",
+        "when_to_apply": "Whenever an ordering (e.g., \"to the right of\") or adjacency (e.g., \"directly left of\", \"next to\") clue involves an attribute that is tied to a specific person or another attribute through an equivalence.",
+        "example": "If \"Bob is the photographer\" and \"the photographer is to the right of the dragonfruit smoothie lover\", substitute Bob for photographer to deduce Bob\u202f>\u202fdragonfruit.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-33",
+          "zebralogic-lgp-test-6x4-24"
+        ],
+        "generation": 2,
+        "confidence": 0.575
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_evo_000",
+        "description": "Capitalization mismatch for attribute values",
+        "why_it_happens": "The model normalises case during reasoning but the verifier requires the exact case from the problem statement.",
+        "how_to_avoid": "Copy attribute values verbatim, preserving the original capitalization, punctuation, and spacing.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "zeb_evo_001",
+        "description": "Capitalization mismatch for phone model values",
+        "why_it_happens": "Similar to attribute values, the model may lower\u2011case phone model strings while reasoning.",
+        "how_to_avoid": "Treat phone model strings as exact literals and output them with the original case.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "zeb_evo_002",
+        "description": "Missing or ignoring constraints",
+        "why_it_happens": "The model may overlook a clue or misinterpret its logical meaning, leading to an incomplete set of constraints.",
+        "how_to_avoid": "Systematically parse each clue, translate it into a formal constraint, and verify that every constraint is represented before solving.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "zeb_evo_003",
+        "description": "Misinterpreting direct adjacency clues that reference attributes as non\u2011adjacent ordering",
+        "why_it_happens": "The model treats \"X is directly left of the person who has attribute Y\" as a generic left\u2011of relation, forgetting the immediate\u2011adjacency requirement.",
+        "how_to_avoid": "When a clue contains \"directly left of\" (or \"directly right of\"), enforce |X\u202f\u2212\u202fY|\u202f=\u202f1 even if Y is described by an attribute rather than a name.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 2
+      }
+    ]
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_1_000",
+        "title": "Consolidate Direct Equivalences",
+        "principle": "Merge directly equated attribute values into a single fact and propagate it throughout the puzzle; without this, the solver may assign the two values to different houses, creating contradictions.",
+        "when_to_apply": "Whenever a clue contains an explicit equality between two attribute values.",
+        "example": "Treating 'milk = gray hair' as separate constraints and placing milk in house 4 while putting gray hair in house 5.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 5,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_1_001",
+        "title": "Assign Fixed Positions Immediately",
+        "principle": "Place any attribute that a clue pins to a specific house number (and any directly linked attributes) right away; without this, the solver may postpone placement and later encounter impossible combinations.",
+        "when_to_apply": "When a clue mentions a house index (e.g., 'the milk drinker is in the fourth house').",
+        "example": "Leaving the milk drinker unassigned despite the clue that it is in house 4, later causing a conflict.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 5,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_1_002",
+        "title": "Translate 'N houses between' to Exact Distance",
+        "principle": "Convert a clue stating that exactly N houses lie between two items into a distance of N+1 houses between their positions; without this, the solver may treat the clue as a vague ordering and miss the precise spacing.",
+        "when_to_apply": "When a clue says 'there is one house between X and Y' or similar.",
+        "example": "Interpreting 'one house between May birthday and Peter' as simply 'May is left of Peter' and allowing them to be adjacent.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_1_003",
+        "title": "Enforce Adjacency for 'next to' and Ordered Left",
+        "principle": "Translate adjacency clues ('next to', 'directly left of', 'directly right of') into an exact distance\u20111 relationship with the correct direction; without this, the solver may place the items with a gap or in the wrong order.",
+        "when_to_apply": "When a clue uses adjacency language between two attributes.",
+        "example": "Interpreting 'auburn hair is directly left of Eric' as auburn being anywhere left of Eric, allowing a house gap.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_1_006",
+        "title": "Output Solution in Expected JSON Table Format",
+        "principle": "Produce the final answer as a JSON object with a 'header' array listing column names and a 'rows' array of house entries; without this, the verifier cannot parse the answer.",
+        "when_to_apply": "At the very end of the response, after all reasoning.",
+        "example": "Returning a plain\u2011text table instead of the required JSON structure.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 5,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "zeb_ev_1_007",
+        "title": "Keep Reasoning Concise to Avoid Token Truncation",
+        "principle": "Limit explanatory text before the final JSON so the total output stays within the model's token limit; without this, the answer may be cut off and the JSON become incomplete.",
+        "when_to_apply": "During the reasoning phase, before emitting the final answer.",
+        "example": "Writing a long paragraph of deductions that exceeds the token budget, causing the JSON to be omitted.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 5,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_2_008",
+        "title": "Preserve Original Attribute Tokens (Case and Spelling)",
+        "principle": "Copy attribute values verbatim from the problem statement, preserving exact case, spacing, and punctuation; without this, the verifier will treat mismatched tokens as incorrect.",
+        "when_to_apply": "When writing the final JSON rows.",
+        "example": "Writing 'Milk' instead of 'milk' or adding extra spaces.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 5,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "zeb_ev_4_009",
+        "title": "Directional Ordering for 'somewhere to the left/right of' constraints",
+        "principle": "Translate clues that state 'X is somewhere to the left/right of Y' into a strict ordering constraint (X must be in a lower/higher house number than Y); without this, the solver may place X and Y in the same house or reverse the order.",
+        "when_to_apply": "When a clue uses 'somewhere to the left/right of' language.",
+        "example": "Allowing the tea drinker and the auburn\u2011hair person to occupy the same house despite the clue that tea is left of auburn.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_5_009",
+        "title": "Enforce Exclusion Constraints for Specific House Numbers",
+        "principle": "When a clue states that an attribute cannot occupy a particular house, eliminate that house from its possible positions; without this, the solver may assign the attribute to the forbidden house, violating the clue.",
+        "when_to_apply": "When a clue mentions 'not in house X' or similar exclusion.",
+        "example": "Placing the September birthday in house 6 despite the clue that it is not in the sixth house.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 5,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "zeb_ev_6_009",
+        "title": "Transitive Ordering Inference",
+        "principle": "After establishing direct left/right relationships, propagate them transitively to infer indirect orderings (e.g., if A left of B and B left of C, then A left of C); without this, the solver may miss constraints that further narrow positions.",
+        "when_to_apply": "When multiple ordering constraints share a common element, allowing a chain of orderings.",
+        "example": "Treating 'tea left of auburn' and 'auburn left of Eric' as independent and not deducing that tea must also be left of Eric.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39"
+        ],
+        "generation": 6,
+        "confidence": 0.7
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_err_000",
+        "description": "Generating overly long reasoning before the final answer, causing token truncation.",
+        "why_it_happens": "The model tries to be thorough and does not account for the fixed token budget.",
+        "how_to_avoid": "Limit reasoning to essential deductions and emit the JSON as early as possible within the token budget.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "zeb_err_001",
+        "description": "Providing the solution in a format not recognized by the verifier.",
+        "why_it_happens": "The model is unaware of the exact expected output format.",
+        "how_to_avoid": "Always use the prescribed JSON structure with 'header' and 'rows' fields.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "zeb_err_002",
+        "description": "Using incorrect case or synonyms for attribute values.",
+        "why_it_happens": "The model treats attribute values as free text rather than fixed tokens.",
+        "how_to_avoid": "Copy attribute strings verbatim from the problem statement.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "zeb_err_003",
+        "description": "Misinterpreting adjacency constraints that involve a named entity and a non\u2011name attribute, treating them as non\u2011adjacent or placing both in the same house.",
+        "why_it_happens": "The model conflates adjacency with ordering and does not enforce distance\u20111.",
+        "how_to_avoid": "When a clue says 'directly left of' or 'right of', enforce a distance of exactly one house.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 5
+      }
+    ]
+  }
+}

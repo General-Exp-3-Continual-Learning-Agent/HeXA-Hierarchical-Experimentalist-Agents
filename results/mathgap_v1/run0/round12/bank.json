@@ -1,0 +1,197 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Signed difference equality",
+        "principle": "When a statement equates a signed difference to another difference, translate it directly as (A - B) = (C - D) preserving the order and sign.",
+        "when_to_apply": "Whenever you encounter a sentence of the form 'the number of X that Y has more than Z is equal to the difference between the number of A and B' or similar.",
+        "example": "Interpreting 'X has more than Y' as |X - Y| = N instead of X - Y = N.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 10,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Direct count assignment at point of mention",
+        "principle": "When a statement directly gives a count for a person, set that person's current count to the given number, overwriting any previous value.",
+        "when_to_apply": "Whenever a sentence states 'Person has N items' (or similar).",
+        "example": "Treating 'Leanne has 68 peaches' as a starting count and ignoring later transfers that may change it.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 10,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Non\u2011negative integer check",
+        "principle": "All item counts must be non\u2011negative integers; discard any solution that yields a negative or fractional count.",
+        "when_to_apply": "After solving equations, verify that each variable is a whole number \u2265 0.",
+        "example": "Accepting a solution where a person ends up with -3 peaches.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 10,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_4_007",
+        "title": "Conditional transfer handling",
+        "principle": "For conditional transfers, first evaluate the condition using the current counts; only if the condition holds, apply the transfer.",
+        "when_to_apply": "When a statement says 'If X has more than Y, X gives Z to Y' or similar.",
+        "example": "Applying a transfer regardless of the condition, leading to incorrect counts.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 10,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_4_008",
+        "title": "Redistribution equalization handling",
+        "principle": "When a statement says two persons redistribute items to ensure each has an equal amount, pool their items and split evenly; any remainder is handled according to the problem rules.",
+        "when_to_apply": "When encountering sentences like 'X and Y redistribute their items equally'.",
+        "example": "Leaving the original person with some items after a redistribution that should equalize both counts.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 10,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_7_009",
+        "title": "Directionality of more/fewer statements",
+        "principle": "Interpret 'X has N more than Y' as X - Y = N (i.e., X = Y + N) and 'X has N fewer than Y' as X - Y = -N.",
+        "when_to_apply": "Whenever a sentence uses 'more' or 'fewer' to compare counts.",
+        "example": "Misreading 'X has 5 more than Y' as X = Y - 5.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 10,
+        "confidence": 1.0
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Split-all handling",
+        "principle": "When a statement says 'X splits all the items she owns equally among Y and Z', give each of Y and Z half of X's current count and set X's count to zero.",
+        "when_to_apply": "When encountering 'splits all' phrasing.",
+        "example": "Leaving X with some items after a split\u2011all operation.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 10,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_9_009",
+        "title": "Targeted constraint extraction for queried variable",
+        "principle": "When the goal is to find a specific person's count, first collect all statements that directly involve that person, and then focus on those constraints, ignoring unrelated ones.",
+        "when_to_apply": "When the problem asks for the count of a particular individual.",
+        "example": "Attempting to solve the entire system of equations when only a few constraints involve the queried person.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 10,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_10_009",
+        "title": "Sequential transfer handling with updated counts",
+        "principle": "When a transfer statement appears, immediately subtract the transferred amount from the giver and add it to the receiver; subsequent statements refer to these updated counts.",
+        "when_to_apply": "Whenever a 'X gives N items to Y' sentence is present.",
+        "example": "Evaluating a later comparison using the giver's original count instead of the reduced count after a prior transfer.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 10,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_11_009",
+        "title": "Substitution of known signed differences into signed difference equalities",
+        "principle": "When a signed difference equality involves a difference that is already known from a direct 'X has N more/fewer than Y' statement, substitute that known value into the equality to simplify and solve for the remaining variables, rather than treating the equality as an absolute difference.",
+        "when_to_apply": "Whenever you have an equation of the form (A - B) = (C - D) and you already know the numeric value of (A - B) or (C - D) from a previous direct comparison.",
+        "example": "Treating '(Hershel - Eva) = (Silas - Leanne)' as an absolute difference and not substituting the known value 'Hershel - Eva = 2', leading to ambiguous solutions.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_13"
+        ],
+        "generation": 11,
+        "confidence": 0.8
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Treating signed difference statements as absolute differences",
+        "why_it_happens": "The model often interprets 'X has N more than Y' as |X - Y| = N, losing sign information.",
+        "how_to_avoid": "Always keep the sign: translate 'X has N more than Y' as X - Y = N, and use signed difference equalities accordingly.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Ignoring the sequential order of transfers",
+        "why_it_happens": "The model may treat all transfers as simultaneous, applying them after all other statements.",
+        "how_to_avoid": "Apply each transfer immediately when encountered, updating counts before processing subsequent statements.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Assuming explicit counts are final after all transfers",
+        "why_it_happens": "The model may think a direct count assignment sets the initial count only, not the final count after later transfers.",
+        "how_to_avoid": "Treat direct count assignments as setting the current count at that point, which may be overridden by later transfers if any.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Misinterpreting 'increase by N times' as addition rather than multiplication",
+        "why_it_happens": "The phrase 'increase by N times' is often read as 'add N' instead of 'multiply by N'.",
+        "how_to_avoid": "Interpret 'increase by N times' as multiplying the current count by N.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Misinterpreting split-all statements as leaving the original person with zero even when they are a recipient",
+        "why_it_happens": "The model may think the original person retains some items after a split\u2011all, contrary to the definition.",
+        "how_to_avoid": "When 'X splits all items among Y and Z', give each of Y and Z half of X's count and set X's count to zero.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 10
+      }
+    ]
+  }
+}

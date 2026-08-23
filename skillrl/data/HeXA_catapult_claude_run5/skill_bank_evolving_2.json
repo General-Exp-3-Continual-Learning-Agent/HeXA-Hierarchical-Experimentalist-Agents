@@ -1,0 +1,178 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "catapult": [
+      {
+        "skill_id": "cat_ev_0_000",
+        "title": "Hit Right Side of Arm Near Pivot (x=0.60\u20130.75)",
+        "principle": "Placing the red ball at x\u22480.60\u20130.75 on the catapult arm, just right of the pivot, produces optimal leverage. This range consistently launches the green ball rightward with sufficient arc to reach the basket. Moving further right (x>0.8) dramatically reduces or reverses the green ball's rightward range.",
+        "when_to_apply": "Always when attempting a catapult launch. Use as the primary x-target before fine-tuning.",
+        "example": "x=0.7, r=1.4, y=0.0 succeeded in Seed 8 in 4 steps; x=0.65, r=1.4, y=1.5 succeeded in Seed 7.",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [
+          6,
+          7,
+          8
+        ],
+        "generation": 0,
+        "confidence": 0.78
+      },
+      {
+        "skill_id": "cat_ev_0_001",
+        "title": "r=1.4 is the Optimal Launch Radius",
+        "principle": "A radius of 1.4 delivers sufficient impulse to the catapult arm without over-rotating it. r=1.3 consistently under-shoots the basket by ~0.6 units; r=1.5 over-rotates the arm and sends the green ball far left (x\u2248-0.06). r=1.4 is the narrow sweet spot.",
+        "when_to_apply": "Set radius to 1.4 as the default starting point. Only deviate if trace_green_ball confirms the green ball overshoots or undershoots significantly.",
+        "example": "Seed 7: r=1.3\u2192x=2.86 (short), r=1.5\u2192x=-0.06 (over-rotated), r=1.4\u2192x=4.34 (success).",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [
+          7,
+          8
+        ],
+        "generation": 0,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "cat_ev_0_002",
+        "title": "Drop From Moderate Height (y=0.0\u20131.5)",
+        "principle": "y=0.0 (just above the arm) is the most reliable drop height \u2014 it produces a clean arc with moderate peak and sends the green ball to the basket zone efficiently. y=1.5 also works but requires r=1.4 to compensate for altered contact dynamics. y>2.0 risks over-rotation or sending the green ball far off-course.",
+        "when_to_apply": "Start with y=0.0 for efficiency. If green ball falls short, try y=1.5 with r=1.4 before adjusting x.",
+        "example": "Seed 8: y=0.0, r=1.4 succeeded in 4 steps. Seed 7: y=1.5, r=1.4 succeeded after 13 steps of tuning.",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [
+          7,
+          8
+        ],
+        "generation": 0,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "cat_ev_0_003",
+        "title": "Verify Green Ball Reaches Basket X Range via trace_green_ball",
+        "principle": "Before running simulate_action, always call trace_green_ball to check whether the green ball's final x-position overlaps with the blue ball's x. If the green ball ends >0.5 units short, adjust placement rather than committing to a full simulation.",
+        "when_to_apply": "After every candidate placement, before simulate_action.",
+        "example": "Seed 8 step 3: trace confirmed green lands at x=3.84 vs blue at x=3.50 \u2192 simulate immediately succeeded.",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [
+          6,
+          7,
+          8
+        ],
+        "generation": 0,
+        "confidence": 0.78
+      },
+      {
+        "skill_id": "cat_ev_1_004",
+        "title": "Efficient 3-Step Workflow: predict \u2192 trace \u2192 simulate",
+        "principle": "The fastest path to success is: (1) predict_first_contact to confirm the red ball hits the arm, (2) trace_green_ball to verify the green ball reaches the basket x-range, (3) simulate_action only if both checks pass. This avoids wasting full simulations on placements that clearly miss.",
+        "when_to_apply": "At the start of every attempt. Do not call simulate_action without first confirming with trace_green_ball.",
+        "example": "Seed 8 solved in 4 steps total using exactly this workflow: describe \u2192 predict_first_contact \u2192 trace_green_ball \u2192 simulate_action.",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [
+          8
+        ],
+        "generation": 1,
+        "confidence": 0.875
+      },
+      {
+        "skill_id": "cat_ev_1_005",
+        "title": "x>0.8 on Arm Dramatically Reduces or Reverses Green Ball Range",
+        "principle": "Striking the catapult arm at x>0.8 produces a contact point too close to or past the pivot, reducing torque on the green-ball side. At x=1.0\u20131.2, the green ball only reaches x\u2248-0.8 to +2.3, far short of the basket. This is counterintuitive \u2014 moving rightward on the arm does not increase rightward launch.",
+        "when_to_apply": "Never place red ball at x>0.8 for catapult launch. If fine-tuning x, search in range [0.5, 0.75] only.",
+        "example": "Seed 6: x=1.0\u2192green at x=-0.84; x=1.2\u2192green at x=-0.84. Seed 7: x=0.8\u2192green at x=0.20.",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [
+          6,
+          7
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "cat_sk_005",
+        "title": "Iteratively Fine-Tune X Position for Range",
+        "principle": "The green ball's landing x is sensitive to the red ball's x position on the arm, but in a non-monotonic way. Small changes (\u0394x=0.1) can shift landing by 0.5\u20131.5 units or cause abrupt reversals. Use trace_green_ball to sample x=0.5, 0.6, 0.65, 0.7, 0.75 systematically, selecting the one that lands closest to blue ball x.",
+        "when_to_apply": "When green ball consistently lands 0.3\u20131.0 units short of blue ball x. Try x increments of 0.05 within [0.5, 0.75].",
+        "example": "Seed 7: x=0.7\u2192x=2.86, x=0.6\u2192x=2.86, x=0.65 with r=1.4\u2192x=4.34 (success).",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [
+          6,
+          7,
+          8
+        ],
+        "generation": 0,
+        "confidence": 0.68
+      },
+      {
+        "skill_id": "cat_ev_0_007",
+        "title": "Avoid Alternative Strategies When Catapult Approach Is Viable",
+        "principle": "Switching to knocking the blue ball leftward, placing deflectors, or hitting the green ball directly almost never works and wastes iterations. The basket area and right ledge region have dense object overlap, making most alternative placements invalid. Persist with catapult refinement unless trace_green_ball confirms the green ball categorically cannot reach the basket x-range.",
+        "when_to_apply": "When tempted to try non-catapult strategies after a few failures. First exhaust the [x=0.5\u20130.75, y=0.0\u20131.5, r=1.4] parameter space via trace_green_ball.",
+        "example": "Seed 6: deflector attempts at x=2.5\u20133.0 were all INVALID due to object overlap.",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [
+          6
+        ],
+        "generation": 0,
+        "confidence": 0.35
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "catapult": [
+      {
+        "mistake_id": "cat_err_000",
+        "description": "Agent persists with catapult strikes for many steps without verifying that the green ball ever reaches basket height during its arc.",
+        "why_it_happens": "Agent assumes any catapult hit will eventually reach the basket if parameters are tuned, but the arm geometry and ceiling blocker can cause the green ball to fall far short regardless.",
+        "how_to_avoid": "Use trace_green_ball after every parameter change. If green ball final x is >1.0 unit short of blue ball x across 3+ different placements, reconsider whether the seed geometry allows a catapult solution.",
+        "source_level": "catapult",
+        "source_seeds": [],
+        "generation": 0
+      },
+      {
+        "mistake_id": "cat_err_001",
+        "description": "Agent rapidly cycles through unrelated strategies (catapult \u2192 knockback \u2192 deflector \u2192 direct hit) without converging.",
+        "why_it_happens": "After a few catapult failures the agent loses confidence and abandons a viable approach, switching strategies before exhausting the parameter space.",
+        "how_to_avoid": "Systematically sweep the [x=0.5\u20130.75, r=1.3\u20131.4, y=0.0\u20131.5] grid via trace_green_ball before switching strategies. Only abandon catapult if trace confirms green ball cannot reach basket x in any configuration.",
+        "source_level": "catapult",
+        "source_seeds": [],
+        "generation": 0
+      },
+      {
+        "mistake_id": "cat_err_002",
+        "description": "Agent attempts to knock the blue ball leftward without first establishing where the green ball will be when blue arrives.",
+        "why_it_happens": "Agent reasons that pushing blue leftward toward green is simpler, but both balls move independently and have no guaranteed convergence point.",
+        "how_to_avoid": "Do not attempt blue-knockback strategies. The success condition requires green ball to contact blue ball, which is most reliably achieved by launching green ball into the basket.",
+        "source_level": "catapult",
+        "source_seeds": [],
+        "generation": 0
+      },
+      {
+        "mistake_id": "cat_err_003",
+        "description": "Agent repeatedly tries placements in the basket/ledge region (x\u22482.5\u20133.5) that are consistently INVALID due to object overlap.",
+        "why_it_happens": "Agent treats the basket area as open space but the basket, blue ball, and ledge fill this region densely, invalidating most red ball placements there.",
+        "how_to_avoid": "Never place the red ball at x>2.0 unless predict_first_contact explicitly confirms placement_valid=True. Default to catapult arm placements at x=0.5\u20130.75.",
+        "source_level": "catapult",
+        "source_seeds": [],
+        "generation": 0
+      },
+      {
+        "mistake_id": "cat_err_004",
+        "description": "Agent treats the catapult as a simple lever and assumes more drop height or larger radius always increases rightward launch range.",
+        "why_it_happens": "Simple lever intuition breaks down: too much energy over-rotates the arm, the ceiling blocker deflects the green ball, and x>0.8 reduces torque. The relationship is non-monotonic.",
+        "how_to_avoid": "Always use trace_green_ball to empirically verify launch outcome rather than relying on lever intuition. If radius increase reduces range, step back to r=1.4 and adjust x instead.",
+        "source_level": "catapult",
+        "source_seeds": [],
+        "generation": 0
+      }
+    ]
+  }
+}

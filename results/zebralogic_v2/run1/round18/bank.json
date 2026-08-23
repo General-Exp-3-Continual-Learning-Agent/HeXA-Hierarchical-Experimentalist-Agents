@@ -1,0 +1,196 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_6_001",
+        "title": "Interpret adjacency and ordering clues correctly",
+        "principle": "When a clue mentions spatial relationships such as \"directly left of\", \"directly right of\", or \"immediately left of\", treat it as a strict adjacency with the specified direction; when it says \"somewhere left of\" or \"somewhere right of\", treat it as a strict ordering without requiring adjacency.",
+        "when_to_apply": "Whenever a clue describes positional relationships between two houses or attributes.",
+        "example": "Treating \"the engineer is directly left of the artist\" as allowing other houses between them instead of placing the engineer immediately to the left.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-35",
+          "zebralogic-lgp-test-6x5-33"
+        ],
+        "generation": 8,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "zeb_ev_1_003",
+        "title": "Interpret distance clues correctly",
+        "principle": "A clue stating \"N houses between X and Y\" means there are exactly N houses separating X and Y, i.e., the positions differ by N+1. The order (which is left/right) is not specified unless the clue says so.",
+        "when_to_apply": "When a clue mentions a specific number of houses between two items.",
+        "example": "Interpreting \"two houses between baseball and modern\" as placing them two positions apart instead of three.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-35",
+          "zebralogic-lgp-test-6x5-33"
+        ],
+        "generation": 8,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_2_004",
+        "title": "Treat 'somewhere left/right of' as inequality",
+        "principle": "Clues that say \"X is somewhere left of Y\" (or right of) impose only a strict ordering (pos(X)\u202f<\u202fpos(Y) or pos(X)\u202f>\u202fpos(Y)), without requiring adjacency.",
+        "when_to_apply": "When a clue uses the phrase \"somewhere left of\" or \"somewhere right of\".",
+        "example": "Interpreting \"Alice is somewhere to the left of Bob\" as requiring Alice to be immediately left of Bob.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-35",
+          "zebralogic-lgp-test-6x5-33"
+        ],
+        "generation": 8,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_1_006",
+        "title": "Apply exclusion constraints",
+        "principle": "When a clue explicitly forbids an attribute from a particular house (e.g., \"the nurse is not in the sixth house\") or forbids two attributes from co\u2011occurring, enforce that exclusion throughout the solution.",
+        "when_to_apply": "Whenever a clue contains a negative statement (\"not\", \"cannot\", \"does not\").",
+        "example": "Ignoring \"the nurse is not in the sixth house\" and placing the nurse in house\u202f6.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-35",
+          "zebralogic-lgp-test-6x5-33"
+        ],
+        "generation": 8,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_1_007",
+        "title": "Enforce uniqueness across each attribute category",
+        "principle": "Each value in a category (e.g., each name, each house style, each occupation, each sport) must appear exactly once across the six houses; duplicate assignments violate the puzzle constraints.",
+        "when_to_apply": "Throughout the solving process, after any assignment.",
+        "example": "Assigning the sport \"baseball\" to two different houses.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-35",
+          "zebralogic-lgp-test-6x5-33"
+        ],
+        "generation": 8,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_2_008",
+        "title": "Preserve original case of attribute values",
+        "principle": "When outputting the final grid, copy each attribute value exactly as it appears in the problem statement, preserving capitalization and spelling.",
+        "when_to_apply": "During the final answer formatting step.",
+        "example": "Outputting \"Victorian\" instead of the required \"victorian\".",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-35"
+        ],
+        "generation": 8,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_009",
+        "title": "Make forced assignments when only one candidate remains",
+        "principle": "If after applying all constraints a house (or an attribute) has exactly one possible remaining value, assign it immediately; this often triggers further deductions.",
+        "when_to_apply": "After each round of constraint propagation.",
+        "example": "Leaving a house with only one possible sport unfilled, thereby missing a forced deduction.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-35",
+          "zebralogic-lgp-test-6x5-33"
+        ],
+        "generation": 8,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_7_009",
+        "title": "Interpret 'next to each other' as adjacency",
+        "principle": "A clue stating that X and Y are \"next to each other\" means the two houses occupy consecutive positions, but the order (which is left/right) is not specified unless further clarified.",
+        "when_to_apply": "When a clue uses the phrase \"next to each other\".",
+        "example": "Treating \"Arnold and the baseball lover are next to each other\" as allowing a house between them.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-35"
+        ],
+        "generation": 8,
+        "confidence": 0.62
+      },
+      {
+        "skill_id": "zeb_ev_8_009",
+        "title": "Bidirectional equivalence for name-attribute clues",
+        "principle": "When a clue directly links a specific name to an attribute (e.g., \"Peter is the artist\"), enforce that the name and attribute belong to the same house, and propagate the equivalence both ways.",
+        "when_to_apply": "Whenever a clue ties a name to another attribute.",
+        "example": "Ignoring \"Peter is the artist\" and allowing Peter to have a different occupation.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-35",
+          "zebralogic-lgp-test-6x5-33"
+        ],
+        "generation": 8,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "zeb_ev_9_009",
+        "title": "Bidirectional equivalence for attribute-attribute clues",
+        "principle": "When a clue directly links two non\u2011name attributes (e.g., \"The person who loves volleyball is the engineer\" or \"The tennis lover has an associate's degree\"), treat the two attributes as belonging to the same house and enforce the equality in both directions.",
+        "when_to_apply": "Whenever a clue equates two attribute values from different categories.",
+        "example": "Ignoring \"The person who loves volleyball is the engineer\" and assigning volleyball to a house with a different occupation.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x4-35",
+          "zebralogic-lgp-test-6x5-33"
+        ],
+        "generation": 9,
+        "confidence": 0.7
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_err_001",
+        "description": "Interpreting 'N houses between' as distance N",
+        "why_it_happens": "The model confuses \"N houses between\" with a total offset of N positions, forgetting that the two houses are separated by N intervening houses.",
+        "how_to_avoid": "Remember that \"N houses between X and Y\" means the positions differ by N\u202f+\u202f1; treat it as a distance constraint, not a direct offset.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 8
+      },
+      {
+        "mistake_id": "zeb_evo_002",
+        "description": "Ignoring equivalence clues that bind two attributes to the same house",
+        "why_it_happens": "The model treats each attribute independently and fails to enforce that linked attributes must co\u2011occur, especially when the clue does not involve a name.",
+        "how_to_avoid": "Whenever a clue equates two attributes (name\u2011attribute or attribute\u2011attribute), enforce a bidirectional equality so both values occupy the same house.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 8
+      },
+      {
+        "mistake_id": "zeb_evo_003",
+        "description": "Violating the one\u2011per\u2011category uniqueness rule",
+        "why_it_happens": "During propagation the model may duplicate a value across houses, often because it forgets to check the global uniqueness constraint after each assignment.",
+        "how_to_avoid": "After any new assignment, verify that each attribute value appears exactly once across all houses; backtrack or reject assignments that cause duplicates.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 8
+      },
+      {
+        "mistake_id": "zeb_err_003",
+        "description": "Altering attribute values (spelling/casing) instead of copying them verbatim",
+        "why_it_happens": "The model normalises text automatically, changing capitalisation or spelling, which leads to mismatches with the expected output format.",
+        "how_to_avoid": "When producing the final grid, output each attribute exactly as given in the problem statement, preserving original spelling and case.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 8
+      }
+    ]
+  }
+}

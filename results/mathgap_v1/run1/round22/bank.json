@@ -1,0 +1,165 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Signed Difference Interpretation",
+        "principle": "When a statement mentions \"the difference between the number of X and Y\", interpret it as the signed subtraction X - Y, preserving the order given, rather than as an absolute value.",
+        "when_to_apply": "Use this rule whenever you encounter a phrase of the form \"difference between the number of ... and ...\" in any statement, especially within equalities.",
+        "example": "Interpreting \"the difference between the number of oranges that A and B have\" as |A - B| (absolute value) instead of A - B.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 18,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_3_001",
+        "title": "Directed More-Than Interpretation",
+        "principle": "Translate comparative statements of the form \"A has N more (or fewer) items than B\" into the equation A = B + N (or A = B - N for fewer), directly reflecting the direction of the comparison.",
+        "when_to_apply": "Apply this whenever a sentence uses \"more\" or \"fewer\" to compare two persons' counts.",
+        "example": "Converting \"Taylor has 5 more oranges than Adolfo\" into Taylor = Adolfo - 5, which reverses the intended relationship.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 18,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_3_003",
+        "title": "Immediate Direct Assignment Update",
+        "principle": "A direct count statement (e.g., \"A has N items\") sets the current value of A to N at that point in the narrative, overwriting any previous value for A.",
+        "when_to_apply": "Whenever a sentence explicitly gives a person's count without any relational or transfer context.",
+        "example": "Ignoring a later statement \"Robert has 8 oranges\" because Robert's count was already set earlier and not updating it.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 18,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_9_009",
+        "title": "Temporal Consistency of Transfers and Relational Statements",
+        "principle": "Process the problem sequentially; when a transfer (\"X gives N to Y\") appears, immediately subtract N from X and add N to Y before evaluating any subsequent statements.",
+        "when_to_apply": "Each time a \"gives\" clause is encountered, update the involved counts before moving on.",
+        "example": "Delaying the effect of \"Robert gives 3 oranges to Myles\" until after all other relational statements, causing Myles's count to be wrong in earlier equations.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 18,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Full Difference Equality Interpretation",
+        "principle": "For sentences equating two differences, translate them into the form (A - B) = (C - D), preserving the order of the names on each side of the equality.",
+        "when_to_apply": "Whenever a statement says that \"the number of X that A has more than B is equal to the difference between the number of Y that C and D have.\"",
+        "example": "Misreading \"the number of oranges that Adolfo has more than Taylor is equal to the difference between the number of oranges that James and Myles have\" as Adolfo = Taylor + (James - Myles) instead of (Adolfo - Taylor) = (James - Myles).",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 18,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_10_009",
+        "title": "Quantity Modification (Multiplication and Subtraction)",
+        "principle": "When a statement modifies a count by multiplication, division, or subtraction (e.g., \"X is multiplied by 2\" or \"X is reduced by 3\"), apply the arithmetic operation to the current value of X.",
+        "when_to_apply": "Whenever a phrase indicates a multiplicative or subtractive change to a known quantity.",
+        "example": "Interpreting \"X increases by 2 times\" as X + 2 rather than X * 2.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 18,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_15_009",
+        "title": "Redistribute Equally Among Group",
+        "principle": "If a group of people redistributes their items so that each ends up with the same amount, compute the total items held by the group and divide by the number of members to obtain the final equal count.",
+        "when_to_apply": "When a statement explicitly says that a set of persons share or redistribute items equally.",
+        "example": "Assuming each person keeps their original count when the problem says \"they redistribute equally\", instead of averaging the total.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 18,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "mat_ev_16_008",
+        "title": "Comprehensive Constraint Extraction",
+        "principle": "Gather every constraint implied by each statement, even those that do not directly involve the queried person, because they may indirectly affect the query through the network of equations.",
+        "when_to_apply": "Throughout the solving process, before attempting to isolate the queried variable.",
+        "example": "Ignoring constraints about other people's counts, leading to an underdetermined system that cannot produce the correct answer.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 18,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_18_008",
+        "title": "Signed More-Than Difference Equality Interpretation",
+        "principle": "Within a difference equality, treat a phrase like \"the number of X has more than Y\" as the signed difference X - Y, allowing the result to be negative; do not assume X > Y.",
+        "when_to_apply": "When a \"has more than\" clause appears inside an equation equating two differences.",
+        "example": "Assuming \"the number of oranges that A has more than B\" must be positive and rewriting it as A = B + N, ignoring that the signed difference could be negative.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 18,
+        "confidence": 0.7
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Treating \u2018difference between the number of X and Y\u2019 as absolute value instead of signed subtraction.",
+        "why_it_happens": "The model defaults to interpreting \"difference\" as a magnitude, forgetting that the problem defines the order of subtraction.",
+        "how_to_avoid": "Always keep the order of the two names as given and translate the phrase into X - Y, even if the result may be negative.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Delaying the effect of transfer statements until after all other statements.",
+        "why_it_happens": "The model treats \"gives\" as a separate fact that does not alter the current counts for subsequent constraints.",
+        "how_to_avoid": "Apply each transfer immediately when it appears, updating both giver and receiver before processing later statements.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Considering a direct count as a fixed initial value that cannot be changed by later transfers.",
+        "why_it_happens": "The model assumes that a direct assignment is immutable, ignoring that later \"gives\" can modify the count.",
+        "how_to_avoid": "Treat direct counts as the current value at that point; later transfer statements may change that value.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Misinterpreting a difference equality as a direct assignment to a single variable, ignoring the second term (including assuming positivity).",
+        "why_it_happens": "The model simplifies an equality of differences by moving one side to the other and treating it as a simple assignment.",
+        "how_to_avoid": "Preserve both sides of the equality as (A - B) = (C - D); do not collapse it to A = B + (C - D) unless algebraically justified.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Misinterpreting 'increases by N times' as addition or division instead of multiplication.",
+        "why_it_happens": "The phrase \"increases by N times\" is ambiguous; the model may default to addition.",
+        "how_to_avoid": "Recognize that \"increases by N times\" means multiplication by N (i.e., new = old * N).",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 18
+      }
+    ]
+  }
+}

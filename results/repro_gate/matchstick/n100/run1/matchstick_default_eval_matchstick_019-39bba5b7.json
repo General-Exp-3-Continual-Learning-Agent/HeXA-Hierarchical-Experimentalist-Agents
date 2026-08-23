@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_019",
+  "run": 1,
+  "item_idx": 19,
+  "seed": 1843041429,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "III = XIII - X",
+  "finish_reason": "stop",
+  "raw_chars": 37112,
+  "reasoning_chars": 35779,
+  "final_chars": 1333,
+  "elapsed_s": 104.50451612472534,
+  "usage": {
+    "completion_tokens": 9108,
+    "prompt_tokens": 459,
+    "total_tokens": 9567,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "65bf1c51e0dff21c425db5e9b5b24544e78399491b032dcd5eb91d8113be3af2"
+}

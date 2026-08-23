@@ -1,0 +1,215 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Signed 'has N more than'",
+        "principle": "When a statement says 'X has N more than Y', interpret it as the signed equation X = Y + N. Do not invert the relationship or treat it as Y = X + N.",
+        "when_to_apply": "Whenever you encounter a direct statement of the form 'X has N more than Y'.",
+        "example": "Interpreting 'X has N more than Y' as Y = X + N instead of X = Y + N.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.525
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Signed relational equation",
+        "principle": "For statements like 'The number of X that A has more than B is equal to the difference between the number of X that C and D have', translate directly to (A - B) = (C - D), preserving the order of subtraction on both sides. Do not use absolute values.",
+        "when_to_apply": "When a relational equation involves a 'has more than' clause together with a 'difference between' clause.",
+        "example": "Treating the equation as |A - B| = |C - D| instead of (A - B) = (C - D).",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.525
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Signed 'difference between'",
+        "principle": "The phrase 'difference between the number of X that C and D have' means the signed subtraction C - D in the order presented, not the absolute difference.",
+        "when_to_apply": "Whenever a statement mentions the 'difference between' two persons' counts.",
+        "example": "Using |C - D| instead of (C - D) for the right\u2011hand side of a relational equation.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.525
+      },
+      {
+        "skill_id": "mat_ev_1_003",
+        "title": "Allow negative differences",
+        "principle": "Do not assume that a 'has more than' clause guarantees a positive difference; the equation may legitimately yield a negative value, which should be kept as\u2011is for solving the system.",
+        "when_to_apply": "When a 'has more than' equation seems contradictory or produces a negative left\u2011hand side.",
+        "example": "Discarding a solution because A - B is negative, assuming A must be larger than B.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.525
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Model transfers as net changes",
+        "principle": "Each statement 'X gives N to Y' reduces X's count by N and increases Y's count by N. Apply all such transfers after establishing the initial amounts.",
+        "when_to_apply": "Whenever a transfer of items is described.",
+        "example": "Adding N to the giver's count instead of subtracting it.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.525
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Initial count statements",
+        "principle": "Plain statements like 'X has N' describe the initial amount before any transfers. Use them as starting values and adjust later with transfers.",
+        "when_to_apply": "When encountering a simple 'has N' statement without any transfer verb.",
+        "example": "Treating 'X has N' as the final amount after all transfers.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.525
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Systematic equation solving",
+        "principle": "Represent each person as a variable, write a linear equation for every relational statement and every transfer, then solve the resulting linear system using substitution or elimination.",
+        "when_to_apply": "When the problem contains many interdependent statements.",
+        "example": "Guessing individual values without forming a system of equations.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.525
+      },
+      {
+        "skill_id": "mat_ev_1_007",
+        "title": "Handle contradictory 'more than' statements",
+        "principle": "If two statements appear to contradict (e.g., A has more than B and B has more than A), keep both as signed equations. The system may still be solvable; the wording may be imprecise.",
+        "when_to_apply": "When encountering seemingly contradictory relational statements.",
+        "example": "Abandoning the problem because of contradictory 'has more than' clauses.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_008",
+        "title": "Order of applying transfers",
+        "principle": "The final net result of multiple transfers is independent of the order in which they are applied; you can apply them in any sequence after setting the initial counts.",
+        "when_to_apply": "When several transfers involve the same individuals and the order is unclear.",
+        "example": "Applying a transfer before the giver's initial count has been established.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.525
+      },
+      {
+        "skill_id": "mat_ev_1_009",
+        "title": "Distinct variables for similar names",
+        "principle": "Treat each distinct name as a separate variable, even if the names are similar (e.g., Orval vs Orville). Do not merge them unless the problem explicitly states they refer to the same person.",
+        "when_to_apply": "When the problem includes names that differ by only a few letters.",
+        "example": "Combining Orval and Orville into a single variable.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Using absolute value for 'difference between' clauses",
+        "why_it_happens": "The word 'difference' is often interpreted colloquially as an absolute distance, leading to |A\u2011B| instead of the signed subtraction A\u2011B.",
+        "how_to_avoid": "Remember that in these puzzles 'difference between' means the signed subtraction in the order presented: treat it as (A - B).",
+        "source_level": "mathgap",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Assuming positivity for 'has more than' statements",
+        "why_it_happens": "Natural\u2011language intuition suggests the left side should be larger, causing solvers to discard equations that yield a negative difference.",
+        "how_to_avoid": "Write the equation exactly as stated (A - B = \u2026) and accept negative values; the puzzle may use the wording loosely.",
+        "source_level": "mathgap",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Treating 'X has N' as a final count after transfers",
+        "why_it_happens": "Uncertainty about whether the given counts are before or after the described transfers leads to using them as final values.",
+        "how_to_avoid": "Assume such statements describe the initial state; apply all transfers afterwards to obtain final counts.",
+        "source_level": "mathgap",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16"
+        ],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Applying transfers in the wrong direction",
+        "why_it_happens": "Misreading the verb 'gives' can cause the solver to add to the giver instead of subtracting.",
+        "how_to_avoid": "Remember that 'X gives N to Y' means X loses N and Y gains N; update both counts accordingly.",
+        "source_level": "mathgap",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16"
+        ],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Giving up on contradictory statements",
+        "why_it_happens": "Seeing two statements that appear to conflict can make the solver think the system is unsolvable and abandon systematic solving.",
+        "how_to_avoid": "Keep both equations as signed relations; the overall system may still have a unique solution despite apparent contradictions.",
+        "source_level": "mathgap",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16"
+        ],
+        "generation": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_078",
+  "run": 1,
+  "item_idx": 78,
+  "seed": 1843041488,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "VIII - II = VI",
+  "finish_reason": "stop",
+  "raw_chars": 56653,
+  "reasoning_chars": 55833,
+  "final_chars": 820,
+  "elapsed_s": 176.8456449508667,
+  "usage": {
+    "completion_tokens": 13437,
+    "prompt_tokens": 459,
+    "total_tokens": 13896,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "b13a7a2dcac8806419c8075d54cfcf678d013cba0966fd8f413e6bcdf787cbbd"
+}

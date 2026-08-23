@@ -1,0 +1,134 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "tower-of-hanoi": [
+      {
+        "skill_id": "tow_ev_1_000",
+        "title": "Move largest disk first if not on target",
+        "principle": "If the largest disk is not already on the goal peg and there are no smaller disks on top of it, move it directly to the goal peg before moving any other disks.",
+        "when_to_apply": "When the largest disk is free (no smaller disks above it) and is not on its target peg.",
+        "example": "Attempted to move the largest disk while it still had smaller disks on top, resulting in an illegal move.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s106",
+          "tower-of-hanoi-state-train-n5-s108"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "tow_ev_1_001",
+        "title": "Recursively solve subproblem after moving largest disk",
+        "principle": "After placing the largest disk on the goal peg, treat the remaining n\u20111 disks as a standard Tower of Hanoi problem and solve it recursively, using the other pegs as needed.",
+        "when_to_apply": "Once the largest disk has been moved to its target peg and will not be moved again.",
+        "example": "After moving the largest disk, continued moving other disks without resetting the subproblem, leading to a disordered final configuration.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s106",
+          "tower-of-hanoi-state-train-n5-s108"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "tow_ev_1_002",
+        "title": "Standard recursive move sequence for k disks",
+        "principle": "To move a tower of k disks from a source peg to a target peg using an auxiliary peg, first recursively move the top k\u20111 disks to the auxiliary peg, then move the kth (largest) disk to the target, and finally move the k\u20111 disks from the auxiliary to the target.",
+        "when_to_apply": "Whenever you need to transfer a contiguous stack of k disks between two pegs.",
+        "example": "Used a non\u2011recursive sequence that left smaller disks on top of larger ones, violating the rules.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s106",
+          "tower-of-hanoi-state-train-n5-s108"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "tow_ev_1_003",
+        "title": "Place move list as final parseable output",
+        "principle": "The verifier reads the last parseable list of moves in the response; ensure that the move list is the final element and that no additional parseable lists appear after it.",
+        "when_to_apply": "When formatting the answer, output the move list as the last parseable list in the response.",
+        "example": "Placed extra text after the move list, causing the parser to read a later empty list instead of the intended moves.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s106",
+          "tower-of-hanoi-state-train-n5-s108"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "tow_ev_2_004",
+        "title": "Clear path for largest disk",
+        "principle": "Before moving the largest disk to its target peg, relocate any smaller disks that are stacked on top of it to other pegs where they can be placed legally, thereby freeing the largest disk for a legal move.",
+        "when_to_apply": "When the largest disk is not on its goal peg and has one or more smaller disks above it.",
+        "example": "Attempted to move the largest disk while it was still covered by smaller disks, resulting in an illegal move or deadlock.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s106",
+          "tower-of-hanoi-state-train-n5-s108"
+        ],
+        "generation": 2,
+        "confidence": 0.475
+      },
+      {
+        "skill_id": "tow_ev_2_005",
+        "title": "Verify final configuration",
+        "principle": "After constructing the move list, mentally simulate each move from the initial state and confirm that the resulting final configuration exactly matches the goal; if it does not, adjust the sequence before outputting.",
+        "when_to_apply": "After generating the full move list but before finalizing the answer.",
+        "example": "Provided a move list that was legal but left the disks on the wrong pegs, so the final configuration did not match the goal.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s108"
+        ],
+        "generation": 2,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "tow_ev_2_006",
+        "title": "Concise final move list",
+        "principle": "Keep the reasoning brief and place the complete move list as the very last element of the response, ensuring it fits within the token budget and is not followed by any additional parseable content.",
+        "when_to_apply": "When formatting the answer, after any explanation, output only the move list as the final line.",
+        "example": "The answer was cut off before the full move list, leaving an incomplete list that the verifier could not parse.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s106",
+          "tower-of-hanoi-state-train-n5-s108"
+        ],
+        "generation": 2,
+        "confidence": 0.475
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "tower-of-hanoi": [
+      {
+        "mistake_id": "tow_err_000",
+        "description": "No move list provided (empty list)",
+        "why_it_happens": "The model finishes the response without generating any moves, often due to forgetting to output the move list or truncating it entirely.",
+        "how_to_avoid": "Always include a non\u2011empty list of moves as the final parseable element of the answer.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "tow_evo_001",
+        "description": "Truncated move list (incomplete)",
+        "why_it_happens": "The response exceeds the token limit or includes too much explanatory text, causing the move list to be cut off before all moves are listed.",
+        "how_to_avoid": "Keep the explanation concise, place the move list at the end, and ensure the full list fits within the token budget.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 2
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "task": "mathgap",
+  "n_train": 100,
+  "train_n_train": 60,
+  "in_training_job": true,
+  "eval_ids_sha256": "b7cde914fd8753f0b0369870700c0c844cdb9d4ad1bac24b6db8226996b8a1fb",
+  "max_tokens": 60000,
+  "run_index": 0,
+  "with_memory_acc": 0.33,
+  "no_memory_acc": 0.51,
+  "delta": -0.18,
+  "with_memory_truncated": 1,
+  "no_memory_truncated": 5
+}

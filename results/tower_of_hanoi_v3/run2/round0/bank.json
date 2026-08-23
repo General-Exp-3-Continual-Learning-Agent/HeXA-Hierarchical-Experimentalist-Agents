@@ -1,0 +1,79 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "tower-of-hanoi": [
+      {
+        "skill_id": "tow_ev_1_000",
+        "title": "Move largest disk first if not on target",
+        "principle": "If the largest disk is not already on the goal peg, move it directly to the goal peg before moving any smaller disks, because it can be placed on an empty goal peg without violating size constraints.",
+        "when_to_apply": "When the initial configuration has the largest disk on a different peg than the goal peg.",
+        "example": "Moving a smaller disk onto the goal peg before the largest disk, which later makes moving the largest disk illegal.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s1"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "tow_ev_1_001",
+        "title": "Recursively solve subproblem after moving largest disk",
+        "principle": "After placing the largest disk on the goal peg, treat the remaining n\u20111 disks as a standard Tower of Hanoi problem: move them from their current source peg to the goal peg using the other peg as auxiliary, applying the recursive pattern.",
+        "when_to_apply": "Immediately after moving the largest disk to its final position.",
+        "example": "Attempting to move the remaining disks without first securing the largest disk, leading to illegal moves or an incorrect final arrangement.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s1"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "tow_ev_1_002",
+        "title": "Standard recursive move sequence for k disks",
+        "principle": "To move a tower of k disks from source to target using auxiliary, first move k\u20111 disks from source to auxiliary, then move the kth disk from source to target, and finally move the k\u20111 disks from auxiliary to target.",
+        "when_to_apply": "Whenever you need to transfer a contiguous stack of disks between two pegs.",
+        "example": "Using a non\u2011recursive or arbitrary ordering that places a larger disk on a smaller one, violating the Tower of Hanoi rules.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s1",
+          "tower-of-hanoi-state-train-n5-s0"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "tow_ev_1_003",
+        "title": "Place move list as final parseable output",
+        "principle": "The verifier reads the last parseable list of moves; ensure that the move list is the final element in the response and that no later empty list or unrelated text follows it.",
+        "when_to_apply": "When writing the final answer for a Tower of Hanoi problem.",
+        "example": "Appending extra text or an empty list after the correct move list, causing the parser to capture the empty list as the answer.",
+        "source_level": "tower-of-hanoi",
+        "source_type": "evolved",
+        "source_seeds": [
+          "tower-of-hanoi-state-train-n5-s1",
+          "tower-of-hanoi-state-train-n5-s0"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "tower-of-hanoi": [
+      {
+        "mistake_id": "tow_evo_000",
+        "description": "No move list provided (empty list) as the answer",
+        "why_it_happens": "The model may stop generating moves or forget to output the move list, resulting in an empty list that the verifier treats as the solution.",
+        "how_to_avoid": "Always generate and output a complete list of legal moves; verify that the list is non\u2011empty before finalizing the response.",
+        "source_level": "tower-of-hanoi",
+        "source_seeds": [],
+        "generation": 1
+      }
+    ]
+  }
+}

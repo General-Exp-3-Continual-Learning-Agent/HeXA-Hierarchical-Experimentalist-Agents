@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_063",
+  "run": 1,
+  "item_idx": 63,
+  "seed": 1843041473,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "IX = XVII - VIII",
+  "finish_reason": "stop",
+  "raw_chars": 59999,
+  "reasoning_chars": 58814,
+  "final_chars": 1185,
+  "elapsed_s": 174.42570185661316,
+  "usage": {
+    "completion_tokens": 14257,
+    "prompt_tokens": 459,
+    "total_tokens": 14716,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "06cfdd970c0ba1032386112045e387f946b93cb462dbaeaafa239eeb07bb1c7a"
+}

@@ -1,0 +1,52 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Balance by numeric difference and single\u2011stick transformation",
+        "principle": "Compute the integer values of both sides of the equation, find the numeric difference, and then look for a single\u2011matchstick move that changes a numeral\u2019s value by exactly that amount while keeping all symbols valid Roman numerals.",
+        "when_to_apply": "When the displayed equation is false and the numeric values of the left\u2011hand side and right\u2011hand side can be evaluated.",
+        "example": "Moving a stick that changes a V into an L (adding 45) when the equation is only off by 5, leaving the equality still false.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_001",
+          "matchstick:default:train:matchstick_000"
+        ],
+        "generation": 1,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Convert V to X to add 5",
+        "principle": "If the imbalance is exactly\u202f5, turn a V (value\u202f5) into an X (value\u202f10) by repositioning one of its diagonal sticks so the two sticks cross; this raises that numeral\u2019s value by\u202f5.",
+        "when_to_apply": "When the equation is off by\u202f5 and a V appears that can be reshaped into an X without breaking other symbols.",
+        "example": "Changing a V into an L (value\u202f50) when only a\u202f+5 adjustment is needed, which makes the equation incorrect.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Swap I and V in IV to make VI (adds 2)",
+        "principle": "If the imbalance is exactly\u202f2 and the pattern\u202fIV\u202fappears, move the I stick to the right of the V, turning\u202fIV\u202f(4) into\u202fVI\u202f(6) and increasing the numeral\u2019s value by\u202f2.",
+        "when_to_apply": "When the equation is off by\u202f2 and a numeral\u202fIV\u202fis present on either side.",
+        "example": "Removing the I stick from\u202fIV\u202fand leaving a single diagonal stick, which is not a valid numeral, instead of correctly forming\u202fVI.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_000"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {}
+}

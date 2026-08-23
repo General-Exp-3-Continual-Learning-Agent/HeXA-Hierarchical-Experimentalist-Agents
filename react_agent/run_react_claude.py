@@ -22,6 +22,20 @@ from react_agent.level_prompts import build_system_prompt, build_initial_user_me
 import cv2
 
 
+class SessionLimitError(RuntimeError):
+    """Raised when the Claude CLI reports the usage/session limit is exhausted.
+
+    This must propagate (NOT be swallowed into a fake "failure" action): a
+    session-limit episode is not a real failure, and recording it as one
+    poisons GEPA's optimization and test scores. Callers catch this to stop
+    the run cleanly with the checkpoint intact, then resume in a fresh session.
+    """
+
+
+# Substrings the CLI emits when the usage window is exhausted.
+_SESSION_LIMIT_MARKERS = ("session limit", "usage limit", "rate limit")
+
+
 def load_claude_cli_model():
     """
     Returns a callable `model_fn` that is compatible with `ReactAgent`
@@ -52,6 +66,7 @@ def load_claude_cli_model():
     capture_output=True,
     text=True,
     env=os.environ.copy(),
+    stdin=subprocess.DEVNULL,
     timeout=2000,
 )
             elapsed = time.time() - call_start
@@ -67,6 +82,13 @@ def load_claude_cli_model():
                     f"stdout (first 1500): {std_out[:1500] if std_out else 'none'}",
                     flush=True,
                 )
+                # A session/usage-limit error is NOT a real failure — propagate
+                # it so the run stops cleanly instead of recording a fake 0 score.
+                blob = (std_out + " " + err_out).lower()
+                if any(m in blob for m in _SESSION_LIMIT_MARKERS):
+                    raise SessionLimitError(
+                        f"Claude CLI session limit hit: {std_out[:200] or err_out[:200]}"
+                    )
                 return "Thought: I encountered an error communicating with Claude CLI.\nAction: finish\nAction Input: {}"
 
             print(f"[Claude CLI] Response received in {elapsed:.1f}s", flush=True)
@@ -78,6 +100,8 @@ def load_claude_cli_model():
         except subprocess.TimeoutExpired:
              print(f"[Claude Error] Claude CLI timed out after {time.time() - call_start:.1f}s.", flush=True)
              return "Thought: I encountered an error communicating with Claude CLI.\nAction: finish\nAction Input: {}"
+        except SessionLimitError:
+             raise  # propagate — do not turn a session limit into a fake failure
         except Exception as e:
              print(f"[Claude Error] Unexpected after {time.time() - call_start:.1f}s: {type(e).__name__}: {e}", flush=True)
              return "Thought: I encountered an error communicating with Claude CLI.\nAction: finish\nAction Input: {}"

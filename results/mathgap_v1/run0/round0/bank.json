@@ -1,0 +1,157 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Sequential processing of transfers",
+        "principle": "When a transfer statement appears, immediately adjust the giver's and receiver's counts before processing any later statements. Subsequent statements refer to the updated counts.",
+        "when_to_apply": "Whenever the problem includes 'X gives K to Y' statements and later statements reference X or Y.",
+        "example": "A later comparison uses X's original count even though an earlier 'X gives K to Y' transfer has already changed X's amount.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Signed difference equality",
+        "principle": "Translate statements of the form 'the number of onions that A has more than B is equal to the difference between the number of onions that C and D have' into the signed equation (A - B) = (C - D), preserving the order of names on each side.",
+        "when_to_apply": "Whenever a statement uses the phrase 'the number of X that A has more than B is equal to the difference between the number of X that C and D have.'",
+        "example": "Interpreting the same statement as |A - B| = |C - D| and solving with absolute values.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_16"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Direct count assignment at point of mention",
+        "principle": "When a statement says 'Person has N onions', set that person's current count to N at that moment, after any earlier transfers. This count is used for all subsequent references.",
+        "when_to_apply": "Whenever an explicit count is given for a person.",
+        "example": "Later using the person's count as N even though a prior transfer has already altered it.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_003",
+        "title": "Update both parties in a transfer",
+        "principle": "For a statement 'X gives K onions to Y', subtract K from X's current count and add K to Y's current count at that point.",
+        "when_to_apply": "Whenever a transfer statement appears.",
+        "example": "Only adding K to Y's count while leaving X unchanged.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Accumulate net change for multiple transfers",
+        "principle": "If a person appears in several transfer statements, sum all gains and losses to compute their net change before using the resulting count in later equations.",
+        "when_to_apply": "When a person is involved in more than one transfer.",
+        "example": "Treating each transfer separately and writing contradictory equations for the same person.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Systematic linear solving",
+        "principle": "After translating all statements into linear equations, solve the system using substitution or elimination, ensuring each variable satisfies all constraints.",
+        "when_to_apply": "After all constraints have been collected.",
+        "example": "Guessing a value for a variable without solving the equations, leading to inconsistency.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Non\u2011negative integer check",
+        "principle": "All derived counts must be non\u2011negative integers; if any equation yields a negative or fractional value, revisit sign conventions or transfer handling.",
+        "when_to_apply": "After solving the system, before final answer.",
+        "example": "Obtaining a negative count for a person because a difference was taken with the wrong sign.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_4-s_0-idx_3"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Treating signed difference statements as absolute differences",
+        "why_it_happens": "The phrasing 'difference between the number of X that A and B have' is ambiguous, leading the model to default to absolute value.",
+        "how_to_avoid": "Translate such statements directly to (A - B) = (C - D) preserving order; do not apply absolute value.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Ignoring the sequential order of transfers",
+        "why_it_happens": "The model assumes all transfers happen simultaneously, so later statements use pre\u2011transfer counts.",
+        "how_to_avoid": "Process the problem line by line, updating counts after each transfer before evaluating later statements.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Assuming explicit counts are final after all transfers",
+        "why_it_happens": "The model treats 'Person has N' as a final state, overlooking that later transfers may modify the count.",
+        "how_to_avoid": "Treat explicit counts as the current count at that point in the text; apply any subsequent transfers to update it.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Updating only the receiver in a transfer",
+        "why_it_happens": "The model focuses on the gain and forgets the corresponding loss for the giver.",
+        "how_to_avoid": "When processing 'X gives K to Y', subtract K from X and add K to Y.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Reversing the direction in 'X has N more than Y' statements",
+        "why_it_happens": "The model misreads the phrase and writes Y = X + N instead of X = Y + N.",
+        "how_to_avoid": "Interpret 'X has N more than Y' as X = Y + N.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 1
+      }
+    ]
+  }
+}

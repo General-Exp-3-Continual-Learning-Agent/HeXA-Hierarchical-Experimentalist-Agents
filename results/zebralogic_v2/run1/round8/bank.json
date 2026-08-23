@@ -1,0 +1,207 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_1_000",
+        "title": "Assign fixed\u2011position attributes immediately",
+        "principle": "If a clue directly states that a specific attribute value belongs to a particular house number, assign it right away to reduce the search space.",
+        "when_to_apply": "When a clue mentions a fixed house number for an attribute (e.g., \"Eric is in the third house\").",
+        "example": "Delaying the placement of a fixed\u2011position clue and treating it as a later constraint, causing unnecessary branching.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-9",
+          "zebralogic-lgp-test-6x6-26"
+        ],
+        "generation": 5,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_1_001",
+        "title": "Translate direct adjacency into offset constraints",
+        "principle": "When a clue says X is directly left/right of Y, enforce that X and Y occupy adjacent houses with the correct orientation.",
+        "when_to_apply": "For clues containing \"directly left of\" or \"directly right of\".",
+        "example": "Treating \"X is directly left of Y\" as only an ordering (pos(X) < pos(Y)) without requiring adjacency.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-9",
+          "zebralogic-lgp-test-6x6-26"
+        ],
+        "generation": 5,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_1_003",
+        "title": "Interpret distance clues correctly",
+        "principle": "A clue stating \"N houses between X and Y\" means there are exactly N houses separating them, i.e., |pos(X)\u2011pos(Y)| = N+1.",
+        "when_to_apply": "For clues that specify a number of houses between two items.",
+        "example": "Interpreting \"There are 2 houses between X and Y\" as a distance of 2 instead of the correct distance of 3.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-9",
+          "zebralogic-lgp-test-6x6-26"
+        ],
+        "generation": 5,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_1_004",
+        "title": "Bind equivalence clues to the same house",
+        "principle": "If a clue equates two attribute values (e.g., \"The milk drinker has a hamster\"), treat them as belonging to the same house and propagate both directions.",
+        "when_to_apply": "When a clue links two attributes with words like \"is\", \"has\", or \"the ... who\".",
+        "example": "Treating \"The milk drinker has a hamster\" as two separate facts instead of binding milk and hamster to the same house.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-9",
+          "zebralogic-lgp-test-6x6-26"
+        ],
+        "generation": 5,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_2_004",
+        "title": "Treat 'somewhere left/right of' as inequality",
+        "principle": "Clues that say X is somewhere left/right of Y impose only an ordering (pos(X)\u202f<\u202fpos(Y) or pos(X)\u202f>\u202fpos(Y)), not adjacency.",
+        "when_to_apply": "For clues containing \"somewhere left of\" or \"somewhere right of\".",
+        "example": "Interpreting \"X is somewhere left of Y\" as if X must be directly adjacent to Y.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-9",
+          "zebralogic-lgp-test-6x6-26"
+        ],
+        "generation": 5,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_1_006",
+        "title": "Apply exclusion constraints",
+        "principle": "When a clue forbids an attribute from a specific house (e.g., \"Peter is not in the fifth house\"), eliminate that possibility immediately.",
+        "when_to_apply": "For clues that explicitly state that something is not in a given house.",
+        "example": "Ignoring \"Peter is not in the fifth house\" and allowing Peter to be placed there.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-9",
+          "zebralogic-lgp-test-6x6-26"
+        ],
+        "generation": 5,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_1_007",
+        "title": "Enforce uniqueness across each attribute category",
+        "principle": "Each value in a category must appear exactly once across all houses; after assigning a value, remove it from the candidate sets of the other houses.",
+        "when_to_apply": "Continuously throughout solving, after any assignment.",
+        "example": "Assigning the same food to two different houses, violating the one\u2011per\u2011category rule.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-9",
+          "zebralogic-lgp-test-6x6-26"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_2_008",
+        "title": "Preserve original case of attribute values",
+        "principle": "When outputting the final solution, write each attribute value exactly as it appears in the problem statement, including case and spelling.",
+        "when_to_apply": "During the final answer construction, before serialising to JSON.",
+        "example": "Changing \"sept\" to \"september\" or altering the case of a name.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-9",
+          "zebralogic-lgp-test-6x6-26"
+        ],
+        "generation": 5,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_009",
+        "title": "Make forced assignments when only one candidate remains",
+        "principle": "If after applying all constraints a house (or an attribute) has exactly one possible remaining value, assign it immediately.",
+        "when_to_apply": "Whenever a domain for a variable is reduced to a single option.",
+        "example": "Leaving a house's food undefined even though only one food remains possible, causing unnecessary ambiguity.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-9",
+          "zebralogic-lgp-test-6x6-26"
+        ],
+        "generation": 5,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_5_009",
+        "title": "Validate final answer completeness and JSON structure",
+        "principle": "Before submitting, ensure the JSON object is syntactically complete, contains all houses, and follows the required schema.",
+        "when_to_apply": "After constructing the solution but before output.",
+        "example": "Truncating the JSON output so that the closing brackets or some rows are missing.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-9",
+          "zebralogic-lgp-test-6x6-26"
+        ],
+        "generation": 5,
+        "confidence": 0.4
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_err_001",
+        "description": "Interpreting 'N houses between' as distance N",
+        "why_it_happens": "The model treats the number of houses as the absolute distance, forgetting that 'N houses between' implies a gap of N houses, i.e., distance N+1.",
+        "how_to_avoid": "When a clue says 'N houses between X and Y', enforce |pos(X)\u2011pos(Y)| = N+1, not N.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "zeb_evo_002",
+        "description": "Ignoring equivalence clues that bind two attributes to the same house",
+        "why_it_happens": "The model processes each part of the clue independently, missing that they refer to the same house.",
+        "how_to_avoid": "Whenever a clue links two attributes (e.g., 'The milk drinker has a hamster'), treat them as a single combined constraint on one house.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "zeb_evo_003",
+        "description": "Violating the one\u2011per\u2011category uniqueness rule",
+        "why_it_happens": "The model may assign the same value to multiple houses because it does not enforce global uniqueness across a category.",
+        "how_to_avoid": "After any assignment, remove that value from the candidate sets of all other houses in the same category.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "zeb_evo_004",
+        "description": "Truncating the final answer, resulting in incomplete JSON",
+        "why_it_happens": "The model reaches the token limit or stops generation early, leaving the JSON structure unfinished.",
+        "how_to_avoid": "Generate the full JSON in one go, double\u2011check that all opening brackets have matching closing ones, and count rows to ensure all houses are present.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 5
+      },
+      {
+        "mistake_id": "zeb_evo_004",
+        "description": "Altering attribute values (spelling/casing) instead of copying them verbatim",
+        "why_it_happens": "The model assumes abbreviations or case changes are equivalent and rewrites values, but the verifier expects the exact strings from the problem.",
+        "how_to_avoid": "When writing the solution, copy each attribute value exactly as given in the puzzle, without expanding abbreviations or changing case.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 6
+      }
+    ]
+  }
+}

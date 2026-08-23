@@ -1,0 +1,211 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Signed Difference Interpretation",
+        "principle": "Interpret any phrase of the form 'the difference between the number of X and Y' as the signed subtraction X - Y, preserving the order named on each side.",
+        "when_to_apply": "Whenever a statement mentions 'difference between the number of ... and ...', treat it as a signed subtraction rather than an absolute difference.",
+        "example": "Treating 'difference between A and B' as |A - B| instead of A - B.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 15,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_3_001",
+        "title": "Directed More-Than Interpretation",
+        "principle": "Translate statements like 'A has N more (or fewer) items than B' into the equation A = B + N (or A = B - N), preserving direction.",
+        "when_to_apply": "When a statement uses 'more than' or 'fewer than' to compare two people.",
+        "example": "Interpreting 'A has 5 more items than B' as A = B + 5, but mistakenly swapping the order.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 15,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_3_003",
+        "title": "Immediate Direct Assignment Update",
+        "principle": "When a direct count statement 'A has N items' appears, set A's current count to N at that moment, overriding any previous value.",
+        "when_to_apply": "Whenever a statement gives an explicit count for a person.",
+        "example": "Keeping an earlier count for A after later statement 'A has N items' that should overwrite it.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 15,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_9_009",
+        "title": "Temporal Consistency of Transfers and Relational Statements",
+        "principle": "Process statements in the order given; apply each transfer immediately before evaluating any later relational statements, using the updated counts.",
+        "when_to_apply": "When the problem contains transfers and relational statements that depend on current counts.",
+        "example": "Delaying a transfer until after processing a later 'A has N more than B' statement, leading to wrong values.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 15,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Full Difference Equality Interpretation",
+        "principle": "For statements equating one difference to another, translate them into (A - B) = (C - D), preserving the order named on each side.",
+        "when_to_apply": "When a sentence says 'the number of X that A has more than B is equal to the difference between the number of X that C and D have'.",
+        "example": "Reducing 'A has more than B equals C minus D' to A = C - D, dropping B.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 15,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_10_009",
+        "title": "Quantity Modification (Multiplication and Subtraction)",
+        "principle": "When a statement modifies a count by a numeric operation other than direct assignment or transfer (such as multiplication or subtraction), apply the operation directly to the current count.",
+        "when_to_apply": "When encountering phrases like 'increases by X times', 'decreases by X', or similar.",
+        "example": "Treating 'increases by 9/5 times' as adding 9/5 instead of multiplying.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_17"
+        ],
+        "generation": 15,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_15_008",
+        "title": "Split All Items Equally Among Recipients",
+        "principle": "When a statement says a person splits all their items equally among two or more recipients, set each recipient's count to the original count divided by the number of recipients, and set the original person's count to zero.",
+        "when_to_apply": "When a sentence explicitly mentions splitting all items equally among recipients.",
+        "example": "Misreading 'A splits all items equally among B and C' as giving each half while leaving A unchanged.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 15,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "mat_ev_15_009",
+        "title": "Redistribute Equally Among Group",
+        "principle": "When a statement says two or more persons redistribute their items to ensure each has an equal amount, set each person's count to the total items divided by the number of persons.",
+        "when_to_apply": "When a sentence describes a group equalizing their counts.",
+        "example": "Failing to zero out the excess and give each person the average.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 15,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "mat_ev_16_008",
+        "title": "Comprehensive Constraint Extraction",
+        "principle": "Collect all statements that involve any variable, not only those that mention the queried person, because indirect relationships can determine the target's value.",
+        "when_to_apply": "At the beginning of solving, before processing statements, gather every constraint about any person.",
+        "example": "Only extracting statements that mention Susanna and ignoring those about Chester, Candace, and Daniela, leading to insufficient information.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_12"
+        ],
+        "generation": 16,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_16_009",
+        "title": "Interpret 'increase by N times' as multiplication",
+        "principle": "When a statement says a quantity 'increases by X times', treat it as multiplying the current count by X, not adding X.",
+        "when_to_apply": "Whenever a phrase like 'increases by 9/5 times' or 'increases by 24/11 times' appears.",
+        "example": "Treating 'increases by 9/5 times' as adding 9/5 instead of multiplying by 9/5.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_17"
+        ],
+        "generation": 16,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Treating \u2018difference between the number of X and Y\u2019 as absolute value instead of signed subtraction.",
+        "why_it_happens": "The model defaults to interpreting differences as magnitudes, ignoring the order of names.",
+        "how_to_avoid": "Always preserve the order and interpret as X - Y.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 15
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Delaying the effect of transfer statements until after all other statements.",
+        "why_it_happens": "The model processes transfers after building the system, forgetting that they happen sequentially.",
+        "how_to_avoid": "Apply each transfer immediately when encountered, updating both giver and receiver.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 15
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Considering a direct count as a fixed initial value that cannot be changed by later transfers.",
+        "why_it_happens": "The model treats direct assignments as immutable, not as current values that can be updated.",
+        "how_to_avoid": "When a direct count appears, overwrite any previous value; later transfers can still modify it.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 15
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Misinterpreting a difference equality as a direct assignment to a single variable, ignoring the second term.",
+        "why_it_happens": "The model collapses (A - B) = (C - D) into A = C - D, dropping B.",
+        "how_to_avoid": "Translate the equality fully as (A - B) = (C - D) and keep both terms on each side.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 15
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Incomplete processing of problem statements: stopping after a subset of constraints or ignoring many statements.",
+        "why_it_happens": "The model focuses on statements mentioning the target and neglects indirect constraints.",
+        "how_to_avoid": "Extract and consider every statement in the problem, regardless of whether it mentions the target directly.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 15
+      },
+      {
+        "mistake_id": "mat_evo_005",
+        "description": "Misinterpreting 'increase by N times' as addition rather than multiplication.",
+        "why_it_happens": "The phrase 'increase by X times' is ambiguous; the model often treats it as adding X.",
+        "how_to_avoid": "Interpret 'increase by X times' as multiplying the current count by X.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 16
+      },
+      {
+        "mistake_id": "mat_evo_006",
+        "description": "Limiting statement extraction to only those mentioning the target variable, missing indirect constraints.",
+        "why_it_happens": "The model assumes only direct mentions matter for the query.",
+        "how_to_avoid": "Collect all constraints, even those not mentioning the target, as they may affect the target through relationships.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 16
+      }
+    ]
+  }
+}

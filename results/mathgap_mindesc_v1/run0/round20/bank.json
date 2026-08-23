@@ -1,0 +1,198 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_16_000",
+        "title": "Signed 'has more than' interpretation",
+        "principle": "Interpret any phrase of the form 'X has more than Y' as a signed difference: if a numeric amount N is given, set X = Y + N; otherwise treat it as the equation X - Y = ... preserving the order of the names. This avoids turning a signed difference into an absolute value.",
+        "when_to_apply": "Whenever a statement uses 'has more than' either with a numeric amount or as part of a relational equation.",
+        "example": "Treating 'Eduardo has more than Carleigh' as |Eduardo\u202f\u2212\u202fCarleigh| instead of the signed difference Eduardo\u202f\u2212\u202fCarleigh.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 16,
+        "confidence": 0.44999999999999996
+      },
+      {
+        "skill_id": "mat_ev_16_001",
+        "title": "Conditional transfer handling",
+        "principle": "For statements of the form 'If X has more than N apples, X will transfer their apples to Y', first evaluate X's current count (after any prior updates). If the condition holds, move all of X's apples to Y (X becomes 0, Y gains X's previous count).",
+        "when_to_apply": "When encountering conditional transfer statements.",
+        "example": "Transferring Lyle's apples to Geoffrey even though Lyle only has 1 apple, ignoring the condition 'more than 3'.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 16,
+        "confidence": 0.44999999999999996
+      },
+      {
+        "skill_id": "mat_ev_16_002",
+        "title": "Increase by factor (including rational) interpretation",
+        "principle": "When a statement says 'the number of X increases by k times' (k may be a fraction), treat it as multiplication: new X = original X \u00d7 k. This applies even when k is expressed as a rational number such as 64/45 or 13/10.",
+        "when_to_apply": "When encountering 'increases by \u2026 times' phrasing.",
+        "example": "Treating 'Mariah's apples increase by 64/45 times' as adding 64/45 apples instead of multiplying her original count by 64/45.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 16,
+        "confidence": 0.44999999999999996
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Model transfers as net changes",
+        "principle": "When a transfer 'X gives N to Y' occurs, subtract N from X and add N to Y.",
+        "when_to_apply": "Whenever a transfer statement is present.",
+        "example": "Adding N to both X and Y instead of subtracting N from X and adding it to Y.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Systematic equation solving",
+        "principle": "Introduce a variable for each person and translate every relevant statement into a linear equation, then solve the resulting system.",
+        "when_to_apply": "When multiple relational statements involve several people.",
+        "example": "Skipping the creation of variables and trying to guess numbers directly.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_4_009",
+        "title": "Equal split and redistribution handling",
+        "principle": "If a person splits all their items equally among a set of recipients, set the splitter's final count to zero and give each recipient an equal share of the splitter's total.",
+        "when_to_apply": "When a split\u2011all statement appears.",
+        "example": "Leaving the splitter with some apples after a split\u2011all operation.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Signed difference phrasing",
+        "principle": "Interpret 'difference between X and Y' as the signed difference X\u00a0\u2212\u00a0Y, preserving the order given, rather than the absolute value.",
+        "when_to_apply": "When a statement mentions the difference between two quantities.",
+        "example": "Treating 'difference between Newton and Mariah' as |Newton\u00a0\u2212\u00a0Mariah| instead of Newton\u00a0\u2212\u00a0Mariah.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_12_008",
+        "title": "Include transfers as constraints before solving relational equations",
+        "principle": "Apply all transfer statements (including conditional transfers) first, updating each person's count, then use the resulting final counts when setting up and solving relational equations.",
+        "when_to_apply": "Before setting up and solving relational equations.",
+        "example": "Solving relational equations before applying a transfer that changes the involved counts.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_14_009",
+        "title": "Direct counts as initial constraints",
+        "principle": "Treat direct count statements (e.g., 'X has N items') as the initial amounts before any transfers, splits, or other operations.",
+        "when_to_apply": "When a direct count is given.",
+        "example": "Treating a direct count as the final count after later transfers.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6"
+        ],
+        "generation": 15,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_15_009",
+        "title": "Answer formatting",
+        "principle": "Output the final answer using the exact required format: 'The final answer is $\\boxed{<integer>}$'.",
+        "when_to_apply": "When providing the final answer.",
+        "example": "Omitting the LaTeX box or using a different punctuation style.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_6",
+          "mathgap_num_20-seed_0-d_6-l_200-diverse-idx_0"
+        ],
+        "generation": 15,
+        "confidence": 0.6
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Treating direct count statements as final counts after transfers",
+        "why_it_happens": "The model assumes a given count is already the final amount and ignores later operations that modify it.",
+        "how_to_avoid": "Interpret direct counts as initial values, then apply all subsequent transfers, splits, and other changes before determining the final count.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 15
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Misinterpreting split/redistribute statements",
+        "why_it_happens": "The model may leave the splitter with leftover items or fail to divide the total equally among recipients.",
+        "how_to_avoid": "When a split\u2011all statement appears, set the splitter's final count to zero and distribute the total equally among the listed recipients.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 15
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Applying transfers in the wrong direction",
+        "why_it_happens": "The model may add the transferred amount to the source or subtract it from the target, reversing the intended flow.",
+        "how_to_avoid": "When a transfer 'X gives N to Y' occurs, subtract N from X and add N to Y.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 15
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Misinterpreting 'increase by k times' as addition",
+        "why_it_happens": "The phrase 'increases by k times' can be read as adding k, but mathematically it means multiplication by the factor k.",
+        "how_to_avoid": "Treat any 'increase by \u2026 times' statement as new = original \u00d7 k, even when k is a fraction.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 16
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Misapplying conditional transfers",
+        "why_it_happens": "The model may apply a transfer regardless of the stated condition or evaluate the condition using the wrong count.",
+        "how_to_avoid": "First evaluate the condition based on the current count; only if the condition holds should the entire source amount be moved to the target.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 16
+      }
+    ]
+  }
+}

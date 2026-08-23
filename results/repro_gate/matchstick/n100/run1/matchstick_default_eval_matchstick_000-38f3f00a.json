@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_000",
+  "run": 1,
+  "item_idx": 0,
+  "seed": 1843041410,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "XVIII = XIX - I",
+  "finish_reason": "stop",
+  "raw_chars": 20592,
+  "reasoning_chars": 19254,
+  "final_chars": 1338,
+  "elapsed_s": 46.41608810424805,
+  "usage": {
+    "completion_tokens": 5001,
+    "prompt_tokens": 460,
+    "total_tokens": 5461,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "f76bec6d67a09aa2085315ea74adde97e9e7ee2defaec80fe108a9dd6eeee3f0"
+}

@@ -1,0 +1,158 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_3_000",
+        "title": "PreserveExactCase",
+        "principle": "Copy every attribute value exactly as it appears in the puzzle, preserving case, spacing, punctuation, and spelling.",
+        "when_to_apply": "Whenever you output attribute values in the final JSON solution.",
+        "example": "Changing \"black hair\" to \"Black Hair\" or \"blackhair\" leads to a mismatch with the expected answer.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-21",
+          "zebralogic-lgp-test-6x4-16"
+        ],
+        "generation": 7,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "zeb_ev_3_001",
+        "title": "DirectAdjacency",
+        "principle": "Interpret clues stating \"X is directly left of Y\" (or \"directly right of\") as X's house number = Y's house number\u202f\u2212\u202f1 (or\u202f+\u202f1) and enforce boundary limits (X cannot be house\u202f6, Y cannot be house\u202f1).",
+        "when_to_apply": "For any clue containing \"directly left of\", \"directly right of\", or \"immediately left/right of\".",
+        "example": "Treating \"directly left of\" as a generic \"to the left of\" and allowing any distance between the houses.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-21",
+          "zebralogic-lgp-test-6x4-16"
+        ],
+        "generation": 7,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_002",
+        "title": "RelativeOrdering",
+        "principle": "Treat clues that say \"X is somewhere to the left of Y\" (or \"right of\") as a strict ordering constraint X\u202f<\u202fY (or X\u202f>\u202fY) without specifying distance, and enforce that X cannot be house\u202f6 if it must be left of Y, etc.",
+        "when_to_apply": "For any clue containing \"somewhere to the left/right of\", \"to the left of\", or \"to the right of\" without the word \"directly\".",
+        "example": "Interpreting \"somewhere to the left of\" as meaning the houses are adjacent.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-21",
+          "zebralogic-lgp-test-6x4-16"
+        ],
+        "generation": 7,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_003",
+        "title": "AdjacencyWithoutOrientation",
+        "principle": "When a clue says \"X and Y are next to each other\" (or \"adjacent\"), enforce |X\u202f\u2212\u202fY|\u202f=\u202f1 but do not infer left/right orientation unless another clue provides it.",
+        "when_to_apply": "For any clue indicating adjacency without a directional word.",
+        "example": "Assuming X is left of Y simply because they are adjacent, when the clue gives no orientation.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-21",
+          "zebralogic-lgp-test-6x4-16"
+        ],
+        "generation": 7,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_005",
+        "title": "EquivalenceLinking",
+        "principle": "When a clue states that two attribute values refer to the same entity (e.g., \"the person with red hair loves pop music\"), link those two values so they must appear in the same house.",
+        "when_to_apply": "For any clue that equates two attributes across categories.",
+        "example": "Assigning the red\u2011hair attribute to one house and the pop\u2011music attribute to a different house, violating the equivalence.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-21",
+          "zebralogic-lgp-test-6x4-16"
+        ],
+        "generation": 7,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_006",
+        "title": "FixedHouseAssignment",
+        "principle": "If a clue fixes an attribute to a specific house number (e.g., \"the jazz lover lives in house\u202f6\"), assign that attribute to that house immediately and propagate the resulting constraints.",
+        "when_to_apply": "For any clue that mentions a concrete house number.",
+        "example": "Ignoring the fixed house number and treating the clue as a relative ordering instead.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-21",
+          "zebralogic-lgp-test-6x4-16"
+        ],
+        "generation": 7,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "zeb_ev_4_009",
+        "title": "ValidateJSONStructureAndSyntax",
+        "principle": "Ensure the final output is a syntactically valid JSON object with proper brackets, commas, quotes, and matching keys; otherwise the verifier will reject the answer.",
+        "when_to_apply": "After constructing the final answer, before returning it.",
+        "example": "Missing a closing bracket or using single quotes instead of double quotes in the JSON.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-21",
+          "zebralogic-lgp-test-6x4-16"
+        ],
+        "generation": 7,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "zeb_ev_6_009",
+        "title": "CompactFinalAnswer",
+        "principle": "Place the solution JSON as the very last part of the response, with any reasoning before it, so the verifier parses only the intended answer.",
+        "when_to_apply": "When finishing the response.",
+        "example": "Appending extra commentary or a signature after the JSON, causing the parser to read non\u2011JSON text.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-21",
+          "zebralogic-lgp-test-6x4-16"
+        ],
+        "generation": 7,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "zeb_ev_7_009",
+        "title": "OverlappingCategoryDisambiguation",
+        "principle": "When an attribute value appears in multiple categories (e.g., \"cat\" could be an animal or a pet), use contextual clues to decide which category it belongs to and keep the categories distinct.",
+        "when_to_apply": "During parsing of clues that contain ambiguous terms that could belong to more than one attribute set.",
+        "example": "Assigning the word \"cat\" simultaneously to both the Animal and Pet categories in the same house.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-21",
+          "zebralogic-lgp-test-6x4-16"
+        ],
+        "generation": 7,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "zeb_ev_8_009",
+        "title": "TransitiveEquivalenceLinking",
+        "principle": "When multiple clues each link a new attribute to an already linked attribute, propagate the equivalence across all linked attributes so that all of them belong to the same entity; treat the equivalence relation as transitive.",
+        "when_to_apply": "After processing each equivalence clue, check whether any of the linked attributes already appear in an existing equivalence group and merge groups accordingly.",
+        "example": "Linking \"blonde hair = colonial house\" and later \"painting hobby = blonde hair\" but failing to also link \"painting hobby\" to \"colonial house\", treating them as separate entities.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-21"
+        ],
+        "generation": 8,
+        "confidence": 0.6
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {}
+}

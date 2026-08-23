@@ -1,0 +1,202 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Signed Equality for Difference Statements",
+        "principle": "Interpret statements that equate two differences as signed equations preserving the order of names on each side; treat each side as a signed difference, allowing negative values.",
+        "when_to_apply": "When a statement says \"the number of items that A has more than B is equal to the difference between the number of items that C and D have\" (or similar).",
+        "example": "Treating (A - B) = (C - D) as |A - B| = |C - D|, losing the sign.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_13"
+        ],
+        "generation": 8,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Iterative Substitution and Propagation",
+        "principle": "Whenever a variable's value becomes known, substitute it into all pending equations and simplify, propagating the information throughout the system.",
+        "when_to_apply": "After solving any equation that yields a concrete value for a variable, immediately replace that variable in all other equations.",
+        "example": "Leaving a known variable unchanged in other equations, causing the system to remain underdetermined.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_13",
+          "mathgap_num_20-seed_0-d_3-l_200-diverse-idx_13"
+        ],
+        "generation": 8,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "mat_ev_2_008",
+        "title": "Chronological Evaluation of Comparative Statements",
+        "principle": "Interpret comparative and difference statements using the counts as they exist at that point in the text, taking into account any prior transfers or overrides.",
+        "when_to_apply": "When processing a statement that compares two persons, use the current values after all earlier statements have been applied.",
+        "example": "Using a person's initial count for a comparison that appears after a transfer, ignoring the effect of the transfer.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_13",
+          "mathgap_num_20-seed_0-d_3-l_200-diverse-idx_13"
+        ],
+        "generation": 8,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_2_009",
+        "title": "Query\u2011Focused Subsystem Extraction",
+        "principle": "Identify the minimal subset of equations that involve the queried person directly or indirectly, and solve only that subsystem, ignoring unrelated equations.",
+        "when_to_apply": "When the problem asks for the count of a specific person, first trace which variables are connected to that person through equations and restrict solving to that subgraph.",
+        "example": "Attempting to solve the entire large system of equations even though only a small component is needed, leading to wasted effort.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_13"
+        ],
+        "generation": 8,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_5_008",
+        "title": "Distinct Name Disambiguation",
+        "principle": "Treat each unique name as a separate variable, even if names differ by only a single character; avoid conflating similarly spelled names.",
+        "when_to_apply": "Whenever a new name appears, create a distinct variable unless it is exactly the same string as a previously seen name.",
+        "example": "Confusing \"Mackenzie\" with \"Mackenz\" and using a single variable for both.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_13"
+        ],
+        "generation": 8,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_6_009",
+        "title": "Preserve Order in \"Difference Between\" Phrases",
+        "principle": "When a phrase says \"the difference between the number of items that A and B have\", interpret it as the signed difference A - B, preserving the order of the names.",
+        "when_to_apply": "Whenever a statement uses the wording \"difference between ... A and B\", set up the equation with A first, B second.",
+        "example": "Interpreting \"the difference between A and B\" as B - A, reversing the intended order.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_13"
+        ],
+        "generation": 8,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "mat_ev_7_006",
+        "title": "General Comparative Interpretation (more/fewer)",
+        "principle": "Interpret \"A has K more than B\" as A - B = K, and \"A has K fewer than B\" as A - B = -K, preserving sign.",
+        "when_to_apply": "When encountering a comparative phrase with \"more\" or \"fewer\", translate it into a signed equation.",
+        "example": "Swapping the sign for \"fewer\" and writing A - B = K instead of -K.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_13",
+          "mathgap_num_20-seed_0-d_3-l_200-diverse-idx_13"
+        ],
+        "generation": 8,
+        "confidence": 0.4
+      },
+      {
+        "skill_id": "mat_ev_7_007",
+        "title": "Direct Count Handling with Overrides",
+        "principle": "When a statement says \"X has N items\", set X's count to N at that point, overriding any previous value for X.",
+        "when_to_apply": "Whenever a direct count statement appears, assign the given number to the person, discarding any earlier inferred value.",
+        "example": "Treating a later \"X has N\" as an initial count and ignoring the earlier assignment.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_13",
+          "mathgap_num_20-seed_0-d_3-l_200-diverse-idx_13"
+        ],
+        "generation": 8,
+        "confidence": 0.4
+      },
+      {
+        "skill_id": "mat_ev_8_008",
+        "title": "Chronological Transfer Application",
+        "principle": "Apply each transfer statement in the order given, subtracting the specified amount from the giver and adding it to the receiver.",
+        "when_to_apply": "When processing a \"X gives K items to Y\" statement, update X and Y immediately before handling later statements.",
+        "example": "Applying the second transfer before the first, resulting in incorrect balances.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_2-s_0-idx_13",
+          "mathgap_num_20-seed_0-d_3-l_200-diverse-idx_13"
+        ],
+        "generation": 8,
+        "confidence": 1.0
+      },
+      {
+        "skill_id": "mat_ev_9_009",
+        "title": "Conditional Transfer Evaluation",
+        "principle": "When a statement conditionally transfers items (e.g., \"If X has more than Y items, X transfers all items to Z\"), first resolve all non-conditional statements to determine X's current count, then evaluate the condition; if true, move X's entire count to Z and set X's count to zero.",
+        "when_to_apply": "When encountering a conditional transfer that depends on a comparison of the giver's count, evaluate the condition after all other statements have been processed.",
+        "example": "Interpreting \"If X has more than Y items, X transfers their items to Z\" as transferring only the excess over Y, or ignoring the condition entirely.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_3-l_200-diverse-idx_13"
+        ],
+        "generation": 9,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Swapped direction in \"has K more than\" statements",
+        "why_it_happens": "The model often interprets \"A has K more than B\" as B - A = K, reversing the intended direction.",
+        "how_to_avoid": "Always translate \"A has K more than B\" to the signed equation A - B = K; similarly, \"A has K fewer than B\" to A - B = -K.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 8
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Treating differences as absolute values",
+        "why_it_happens": "The model drops the sign when converting difference statements, assuming only the magnitude matters.",
+        "how_to_avoid": "Preserve the sign of each difference; interpret \"the difference between A and B\" as A - B, not |A - B|.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 8
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Ignoring the chronological order of transfers",
+        "why_it_happens": "The model applies all transfers simultaneously or out of order, missing the effect on subsequent statements.",
+        "how_to_avoid": "Process transfer statements sequentially in the order they appear, updating counts after each transfer before handling later statements.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 8
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Treating \"has N\" as an initial count regardless of position",
+        "why_it_happens": "The model assumes direct count statements set the initial value and never get overridden, even if they appear later.",
+        "how_to_avoid": "When a direct count appears, assign the value at that point, overriding any previous value for that person.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 8
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Misinterpreting multiplicative increase statements",
+        "why_it_happens": "The model sometimes reads phrases like \"A has twice as many as B\" as an addition rather than a multiplication.",
+        "how_to_avoid": "Recognize multiplicative language and translate it to a multiplication equation (e.g., A = 2 * B).",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 8
+      }
+    ]
+  }
+}

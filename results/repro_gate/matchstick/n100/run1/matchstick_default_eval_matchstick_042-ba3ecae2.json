@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_042",
+  "run": 1,
+  "item_idx": 42,
+  "seed": 1843041452,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "XII = IX + III",
+  "finish_reason": "stop",
+  "raw_chars": 55497,
+  "reasoning_chars": 54554,
+  "final_chars": 943,
+  "elapsed_s": 165.36525177955627,
+  "usage": {
+    "completion_tokens": 13016,
+    "prompt_tokens": 460,
+    "total_tokens": 13476,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "2df3c5b7c64f37b23767a25dd7897ae915de939e705a0ddb76ac55fb081e7e40"
+}

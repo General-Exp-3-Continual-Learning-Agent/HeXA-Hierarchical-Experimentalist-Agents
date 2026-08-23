@@ -55,7 +55,7 @@ Place ONE Red Ball so that the Green Ball contacts the Blue Ball for at least 3 
 {react_format}"""
 
 PASS_THE_PARCEL_INITIAL = """\
-Solve the Pass The Parcel puzzle. You have 12 iterations to solve this. Start by calling get_level_state.
+Solve the Pass The Parcel puzzle. You have 25 iterations to solve this. Start by calling get_level_state.
 
 Your goal: knock the inverted top basket off the platform to release the green ball, which must then contact the blue ball in the bottom basket for 3 seconds.
 

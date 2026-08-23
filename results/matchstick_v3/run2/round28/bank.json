@@ -1,0 +1,208 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Preserve stick orientation",
+        "principle": "When moving a matchstick, keep its original orientation (vertical, horizontal, or diagonal). Without this, a stick may be placed in an orientation that does not belong to any Roman numeral or operator, leading to invalid characters.",
+        "when_to_apply": "Any time you relocate a stick from one character to another.",
+        "example": "Moving a vertical stick and placing it as a diagonal, resulting in an invalid shape.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 22,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_003",
+        "title": "No addition or removal of sticks",
+        "principle": "Exactly one existing stick may be moved; you cannot create a new stick or discard a stick without placing it elsewhere. Without this, the total stick count changes, producing extra or missing characters.",
+        "when_to_apply": "When planning the transformation, ensure you only relocate a single stick.",
+        "example": "Removing a stick from a numeral and not placing it anywhere, effectively deleting part of the equation.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 22,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Maintain valid characters",
+        "principle": "After moving a stick, every token must still be a legal Roman numeral (I, V, X, L, C, D, M) or an operator (+, -, =). Without this, you may produce an invalid shape like a single diagonal stick.",
+        "when_to_apply": "After moving a stick, check each token's shape against the allowed set.",
+        "example": "Leaving a single diagonal stick where a V used to be, which is not a valid numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 22,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Verify arithmetic correctness",
+        "principle": "Convert the Roman numerals on both sides of the equation to Arabic numbers and ensure the equality holds. Without this, you may produce an equation that looks syntactically correct but is mathematically false.",
+        "when_to_apply": "After proposing a new equation, compute its numeric values to confirm equality.",
+        "example": "Proposing 'X = X + X' which is syntactically valid but 10 \u2260 20.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 22,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_7_009",
+        "title": "Answer formatting",
+        "principle": "The final response must end with a line exactly matching \u2018Correct version of the equation: <equation>\u2019. Without this, the answer cannot be parsed by the evaluator.",
+        "when_to_apply": "When writing the final answer, ensure the line starts with the required prefix and contains the corrected equation.",
+        "example": "Ending the response with just 'X = X' instead of the required prefixed line.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 22,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_19_009",
+        "title": "Preserve exactly one equals sign",
+        "principle": "The equation must contain exactly one \u2018=\u2019 operator after the move; you cannot remove it or turn it into another symbol. Without this, the expression is not a valid equation.",
+        "when_to_apply": "When moving sticks, ensure the equals sign retains its two horizontal sticks.",
+        "example": "Removing one horizontal from the equals sign, turning it into a minus sign.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 22,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_20_009",
+        "title": "Target numeral based on arithmetic difference",
+        "principle": "Compute the numeric difference between the two sides of the original equation; identify a numeral that can be formed by moving a stick to bridge that difference. Without this, you may choose a move that does not fix the arithmetic.",
+        "when_to_apply": "When the equation is off by a known amount, look for a numeral that can be changed by a single stick to adjust the value accordingly.",
+        "example": "Changing 'XVII' to 'XVIII' to increase the value by 1 when the equation is short by 1.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 22,
+        "confidence": 0.52
+      },
+      {
+        "skill_id": "mat_ev_22_009",
+        "title": "Preserve operator integrity",
+        "principle": "When moving a stick that belongs to an operator (+ or -), ensure the remaining sticks still form a recognized operator. Without this, you may turn a minus into an invalid symbol.",
+        "when_to_apply": "If a stick is taken from an operator, verify the operator remains valid after removal.",
+        "example": "Removing the horizontal line from a minus sign, leaving no operator.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 22,
+        "confidence": 0.57
+      },
+      {
+        "skill_id": "mat_ev_23_008",
+        "title": "Token preservation",
+        "principle": "After moving a stick, each original token (numeral or operator) must still be present in the equation, possibly altered, but you cannot delete or add tokens. Without this, you may end up with missing parts of the equation.",
+        "when_to_apply": "Before finalizing the new equation, check that the sequence of tokens matches the original length and order, aside from allowed shape changes.",
+        "example": "Removing the 'XI -' part entirely, resulting in fewer tokens than the original.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 23,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_23_009",
+        "title": "Single-stick move verification",
+        "principle": "Ensure the transformation can be achieved by moving exactly one stick: only one token's stick count should change by \u00b11, and all other tokens' stick counts remain unchanged. Without this, you may inadvertently modify multiple characters.",
+        "when_to_apply": "After proposing a new equation, compare the stick composition of each token before and after; verify only one stick moved.",
+        "example": "Changing both 'XVII' to 'XVI' and 'XVIII' to 'I' simultaneously, which requires moving more than one stick.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_027",
+          "matchstick_032",
+          "matchstick_033"
+        ],
+        "generation": 23,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_err_000",
+        "description": "Failing to verify arithmetic correctness",
+        "why_it_happens": "The model focuses on visual changes without checking the numeric values, leading to equations that look plausible but are mathematically false.",
+        "how_to_avoid": "After proposing a new equation, convert all Roman numerals to Arabic numbers and confirm the equality holds before finalizing.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 22
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Incorrect answer format",
+        "why_it_happens": "The model outputs the corrected equation without the required prefix or proper line, causing the parser to miss the answer.",
+        "how_to_avoid": "Always end the response with a line exactly matching \u2018Correct version of the equation: <equation>\u2019, with no extra characters before or after.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 22
+      },
+      {
+        "mistake_id": "mat_err_002",
+        "description": "Discarded stick (failed to relocate)",
+        "why_it_happens": "The model removes a stick from a character but does not place it elsewhere, effectively deleting part of the equation.",
+        "how_to_avoid": "When moving a stick, immediately decide its new location and ensure it is placed to form a valid character.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 22
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Invalid operator after moving a stick",
+        "why_it_happens": "The model moves a stick from an operator, leaving it incomplete or turning it into a non\u2011operator shape.",
+        "how_to_avoid": "If a stick is taken from an operator, verify that the remaining sticks still constitute a recognized operator (+, -, =).",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 22
+      }
+    ]
+  }
+}

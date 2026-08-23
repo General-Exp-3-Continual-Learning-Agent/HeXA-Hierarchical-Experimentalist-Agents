@@ -1,0 +1,197 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "Compute numeric discrepancy",
+        "principle": "Convert each Roman numeral to its integer value, evaluate the left\u2011hand side and the right\u2011hand side (including operators), and compute the difference needed to balance the equation.",
+        "when_to_apply": "At the start of a matchstick puzzle, before trying any moves.",
+        "example": "For IV = XIV - V, LHS = 4, RHS = 14\u20115 = 9, discrepancy = \u20135 (need to raise LHS by 5 or lower RHS by 5).",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Enumerate single\u2011stick numeral transformations",
+        "principle": "List all numeral changes achievable by moving a single stick while preserving its orientation, together with their numeric effect (e.g., V\u2194X changes value by \u00b15; I\u2194II changes by \u00b11).",
+        "when_to_apply": "After computing the discrepancy, to generate candidate moves.",
+        "example": "V \u2192 X adds 5, I \u2192 II adds 1; the reverse moves subtract the same amount.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Validate source and destination characters",
+        "principle": "When a stick is removed from a character, the remaining sticks must still form a valid Roman numeral or operator; when a stick is added, the target must also become a valid character.",
+        "when_to_apply": "For every candidate stick move.",
+        "example": "Removing a diagonal from V leaves a single diagonal, which is not a valid numeral, so V\u2192I is illegal.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_003",
+        "title": "V\u2194X transformation (reposition diagonal)",
+        "principle": "Reposition one diagonal stick of a V so it crosses the other, turning V (5) into X (10) or vice versa; this changes the value by \u00b15 while keeping both characters valid.",
+        "when_to_apply": "When the needed numeric adjustment is exactly 5 (or \u20135).",
+        "example": "Changing the V in IV to X yields IX, turning 4 into 9.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "I\u2194II vertical addition/removal",
+        "principle": "Adding a vertical stick to an I creates II (value +1); removing a vertical stick from II yields I (value \u20131).",
+        "when_to_apply": "When the discrepancy is \u00b11 and a vertical stick is available.",
+        "example": "Turning I into II raises the left side from 1 to 2.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Operator change: \u2013 to + (or + to \u2013)",
+        "principle": "Adding a vertical stick to a minus sign creates a plus sign, turning subtraction into addition (RHS changes by +2\u202f\u00d7\u202fright operand); removing a vertical from a plus makes a minus (RHS changes by \u20132\u202f\u00d7\u202fright operand).",
+        "when_to_apply": "When the discrepancy equals twice the right\u2011hand operand (or its negative).",
+        "example": "Changing \u2018\u2011 V\u2019 to \u2018+ V\u2019 adds 10 to the RHS (2\u202f\u00d7\u202f5).",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Never alter the equality sign",
+        "principle": "The \u2018=\u2019 sign must stay as two horizontal sticks; moving a stick away destroys the equality operator and makes the equation invalid.",
+        "when_to_apply": "For any candidate move that involves the \u2018=\u2019 sign.",
+        "example": "Removing one horizontal from \u2018=\u2019 would turn it into \u2018\u2011\u2019, which is not allowed.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_007",
+        "title": "Respect stick orientation",
+        "principle": "Angled (diagonal) sticks cannot serve as vertical sticks; a diagonal cannot be used to form an I after removal.",
+        "when_to_apply": "When considering transformations that would change a diagonal into a vertical or vice versa.",
+        "example": "Taking a diagonal from V does not produce a valid I.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_008",
+        "title": "Re\u2011evaluate arithmetic after each move",
+        "principle": "After applying a candidate stick move, recompute the numeric values to confirm the equality holds; discard moves that are visually plausible but numerically false.",
+        "when_to_apply": "Immediately after any proposed transformation.",
+        "example": "After turning V into X, check that 4 = 14 \u2013 10 indeed holds.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_1_009",
+        "title": "Prefer intra\u2011character stick repositioning",
+        "principle": "Moving a stick within the same character (e.g., V\u2192X) often yields a valid solution without affecting other characters, reducing the risk of creating invalid source or target symbols.",
+        "when_to_apply": "When the needed numeric change matches the effect of an intra\u2011character transformation.",
+        "example": "Instead of taking a stick from another numeral, simply reposition a diagonal in the V to make X.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick:default:train:matchstick_001"
+        ],
+        "generation": 1,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Treating a diagonal stick as a vertical I",
+        "why_it_happens": "The model forgets that stick orientation is fixed, assuming any stick can become an I after removal.",
+        "how_to_avoid": "Remember that angled sticks cannot be used as vertical sticks; only vertical sticks can form I.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Altering the equality sign",
+        "why_it_happens": "Attempting to use the \u2018=\u2019 sign as a source of sticks, which would break the required equality operator.",
+        "how_to_avoid": "Never move sticks away from or onto \u2018=\u2019; it must remain two horizontal sticks.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Leaving an invalid source character after removal",
+        "why_it_happens": "The model removes a stick without checking whether the remaining shape still matches a valid Roman numeral or operator.",
+        "how_to_avoid": "Always verify that the character you take a stick from remains a valid symbol after the removal.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Ignoring operator conversion (\u2013 \u2194 +)",
+        "why_it_happens": "Focusing solely on numeral changes and overlooking that changing a minus to a plus (or vice versa) can resolve the discrepancy.",
+        "how_to_avoid": "Include operator changes in the list of possible single\u2011stick moves and evaluate their numeric impact.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 1
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Skipping arithmetic verification after a visual change",
+        "why_it_happens": "Relying on the appearance of a corrected equation without recomputing its numeric value.",
+        "how_to_avoid": "Re\u2011calculate the left\u2011 and right\u2011hand side values after every candidate move to ensure the equality truly holds.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 1
+      }
+    ]
+  }
+}

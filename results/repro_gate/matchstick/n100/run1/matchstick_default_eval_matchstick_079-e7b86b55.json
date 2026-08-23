@@ -1,0 +1,24 @@
+{
+  "problem_id": "matchstick:default:eval:matchstick_079",
+  "run": 1,
+  "item_idx": 79,
+  "seed": 1843041489,
+  "is_correct": true,
+  "verifier_score": 1.0,
+  "prediction": "XX - V = XV",
+  "finish_reason": "stop",
+  "raw_chars": 30564,
+  "reasoning_chars": 29296,
+  "final_chars": 1268,
+  "elapsed_s": 91.12092995643616,
+  "usage": {
+    "completion_tokens": 6949,
+    "prompt_tokens": 459,
+    "total_tokens": 7408,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+  },
+  "error": null,
+  "attempts": 1,
+  "fingerprint": "5b4aa01602b901d9c43cf72d1f58a86a05fd522f6360652020a61c8efcbc923d"
+}

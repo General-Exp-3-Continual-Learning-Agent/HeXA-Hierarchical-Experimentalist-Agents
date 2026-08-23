@@ -1,0 +1,154 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "catapult": [
+      {
+        "skill_id": "cat_ev_1_004",
+        "title": "Efficient 3-Step Workflow: predict \u2192 trace \u2192 simulate",
+        "principle": "The fastest path to success is: (1) predict_first_contact to confirm the red ball hits the catapult arm, (2) trace_green_ball to verify the green ball reaches the basket, (3) simulate_action only when both checks pass. Skipping steps leads to wasted simulate_action calls with no diagnostic information.",
+        "when_to_apply": "Always \u2014 use as the default workflow before any simulate_action call.",
+        "example": "Seed 15: predict confirmed arm hit at step 11, trace showed green ending at (3.96, -2.08), simulate succeeded immediately.",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [
+          15
+        ],
+        "generation": 3,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "cat_ev_0_003",
+        "title": "Verify Green Ball Reaches Basket X Range via trace_green_ball",
+        "principle": "Before running simulate_action, always call trace_green_ball to check whether the green ball's final resting x is within the basket x-range (~3.0\u20134.5) AND at basket height (~y=-2.0 to -3.1). A ball overshooting to y\u2248-4.78 (floor) or stopping short of x=3.0 will never contact the blue ball regardless of fine-tuning.",
+        "when_to_apply": "After predict_first_contact confirms arm contact, before simulate_action.",
+        "example": "Seed 15: trace showed green at (3.96, -2.08) \u2014 within both x-range and y-height of basket \u2014 so simulate was called and succeeded.",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [
+          15,
+          16,
+          17
+        ],
+        "generation": 3,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "cat_ev_3_002",
+        "title": "r=1.4 is the Optimal Launch Radius at Canonical X",
+        "principle": "A radius of 1.4 at the canonical x=0.65 consistently delivers sufficient impulse to launch the green ball into the basket when the pivot is near x\u2248-0.93 to -1.0. At non-canonical x positions (e.g., x=-0.62 to -0.8), r=1.4 may overshoot to floor level, and the threshold between 'too short' and 'overshoots' can be as narrow as \u0394r=0.01.",
+        "when_to_apply": "Use r=1.4 specifically with the canonical x=0.65 placement. Avoid fine-tuning r at non-canonical x positions \u2014 the cliff effect makes it unreliable.",
+        "example": "Seed 15: x=0.65, r=1.4 succeeded. Seed 17: x=-0.62, r=1.35 too short, r=1.36 overshoots to floor.",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [
+          15,
+          17
+        ],
+        "generation": 3,
+        "confidence": 0.82
+      },
+      {
+        "skill_id": "cat_ev_3_003",
+        "title": "Canonical Default Placement: x=0.65, y=0.0, r=1.4",
+        "principle": "When the pivot (gray_ball) is near x\u2248-0.93 to -1.0, placing the red ball at x=0.65, y=0.0, r=1.4 reliably strikes the catapult arm and launches the green ball into the basket. This is the first placement to attempt in any new scene before exploring alternatives.",
+        "when_to_apply": "Always try this first when pivot is near x\u2248-0.93 to -1.0. Verify validity with predict_first_contact before committing.",
+        "example": "Seed 15: pivot at x=-0.99, canonical placement succeeded on iteration 4.",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [
+          15
+        ],
+        "generation": 3,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "cat_ev_3_004",
+        "title": "Adaptive X Fallback When Canonical Placement is Invalid",
+        "principle": "If x=0.65, y=0.0, r=1.4 is invalid (object overlap), the scene geometry has shifted. Read the pivot (gray_ball) x-position and place the red ball at pivot_x + 1.5 to 1.7 at y=0.0, r=1.4 to hit the arm on the right side of the pivot. Always re-verify with predict_first_contact that the arm (gray_platform) is the first contact object.",
+        "when_to_apply": "When canonical placement returns invalid due to overlap or when pivot x deviates more than 0.3 from -0.93.",
+        "example": "If pivot is at x=-1.2, try x=-1.2+1.6=0.4, y=0.0, r=1.4.",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 3,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "cat_ev_2_005",
+        "title": "x>0.8 on Arm Dramatically Reduces or Reverses Green Ball Range",
+        "principle": "Striking the catapult arm at x>0.8 (absolute) produces a contact point too close to or past the pivot, drastically reducing launch impulse or pushing the arm in the wrong direction. The lever mechanics require striking clearly to the right of the pivot (typically pivot_x + 1.5 or more) to generate sufficient torque for launch.",
+        "when_to_apply": "When considering arm strike positions during fallback search \u2014 avoid x>0.8 unless the pivot is unusually far right.",
+        "example": "Canonical x=0.65 works; shifting to x=0.9+ collapses range.",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 3,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "cat_ev_4_006",
+        "title": "Sharp Threshold Cliff Makes Non-Canonical X Fine-Tuning Unreliable",
+        "principle": "When striking the arm at non-canonical x positions (e.g., x=-0.62 to -0.8), the catapult can exhibit a sharp threshold: a radius difference of \u0394r=0.01 can change the green ball's landing from x\u2248-0.37 (too short) to x\u22484.1 at floor level (y\u2248-4.78, overshoot). Fine-tuning radius in this regime is ineffective \u2014 pivot back to canonical x=0.65 instead.",
+        "when_to_apply": "When trace_green_ball results oscillate between 'too short' and 'overshoots to floor' with tiny radius changes at a non-canonical x position.",
+        "example": "Seed 17: x=-0.62, r=1.35 ends at x=-0.37; r=1.36 overshoots to floor y=-4.78. Canonical x=0.65 avoids this cliff.",
+        "source_level": "catapult",
+        "source_type": "evolved",
+        "source_seeds": [
+          17
+        ],
+        "generation": 4,
+        "confidence": 0.25
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "catapult": [
+      {
+        "mistake_id": "cat_err_000",
+        "description": "Agent persists with catapult strikes for many steps without verifying that the green ball ever reaches basket HEIGHT (y\u2248-2.5 to -3.1) during its arc \u2014 not just basket x-range.",
+        "why_it_happens": "trace_green_ball output shows x-range success, but agents overlook that the green ball may pass through correct x at the wrong y (floor level or too high).",
+        "how_to_avoid": "After trace_green_ball, explicitly check that the final resting y is between -2.0 and -3.5. If green lands at y\u2248-4.78 (floor), the ball overshot \u2014 adjust placement, not radius fine-tuning.",
+        "source_level": "catapult",
+        "source_seeds": [],
+        "generation": 3
+      },
+      {
+        "mistake_id": "cat_evo_001",
+        "description": "Agent fine-tunes radius at a non-canonical x position when the catapult exhibits a sharp threshold cliff (tiny \u0394r causes swing from 'too short' to 'overshoot to floor').",
+        "why_it_happens": "Agent assumes continuous sensitivity of launch distance to radius, but at certain x positions the arm mechanics create a bifurcation: below threshold the arm barely moves, above it the green ball is launched with full force straight past the basket.",
+        "how_to_avoid": "If trace_green_ball shows the green ball alternating between 'too short' and 'overshoots to floor' with \u0394r \u2264 0.05, abandon that x position immediately and return to canonical x=0.65.",
+        "source_level": "catapult",
+        "source_seeds": [],
+        "generation": 4
+      },
+      {
+        "mistake_id": "cat_err_002",
+        "description": "Agent attempts placements in the basket/ledge region (x\u22482.5\u20133.5, y\u2248-1.5 to -2.5) as deflectors that are consistently INVALID due to object overlap.",
+        "why_it_happens": "The basket, ledge, and blue ball occupy this region; any ball placed nearby overlaps with existing objects.",
+        "how_to_avoid": "Do not attempt deflector placements in x=2.5\u20133.5, y=-1.5 to -2.5. This entire zone is blocked. If green ball stops short of basket, fix catapult parameters rather than adding a deflector.",
+        "source_level": "catapult",
+        "source_seeds": [],
+        "generation": 3
+      },
+      {
+        "mistake_id": "cat_err_003",
+        "description": "Agent rapidly cycles through unrelated strategies (catapult \u2192 direct green hit \u2192 basket knockback \u2192 deflector) without converging on a viable mechanism.",
+        "why_it_happens": "When the canonical placement fails, agents lose structured search and switch strategies impulsively instead of diagnosing WHY the canonical placement failed.",
+        "how_to_avoid": "Before switching strategies, use trace_green_ball to identify the failure mode: (1) arm not hit \u2192 fix x; (2) green too short \u2192 slightly increase r or x; (3) green overshoots to floor \u2192 return to canonical x=0.65; (4) geometry fundamentally broken \u2192 reassess scene.",
+        "source_level": "catapult",
+        "source_seeds": [],
+        "generation": 3
+      },
+      {
+        "mistake_id": "cat_err_004",
+        "description": "Agent attempts to knock the blue ball leftward to meet the green ball without establishing where the green ball will be when blue arrives.",
+        "why_it_happens": "Agents treat the two balls' rendezvous as achievable without timing analysis \u2014 blue ball trajectory and green ball trajectory must intersect at the same time and place.",
+        "how_to_avoid": "Before attempting a basket-knockback strategy, first run trace_green_ball to find the green ball's resting position and time. Only attempt to bring blue to that position if the timing is feasible.",
+        "source_level": "catapult",
+        "source_seeds": [],
+        "generation": 3
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "task": "mathgap",
+  "n_train": 100,
+  "bank": "results/mathgap_v1/run0/round29/bank.json",
+  "max_tokens": 60000,
+  "run_index": 0,
+  "llm_seed": 42,
+  "with_memory_acc": 0.87,
+  "no_memory_acc": 0.5,
+  "delta": 0.37,
+  "with_memory_truncated": 1,
+  "no_memory_truncated": 4
+}

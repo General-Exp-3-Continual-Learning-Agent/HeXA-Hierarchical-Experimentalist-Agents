@@ -1,0 +1,180 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "mathgap": [
+      {
+        "skill_id": "mat_ev_16_000",
+        "title": "Signed 'has more than' interpretation",
+        "principle": "Interpret any phrase of the form 'X has more than Y' as a signed difference X\u00a0\u2212\u00a0Y\u00a0=\u00a0N, preserving the order presented.",
+        "when_to_apply": "When a statement directly says that one person has more tomatoes than another.",
+        "example": "Treating 'Rubi has 3 more tomatoes than Amelia' as an absolute count rather than the signed difference Rubi\u00a0\u2212\u00a0Amelia\u00a0=\u00a03.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 20,
+        "confidence": 0.45
+      },
+      {
+        "skill_id": "mat_ev_1_004",
+        "title": "Model transfers as net changes",
+        "principle": "When a transfer 'X gives N to Y' occurs, subtract N from X and add N to Y, updating each person's count.",
+        "when_to_apply": "For every statement describing a give/receive transfer of tomatoes.",
+        "example": "Applying 'Nigel gives 6 tomatoes to Thurston' by adding 6 to Nigel instead of subtracting.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 20,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Systematic equation solving",
+        "principle": "Introduce a distinct variable for each person and translate every relevant statement into a linear equation, then solve the system.",
+        "when_to_apply": "After all tomato\u2011related statements have been identified and expressed as equations.",
+        "example": "Listing equations but never solving them, leaving the answer undetermined.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 20,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_8_009",
+        "title": "Signed difference phrasing",
+        "principle": "Interpret 'difference between X and Y' as the signed difference X\u00a0\u2212\u00a0Y, preserving the order presented.",
+        "when_to_apply": "When a statement refers to the difference between two people's tomato counts.",
+        "example": "Reading 'the difference between Nealie and Pinkie' as |Nealie\u00a0\u2212\u00a0Pinkie| instead of Nealie\u00a0\u2212\u00a0Pinkie.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 20,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_12_008",
+        "title": "Include transfers as constraints before solving relational equations",
+        "principle": "Apply all transfer statements first, updating each person's count, and then use those updated counts in relational equations.",
+        "when_to_apply": "Immediately after parsing all transfer statements, before handling any difference or 'has more than' equations.",
+        "example": "Solving relational equations using the original counts and ignoring the net effect of transfers.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 20,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "mat_ev_14_009",
+        "title": "Direct counts as initial constraints",
+        "principle": "Treat statements that give an explicit count (e.g., 'X has N items') as the initial amount before any transfers.",
+        "when_to_apply": "When a statement provides an exact tomato count for a person.",
+        "example": "Assuming 'Gloria has 7 tomatoes' is the final count after transfers, instead of the starting count.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 20,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_15_009",
+        "title": "Answer formatting",
+        "principle": "Output the final answer using the exact required format: 'The final answer is \\boxed{<integer>}'.",
+        "when_to_apply": "When producing the final response.",
+        "example": "Writing 'The answer is 5' instead of the required boxed format.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 20,
+        "confidence": 0.6
+      },
+      {
+        "skill_id": "mat_ev_20_007",
+        "title": "Direct counts with transfers",
+        "principle": "Treat explicit count statements as describing the initial amount before any transfers. After applying transfers, update counts.",
+        "when_to_apply": "When both a direct count and later transfer statements involve the same person.",
+        "example": "Using a direct count as the final amount and then also adding a transfer to it, double\u2011counting the tomatoes.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 20,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_20_008",
+        "title": "Aggregate multiple transfers per person",
+        "principle": "Sum all incoming and outgoing transfer amounts for each person to obtain a net change, then apply them.",
+        "when_to_apply": "When a person appears in more than one transfer statement.",
+        "example": "Applying each transfer separately and forgetting to combine them, leading to an incorrect net total.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 20,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_21_009",
+        "title": "Complete system solving",
+        "principle": "After translating all constraints into linear equations, actually solve the system (or directly isolate the asked person's variable) using algebraic elimination, substitution, or matrix methods; never guess without calculation.",
+        "when_to_apply": "Once every relevant tomato statement has been converted into an equation and all transfers have been applied.",
+        "example": "Listing dozens of equations and then outputting 'The final answer is \\boxed{1}' without performing any algebraic solution.",
+        "source_level": "mathgap",
+        "source_type": "evolved",
+        "source_seeds": [
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_60-idx_19",
+          "mathgap_num_20-seed_0-d_5-l_20-irr-a_6-s_0-idx_14"
+        ],
+        "generation": 21,
+        "confidence": 0.5
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "mathgap": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Treating direct count statements as final counts after transfers",
+        "why_it_happens": "The model assumes the given explicit numbers already include the effect of later transfers, ignoring the need to apply transfers first.",
+        "how_to_avoid": "Interpret explicit counts as initial amounts; apply all transfer updates before using those counts in any relational equation.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 20
+      },
+      {
+        "mistake_id": "mat_err_001",
+        "description": "Applying transfers in the wrong direction",
+        "why_it_happens": "The model confuses the giver and receiver, adding to the giver instead of subtracting.",
+        "how_to_avoid": "When a statement says 'X gives N to Y', subtract N from X and add N to Y.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 20
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Misinterpreting signed difference statements as absolute differences",
+        "why_it_happens": "The model drops the order of subtraction and treats differences as non\u2011negative magnitudes.",
+        "how_to_avoid": "Preserve the order: 'difference between A and B' means A\u00a0\u2212\u00a0B, not |A\u00a0\u2212\u00a0B|.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 20
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Applying relational equations before applying transfers",
+        "why_it_happens": "The model uses equations that involve final counts while still working with pre\u2011transfer values.",
+        "how_to_avoid": "First process all transfer statements to obtain updated counts, then formulate and solve relational equations.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 20
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Incomplete solving: failing to derive the answer from the constraints, leading to a guess",
+        "why_it_happens": "The model enumerates many equations but stops without performing algebraic elimination, resorting to an arbitrary answer.",
+        "how_to_avoid": "After all equations are set up, actually solve the linear system (or isolate the target variable) using substitution, elimination, or matrix methods; verify the answer satisfies all constraints.",
+        "source_level": "mathgap",
+        "source_seeds": [],
+        "generation": 21
+      }
+    ]
+  }
+}

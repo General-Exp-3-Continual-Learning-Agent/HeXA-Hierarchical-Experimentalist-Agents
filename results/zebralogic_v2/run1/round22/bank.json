@@ -1,0 +1,198 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_6_001",
+        "title": "Interpret adjacency and ordering clues correctly",
+        "principle": "When a clue uses terms like 'directly left of', 'directly right of', or similar, enforce that the two houses are adjacent with the specified direction.",
+        "when_to_apply": "Whenever a clue mentions direct adjacency or ordering with direction.",
+        "example": "Treating 'directly left of' as merely 'somewhere left of', allowing non\u2011adjacent placements.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-18",
+          "zebralogic-lgp-test-6x6-15"
+        ],
+        "generation": 10,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "zeb_ev_1_003",
+        "title": "Interpret distance clues correctly",
+        "principle": "When a clue says 'N houses between X and Y', enforce that there are exactly N houses separating X and Y (i.e., |pos(X)\u2011pos(Y)| = N+1).",
+        "when_to_apply": "Whenever a clue mentions a specific number of houses between two items.",
+        "example": "Interpreting 'one house between X and Y' as X and Y being adjacent (distance\u202f1) instead of distance\u202f2.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-18",
+          "zebralogic-lgp-test-6x6-15"
+        ],
+        "generation": 10,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_2_004",
+        "title": "Treat 'somewhere left/right of' as inequality",
+        "principle": "Interpret 'X is somewhere left of Y' (or right of) as a strict ordering constraint pos(X) < pos(Y) (or >) without requiring adjacency.",
+        "when_to_apply": "When a clue uses the phrasing 'somewhere left of' or 'somewhere right of'.",
+        "example": "Assuming X must be directly adjacent to Y when the clue only says 'somewhere left of'.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-18",
+          "zebralogic-lgp-test-6x6-15"
+        ],
+        "generation": 10,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_1_006",
+        "title": "Apply exclusion constraints",
+        "principle": "If a clue explicitly forbids an attribute from a particular house (e.g., 'X is not in house\u202f2'), enforce that X cannot occupy that house and propagate uniqueness.",
+        "when_to_apply": "When a clue contains a negative placement.",
+        "example": "Ignoring a clue that says 'Bob is not in house\u202f3' and placing Bob there.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-18",
+          "zebralogic-lgp-test-6x6-15"
+        ],
+        "generation": 10,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_1_007",
+        "title": "Enforce uniqueness across each attribute category",
+        "principle": "Each value in a category must appear exactly once across all houses; no two houses can share the same attribute value.",
+        "when_to_apply": "Throughout solving; after any assignment, ensure the same value cannot be assigned elsewhere.",
+        "example": "Assigning the same car model to two different houses.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-18",
+          "zebralogic-lgp-test-6x6-15"
+        ],
+        "generation": 10,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_2_008",
+        "title": "Preserve original case of attribute values",
+        "principle": "When outputting the final grid, copy each attribute value exactly as it appears in the problem statement, preserving its case.",
+        "when_to_apply": "During final answer generation.",
+        "example": "Changing 'British' to 'british' or otherwise altering capitalization.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-18",
+          "zebralogic-lgp-test-6x6-15"
+        ],
+        "generation": 10,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_7_009",
+        "title": "Interpret 'next to each other' as adjacency",
+        "principle": "When a clue says two items are 'next to each other', enforce that their house positions differ by exactly one, without specifying direction.",
+        "when_to_apply": "When a clue uses the phrase 'next to each other' or similar.",
+        "example": "Treating 'next to each other' as any ordering, allowing a gap between the two items.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-18",
+          "zebralogic-lgp-test-6x6-15"
+        ],
+        "generation": 10,
+        "confidence": 0.62
+      },
+      {
+        "skill_id": "zeb_ev_8_009",
+        "title": "Bidirectional equivalence for name-attribute clues",
+        "principle": "When a clue directly links a specific name to an attribute (e.g., 'Alice is the doctor'), enforce that the name has that attribute and that attribute belongs exclusively to that name.",
+        "when_to_apply": "When a clue states a name\u2011attribute relationship.",
+        "example": "Assigning the attribute to the named person but not preventing another person from also having that attribute.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-18",
+          "zebralogic-lgp-test-6x6-15"
+        ],
+        "generation": 10,
+        "confidence": 0.65
+      },
+      {
+        "skill_id": "zeb_ev_9_009",
+        "title": "Bidirectional equivalence for attribute-attribute clues",
+        "principle": "When a clue links two non\u2011name attributes (e.g., 'The Norwegian uses a Samsung'), enforce that they co\u2011occur in the same house, i.e., both attributes belong to the same entity.",
+        "when_to_apply": "When a clue states a relationship between two attributes.",
+        "example": "Treating 'The Norwegian uses a Samsung' as only a one\u2011way implication, allowing the Samsung user to be non\u2011Norwegian.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-18",
+          "zebralogic-lgp-test-6x6-15"
+        ],
+        "generation": 10,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "zeb_ev_11_009",
+        "title": "Apply direct placement constraints",
+        "principle": "When a clue explicitly places an attribute in a specific house (e.g., 'The cat is in house\u202f2'), enforce that the attribute occupies that house and that no other house can have that attribute.",
+        "when_to_apply": "When a clue contains a positive house assignment.",
+        "example": "Ignoring a clue that says 'The cat is in house\u202f2' and placing the cat elsewhere.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-18",
+          "zebralogic-lgp-test-6x6-15"
+        ],
+        "generation": 11,
+        "confidence": 0.65
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_err_001",
+        "description": "Interpreting 'N houses between' as distance N",
+        "why_it_happens": "The model confuses the number of houses separating two items with the total positional distance, forgetting that 'N houses between' means there are N houses in between, so the positions differ by N+1.",
+        "how_to_avoid": "When parsing such clues, add 1 to the given number to compute the positional distance, i.e., enforce |pos(X) - pos(Y)| = N + 1.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "zeb_evo_002",
+        "description": "Ignoring equivalence clues that bind two attributes to the same house",
+        "why_it_happens": "The model treats the clue as a one\u2011way implication, not enforcing that both attributes must co\u2011occur in the same house.",
+        "how_to_avoid": "Treat any clue linking two attributes as a bidirectional equivalence, ensuring both attributes are assigned to the same house.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "zeb_evo_003",
+        "description": "Violating the one\u2011per\u2011category uniqueness rule",
+        "why_it_happens": "The model may assign the same attribute value to multiple houses, overlooking the global uniqueness constraint.",
+        "how_to_avoid": "After each assignment, enforce that each attribute value appears exactly once across all houses.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "zeb_err_003",
+        "description": "Altering attribute values (spelling/casing) instead of copying them verbatim",
+        "why_it_happens": "The model normalises or changes the case of attribute strings during generation, deviating from the exact tokens given in the problem.",
+        "how_to_avoid": "Copy attribute tokens exactly as they appear in the problem statement, preserving case, spelling, and any abbreviations.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 10
+      }
+    ]
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_5_001",
+        "title": "Prefer intra-character stick relocation",
+        "principle": "First try to fix the equation by moving a stick within the same character; many puzzles can be solved this way without altering other symbols.",
+        "when_to_apply": "When the equation is invalid, before considering moves that affect other characters.",
+        "example": "Attempting to move a stick from one numeral to another without first checking if moving it inside a single numeral could resolve the mismatch.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_041"
+        ],
+        "generation": 12,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "mat_ev_5_002",
+        "title": "Validate symbols after stick move",
+        "principle": "After relocating a stick, verify that each resulting character is a recognized Roman numeral or operator; any shape that does not correspond to a valid symbol indicates an invalid move.",
+        "when_to_apply": "Immediately after proposing a stick relocation, before evaluating arithmetic.",
+        "example": "Leaving a single diagonal line after taking a stick from X, which no longer matches any Roman numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_041"
+        ],
+        "generation": 12,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_5_003",
+        "title": "Avoid single angled sticks",
+        "principle": "A solitary diagonal stick does not represent any Roman numeral; when moving a diagonal from X or V, ensure the remaining part still forms a valid character.",
+        "when_to_apply": "Whenever you consider moving a diagonal stick from X or V.",
+        "example": "Removing one diagonal from X and leaving a lone slash, which is not a valid numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_041"
+        ],
+        "generation": 12,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_5_006",
+        "title": "Consider inter-character stick relocation",
+        "principle": "If intra\u2011character moves fail, explore moving a stick from one character to a different character; this can change numerals or operators to achieve a valid equation.",
+        "when_to_apply": "After exhausting intra\u2011character options without success.",
+        "example": "Moving a vertical stick from III to V to turn XV into XVI and III into II, as in the correct solution.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_041"
+        ],
+        "generation": 12,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_6_009",
+        "title": "Verify arithmetic after stick move",
+        "principle": "Compute the numeric values of both sides after any transformation; an equation that looks syntactically correct must also be arithmetically true.",
+        "when_to_apply": "After each candidate transformation, before finalizing the answer.",
+        "example": "Accepting a visually correct equation like IXIV = XV - II without checking that IXIV is not a standard numeral or that the arithmetic holds.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_041"
+        ],
+        "generation": 12,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_11_009",
+        "title": "Preserve equality sign after stick relocation",
+        "principle": "If you relocate a stick from the '=', ensure that after the move the equation still contains exactly one valid equality sign (two horizontal sticks).",
+        "when_to_apply": "Whenever a stick is moved from or to the equality sign.",
+        "example": "Removing a horizontal stick from '=', turning it into a minus sign, and not creating a new '=' elsewhere, leaving the equation without a proper equality sign.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_040"
+        ],
+        "generation": 12,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_5_005",
+        "title": "Create new numeral by reordering stick",
+        "principle": "A detached stick can be placed as a separate character to form a new valid Roman numeral (e.g., moving a vertical stick to create an extra I).",
+        "when_to_apply": "When a stick becomes free after modifying a character and can be used to form an additional numeral.",
+        "example": "Leaving a stray vertical stick unused after converting '+' to '-', resulting in an incomplete equation.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_041"
+        ],
+        "generation": 12,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_13_007",
+        "title": "Swap equality and subtraction operators",
+        "principle": "When both '=' and '-' appear, you can move a horizontal stick from the equality sign to the subtraction sign (or vice versa) to swap them, ensuring the equation still has exactly one '=' sign.",
+        "when_to_apply": "If the equation contains both '=' and '-', consider swapping them by moving a single horizontal stick.",
+        "example": "Moving a horizontal stick from '=' to '-', turning the original '=' into '-', and the original '-' into '=', but forgetting to keep a single '=' in the final equation.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_040"
+        ],
+        "generation": 13,
+        "confidence": 0.475
+      },
+      {
+        "skill_id": "mat_ev_13_008",
+        "title": "Validate whole numeral strings for proper Roman numeral syntax",
+        "principle": "After moving sticks, ensure each multi\u2011character numeral follows standard Roman numeral rules (ordering, subtractive notation); a sequence of valid symbols is not enough if the combined numeral is nonstandard.",
+        "when_to_apply": "After any stick relocation, before accepting the solution, check each numeral string for standard form.",
+        "example": "Creating IXIV, which is not a standard Roman numeral, even though each character I, X, I, V is individually valid.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_041"
+        ],
+        "generation": 13,
+        "confidence": 0.475
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Overlooking intra\u2011character transformations (e.g., X\u2192V) before inter\u2011character moves",
+        "why_it_happens": "The model tends to jump to moving sticks between characters, missing simpler fixes within a single symbol.",
+        "how_to_avoid": "First enumerate possible intra\u2011character stick relocations for each numeral/operator before considering inter\u2011character moves.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Leaving a single angled stick after moving a diagonal from X or V (invalid numeral)",
+        "why_it_happens": "Diagonal sticks are treated as interchangeable with vertical sticks, leading to leftover diagonal pieces that don't form any numeral.",
+        "how_to_avoid": "When taking a diagonal from X or V, ensure the remaining part still matches a valid Roman numeral; otherwise avoid that move.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Not evaluating the arithmetic result after each candidate transformation",
+        "why_it_happens": "The model focuses on visual validity of symbols and forgets to check numeric equality.",
+        "how_to_avoid": "After any proposed move, compute the numeric values of both sides and confirm they are equal before finalizing.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "mat_err_003",
+        "description": "Assuming operator swaps (e.g., converting '=' to '-' or vice versa) automatically solve the puzzle, without ensuring a single '=' remains",
+        "why_it_happens": "The model treats operator symbols as independent and forgets the requirement of exactly one equality sign.",
+        "how_to_avoid": "When swapping operators, verify that the final equation still contains exactly one valid '=' sign.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Creating nonstandard Roman numeral forms (e.g., IXIV) that are not valid according to standard Roman numeral rules",
+        "why_it_happens": "The model checks only individual character validity, not the combined numeral syntax.",
+        "how_to_avoid": "After each move, validate each multi\u2011character numeral against standard Roman numeral conventions (order, subtractive notation).",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 13
+      }
+    ]
+  }
+}

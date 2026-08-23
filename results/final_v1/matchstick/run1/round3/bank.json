@@ -1,0 +1,195 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "matchstick": [
+      {
+        "skill_id": "mat_ev_1_000",
+        "title": "V\u2194X transformation via single stick reposition",
+        "principle": "A V (two diagonal sticks) can be turned into an X (two crossing diagonals) by moving one diagonal stick, and vice\u2011versa, changing the numeral\u2019s value between 5 and 10.",
+        "when_to_apply": "When the equation contains a V or X and the numeric gap suggests a change of \u00b15, consider a single diagonal stick move between them.",
+        "example": "Changing \u2018V\u2019 to \u2018X\u2019 turns \u2018IV\u2019 (4) into \u2018IX\u2019 (9).",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [],
+        "generation": 3,
+        "confidence": 0.49
+      },
+      {
+        "skill_id": "mat_ev_1_001",
+        "title": "Check numeric discrepancy to guide stick moves",
+        "principle": "Compute the integer values of both sides; the difference indicates how much the total must increase or decrease, guiding which characters to modify.",
+        "when_to_apply": "At the start of solving, after translating the Roman numerals to Arabic numbers.",
+        "example": "In \u2018IX = XII + IV\u2019, LHS=9, RHS=16, discrepancy=7, so the move must reduce RHS by 7 or raise LHS by 7.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_007"
+        ],
+        "generation": 3,
+        "confidence": 0.49
+      },
+      {
+        "skill_id": "mat_ev_1_002",
+        "title": "Preserve equality sign integrity",
+        "principle": "The \u2018=\u2019 sign must remain exactly two horizontal sticks; it cannot be altered, used as a source, or become another symbol.",
+        "when_to_apply": "Throughout the puzzle; never select a stick from the equality sign for relocation.",
+        "example": "Never turn \u2018=\u2019 into \u2018\u2260\u2019 or a minus sign.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_007"
+        ],
+        "generation": 3,
+        "confidence": 0.49
+      },
+      {
+        "skill_id": "mat_ev_1_003",
+        "title": "Validate resulting characters after move",
+        "principle": "After moving a stick, each affected character must still correspond to a recognized Roman numeral or a valid operator (+, -, =).",
+        "when_to_apply": "Immediately after each proposed relocation, before accepting the move.",
+        "example": "Moving a diagonal from V must not leave a single diagonal, which is not a numeral.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_007"
+        ],
+        "generation": 3,
+        "confidence": 0.49
+      },
+      {
+        "skill_id": "mat_ev_1_005",
+        "title": "Avoid orientation mismatches",
+        "principle": "Sticks keep their orientation; a vertical stick cannot become diagonal, and a horizontal cannot become vertical.",
+        "when_to_apply": "When choosing a stick to relocate, ensure the target shape requires the same orientation.",
+        "example": "A vertical stick from \u2018+\u2019 can become the stem of an \u2018I\u2019, but cannot be used to form a diagonal part of a \u2018V\u2019.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_007"
+        ],
+        "generation": 3,
+        "confidence": 0.49
+      },
+      {
+        "skill_id": "mat_ev_1_006",
+        "title": "Operator conversion only when resulting operator is valid",
+        "principle": "Changing an operator (e.g., \u2018+\u2019 to \u2018-\u2019) is allowed only if the new symbol is a legal operator in the puzzle.",
+        "when_to_apply": "When a stick move would alter an operator; verify the new shape matches a permitted operator.",
+        "example": "Removing the vertical stick from \u2018+\u2019 yields \u2018-\u2019, which is valid.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_007"
+        ],
+        "generation": 3,
+        "confidence": 0.49
+      },
+      {
+        "skill_id": "mat_ev_1_007",
+        "title": "Recompute numeric values after transformation",
+        "principle": "After any stick relocation, recalculate the Arabic values of all numerals and re\u2011evaluate the arithmetic to confirm equality.",
+        "when_to_apply": "After finalizing a move, before submitting the answer.",
+        "example": "After turning \u2018+\u2019 into \u2018-\u2019 and adding an I, recompute RHS: 13\u202f\u2212\u202f4\u202f=\u202f9, matching LHS.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_007"
+        ],
+        "generation": 3,
+        "confidence": 0.49
+      },
+      {
+        "skill_id": "mat_ev_2_008",
+        "title": "Plus\u2011to\u2011minus conversion via vertical stick relocation",
+        "principle": "A plus sign consists of a vertical and a horizontal stick; moving the vertical stick away turns it into a minus sign while providing a vertical stick for other characters.",
+        "when_to_apply": "When the numeric discrepancy suggests a change of \u00b12\u202f\u00d7\u202foperand, and a vertical stick is needed elsewhere.",
+        "example": "Moving the vertical stick from \u2018+\u2019 to the numeral \u2018XII\u2019 creates \u2018XIII\u2019 and changes \u2018+\u2019 to \u2018-\u2019, fixing the equation.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_007"
+        ],
+        "generation": 3,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "mat_ev_2_009",
+        "title": "Dual\u2011character stick relocation for balancing values",
+        "principle": "A single stick can be moved from one character to another, simultaneously decreasing the source\u2019s value and increasing the destination\u2019s value, useful for matching a numeric gap.",
+        "when_to_apply": "When the discrepancy equals the sum of a possible decrease in one character and an increase in another.",
+        "example": "Moving the vertical stick from \u2018+\u2019 (decreasing RHS by 8) to \u2018XII\u2019 (increasing it by 1) resolves a 7\u2011point gap.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_007"
+        ],
+        "generation": 3,
+        "confidence": 0.4
+      },
+      {
+        "skill_id": "mat_ev_3_009",
+        "title": "Vertical stick addition creates extra I (value +1)",
+        "principle": "Adding a vertical stick to a numeral creates an additional \u2018I\u2019, raising its value by\u202f1 without breaking other characters.",
+        "when_to_apply": "When a vertical stick is available (e.g., from a \u2018+\u2019) and the needed adjustment is exactly\u202f+1.",
+        "example": "Adding the vertical stick from \u2018+\u2019 to \u2018XII\u2019 yields \u2018XIII\u2019.",
+        "source_level": "matchstick",
+        "source_type": "evolved",
+        "source_seeds": [
+          "matchstick_007"
+        ],
+        "generation": 3,
+        "confidence": 0.4
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "matchstick": [
+      {
+        "mistake_id": "mat_evo_000",
+        "description": "Assuming stick orientation can change",
+        "why_it_happens": "Model conflates stick identity with shape, ignoring the rule that orientation is fixed.",
+        "how_to_avoid": "Always check the orientation of the source stick and ensure the target character requires the same orientation.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 3
+      },
+      {
+        "mistake_id": "mat_evo_001",
+        "description": "Modifying the equality sign",
+        "why_it_happens": "Model seeks any stick to move and overlooks the rule that \u2018=\u2019 must stay unchanged.",
+        "how_to_avoid": "Never select a stick from the equality sign; treat it as immutable.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 3
+      },
+      {
+        "mistake_id": "mat_evo_002",
+        "description": "Leaving an invalid character after move",
+        "why_it_happens": "Model focuses on numeric balance and forgets character validity.",
+        "how_to_avoid": "After each move, verify that every affected character matches a known numeral/operator.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 3
+      },
+      {
+        "mistake_id": "mat_evo_003",
+        "description": "Changing an operator to an invalid shape",
+        "why_it_happens": "Model moves sticks without checking the operator set.",
+        "how_to_avoid": "When an operator is altered, confirm the new shape is either \u2018+\u2019, \u2018-\u2019, or \u2018=\u2019.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 3
+      },
+      {
+        "mistake_id": "mat_evo_004",
+        "description": "Neglecting numeric discrepancy analysis",
+        "why_it_happens": "Model jumps to arbitrary stick moves instead of using arithmetic guidance.",
+        "how_to_avoid": "Start by converting Roman numerals to Arabic, compute the gap, and let that guide the stick relocation.",
+        "source_level": "matchstick",
+        "source_seeds": [],
+        "generation": 3
+      }
+    ]
+  }
+}

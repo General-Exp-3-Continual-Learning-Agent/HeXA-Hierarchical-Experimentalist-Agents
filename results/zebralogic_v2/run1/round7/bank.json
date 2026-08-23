@@ -1,0 +1,206 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "zebralogic": [
+      {
+        "skill_id": "zeb_ev_1_000",
+        "title": "Assign fixed\u2011position attributes immediately",
+        "principle": "If a clue directly states that a specific attribute value belongs to a particular house number, assign it right away. This reduces the search space and prevents later contradictions.",
+        "when_to_apply": "During initial parsing of clues, as soon as a fixed\u2011position statement is encountered.",
+        "example": "Leaving a fixed\u2011position attribute as a candidate instead of assigning it immediately, causing missed deductions.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 4,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_1_001",
+        "title": "Translate direct adjacency into offset constraints",
+        "principle": "When a clue says X is directly left/right of Y, enforce that X and Y occupy adjacent houses with X\u2019s position = Y\u2019s position \u00b1\u202f1. This captures the exact distance required.",
+        "when_to_apply": "When processing adjacency clues, convert them into positional equations rather than simple ordering.",
+        "example": "Treating 'directly left of' as only 'somewhere left of', allowing extra houses between them.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 4,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_1_003",
+        "title": "Interpret distance clues correctly",
+        "principle": "When a clue says there are N houses between X and Y, enforce that the absolute difference in their positions is N\u202f+\u202f1. This captures the exact spacing required.",
+        "when_to_apply": "When encountering distance clues, compute the precise positional gap.",
+        "example": "Interpreting 'two houses between' as a distance of 2 instead of the correct 3.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 4,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_1_004",
+        "title": "Bind equivalence clues to the same house",
+        "principle": "If a clue equates two attribute values (e.g., 'The milk drinker has gray hair'), treat them as belonging to the same house. Merge their candidate sets accordingly.",
+        "when_to_apply": "Whenever a clue links two attributes, unify their possible locations.",
+        "example": "Ignoring that 'milk' and 'gray hair' refer to the same person, leading to duplicate assignments.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 4,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_2_004",
+        "title": "Treat 'somewhere left/right of' as inequality",
+        "principle": "Clues that say X is somewhere left/right of Y impose only an ordering (pos(X)\u202f<\u202fpos(Y) or pos(X)\u202f>\u202fpos(Y)), not adjacency.",
+        "when_to_apply": "When parsing non\u2011adjacent ordering clues, enforce only the inequality.",
+        "example": "Treating 'somewhere left of' as directly left, reducing the set of possible positions incorrectly.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 4,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_1_006",
+        "title": "Apply exclusion constraints",
+        "principle": "When a clue forbids an attribute from a specific house (e.g., 'Eric is not in the second house'), eliminate that possibility from the candidate set.",
+        "when_to_apply": "Immediately after reading a negative placement clue.",
+        "example": "Failing to exclude a value from a house, allowing it to be placed where it is prohibited.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 4,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_1_007",
+        "title": "Enforce uniqueness across each attribute category",
+        "principle": "Each value in a category must appear exactly once across all houses; after assigning a value to a house, remove it from the candidate sets of other houses.",
+        "when_to_apply": "Continuously after each assignment, propagate the uniqueness constraint.",
+        "example": "Assigning the same book genre to two different houses, violating the one\u2011per\u2011category rule.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 4,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_2_008",
+        "title": "Preserve original case of attribute values",
+        "principle": "When outputting the final solution, write each attribute value exactly as it appears in the problem statement, preserving capitalization and spelling.",
+        "when_to_apply": "During final answer formatting, copy attribute strings verbatim.",
+        "example": "Changing 'April' to 'april' or altering spelling, causing a mismatch with the reference solution.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 4,
+        "confidence": 0.55
+      },
+      {
+        "skill_id": "zeb_ev_3_009",
+        "title": "Make forced assignments when only one candidate remains",
+        "principle": "If after applying all constraints a house (or an attribute) has exactly one possible remaining value, assign it immediately.",
+        "when_to_apply": "After each round of constraint propagation, scan for singleton candidate sets.",
+        "example": "Missing a forced assignment, leaving an ambiguous placement that later leads to inconsistency.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x5-39",
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 4,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "zeb_ev_5_009",
+        "title": "Validate final answer completeness and JSON structure",
+        "principle": "After constructing the solution grid, verify that the JSON object is syntactically complete, contains all expected houses, and ends with the proper closing brackets. Ensure the output is not truncated.",
+        "when_to_apply": "Immediately before returning the final answer, perform a sanity check on the JSON format and length.",
+        "example": "Output ends abruptly or missing closing brackets, causing the verifier to reject the answer.",
+        "source_level": "zebralogic",
+        "source_type": "evolved",
+        "source_seeds": [
+          "zebralogic-lgp-test-6x6-16"
+        ],
+        "generation": 5,
+        "confidence": 0.4
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "zebralogic": [
+      {
+        "mistake_id": "zeb_err_000",
+        "description": "Treating 'somewhere left/right of' as adjacency (directly left/right)",
+        "why_it_happens": "The model conflates ordering clues with adjacency, assuming the two entities must be immediate neighbors.",
+        "how_to_avoid": "Interpret 'somewhere left/right of' as a pure inequality; only clues that explicitly say 'directly' impose adjacency.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 4
+      },
+      {
+        "mistake_id": "zeb_err_001",
+        "description": "Interpreting 'N houses between' as distance N",
+        "why_it_happens": "The model forgets that N houses between means a gap of N\u202f+\u202f1 positions.",
+        "how_to_avoid": "When a clue mentions N houses between two items, enforce that their positions differ by N\u202f+\u202f1.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 4
+      },
+      {
+        "mistake_id": "zeb_evo_002",
+        "description": "Ignoring equivalence clues that bind two attributes to the same house",
+        "why_it_happens": "The model treats linked attributes as independent, missing the requirement that they co\u2011occur.",
+        "how_to_avoid": "Whenever a clue equates two attributes, merge their candidate sets so they must be assigned to the same house.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 4
+      },
+      {
+        "mistake_id": "zeb_evo_003",
+        "description": "Violating the one\u2011per\u2011category uniqueness rule",
+        "why_it_happens": "The model may assign the same value to multiple houses, overlooking the global uniqueness constraint.",
+        "how_to_avoid": "After each assignment, remove that value from the candidate sets of all other houses in the same category.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 4
+      },
+      {
+        "mistake_id": "zeb_evo_004",
+        "description": "Truncating the final answer, resulting in incomplete JSON",
+        "why_it_happens": "The model generates a response that exceeds the token limit or stops early, leaving the JSON object unfinished.",
+        "how_to_avoid": "Check the length of the output, ensure it fits within the token budget, and verify that the JSON ends with a closing brace and includes all rows before submitting.",
+        "source_level": "zebralogic",
+        "source_seeds": [],
+        "generation": 5
+      }
+    ]
+  }
+}
