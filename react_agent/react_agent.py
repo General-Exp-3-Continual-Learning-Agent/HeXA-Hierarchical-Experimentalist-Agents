@@ -3,6 +3,7 @@ Core ReAct loop that orchestrates model <-> tool interaction for solving
 Interphyre physics puzzles.
 """
 
+import os
 import re
 import json
 import time
@@ -333,12 +334,39 @@ def load_qwen_model(model_name: str, temperature: float = 0.3, max_new_tokens: i
     tokenizer = AutoTokenizer.from_pretrained(hf_name)
     is_oss = "gpt-oss" in model_name.lower()
     if is_oss:
-        # GptOssForCausalLM does not support SDPA; eager is required.
+        # GptOssForCausalLM does not support SDPA; eager is required, which
+        # materialises the full (heads x N x N) score matrix -- ~20GB at a 13k
+        # context with 64 heads.  device_map="auto" packs GPUs greedily (it
+        # fills GPU 0 to capacity before spilling), so simply asking for more
+        # GPUs does NOT buy activation headroom: on 8x A100 GPU 0 still held
+        # 58GB of weights and OOMed exactly as it did on 4.  Cap the per-GPU
+        # weight budget instead, which forces an even spread and reserves the
+        # remainder for activations.  On A100 the MXFP4 checkpoint is
+        # dequantised to bf16 (MXFP4 kernels need sm_90), so weights are
+        # ~218GiB in total; budget accordingly.
+        max_memory = None
+        if torch.cuda.is_available():
+            n = torch.cuda.device_count()
+            cap = os.environ.get("OSS_MAX_MEM_PER_GPU")
+            if cap is None and n > 1:
+                total = torch.cuda.get_device_properties(0).total_memory / 1024**3
+                # accelerate fills each card UP TO this cap in order, so the cap
+                # -- not the GPU count -- decides how much is left for
+                # activations.  bf16 weights are ~218GiB, so 8 cards need only
+                # ~27GiB each; 40% of an 80GB card (~31GiB) covers that and
+                # leaves ~48GiB per card for the attention buffer (~20k tokens).
+                # Fewer than 8 A100s cannot hold the model with any usable
+                # headroom, and will fail loudly here rather than 3h in.
+                cap = f"{int(total * 0.40)}GiB"
+            if cap:
+                max_memory = {i: cap for i in range(n)}
+                print(f"  device_map: even spread, max_memory={cap} x {n} GPUs")
         model = AutoModelForCausalLM.from_pretrained(
             hf_name,
             torch_dtype="auto",
             device_map="auto",
             attn_implementation="eager",
+            max_memory=max_memory,
         )
     else:
         model = AutoModelForCausalLM.from_pretrained(
