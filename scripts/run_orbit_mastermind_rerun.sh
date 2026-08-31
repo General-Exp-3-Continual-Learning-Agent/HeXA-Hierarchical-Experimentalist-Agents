@@ -24,6 +24,12 @@
 # rejected and `evolve_skill_bank` silently keeps the previous bank. Hence 32768
 # here, which gpt-oss (served at 65536) has room for.
 #
+# Rounds are 8, not the old run's 20. `perm(6,3) = 120` is the whole code space
+# and instance identity IS the code, so train gets the 80 codes left after the
+# 40-code eval prefix -- which caps a run at 8 rounds of batch 10. Asking for 20
+# does not raise; `train_specs(80)` is drawn once and the rounds recycle it,
+# showing the teacher each code ~2.5 times. See MastermindTask.EVAL_POOL_SIZE.
+#
 #   VLLM_URL=http://gpu017:8000/v1 sbatch scripts/run_orbit_mastermind_rerun.sh
 
 set -Eeuo pipefail
@@ -44,7 +50,7 @@ fi
 echo "[$(date)] endpoint ${VLLM_URL} is live, teacher budget ${HEXA_TEACHER_MAX_TOKENS}"
 
 "$PYTHON" -u scripts/run_orbit_mastermind_hexa.py \
-    --rounds 20 --batch-size 10 --train-size 80 --eval-size 40 \
+    --rounds 8 --batch-size 10 --train-size 80 --eval-size 40 \
     --max-trajs 12 --reward-bin \
     --concurrency "$CONCURRENCY" --max-response-tokens 4096 \
     --model "$MODEL" --teacher-model "$MODEL" --base-url "$VLLM_URL" \
