@@ -155,6 +155,47 @@ sharpens the earlier prediction (Minesweeper→Mastermind beats
 Minesweeper→Maze): the reason is not source-target distance but whether the
 target's dominant failure is one the source banks have vocabulary for.
 
+## Pre-registration amendment (2026-08-31, BEFORE any Phase 4 eval)
+
+Design B's headline was the **episode-1 delta over the no-bank baseline**.
+Carrying that unchanged to both Design C targets would be a mistake, and the
+reason is structural, not result-driven — it is recorded here before any Phase 4
+arm has been run.
+
+**Mastermind: primary becomes ep3 and `any`; ep1 is a declared non-mover.**
+Episode 1 is a blind guess at 1 of 1680 codes with zero feedback available. No
+bank can help before any constraint exists. The evidence: Design B's Mastermind
+bank, evolved on Mastermind's own trajectories, moved ep1 **.031 -> .027** while
+moving ep3 **.367 -> .543**. A metric that a target-trained bank cannot move is
+not a test of transfer.
+
+**Maze: primary stays ep1.** Baseline ep1 is .250 with a measured ±.008
+run-to-run band, so there is real room and the metric is live.
+
+Secondary on both targets: the full ep1/ep2/ep3/`any` profile, reported whatever
+it shows. Paired McNemar exact tests against each baseline run, with the
+run-to-run spread as the noise band.
+
+### Predictions, recorded before the runs
+
+| arm | prediction | confidence |
+|---|---|---|
+| mastermind ← wordle | beats baseline, ep3/any +6 to +14 | ~75% |
+| mastermind ← minesweeper | beats baseline, ep3/any +6 to +14 | ~70% |
+| mastermind ← minesweeper+wordle | beats baseline, ep3/any +6 to +14 | ~70% |
+| maze ← any source | **null**, ep1 within ±.03 | ~75% null / 15% negative / 10% positive |
+
+Basis: coverage of the Design B Mastermind bank (which earned +17.6 ep3) by each
+synthesised bank is 4-5 of 5 skills. The one systematic gap is Design B's
+highest-confidence skill, *Total Peg Count Pruning* (conf 1.00) — using the
+**sum** of black+white pegs to infer digit membership. Every Design C bank
+covers only the degenerate sum=0 case. That is the piece that required seeing
+real Mastermind trajectories, and synthesis could not invent it.
+
+Note against the plan's framing: `mastermind ← minesweeper` — the **"far"** arm —
+has the best structural coverage of the three (5/5, one partial). If it performs,
+the near/far axis was mis-specified.
+
 ## Next
 
 Phase 4 — zero-shot eval, 6 arms, both targets. **Episode-1 delta over the
