@@ -265,6 +265,61 @@ subset, not the banks. Note the multi-source arm is the only one injected whole,
 which is a plausible partial explanation of its win and should be controlled for.
 
 
+## Phase 4 results — Mastermind (ORBIT-paper config, run0)
+
+3-digit / digits 1-6 / 120 codes. Paired McNemar against three matched no-bank
+baseline runs on the same 40 held-out specs. Deltas min/max across baselines;
+p is the smallest of the three.
+
+| arm | ep1 | ep2 | ep3 | any |
+|---|---|---|---|---|
+| no-bank baseline x3 | .150 / .075 / .075 | .325 / .350 / .275 | .650 / .625 / .675 | .725 / .650 / .675 |
+| **near ← wordle** | .050 (−10.0/−2.5) | .475 (+12.5/+20.0) p=.077 | **.925 (+25.0/+30.0) p=.002** | **.925 (+20.0/+27.5) p=.003** |
+| **far ← minesweeper** | .075 (−7.5/+0.0) | .275 (−7.5/+0.0) | **.900 (+22.5/+27.5) p=.012** | **.925 (+20.0/+27.5) p=.006** |
+| both | .100 (−5.0/+2.5) | .300 (−5.0/+2.5) | .800 (+12.5/+17.5) p=.118 | .800 (+7.5/+15.0) p=.180 |
+| **rawdump ablation** | .125 | .375 | **.575 (−10.0/−5.0)** | .650 (−7.5/+0.0) |
+
+Baseline noise band: ep1 ±.037, ep2 ±.037, ep3 ±.025, any ±.037.
+
+**The ablation carries the claim.** The same Wordle bank injected verbatim gives
+ep3 .575 — below every baseline run — while the synthesised version gives .925.
+A 35-point gap from re-grounding alone on identical source material. Cross-task
+transfer is not "relevant text in the prompt helps": the raw dump actively
+hurts, and only the re-grounded bank works. Without this arm the result has no
+defence against the obvious objection.
+
+### Four ways the predictions were wrong
+
+1. **Magnitude.** Predicted +6 to +14 on ep3/`any` at ~70-75% confidence.
+   Actual +22 to +30. Badly underestimated.
+2. **ep1 stays dead.** The suspended amendment guessed that 120 codes would make
+   episode 1 live where 1680 did not. It did not: every arm is flat-to-negative
+   on ep1 and none is significant. The amendment's *conclusion* (ep3/`any` as the
+   Mastermind primary) is reinstated — now on evidence from this config, not on
+   the retracted Design B number that originally motivated it.
+3. **Near/far is not the axis.** `far ← minesweeper` (+22.5/+27.5 ep3)
+   essentially matches `near ← wordle`. This confirms the structural-coverage
+   reading from the bank audit and refutes the plan's surface-similarity pairing.
+4. **Multi-source is target-dependent, not generally better.** Best arm on Maze,
+   *worst* arm on Mastermind (.800, the only Mastermind arm to miss
+   significance). Not an injection artifact — it lost only two skills at conf
+   .65, while `near` was injected whole at 8/8.
+
+### Standing caveats
+
+- **n=1 per arm** (replication of runs 1-2 in flight at time of writing).
+- **n=40** is the whole eval universe; each instance is 2.5 points. It cannot be
+  enlarged without breaking eval/train code disjointness.
+- **No target-trained ceiling.** Design B Mastermind is retracted and its rerun
+  was cancelled, so "zero-shot transfer captures X% of training on the target"
+  cannot currently be stated.
+- **All mistakes were dropped in all three arms** by the injection budget, as on
+  Maze. Every arm reports on a truncated bank.
+- **.925 is near saturation** from a .65 baseline. A real gain, but the headroom
+  is now small and it invites "the task was easy once the model was told to be
+  systematic."
+
+
 ## Next
 
 - **Mastermind, everything, is rerunning on the ORBIT-paper config** (3-digit /
