@@ -353,6 +353,43 @@ is a 36-point gap from re-grounding alone on identical source material.
 from the retracted Design B number.
 
 
+## Phase 4 — Maze at n=3 (replication complete)
+
+n=243 paired, 3 runs per arm, 3 baseline runs, significance over all 9
+arm-run x baseline-run paired McNemar tests.
+
+| arm | ep1 | ep2 | ep3 | `any` |
+|---|---|---|---|---|
+| no-bank baseline | .244 (.239-.247) | .392 (.370-.416) | .610 (.593-.621) | .647 (.634-.658) |
+| near ← minesweeper | .240 (−0.4) 0/9 | .432 (+4.0) 1/9 | .586 (−2.5) 0/9 | .610 (**−3.7**) 0/9 |
+| far ← wordle | .263 (+1.9) 0/9 | .465 (+7.3) 3/9 | .597 (−1.4) 0/9 | .671 (+2.3) 0/9 |
+| **both** | .263 (+1.9) 0/9 | **.499 (+10.7) 7/9** | .630 (+1.9) 0/9 | .708 (+6.0) 1/9 |
+| rawdump ablation | .217 (−2.7) 0/9 | .451 (+5.9) 3/9 | .631 (+2.1) 0/9 | .668 (+2.1) 0/9 |
+
+**One finding survives: multi-source ep2, +10.7, 7/9 significant.** It is the
+only Maze cell that replicates.
+
+**The run0 `any` result did not survive.** `both` on `any` was +6.6/+9.1 at
+p=.020 on a single run; at n=3 it is +6.0 but significant in only 1 of 9 pairs.
+
+**The Maze ablation does NOT support the re-grounding claim.** This corrects the
+run0 reading recorded above. Across three runs the raw dump is *not* worse than
+the synthesised near arm — it is better on three of four metrics:
+
+| metric | rawdump | near ← minesweeper (synthesised) |
+|---|---|---|
+| ep1 | −2.7 | −0.4 |
+| ep2 | +5.9 (3/9) | +4.0 (1/9) |
+| ep3 | **+2.1** | −2.5 |
+| `any` | **+2.1** | −3.7 |
+
+The run0 contrast (rawdump ep1 −3.7/−2.9 vs synthesised +1.6/+2.5) was noise on
+a single pair of runs; both are null on ep1 at n=3. **Re-grounding is supported
+on Mastermind only.** On Maze, synthesising from Minesweeper buys nothing over
+dumping the Minesweeper bank verbatim, and the synthesised near arm is the only
+arm in the whole lattice that trends negative on `any`.
+
+
 ## Next
 
 - **Mastermind, everything, is rerunning on the ORBIT-paper config** (3-digit /
