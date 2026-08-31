@@ -47,11 +47,16 @@ def main() -> int:
     ap.add_argument("--concurrency", type=int, default=24)
     ap.add_argument("--base-url", default=None)
     ap.add_argument("--model", default="openai/gpt-oss-120b")
+    ap.add_argument("--target", action="append", default=None,
+                    choices=("maze", "mastermind"),
+                    help="restrict to these targets; repeatable. Default: all.")
     ap.add_argument("--no-ablation", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
     arms = ARMS + ([] if args.no_ablation else ABLATIONS)
+    if args.target:
+        arms = [a for a in arms if a[0] in args.target]
     results = []
     for target, arm, sources, bank_level in arms:
         bank = bank_path(target, sources)
