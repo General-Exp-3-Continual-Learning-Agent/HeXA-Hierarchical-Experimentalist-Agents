@@ -320,6 +320,39 @@ defence against the obvious objection.
   systematic."
 
 
+## Phase 4 — Mastermind at n=3 (replication complete)
+
+Every arm run three times (`--run-index` reseeds the actor, instances identical).
+Significance counts all 9 arm-run x baseline-run paired McNemar tests.
+
+| arm | ep1 mean (range) | ep3 mean (range) | `any` mean (range) | ep3 verdict |
+|---|---|---|---|---|
+| no-bank baseline | .100 (.075-.150) | .650 (.625-.675) | .683 (.650-.725) | — |
+| **near ← wordle** | .092 (.050-.125) | **.933 (.900-.975)** | **.933 (.900-.975)** | **+28.3, 9/9 significant** |
+| far ← minesweeper | .058 (.025-.075) | .825 (.725-.900) | .833 (.725-.925) | +17.5, **4/9** significant |
+| both | .083 (.075-.100) | .808 (.800-.825) | .808 (.800-.825) | +15.8, **0/9** significant |
+| rawdump ablation | .125 (.100-.150) | .575 (.500-.650) | .650 (.600-.700) | −7.5, 0/9 (null/negative) |
+
+**What survived replication.** Only `near ← wordle` is robust: +28.3 ep3, every
+one of nine paired tests significant, and its worst run (.900) still clears the
+best baseline run (.675) by 22.5 points.
+
+**What did not.** The run0 reading that `far ← minesweeper` "essentially
+matches" the near arm does not hold at n=3. Its ep3 range is .725-.900 —
++5.0 to +27.5 across pairs, significant in only 4 of 9. Real but much noisier,
+and the near/far distinction is weaker than run0 suggested rather than absent.
+The multi-source arm is consistent (.800-.825) yet significant in 0 of 9: at
+n=40 a +15.8 point mean is ~6 instances, which paired McNemar does not resolve.
+
+**The ablation held.** Raw-dumping the same Wordle bank gives ep3 .575 mean,
+below the baseline's .650, across all three runs. Synthesised .933 vs raw .575
+is a 36-point gap from re-grounding alone on identical source material.
+
+**ep1 is dead everywhere.** 0/9 significant on every arm, mean deltas −4.2 to
++2.5. This is now settled on three runs and the current config, not inferred
+from the retracted Design B number.
+
+
 ## Next
 
 - **Mastermind, everything, is rerunning on the ORBIT-paper config** (3-digit /
