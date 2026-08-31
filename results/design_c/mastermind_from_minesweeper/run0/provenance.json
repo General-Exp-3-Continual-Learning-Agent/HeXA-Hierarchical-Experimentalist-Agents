@@ -1,0 +1,24 @@
+{
+  "target": "mastermind",
+  "source": "minesweeper",
+  "sources": [
+    "minesweeper"
+  ],
+  "run_index": 0,
+  "source_banks": {
+    "minesweeper": "results/orbit_minesweeper_hexa/run0/round19/bank.json"
+  },
+  "teacher_model": "openai/gpt-oss-120b",
+  "target_trajectories_used": 0,
+  "manual_edits": [
+    {
+      "date": "2026-08-31",
+      "entry": "mas_xl_err_001",
+      "field": "why_it_happens",
+      "before": "The agent infers presence from partial patterns or guesses, similar to flagging without logical support.",
+      "after": "The agent infers presence from partial patterns or guesses, without logical support.",
+      "reason": "Source-entity leakage gate: clause referenced Minesweeper's flag action inside a Mastermind bank. Explanatory prose only; description and how_to_avoid were already target-grounded. Second independent draw producing this same leak, so it is a systematic re-grounding weakness, not sampling noise.",
+      "original_bank": "skill_bank_xl_mastermind_PRE_DELEAK.json"
+    }
+  ]
+}
