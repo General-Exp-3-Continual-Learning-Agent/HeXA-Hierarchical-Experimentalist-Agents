@@ -390,6 +390,47 @@ dumping the Minesweeper bank verbatim, and the synthesised near arm is the only
 arm in the whole lattice that trends negative on `any`.
 
 
+## Design B ceiling vs Design C (matched, n=3 each)
+
+All arms are eval-seed replicates of a single fixed bank, n=40 paired, 9
+arm-run x comparison-run McNemar tests.
+
+| arm | ep1 | ep2 | ep3 mean (range) | `any` |
+|---|---|---|---|---|
+| baseline (no bank) | .100 | .317 | .650 (.625-.675) | .683 |
+| Design B — target-trained | .058 | .408 | .875 (.850-.900) | .883 |
+| Design C — wordle→mastermind | .092 | .467 | .933 (.900-.975) | .933 |
+
+| comparison | ep3 | significant |
+|---|---|---|
+| Design B vs baseline | +22.5 | 6/9 |
+| Design C vs baseline | +28.3 | **9/9** |
+| **Design C vs Design B** | **+5.8** | **0/9** |
+
+**Design C matches Design B; it does not beat it.** An earlier reading of
+"+10.8, transfer beats target training" came from Design B's single
+`eval_frozen` run at .825, which sits at the bottom of its own spread. The three
+matched replicates mean .875, and the gap is not significant in any of nine
+pairs.
+
+**Code path matters and was worth controlling.** The same Design B bank scores
+.825 through the training script's internal `eval_frozen` and .875 mean through
+`run_orbit_target_zeroshot.py`. Comparing across the two paths would have
+manufactured the gap. All numbers in this table use the zeroshot path, the same
+one every Design C arm used.
+
+**The defensible claim:** a bank synthesised from a different game with **zero
+target trajectories matches a bank evolved on the target's own trajectories**,
+and is the only one of the two significant against baseline in all nine pairs.
+
+Design B's evolution itself was clean: 8/8 rounds changed the bank, zero
+truncation events, final bank 8 skills mostly at confidence 1.0 including
+*Cross-episode constraint accumulation* — so it did not lose from a defective
+bank.
+
+Both banks share the ep1 failure (−4.2 and −0.8, neither significant).
+
+
 ## Next
 
 - **Mastermind, everything, is rerunning on the ORBIT-paper config** (3-digit /
