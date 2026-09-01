@@ -1,7 +1,11 @@
-# Mastermind — consolidated results (gpt-oss-120b)
+# Mastermind — consolidated results
 
-Actor and teacher are both `openai/gpt-oss-120b`. HExA is self-improvement, not
-distillation, so these are never different models.
+Two base models, reported separately: `openai/gpt-oss-120b` (most of this
+document) and `Qwen/Qwen3-8B` (final section). Within each, actor and teacher are
+the **same** model — HExA is self-improvement, not distillation, so these are
+never different models.
+
+Both share the task configuration and 40/80 split below.
 
 Last updated 2026-09-01.
 
@@ -148,9 +152,9 @@ many of those pairs reach p<0.05 on a paired McNemar exact test.
 
 | level | eval n | runs (base/HExA) | metric | baseline | HExA | delta |
 |---|---|---|---|---|---|---|
-| **Minesweeper** | 256 | 3 / **1** | ep1 | .208 (.184-.227) | **.301** | **+9.2 (3/3)** |
-| | | | ep3 | .301 (.289-.316) | .359 | +5.9 (1/3) |
-| | | | `any` | .432 (.402-.453) | **.551** | **+11.8 (3/3)** |
+| **Minesweeper** | 255 | 3 / 3 | ep1 | .209 (.184-.227) | **.333 (.302-.357)** | **+12.4 (9/9)** |
+| | | | ep3 | .302 (.290-.318) | .367 (.341-.400) | +6.5 (4/9) |
+| | | | `any` | .434 (.404-.455) | **.567 (.553-.584)** | **+13.3 (9/9)** |
 | **Wordle-5** | 59 | 3 / 3 | ep1 | .559 (.525-.576) | .531 (.475-.610) | −2.8 (0/9) |
 | | | | ep3 | .825 (.797-.847) | **.932 (.898-.983)** | **+10.7 (3/9)** |
 | | | | `any` | .927 (.898-.966) | .955 (.898-.983) | +2.8 (0/9) |
@@ -158,14 +162,18 @@ many of those pairs reach p<0.05 on a paired McNemar exact test.
 | | | | ep3 | .650 (.625-.675) | **.875 (.850-.900)** | **+22.5 (6/9)** |
 | | | | `any` | .683 (.650-.725) | **.883 (.875-.900)** | +20.0 (4/9) |
 
-Full ep2 figures: Minesweeper .250→.316 (+6.6, 1/3); Wordle-5 .740→.825 (+8.5,
+Full ep2 figures: Minesweeper .251→.357 (+10.6, 7/9); Wordle-5 .740→.825 (+8.5,
 3/9); Mastermind .317→.408 (+9.2, 0/9).
+
+Minesweeper per-run HExA `any`: **.553 / .565 / .584** — every HExA run above
+every baseline run, with no overlap between the two spreads.
 
 ## Reading
 
-**Minesweeper is the only level where episode 1 moves** — +9.2, significant
-against all three baseline runs, and `any` +11.8 likewise. It is the sole arm
-anywhere in this project to improve first-episode performance.
+**Minesweeper is the only level where episode 1 moves** — +12.4 on ep1 and
++13.3 on `any`, both significant in all nine run-pairs. It is the sole arm
+anywhere in this project to improve first-episode performance, and at n=3 it no
+longer rests on a single bank.
 
 **Wordle-5 and Mastermind gain only late.** Both are flat-to-negative on ep1 and
 positive on ep3. Consistent with banks that help accumulate and exploit
@@ -177,11 +185,35 @@ close to saturated.
 
 ## Caveats specific to this table
 
-- **Minesweeper HExA is n=1.** Runs 1 and 2 exist but stopped at rounds 8 and 7
-  with no `eval_frozen`, so only run0 has an eval. Its deltas are therefore
-  1 bank x 3 baselines, not 3x3, and the HExA "range" is a single point.
-- **Eval pools differ in size and are not comparable across levels**: 256
-  (Minesweeper), 59 (Wordle-5, after excluding one instance), 40 (Mastermind).
+- **Minesweeper run2 was rerun after a bank defect; the original is archived.**
+  The first run2 evolved a bank invoking a `terminate` action that does not exist
+  in `game:Minesweeper-v0-only-reveal`. Only the last `\boxed{...}` in a response
+  is read, so 461 of 2267 turns (20.3%) resolved to it, were rejected with "you
+  did not provide a valid guess", and ended the episode; `any` was .051. The
+  cause was `TASK_DESCRIPTIONS["minesweeper"]` never enumerating the valid
+  actions, so the teacher could not have known. It now does. The rerun shows
+  **0 of 3422** turns ending in `terminate` and `any` .586. Original kept at
+  `results/_BROKEN_minesweeper_hexa_run2_terminate/` with the full diagnosis.
+  Note runs 0 and 1 predate the description fix, so the three runs are not all
+  on an identical teacher prompt.
+- **`unparsed_rate` is not a health check.** The broken run2 reported
+  `unparsed_rate` 0.0000 — *lower* than both healthy runs — because
+  `\boxed{terminate}` parses fine as a boxed expression; it is the environment
+  that rejects the action. The metric answers "did we extract a `\boxed{}`", not
+  "was the action accepted".
+- **No checkpoint selection.** `eval_frozen` takes the final round
+  unconditionally. Broken run2 held a healthy 9-skill bank through round 16, was
+  rewritten to a single `terminate` skill at round 17, and scored **0.00** train
+  accuracy at round 19 — which is nonetheless the bank that was evaluated.
+  Selecting by held-out accuracy would have rejected it and cost nothing.
+- **One baseline instance excluded.** Line 3 of
+  `results/orbit_minesweeper_baseline/run1/runs.jsonl` was corrupted by an
+  editor edit (`"metrics": {"de,`) and the file is untracked, so git cannot
+  restore it. The line is skipped rather than repaired, giving n=255 for
+  Minesweeper throughout.
+- **Eval pools differ in size and are not comparable across levels**: 255
+  (Minesweeper, after excluding one corrupted line), 59 (Wordle-5, after
+  excluding one errored instance), 40 (Mastermind).
 - **One Wordle-5 instance excluded**: `2540b53a7f515c84` in `hexa/run2` returned
   `GenerationFailed: openai/gpt-oss-120b returned no generation after retries`.
   That is an infrastructure failure, not a task failure, so it is dropped from
@@ -192,6 +224,95 @@ close to saturated.
   disagree (.825 vs .875 mean), and that discrepancy is unexplained — see the
   Caveats section above.
 
+
+# Qwen3-8B — Design B (within-level)
+
+Actor and teacher are both `Qwen/Qwen3-8B`, served on vLLM with
+`--reasoning-parser qwen3`. Sampling is ORBIT's published eval setting for both
+arms: temperature 0.6, top_p 0.95, **unseeded**, `--max-response-tokens 16384`.
+
+Same task config and same 40/80 partition as above. Training ran **8 rounds x
+batch 10 = 80 instances**, which is the whole training pool.
+
+## Results for Qwen 3B on Mastermind
+
+n=40 paired. Ranges are min-max across runs; only the actor seed varies within
+an arm.
+
+| arm | runs | ep1 | ep2 | ep3 | `any` |
+|---|---|---|---|---|---|
+| baseline (no bank) | 3 | .092 (.075-.100) | .142 (.125-.175) | .283 (.225-.400) | .367 (.275-.450) |
+| **Design B** — target-trained | 4 | .087 (.025-.175) | .225 (.150-.350) | **.438 (.400-.525)** | **.569 (.525-.600)** |
+
+### Delta vs baseline, two tests
+
+| metric | delta | 95% CI | run-level (Welch t) | per-instance (sign test) |
+|---|---|---|---|---|
+| ep1 | −0.004 | [−0.068, +0.060] | p=0.905 | 5 up / 4 down, p=1.000 |
+| ep2 | +0.083 | [−0.008, +0.174] | p=0.150 | 14 up / 10 down, p=0.541 |
+| ep3 | **+0.154** | [+0.026, +0.283] | p=0.099 | 21 up / 17 down, p=0.627 |
+| `any` | **+0.202** | [+0.096, +0.308] | **p=0.044** | 24 up / 13 down, p=0.099 |
+
+The run-level test compares the arms' run means (df≈3, so the p-values do little
+work). The per-instance test averages each arm's runs per code and asks whether
+individual codes get easier — the more conservative reading, and the one that
+should be quoted if only one is.
+
+### Against ORBIT's published numbers
+
+Same game, same base model, from Table 2 of the paper:
+
+| | ep3 |
+|---|---|
+| ORBIT base Qwen3-8B (published) | .27 |
+| **HExA Design B, frozen bank** | **.438** |
+| ORBIT + 100 GRPO steps (published) | .59 |
+
+HExA lands between the two with **no weight updates**. This is the only
+comparison here that is immune to the local baseline-composition problem noted
+below, since it uses the paper's own baseline.
+
+### Training
+
+| round | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|---|---|---|---|---|---|---|---|---|
+| `any` /10 | 6 | 3 | 3 | 6 | 5 | 6 | 5 | 8 |
+
+Pooled over 80 training instances: `any` .525, ep3 .388. The bank grew 3 skills
+(round 0) to 4 (round 5) and held, with **zero citations dropped as fabricated in
+all 8 rounds** — against 50-65% drop rates for the same model on Maze. Final
+bank: `Cross-Episode Feedback Utilization`, `White Peg Inference`, `Progressive
+Constraint Narrowing`, `Feedback-Driven Guess Adjustment`, plus 1 mistake.
+
+## What the table says
+
+**`any` is the only metric positive under both tests.** ep3 is +15.4 points at
+the run level but 21-vs-17 per instance — the bank helps and hurts on nearly as
+many codes as it helps. The gain is in *whether* a code is ever solved, not in
+solving it by episode 3.
+
+**Episode 1 is dead**, as in every gpt-oss arm above (−0.4, p=0.905).
+
+**The bank reduces variance more clearly than it raises accuracy.** HExA's `any`
+sd across runs is 0.037 against the baseline's 0.088, and its ep3 sd is 0.060
+against 0.101. Both HExA sds are below the binomial expectation at n=40
+(0.078), the normal signature of re-running fixed instances; the baseline's are
+above it.
+
+
+## Retracted (Qwen)
+
+- **"+0.175 on ep3, from the first eval pair."** That compared a single HExA run
+  against a single baseline run that drew `any` .375 — the low end of a spread
+  later measured at .275-.625. Replication removed it.
+- **Everything on the 4-of-8 config** (1680 codes): baseline ep3 .077, and the
+  33.6%-truncation runs at `--max-response-tokens 4096`. Archived under
+  `results/orbit_mastermind_{baseline,hexa}_qwen8_ABANDONED_4of8/` with a
+  `WHY_ABANDONED.md`. Those runs remain useful only as evidence about the harder
+  variant: Qwen considered a median of **13 candidate codes per step** (0.77% of
+  1680, but 11% of 120), **66.2% of its guesses contradicted feedback already in
+  context**, and in 26 of 60 instances the code was uniquely determined by that
+  feedback while the model still failed 23 of them.
 
 ## Provenance
 
@@ -204,3 +325,8 @@ close to saturated.
 | Design C evals | `results/design_c/phase4/mastermind_{near,far,both,rawdump}_*/run{0,1,2}` |
 | Minesweeper within-level | `results/orbit_minesweeper_{baseline,hexa}/run*` |
 | Wordle-5 within-level | `results/orbit_wordle5_{baseline,hexa}/run*` |
+| **Qwen** baseline | `results/orbit_mastermind_baseline_qwen8{,_rep1,_rep2}` |
+| **Qwen** Design B training + bank | `results/orbit_mastermind_hexa_qwen8/round{0..7}` |
+| **Qwen** Design B evals | `results/orbit_mastermind_hexa_qwen8/eval_{frozen,rep3,rep4,rep5}` |
+| **Qwen** replicate driver | `scripts/replicate_mastermind_eval.py` |
+| **Qwen** retracted 4-of-8 runs | `results/orbit_mastermind_{baseline,hexa}_qwen8_ABANDONED_4of8/` |
