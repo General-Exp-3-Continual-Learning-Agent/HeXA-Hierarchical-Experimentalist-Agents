@@ -59,7 +59,9 @@ n=40 paired, 3 eval-seed replicates per arm. Within an arm the bank is fixed and
 only the actor seed varies, so the spread is eval noise, not bank noise. All
 numbers come through `run_orbit_target_zeroshot.py` — see the code-path note
 below.
-
+## Mastermind GPT-OSS Results 
+Design B - same level evolution 
+Design C - Cross level Transfer 
 | arm | ep1 | ep2 | ep3 | `any` |
 |---|---|---|---|---|
 | baseline (no bank) | .100 (.075-.150) | .317 (.275-.350) | .650 (.625-.675) | .683 (.650-.725) |
@@ -137,6 +139,60 @@ truncations**, confirming the diagnosis.
 An earlier reading that Design C *beat* Design B (+10.8) came from Design B's
 single `eval_frozen` run at .825, the bottom of its own spread. Corrected above.
 
+# Within-level HExA (Design B) — Minesweeper, Wordle-5, Mastermind
+
+The bank is evolved on the level's **own** trajectories and evaluated on that
+level's held-out pool. Actor and teacher are both `openai/gpt-oss-120b`.
+Deltas are the mean over all HExA-run x baseline-run pairs; the fraction is how
+many of those pairs reach p<0.05 on a paired McNemar exact test.
+
+| level | eval n | runs (base/HExA) | metric | baseline | HExA | delta |
+|---|---|---|---|---|---|---|
+| **Minesweeper** | 256 | 3 / **1** | ep1 | .208 (.184-.227) | **.301** | **+9.2 (3/3)** |
+| | | | ep3 | .301 (.289-.316) | .359 | +5.9 (1/3) |
+| | | | `any` | .432 (.402-.453) | **.551** | **+11.8 (3/3)** |
+| **Wordle-5** | 59 | 3 / 3 | ep1 | .559 (.525-.576) | .531 (.475-.610) | −2.8 (0/9) |
+| | | | ep3 | .825 (.797-.847) | **.932 (.898-.983)** | **+10.7 (3/9)** |
+| | | | `any` | .927 (.898-.966) | .955 (.898-.983) | +2.8 (0/9) |
+| **Mastermind** | 40 | 3 / 3 | ep1 | .100 (.075-.150) | .058 (.025-.075) | −4.2 (0/9) |
+| | | | ep3 | .650 (.625-.675) | **.875 (.850-.900)** | **+22.5 (6/9)** |
+| | | | `any` | .683 (.650-.725) | **.883 (.875-.900)** | +20.0 (4/9) |
+
+Full ep2 figures: Minesweeper .250→.316 (+6.6, 1/3); Wordle-5 .740→.825 (+8.5,
+3/9); Mastermind .317→.408 (+9.2, 0/9).
+
+## Reading
+
+**Minesweeper is the only level where episode 1 moves** — +9.2, significant
+against all three baseline runs, and `any` +11.8 likewise. It is the sole arm
+anywhere in this project to improve first-episode performance.
+
+**Wordle-5 and Mastermind gain only late.** Both are flat-to-negative on ep1 and
+positive on ep3. Consistent with banks that help accumulate and exploit
+constraints rather than play a better opening.
+
+**Mastermind gains most (+22.5 ep3)** and has the largest headroom: its .650
+baseline is the lowest ep3 of the three, while Wordle-5 starts at .825 and is
+close to saturated.
+
+## Caveats specific to this table
+
+- **Minesweeper HExA is n=1.** Runs 1 and 2 exist but stopped at rounds 8 and 7
+  with no `eval_frozen`, so only run0 has an eval. Its deltas are therefore
+  1 bank x 3 baselines, not 3x3, and the HExA "range" is a single point.
+- **Eval pools differ in size and are not comparable across levels**: 256
+  (Minesweeper), 59 (Wordle-5, after excluding one instance), 40 (Mastermind).
+- **One Wordle-5 instance excluded**: `2540b53a7f515c84` in `hexa/run2` returned
+  `GenerationFailed: openai/gpt-oss-120b returned no generation after retries`.
+  That is an infrastructure failure, not a task failure, so it is dropped from
+  the paired set rather than scored as a loss. n=59 for Wordle-5 throughout.
+- **Two code paths.** Minesweeper and Wordle-5 numbers come from each run's
+  `eval_frozen`; Mastermind's come from `run_orbit_target_zeroshot.py`, so that
+  it pairs with the Design C arms. On the one bank measured both ways the paths
+  disagree (.825 vs .875 mean), and that discrepancy is unexplained — see the
+  Caveats section above.
+
+
 ## Provenance
 
 | artifact | path |
@@ -146,3 +202,5 @@ single `eval_frozen` run at .825, the bottom of its own spread. Corrected above.
 | Design B evals | `results/design_c/phase4/mastermind_designb_bank/run{0,1,2}` |
 | Design C banks | `results/design_c/mastermind_from_{wordle,minesweeper,minesweeper_wordle}/run0` |
 | Design C evals | `results/design_c/phase4/mastermind_{near,far,both,rawdump}_*/run{0,1,2}` |
+| Minesweeper within-level | `results/orbit_minesweeper_{baseline,hexa}/run*` |
+| Wordle-5 within-level | `results/orbit_wordle5_{baseline,hexa}/run*` |
