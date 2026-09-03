@@ -269,6 +269,25 @@ def format_trajectory_for_teacher(trajectory: dict, max_steps: int = 10) -> str:
     return "\n".join(lines)
 
 
+#: What the most recent ``format_trajectories_block`` call actually sent, so a
+#: caller can log its selection instead of re-deriving it. Re-deriving is a bug
+#: waiting to happen: ``distill.contrastive_distill`` used to re-sort the list
+#: itself for its log line, which silently disagreed with the prompt as soon as
+#: the block was rebound to a different selector (hexa_orbit.teacher.install).
+_LAST_SELECTION: list[list[dict]] = []
+
+
+def record_selection(chosen: list[dict]) -> None:
+    """Note the trajectories a block call sent. Keeps only the last few."""
+    _LAST_SELECTION.append(list(chosen))
+    del _LAST_SELECTION[:-8]
+
+
+def last_selection() -> list[dict]:
+    """The trajectories the most recent block call sent, or ``[]``."""
+    return list(_LAST_SELECTION[-1]) if _LAST_SELECTION else []
+
+
 def format_trajectories_block(trajectories: list[dict], max_trajs: int = 5) -> str:
     """Format multiple trajectories into a single block for the teacher prompt.
 
@@ -279,6 +298,7 @@ def format_trajectories_block(trajectories: list[dict], max_trajs: int = 5) -> s
     )
     if len(sorted_trajs) > max_trajs:
         sorted_trajs = sorted_trajs[:max_trajs]
+    record_selection(sorted_trajs)
     return "\n\n".join(
         format_trajectory_for_teacher(t) for t in sorted_trajs
     )

@@ -31,6 +31,10 @@ from skillrl.distillation.evolution_prompts import (
 from skillrl.core.skill_bank import Skill, Mistake, SkillBank
 from skillrl.distillation.teacher_prompts import format_trajectories_block
 
+#: Set by a task integration to check skills' cited evidence against the
+#: round's trajectories. ``None`` leaves behaviour unchanged.
+_CITATION_VERIFIER = None
+
 
 def evolve_skill_bank(
     level_name: str,
@@ -125,6 +129,26 @@ def evolve_skill_bank(
     # Process evolved skills
     all_trajs = successes + failures
     raw_skills = parsed.get("skills", [])
+
+    # Drop skills whose cited evidence contradicts the recorded run. Installed by
+    # `hexa_orbit.teacher.install`; absent for every stock task, so CORE is
+    # unaffected. Measured need: 14 of 24 turn citations across all maze runs to
+    # date (58%) named a turn the agent did not play or an action it did not take,
+    # so the "name the turn" gate was passed by confabulation more often than not.
+    # Only demonstrably false claims are dropped -- see `hexa_orbit.citations`.
+    verifier = globals().get("_CITATION_VERIFIER")
+    if verifier is not None and raw_skills:
+        raw_skills, notes = verifier(raw_skills, all_trajs)
+        rejected = [(t, r) for t, r in notes if r.startswith("FALSE")]
+        if notes:
+            print(f"\n  Cited evidence checked: "
+                  f"{sum(1 for _, r in notes if r.startswith('verified'))} verified, "
+                  f"{len(rejected)} fabricated, "
+                  f"{sum(1 for _, r in notes if r.startswith('unverifiable'))} unverifiable")
+            for title, reason in notes:
+                print(f"    [{title}] {reason}")
+        if rejected:
+            print(f"  Dropped {len(rejected)} skill(s) with fabricated evidence.")
     added_skills = 0
     removed_skills = parsed.get("removed_skill_titles", [])
 
@@ -218,6 +242,76 @@ def evolve_skill_bank(
     reasoning = parsed.get("reasoning", "")
     if removed_skills:
         print(f"\n  Removed skills: {', '.join(removed_skills)}")
+
+    # Optional keys. Absent for every stock prompt, so CORE output is unchanged;
+    # present when a task prompt asks for them (hexa_orbit's maze evolution prompt
+    # requires an invariant list and a per-skill cited turn). They are not fields on
+    # `Skill`, so without this they would be parsed and silently dropped -- and the
+    # whole point of gating a skill on "name the turn it changes" is being able to
+    # check afterwards whether a turn was actually named.
+    invariants = parsed.get("invariants") or []
+    if invariants:
+        print("\n  Invariants the teacher claims:")
+        for claim in invariants:
+            print(f"    - {claim}")
+    cited = [(r.get("title", "?"), r.get("changes_action")) for r in raw_skills]
+    if any(action for _, action in cited):
+        print("\n  Turn each skill claims to change:")
+        for title, action in cited:
+            print(f"    [{title}] {action or 'NONE CITED -- unearned slot'}")
+
+    # How much of the bank episode 1 can actually act on. `hexa_orbit.loop` filters
+    # on the rendered text when injecting; this reports the teacher's own claim, so
+    # the two can be compared and a teacher that mislabels is visible. v4 round 1
+    # banked five skills of which zero were first-contact usable, and episode 1
+    # therefore ran with no block at all -- silently, because nothing reported it.
+    def _named(value):
+        """Whether a teacher-supplied optional field actually names something.
+
+        The model writes the *string* "null" rather than a JSON null, and a
+        non-empty string is truthy -- so a plain check reported 4/4 skills naming a
+        departure trigger when only 1 did. Any report on an optional field needs
+        this, or it flatters whatever it is measuring.
+        """
+        if value is None:
+            return False
+        text = str(value).strip().lower()
+        return text not in ("", "null", "none", "n/a", "na", "-")
+
+    departures = [
+        (r.get("title", "?"), r.get("departs_from_earlier_path")) for r in raw_skills
+    ]
+    if any(_named(d) for _, d in departures):
+        named = [t for t, d in departures if _named(d)]
+        print(f"\n  Later-episode skills naming where to stop retracing: "
+              f"{len(named)}/{len(departures)}")
+        for title, where in departures:
+            print(f"    [{title}] {where if _named(where) else '-- no trigger named'}")
+
+    # Which invariants actually produced a skill. Stating an invariant and banking
+    # nothing from it is the specific failure this reports: in v3 round 1 the
+    # teacher named a 5x5 grid and a 7-move shortest path, banked neither, and left
+    # four of ten slots empty. Printed as coverage rather than as a list so the gap
+    # is visible without cross-referencing two blocks by eye.
+    if invariants:
+        covered: dict[str, list[str]] = {}
+        for raw in raw_skills:
+            acts = raw.get("acts_on_invariant")
+            if _named(acts):
+                covered.setdefault(str(acts), []).append(raw.get("title", "?"))
+        print("\n  Invariant -> skill coverage:")
+        for claim in invariants:
+            hits = covered.get(str(claim), [])
+            # Fall back to a loose match: the model rarely echoes the invariant
+            # back verbatim, and an exact-match-only report would read as 0/N
+            # coverage even when every invariant was acted on.
+            if not hits:
+                key = str(claim)[:40].lower()
+                hits = [t for c, t_list in covered.items() for t in t_list
+                        if key and key in c.lower()]
+            print(f"    {'COVERED' if hits else 'NO SKILL'}: {str(claim)[:88]}")
+            if hits:
+                print(f"        -> {', '.join(hits)}")
     if reasoning:
         print(f"\n  Teacher reasoning: {reasoning}")
 

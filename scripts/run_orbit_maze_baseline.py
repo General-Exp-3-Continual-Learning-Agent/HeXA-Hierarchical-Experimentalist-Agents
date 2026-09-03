@@ -29,8 +29,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from hexa_core.tokens import TOKENIZER_NOTE  # noqa: E402
-from hexa_orbit import oracle, pools, report  # noqa: E402
-from hexa_orbit.actor import ActorConfig, GenerationFailed, InstanceRun, MazeActor  # noqa: E402
+from hexa_orbit import loop, oracle, pools, report, trajectory  # noqa: E402
+from hexa_orbit.actor import ActorConfig, InstanceRun, MazeActor  # noqa: E402
 from hexa_orbit.adapter import MazeTask  # noqa: E402
 
 
@@ -65,8 +65,46 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--temperature", type=float, default=ActorConfig.temperature)
     parser.add_argument("--top-p", type=float, default=ActorConfig.top_p)
     parser.add_argument("--max-response-tokens", type=int, default=ActorConfig.max_response_tokens)
-    parser.add_argument("--reasoning-effort", default=ActorConfig.reasoning_effort)
+    parser.add_argument(
+        "--reasoning-effort", default=ActorConfig.reasoning_effort,
+        help="pass '' for models without a reasoning channel (Qwen2.5, Llama, ...). "
+             "Sending this to a model that does not understand it makes vLLM reject "
+             "the request or ignore it silently, depending on version.",
+    )
     parser.add_argument("--seed", type=int, default=None, help="per-call sampling seed")
+    parser.add_argument(
+        "--concurrency", type=int, default=1,
+        help="instances in flight at once. Maze generation is serialised by a lock "
+             "(the only place ORBIT touches the global RNG), so results are "
+             "bit-identical to --concurrency 1; see DECISIONS.md D5. With Qwen3 "
+             "thinking enabled an instance takes ~3.5 min, so 8-16 is the difference "
+             "between a 15-hour and a 1-2 hour 256-instance arm.",
+    )
+    parser.add_argument(
+        "--resume", action="store_true",
+        help="skip instances already present in runs.partial.jsonl. A 256-instance "
+             "arm is ~2h, long enough that a walltime kill or a server death is a "
+             "normal event rather than an exception.",
+    )
+    parser.add_argument(
+        "--transcript-mode", choices=["final", "raw"], default="final",
+        help="what the assistant turn carries. 'final' = answer channel only "
+             "(~15 tokens/turn); 'raw' = reasoning + answer, which is what ORBIT's "
+             "own agent stores (~800 tokens/turn with thinking on). See "
+             "ActorConfig.transcript_mode -- this materially changes the numbers.",
+    )
+    parser.add_argument(
+        "--trajectory-token-budget", type=int, default=None,
+        help="total completion tokens per instance. ORBIT uses 31744 as a "
+             "TRAJECTORY budget (data.max_response_length); ours is per-call and "
+             "cannot bind. Set 31744 to impose theirs.",
+    )
+    parser.add_argument(
+        "--truncation-scoring", choices=["exclude", "orbit"], default="exclude",
+        help="how to score episodes an instance never reached. 'exclude' omits them; "
+             "'orbit' counts them as failures, reproducing "
+             "MultiEpisodeEnv.get_metrics's early-termination branch.",
+    )
     parser.add_argument("--stub", action="store_true", help="oracle stub; no server needed")
     parser.add_argument(
         "--abort-after-errors",
@@ -85,7 +123,13 @@ def main() -> int:
         temperature=args.temperature,
         top_p=args.top_p,
         max_response_tokens=args.max_response_tokens,
-        reasoning_effort=args.reasoning_effort,
+        # '' from the CLI means 'this model has no reasoning channel'. It must
+        # become None, not stay an empty string: VLLMClient omits the argument
+        # only when it is None, and would otherwise send reasoning_effort="".
+        reasoning_effort=args.reasoning_effort or None,
+        transcript_mode=args.transcript_mode,
+        trajectory_token_budget=args.trajectory_token_budget,
+        truncation_scoring=args.truncation_scoring,
         seed=args.seed,
     )
 
@@ -102,53 +146,59 @@ def main() -> int:
 
     args.out.mkdir(parents=True, exist_ok=True)
     runs_path = args.out / "runs.jsonl"
+    partial_path = args.out / "runs.partial.jsonl"
+
+    # Resume: the partial file is the record of what already ran. Completed
+    # instances are dropped from the work list and their runs carried forward, so a
+    # resumed arm is the union of both passes rather than a second partial one.
+    done_runs: list[InstanceRun] = []
+    if args.resume and partial_path.exists():
+        done_runs = [r for r in trajectory.read_runs(partial_path) if r.error is None]
+        done_ids = {r.instance_id for r in done_runs}
+        before = len(eval_specs)
+        eval_specs = [s for s in eval_specs if s.instance_id not in done_ids]
+        print(f"resuming: {len(done_runs)} instances already done, "
+              f"{len(eval_specs)} of {before} remaining")
+        # Re-seed the partial file with what we are keeping, since play_batch
+        # truncates it. Without this, a second interruption would lose pass one.
+        trajectory.write_runs(partial_path, done_runs)
+        _carry = partial_path.read_text()
+    else:
+        _carry = ""
     runs: list[InstanceRun] = []
     errored: list[InstanceRun] = []
     started = time.monotonic()
 
-    with runs_path.open("w", encoding="utf-8") as handle:
-        for position, spec in enumerate(eval_specs, start=1):
-            instance = task.instance(spec)
-            leaked = spec.instance_id in leaked_ids
-            actor = MazeActor(
-                config,
-                client=OracleStub(instance) if args.stub else None,
+    # Delegate to the shared play_batch so the baseline and HExA arms cannot drift
+    # in how they drive instances -- and so both inherit the reset-lock discipline
+    # that makes --concurrency safe (D5).
+    def actor_factory(guidelines, instance=None):
+        actor = MazeActor(config, guidelines=guidelines)
+        if args.stub and instance is not None:
+            actor._client = OracleStub(instance)
+        return actor
+
+    def progress(position: int, run: InstanceRun) -> None:
+        if run.error:
+            print(f"[{position}/{len(eval_specs)}] {run.instance_id} ERROR: {run.error}")
+        else:
+            print(
+                f"[{position}/{len(eval_specs)}] {run.instance_id} "
+                f"R={run.success_count}/3 eps={run.episode_successes} "
+                f"steps={len(run.steps)} spl={run.shortest_path_len}"
+                f"{' LEAKED' if run.leaked else ''}"
             )
-            try:
-                run = actor.run_instance(instance, leaked=leaked)
-            except GenerationFailed as exc:
-                run = InstanceRun(
-                    instance_id=spec.instance_id,
-                    dataset_seed=spec.dataset_seed,
-                    resolved_seed=spec.resolved_seed,
-                    shortest_path_len=spec.shortest_path_len,
-                    leaked=leaked,
-                    steps=[],
-                    messages=[],
-                    metrics={},
-                    episode_successes=[],
-                    episode_lengths=[],
-                    success_count=0,
-                    added_tokens=0,
-                    token_counter="",
-                    error=f"{type(exc).__name__}: {exc}",
-                )
-                errored.append(run)
-                print(f"[{position}/{len(eval_specs)}] {spec.instance_id} ERROR: {exc}")
-                if args.abort_after_errors and len(errored) >= args.abort_after_errors:
-                    print(f"aborting: {len(errored)} errors reached --abort-after-errors")
-                    handle.write(json.dumps(run.to_dict()) + "\n")
-                    break
-            else:
-                runs.append(run)
-                print(
-                    f"[{position}/{len(eval_specs)}] {spec.instance_id} "
-                    f"R={run.success_count}/3 eps={run.episode_successes} "
-                    f"steps={len(run.steps)} spl={spec.shortest_path_len}"
-                    f"{' LEAKED' if leaked else ''}"
-                )
-            handle.write(json.dumps(run.to_dict()) + "\n")
-            handle.flush()
+
+    runs, errored = loop.play_batch(
+        task, eval_specs, actor_factory, None,
+        leaked_ids=leaked_ids, on_instance=progress, concurrency=args.concurrency,
+        # Crash safety: appended per instance as it completes. A 256-instance arm is
+        # hours long, so losing it to a walltime kill is not acceptable.
+        partial_path=partial_path,
+        carry_over=_carry,
+    )
+    runs = done_runs + runs
+    trajectory.write_runs(runs_path, runs + errored)
 
     aggregated = report.aggregate(runs, errored=errored)
     title = f"Maze no-bank baseline ({'ORACLE STUB' if args.stub else config.model})"
@@ -158,6 +208,7 @@ def main() -> int:
         "stub": args.stub,
         "n_requested": args.n,
         "wall_clock_s": round(time.monotonic() - started, 1),
+        "concurrency": args.concurrency,
         "report": aggregated,
         "manifest": task.manifest(),
         "token_note": TOKENIZER_NOTE,

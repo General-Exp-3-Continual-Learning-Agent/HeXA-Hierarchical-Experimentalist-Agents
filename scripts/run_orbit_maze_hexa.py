@@ -101,7 +101,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--top-p", type=float, default=ActorConfig.top_p)
     parser.add_argument("--max-response-tokens", type=int,
                         default=ActorConfig.max_response_tokens)
-    parser.add_argument("--reasoning-effort", default=ActorConfig.reasoning_effort)
+    parser.add_argument(
+        "--reasoning-effort", default=ActorConfig.reasoning_effort,
+        help="pass '' for models without a reasoning channel (Qwen2.5, Llama, ...). "
+             "Sending this to a model that does not understand it makes vLLM reject "
+             "the request or ignore it silently, depending on version.",
+    )
     parser.add_argument("--injection-budget-tokens", type=int,
                         default=loop.INJECTION_BUDGET_TOKENS)
     parser.add_argument("--admission", action="store_true",
@@ -111,8 +116,67 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--no-resume", action="store_true")
     parser.add_argument("--skip-eval", action="store_true",
                         help="train only; run the frozen eval later from the same --out")
+    parser.add_argument(
+        "--concurrency", type=int, default=1,
+        help="instances in flight at once. Maze generation is serialised by a lock "
+             "(the only place ORBIT touches the global RNG), so results are "
+             "bit-identical to --concurrency 1; see DECISIONS.md D5. With Qwen3 "
+             "thinking enabled an instance takes ~3.5 min, so 8-16 is the difference "
+             "between a 15-hour and a 1-2 hour 256-instance arm.",
+    )
+    parser.add_argument(
+        "--transcript-mode", choices=["final", "raw"], default="final",
+        help="what the assistant turn carries. 'final' = answer channel only "
+             "(~15 tokens/turn); 'raw' = reasoning + answer, which is what ORBIT's "
+             "own agent stores (~800 tokens/turn with thinking on). See "
+             "ActorConfig.transcript_mode -- this materially changes the numbers.",
+    )
+    parser.add_argument(
+        "--trajectory-token-budget", type=int, default=None,
+        help="total completion tokens per instance. ORBIT uses 31744 as a "
+             "TRAJECTORY budget (data.max_response_length); ours is per-call and "
+             "cannot bind. Set 31744 to impose theirs.",
+    )
+    parser.add_argument(
+        "--truncation-scoring", choices=["exclude", "orbit"], default="exclude",
+        help="how to score episodes an instance never reached. 'exclude' omits them; "
+             "'orbit' counts them as failures, reproducing "
+             "MultiEpisodeEnv.get_metrics's early-termination branch.",
+    )
     parser.add_argument("--stub", action="store_true",
                         help="oracle actor + canned teacher; no server needed")
+    parser.add_argument(
+        "--evolver-v2", action="store_true",
+        help="iteration-2 evolver: outcome-class trajectory selection (so the "
+             "evolver actually sees cross-episode learners), graded failure rewards "
+             "(so 46%% of instances stop scoring identically), and a prompt that "
+             "quotes the actor's system prompt so skills stop restating it. Off by "
+             "default -- it changes what the teacher sees, so a run must not switch "
+             "mid-flight.",
+    )
+    parser.add_argument(
+        "--max-trajs", type=int, default=None,
+        help="transcripts the evolver block is given per round. Defaults to "
+             "hexa_orbit.teacher.DEFAULT_MAX_TRAJS (6). Raising it is half of the "
+             "Mastermind v3 recipe: with a smaller --batch-size the evolver "
+             "otherwise sees a thinner slice of each round.",
+    )
+    parser.add_argument(
+        "--per-episode-injection", action="store_true",
+        help="inject only episode-1-usable skills during episode 1, and the whole "
+             "bank from episode 2 on. Roughly 60%% of v3's block was phrased "
+             "'based on prior exploration data' and inert in episode 1.")
+    parser.add_argument(
+        "--inject-top-k", type=int, default=None,
+        help="inject only the K highest-confidence skills (and no mistakes) "
+             "instead of the whole bank. Separates 'does the bank contain useful "
+             "skills' from 'does injecting all of them help'.")
+    parser.add_argument("--placebo", choices=["scramble", "foreign"], default=None,
+                        help="arm C (§13): evaluate a length-matched placebo bank "
+                             "instead of the real one. 'scramble' deranges principles "
+                             "across skills; 'foreign' swaps in off-task donors. Writes "
+                             "to eval_placebo/ so it cannot overwrite arm B.")
+    parser.add_argument("--placebo-seed", type=int, default=0)
     return parser.parse_args()
 
 
@@ -123,7 +187,13 @@ def main() -> int:
     config = ActorConfig(
         model=args.model, base_url=args.base_url, temperature=args.temperature,
         top_p=args.top_p, max_response_tokens=args.max_response_tokens,
-        reasoning_effort=args.reasoning_effort,
+        # '' from the CLI means 'this model has no reasoning channel'. It must
+        # become None, not stay an empty string: VLLMClient omits the argument
+        # only when it is None, and would otherwise send reasoning_effort="".
+        reasoning_effort=args.reasoning_effort or None,
+        transcript_mode=args.transcript_mode,
+        trajectory_token_budget=args.trajectory_token_budget,
+        truncation_scoring=args.truncation_scoring,
     )
     if args.stub:
         install_stub_teacher()
@@ -151,6 +221,16 @@ def main() -> int:
             actor._client = OracleStub(instance)
         return actor
 
+    # `None` means "let the loop install the teacher as it always has", so this
+    # stays a no-op unless --max-trajs is passed.
+    teacher_install = None
+    if args.max_trajs is not None:
+        from hexa_orbit import teacher as _teacher
+
+        def teacher_install() -> None:  # noqa: F811
+            _teacher.install(reward_bin_selection=args.evolver_v2,
+                             max_trajs=args.max_trajs)
+
     started = time.monotonic()
     result = loop.run_hexa_loop(
         task, train_specs, actor_factory, args.out,
@@ -159,9 +239,20 @@ def main() -> int:
         admission_enabled=args.admission,
         admission_trials=args.admission_trials,
         injection_budget_tokens=args.injection_budget_tokens,
+        concurrency=args.concurrency,
+        evolver_v2=args.evolver_v2,
+        teacher_install=teacher_install,
+        per_episode_injection=args.per_episode_injection,
         resume=not args.no_resume,
         manifest={"actor": config.to_dict(), "teacher_model": args.teacher_model,
-                  "stub": args.stub, **task.manifest()},
+                  "stub": args.stub,
+                  # The loop knobs were absent from run.json, so recovering what a
+                  # run actually did meant counting round dirs and grepping logs.
+                  "loop": {"rounds": args.rounds, "batch_size": args.batch_size,
+                           "max_trajs": args.max_trajs, "evolver_v2": args.evolver_v2,
+                           "per_episode_injection": args.per_episode_injection,
+                           "inject_top_k": args.inject_top_k},
+                  **task.manifest()},
     )
 
     print()
@@ -180,14 +271,48 @@ def main() -> int:
         print("\nno bank produced; nothing to evaluate")
         return 1
 
+    eval_dir, arm_label = args.out / "eval_frozen", "frozen bank"
+    if args.placebo:
+        from hexa_orbit import placebo as placebo_mod
+
+        if args.placebo == "scramble":
+            real_bank = bank
+            try:
+                bank, manifest = placebo_mod.scramble_bank(
+                    real_bank, seed=args.placebo_seed
+                )
+            except ValueError as exc:
+                # A 1-skill bank has no derangement. Refusing is correct -- the
+                # "placebo" would be the real bank -- but say so rather than
+                # traceback.
+                raise SystemExit(f"cannot build a placebo: {exc}") from None
+            # Compare against the in-memory original, not a re-read from disk.
+            placebo_mod.assert_scrambled(real_bank, bank)
+        else:
+            raise SystemExit(
+                "--placebo foreign needs a donor bank; pass one via "
+                "hexa_orbit.placebo.foreign_bank in a script for now"
+            )
+        eval_dir = args.out / "eval_placebo"
+        eval_dir.mkdir(parents=True, exist_ok=True)
+        (eval_dir / "placebo_manifest.json").write_text(json.dumps(manifest, indent=2))
+        arm_label = f"PLACEBO ({args.placebo}, seed {args.placebo_seed})"
+        print(f"\nplacebo bank: {manifest['tokens_real']} -> "
+              f"{manifest['tokens_placebo']} tokens, "
+              f"length_matched={manifest['length_matched']}")
+
     summary = loop.frozen_eval(
-        task, eval_specs, actor_factory, bank, args.out / "eval_frozen",
+        task, eval_specs, actor_factory, bank, eval_dir,
         train_specs=train_specs, injection_budget_tokens=args.injection_budget_tokens,
+        concurrency=args.concurrency,
+        per_episode_injection=args.per_episode_injection,
+        inject_top_k=args.inject_top_k,
     )
     print()
     print(report.format_summary(
         summary["report"],
-        title=f"Maze HExA Design B, frozen bank ({'ORACLE STUB' if args.stub else config.model})",
+        title=f"Maze HExA Design B, {arm_label} "
+              f"({'ORACLE STUB' if args.stub else config.model})",
     ))
     print(f"\nwall clock {time.monotonic() - started:.0f}s")
     print(f"wrote {args.out}")

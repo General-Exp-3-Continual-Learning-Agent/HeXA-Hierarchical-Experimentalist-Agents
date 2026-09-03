@@ -7,7 +7,13 @@ never different models.
 
 Both share the task configuration and 40/80 split below.
 
-Last updated 2026-09-01.
+Despite the filename this document also carries the **within-level** results for
+Minesweeper and Wordle-5 (they share the Design B setup). **Maze** — baseline,
+Design B, all Design C transfers and the raw-dump ablation — is in
+`MAZE_RESULTS.md`.
+
+Last updated 2026-09-01. All gpt-oss figures below were recomputed from the
+run files on that date and match.
 
 ## Task configuration
 
@@ -88,6 +94,16 @@ Design C - Cross level Transfer
 ### Design C vs Design B
 
 +5.8 on ep3, **0/9 significant**. The two are indistinguishable at n=40.
+
+### A note on which metric leads
+
+The gpt-oss sections lead with **ep3**; the Qwen section below leads with
+**`any`**, as the only metric positive under both of its tests. They are not in
+conflict — different models, different eval noise — but the two should not be
+quoted side by side as though one primary metric had been pre-registered for the
+game. For gpt-oss, `any` tells the same story as ep3 (Design C near +25.0, 8/9;
+Design B +20.0, 4/9), so quoting `any` throughout is the safer choice if a single
+metric is wanted across both models.
 
 ## What the table says
 
@@ -207,7 +223,7 @@ close to saturated.
   accuracy at round 19 — which is nonetheless the bank that was evaluated.
   Selecting by held-out accuracy would have rejected it and cost nothing.
 - **One baseline instance excluded.** Line 3 of
-  `results/orbit_minesweeper_baseline/run1/runs.jsonl` was corrupted by an
+  `results/Baseline_results_oss/orbit_minesweeper_baseline/run1/runs.jsonl` was corrupted by an
   editor edit (`"metrics": {"de,`) and the file is untracked, so git cannot
   restore it. The line is skipped rather than repaired, giving n=255 for
   Minesweeper throughout.
@@ -319,14 +335,24 @@ above it.
 | artifact | path |
 |---|---|
 | baseline | `results/design_c/phase4/mastermind_nobank/run{0,1,2}` |
-| Design B bank | `results/orbit_mastermind_hexa_oss_v4/round7/bank.json` |
+| Design B bank | `results/Hexa_results_oss/orbit_mastermind_hexa_oss/round7/bank.json` |
 | Design B evals | `results/design_c/phase4/mastermind_designb_bank/run{0,1,2}` |
 | Design C banks | `results/design_c/mastermind_from_{wordle,minesweeper,minesweeper_wordle}/run0` |
 | Design C evals | `results/design_c/phase4/mastermind_{near,far,both,rawdump}_*/run{0,1,2}` |
-| Minesweeper within-level | `results/orbit_minesweeper_{baseline,hexa}/run*` |
-| Wordle-5 within-level | `results/orbit_wordle5_{baseline,hexa}/run*` |
+| Minesweeper within-level | `results/Baseline_results_oss/orbit_minesweeper_baseline/run*`, `results/Hexa_results_oss/orbit_minesweeper_hexa/run*` |
+| Wordle-5 within-level | `results/Baseline_results_oss/orbit_wordle5_baseline/run*`, `results/Hexa_results_oss/orbit_wordle5_hexa/run*` |
 | **Qwen** baseline | `results/orbit_mastermind_baseline_qwen8{,_rep1,_rep2}` |
 | **Qwen** Design B training + bank | `results/orbit_mastermind_hexa_qwen8/round{0..7}` |
 | **Qwen** Design B evals | `results/orbit_mastermind_hexa_qwen8/eval_{frozen,rep3,rep4,rep5}` |
 | **Qwen** replicate driver | `scripts/replicate_mastermind_eval.py` |
 | **Qwen** retracted 4-of-8 runs | `results/orbit_mastermind_{baseline,hexa}_qwen8_ABANDONED_4of8/` |
+
+On 2026-09-01 the gpt-oss run directories were reorganised under
+`results/Baseline_results_oss/` and `results/Hexa_results_oss/`; the paths above
+are the post-move ones. Three archives cited elsewhere in this document were
+**deleted in the same pass and are no longer on disk**:
+`results/_BROKEN_minesweeper_hexa_run2_terminate/`,
+`results/_STALE_mastermind_4digit_config/`, and
+`results/orbit_mastermind_{baseline,hexa}_qwen8_ABANDONED_4of8/`. The retractions
+they backed still stand — the reasoning is recorded here — but the raw runs
+behind them can no longer be re-examined.

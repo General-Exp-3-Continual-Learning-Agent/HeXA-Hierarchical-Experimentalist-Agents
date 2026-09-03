@@ -29,6 +29,7 @@ from skillrl.distillation.teacher_prompts import (
     CROSS_LEVEL_GENERALIZATION_PROMPT,
     compute_trajectory_reward,
     format_trajectories_block,
+    last_selection,
 )
 
 
@@ -232,8 +233,16 @@ def distill_contrastive(
     if not successes and not failures:
         return []
 
-    success_block = format_trajectories_block(successes, max_trajs=max_success_trajs) if successes else "(no successes)"
-    failure_block = format_trajectories_block(failures, max_trajs=max_failure_trajs) if failures else "(no failures)"
+    if successes:
+        success_block = format_trajectories_block(successes, max_trajs=max_success_trajs)
+        sorted_succ = last_selection()
+    else:
+        success_block, sorted_succ = "(no successes)", []
+    if failures:
+        failure_block = format_trajectories_block(failures, max_trajs=max_failure_trajs)
+        sorted_fail = last_selection()
+    else:
+        failure_block, sorted_fail = "(no failures)", []
     level_desc = LEVEL_DESCRIPTIONS.get(level_name, "No description available.")
 
     prompt = CONTRASTIVE_DISTILLATION_PROMPT.format(
@@ -244,10 +253,6 @@ def distill_contrastive(
         success_block=success_block,
         failure_block=failure_block,
     )
-
-    # Sort and select the same way format_trajectories_block does, then log
-    sorted_succ = sorted(successes, key=lambda t: compute_trajectory_reward(t), reverse=True)[:max_success_trajs]
-    sorted_fail = sorted(failures, key=lambda t: compute_trajectory_reward(t), reverse=True)[:max_failure_trajs]
 
     s_rewards = [f"{compute_trajectory_reward(t):+.2f}" for t in sorted_succ]
     f_rewards = [f"{compute_trajectory_reward(t):+.2f}" for t in sorted_fail]

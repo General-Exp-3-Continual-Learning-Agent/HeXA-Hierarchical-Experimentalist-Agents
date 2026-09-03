@@ -10,7 +10,14 @@ numpy>=1.26.0,<2.0.0
 opencv-python>=4.8.0
 Pillow>=10.0.0
 
-# JSON / token-counting utilities used by the distillation prompts
+# JSON / token-counting utilities used by the distillation prompts.
+# NOTE: this pin is aspirational for hexa_core. tiktoken is NOT installed in the
+# system interpreter or in the `phyreagent` conda env -- only in `vllm-gptoss` --
+# so hexa_core.tokens falls back to a word/char heuristic there and its
+# added-token figures are estimates, not counts. `hexa_core.tokens.is_exact()`
+# reports which path is live; every run manifest records it as
+# token_counter.citable. Do not quote an added-token number against CORE's
+# reported 0.92k unless that flag is true.
 tiktoken>=0.7.0
 
 # Plotting (only used by analysis scripts under skillrl/analysis/)
@@ -19,7 +26,22 @@ matplotlib>=3.10.0
 # Progress bars (used in the runner)
 tqdm>=4.66.0
 
+# GEPA reflective prompt optimizer (only for gepa_opt/ — catapult prompt search).
+# The reflection + actor models run through the Claude Code CLI, so no API keys
+# or litellm backend are required for the catapult workflow.
+gepa>=0.1.1
+
 # Optional — only for the open-source / Qwen baselines (uncomment if needed):
 # torch>=2.1.0
 # transformers>=4.40.0
-# vllm>=0.5.0
+# vllm>=0.10.1     # 0.10.1 is the FIRST release with gpt-oss / MXFP4 support;
+#                  # the old `>=0.5.0` here would install something that cannot
+#                  # serve gpt-oss-120b at all. hexa_core does not use vllm as a
+#                  # library -- it talks to `vllm serve` over HTTP, in a separate
+#                  # env (see scripts/serve_gpt_oss_vllm.sh, which refuses to
+#                  # install anything itself).
+
+# hexa_core also needs `openai` (the OpenAI-compatible client for vLLM/NIM). It is
+# imported lazily inside hexa_core.llm so the test suite runs without it, and it is
+# NOT pinned here because the driver env is chosen per cluster; `phyreagent` has
+# 2.16.0 and `vllm-gptoss` has 2.53.0.

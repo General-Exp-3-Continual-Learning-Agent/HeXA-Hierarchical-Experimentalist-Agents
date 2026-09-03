@@ -33,6 +33,12 @@ htmlcov/
 
 # Run artefacts (large; don't commit by default)
 eval_results_*/
+results/
+results_core/
+gepa_opt/runs/
+gepa_opt/
+discovery-agents/
+Direct Results/
 *.zip
 logs/
 Plots/
@@ -41,3 +47,7 @@ Plots/
 
 # OS thumbnails
 Thumbs.db
+
+# vLLM / FlashInfer JIT scratch (serve_gpt_oss_vllm.sh)
+.cache/
+tiktoken_encodings/
