@@ -1,0 +1,138 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "down_to_earth": [
+      {
+        "skill_id": "dow_sk_000",
+        "title": "Proper Initial Positioning",
+        "principle": "Place the red ball at a strategic distance from the green ball to ensure sufficient initial momentum.",
+        "when_to_apply": "When placing the red ball to initiate the collision.",
+        "example": "x=2.3678, y=3.5",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          52,
+          53
+        ],
+        "generation": 10,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "dow_sk_002",
+        "title": "Dynamic Radius Adjustment",
+        "principle": "Adjust the radius of the red ball to control the collision impulse and ensure the green ball is pushed off the platform.",
+        "when_to_apply": "When simulating the collision to fine-tune the force applied.",
+        "example": "radius=1.5",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          52,
+          53
+        ],
+        "generation": 10,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "dow_ev_10_002",
+        "title": "Platform Edge Geometry Consideration",
+        "principle": "Place the red ball at the edge of the platform to maximize the force applied to the green ball.",
+        "when_to_apply": "When positioning the red ball to ensure maximum impact.",
+        "example": "x=1.66, y=3.5",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          52,
+          53
+        ],
+        "generation": 10,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "dow_ev_8_003",
+        "title": "Gap Width Analysis",
+        "principle": "Ensure the red ball can push the green ball through the gap by analyzing the gap width.",
+        "when_to_apply": "Before placing the red ball to check if the green ball can pass through.",
+        "example": "gap_width > 0.5",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          52,
+          53
+        ],
+        "generation": 10,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "dow_ev_7_004",
+        "title": "Simulate Partial Actions",
+        "principle": "Simulate partial actions to observe intermediate states and make adjustments before the final collision.",
+        "when_to_apply": "During the planning phase to test different placements and radii.",
+        "example": "simulate_partial({'x': 3.8921, 'y': 3.5, 'radius': 1.5, 'stop_step': 300})",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          52,
+          53
+        ],
+        "generation": 10,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "dow_ev_11_005",
+        "title": "Red Ball Placement Near Edge",
+        "principle": "Place the red ball near the edge of the platform to maximize the force applied to the green ball.",
+        "when_to_apply": "When the red ball needs to be placed close to the edge of the platform.",
+        "example": "x=1.66, y=3.5",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          52,
+          53
+        ],
+        "generation": 11,
+        "confidence": 0.5625
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "down_to_earth": [
+      {
+        "mistake_id": "dow_err_000",
+        "description": "Agent repeatedly tries to place the red ball near the green ball.",
+        "why_it_happens": "Lack of understanding of the required distance for initial momentum.",
+        "how_to_avoid": "Apply the 'Proper Initial Positioning' skill to ensure the red ball is placed at a strategic distance.",
+        "source_level": "down_to_earth",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "dow_evo_001",
+        "description": "Agent fails to properly simulate the action after finding a valid placement.",
+        "why_it_happens": "Insufficient testing of the placement and radius before finalizing.",
+        "how_to_avoid": "Use the 'Simulate Partial Actions' skill to test the placement and radius.",
+        "source_level": "down_to_earth",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "dow_evo_002",
+        "description": "Agent does not consider the gap width and platform edge geometry.",
+        "why_it_happens": "Lack of awareness of the necessary conditions for the green ball to pass through the gap.",
+        "how_to_avoid": "Apply the 'Gap Width Analysis' and 'Platform Edge Geometry Consideration' skills.",
+        "source_level": "down_to_earth",
+        "source_seeds": [],
+        "generation": 10
+      },
+      {
+        "mistake_id": "dow_evo_003",
+        "description": "Agent places the red ball with an excessive radius, causing it to exceed environmental boundaries.",
+        "why_it_happens": "Overestimating the required radius to apply sufficient force.",
+        "how_to_avoid": "Apply the 'Dynamic Radius Adjustment' skill to ensure the radius is appropriate.",
+        "source_level": "down_to_earth",
+        "source_seeds": [],
+        "generation": 10
+      }
+    ]
+  }
+}

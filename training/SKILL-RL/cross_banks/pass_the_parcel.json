@@ -1,0 +1,205 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "pass_the_parcel": [
+      {
+        "skill_id": "pas_sk_000",
+        "title": "Ramp Launch: Upper-Mid Zone Placement",
+        "principle": "Place the red ball on the upper portion of the ramp at x \u2248 ramp_center_x \u2212 0.15 to \u22120.50 and y \u2248 3.8\u20134.2. This offset ensures the ball rolls down the ramp with sufficient leftward momentum to strike the top basket. The exact x-offset within this range modulates the angle of impact on the inverted basket.",
+        "when_to_apply": "Always use as the primary placement strategy; compute the x-offset from get_ramp_center.",
+        "example": "ramp_center_x=3.401 \u2192 try x=2.9; ramp_center_x=3.774 \u2192 try x=3.3",
+        "source_level": "pass_the_parcel",
+        "source_type": "evolved",
+        "source_seeds": [
+          51,
+          53
+        ],
+        "generation": 12,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "pas_ev_12_001",
+        "title": "y=4.2 as Preferred Default Launch Height",
+        "principle": "Setting y=4.2 for the red ball provides reliable impulse for both r=0.45 and r=0.5. Trajectories at y=4.0 frequently leave the green ball energy-deficient (stalling above the bottom basket), while y=4.2 consistently cleared this gap in successful runs. y=4.3 remains a fallback for cases with persistent energy deficit.",
+        "when_to_apply": "Use y=4.2 as the first-attempt height; verify y + r \u2264 4.95 to avoid ceiling clamp. Escalate to y=4.3 only if y=4.2 still leaves green ball stalled above the bottom basket.",
+        "example": "Seed 51: x=2.9, y=4.2, r=0.45 \u2192 SUCCESS after y=4.0 failed. Seed 53: x=3.3, y=4.2, r=0.5 \u2192 SUCCESS after y=4.0 failed.",
+        "source_level": "pass_the_parcel",
+        "source_type": "evolved",
+        "source_seeds": [
+          51,
+          53
+        ],
+        "generation": 12,
+        "confidence": 0.87
+      },
+      {
+        "skill_id": "pas_ev_10_002",
+        "title": "Safe Radius Range: r=0.45\u20130.52",
+        "principle": "Radii below 0.40 often produce insufficient impulse to dislodge the top basket. Radii above 0.52 frequently overshoot the green ball far left (x < \u22123.0), overshooting the bottom basket entirely. The r=0.45\u20130.52 range provides the best impulse-accuracy tradeoff.",
+        "when_to_apply": "Default to r=0.45 or r=0.5 on first attempt; do not exceed r=0.55 without overshoot analysis.",
+        "example": "Seed 52: r=0.6 \u2192 rim stall, r=0.7 \u2192 far overshoot to x=\u22124.73. r=0.5 is the safer choice.",
+        "source_level": "pass_the_parcel",
+        "source_type": "evolved",
+        "source_seeds": [
+          51,
+          52,
+          53
+        ],
+        "generation": 12,
+        "confidence": 0.88
+      },
+      {
+        "skill_id": "pas_sk_002",
+        "title": "get_ramp_center Suggested Placement Trust",
+        "principle": "The get_ramp_center tool returns the ramp centroid, which is a reliable geometric anchor for computing red ball x-placement. Subtract 0.15\u20130.50 from ramp_center_x to land on the upper ramp surface. This x-offset calculation transfers correctly across different seed configurations.",
+        "when_to_apply": "Always call get_ramp_center before choosing x-placement; use it as the primary reference rather than hardcoded coordinates.",
+        "example": "ramp_center_x=3.774 \u2192 x=3.3 (offset \u22120.474) succeeded in seed 53.",
+        "source_level": "pass_the_parcel",
+        "source_type": "evolved",
+        "source_seeds": [
+          51,
+          53
+        ],
+        "generation": 12,
+        "confidence": 0.82
+      },
+      {
+        "skill_id": "pas_ev_10_004",
+        "title": "Ramp Overlap Avoidance: Rightward x Boundary",
+        "principle": "The ramp is a solid diagonal bar. Placing the red ball too far right (x \u2265 ramp_center_x \u2212 0.05) causes the ball to collide with the ramp structure itself, producing an INVALID or misfired simulation. The rightward x boundary is approximately ramp_center_x \u2212 0.10.",
+        "when_to_apply": "Before any simulate_action call, verify x < ramp_center_x \u2212 0.10 to avoid ramp overlap.",
+        "example": "ramp_center_x=3.401 \u2192 keep x \u2264 3.30 to avoid overlap.",
+        "source_level": "pass_the_parcel",
+        "source_type": "evolved",
+        "source_seeds": [
+          51,
+          53
+        ],
+        "generation": 12,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "pas_sk_003",
+        "title": "Overshoot Detection: Binary Threshold Behavior",
+        "principle": "The level exhibits sharp non-monotonic thresholds: small changes in radius (\u0394\u22480.05\u20130.1) can flip the green ball from rim-stall to far-overshoot without passing through a success region. When r=0.5 produces rim stall and r=0.7 produces far overshoot, intermediate radii (r=0.6, 0.65) typically also produce rim stall \u2014 the threshold is extremely narrow. Switch to adjusting y instead of bisecting r.",
+        "when_to_apply": "When two radius values produce opposite failure modes (stall vs. overshoot), do not bisect. Instead hold r constant and increase y to add energy.",
+        "example": "Seed 52: r=0.5/0.6/0.65 \u2192 rim stall, r=0.7 \u2192 far overshoot. Bisecting r was futile; energy-axis adjustment needed.",
+        "source_level": "pass_the_parcel",
+        "source_type": "evolved",
+        "source_seeds": [
+          52
+        ],
+        "generation": 12,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "pas_ev_8_005",
+        "title": "Basket-Fall Coupling: Velocity-Match Signals Active Re-Trapping",
+        "principle": "When the top basket and green ball share nearly identical velocities and positions during descent (green_y \u2212 basket_y < 0.6), the basket is re-trapping the green ball. A large x-shift alone may not break this coupling; increasing y (for more initial impulse) is often required to give the green ball enough velocity to separate from the basket during fall.",
+        "when_to_apply": "After any simulation where basket_y is within 0.6 of green_ball_y in the final state, increase y by 0.15\u20130.20 (not just x-shift).",
+        "example": "Seed 51: x=2.7, y=3.8 \u2192 basket at \u22122.311, green at \u22122.875 (gap 0.56) \u2192 re-trap. x=2.9, y=4.2 \u2192 separation achieved \u2192 SUCCESS.",
+        "source_level": "pass_the_parcel",
+        "source_type": "evolved",
+        "source_seeds": [
+          51
+        ],
+        "generation": 12,
+        "confidence": 0.87
+      },
+      {
+        "skill_id": "pas_ev_6_006",
+        "title": "X-Bisection at Fixed Radius: Opposite-Direction Overshoots",
+        "principle": "When two x-values at the same radius produce green ball landings in opposite directions (one far left, one far right of the bottom basket), bisect x once between them. Apply only one bisection step before switching to a different parameter axis. Repeated bisection in this region is unreliable due to physics non-linearity.",
+        "when_to_apply": "When opposite-direction overshoots are confirmed at the same radius; bisect x once, then switch to y-axis if still failing.",
+        "example": "x=2.0 \u2192 green at x=+0.38 (undershoot/no dislodge), x=3.5 \u2192 green at x=\u22121.12 (overshoot). Try x=2.75 once, then adjust y.",
+        "source_level": "pass_the_parcel",
+        "source_type": "evolved",
+        "source_seeds": [
+          52
+        ],
+        "generation": 12,
+        "confidence": 0.85
+      },
+      {
+        "skill_id": "pas_ev_7_008",
+        "title": "Ceiling-Bounded Y Placement for High Ramp Entries",
+        "principle": "The simulation enforces a hard ceiling at y=5.0; placements where y + radius > 5.0 are immediately rejected or clamped. For r=0.45, max safe y=4.55; for r=0.5, max safe y=4.50. Always verify y + r \u2264 4.95 before calling simulate_action to avoid wasted iterations.",
+        "when_to_apply": "Before every simulate_action call, check y + r \u2264 4.95.",
+        "example": "r=0.45, y=4.45 \u2192 y+r=4.90 \u2713. r=0.5, y=4.6 \u2192 y+r=5.1 \u2717 (invalid).",
+        "source_level": "pass_the_parcel",
+        "source_type": "evolved",
+        "source_seeds": [
+          51,
+          52,
+          53
+        ],
+        "generation": 12,
+        "confidence": 0.88
+      },
+      {
+        "skill_id": "pas_ev_13_009",
+        "title": "Low Ramp Position (ramp_y < 1.0) Creates Unsolvable Energy-Deficit Geometry",
+        "principle": "When the ramp center y-coordinate is below ~1.0, the ramp angle and position create a geometry where the launched red ball imparts insufficient downward momentum to the green ball regardless of x, y, or r adjustments within the safe ranges. In this configuration, the green ball consistently stalls on the bottom basket rim (y \u2248 \u22123.0 to \u22123.7) with near-zero downward velocity across all parameter combinations.",
+        "when_to_apply": "At level start, check ramp center y from get_ramp_center. If ramp_y < 1.0, treat this as a high-difficulty case where standard ramp-launch strategy may be structurally insufficient. After 5+ failed attempts with systematic parameter variation, consider abandoning ramp launch and testing direct placement near the top basket.",
+        "example": "Seed 52: ramp_center=(3.707, 0.672) \u2192 25 iterations all failed. Seeds 51/53 with ramp_y=2.28 and 1.70 succeeded in 5\u20136 iterations.",
+        "source_level": "pass_the_parcel",
+        "source_type": "evolved",
+        "source_seeds": [
+          52
+        ],
+        "generation": 13,
+        "confidence": 0.25
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "pass_the_parcel": [
+      {
+        "mistake_id": "pas_err_000",
+        "description": "Agent performs fine-grained bisection (radius OR y) in chaotic threshold regions where physics exhibits non-monotonic, direction-flipping behavior.",
+        "why_it_happens": "Agent treats the parameter space as smooth and continuous, assuming bisection will converge. In reality, threshold regions have discontinuous jumps.",
+        "how_to_avoid": "Bisect at most once between opposite failure modes, then switch to a different parameter axis entirely (e.g., from r to y).",
+        "source_level": "pass_the_parcel",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "pas_err_001",
+        "description": "Agent fails to prevent the top basket from tracking alongside the green ball after dislodging, allowing it to re-trap or block the green ball mid-fall.",
+        "why_it_happens": "Agent focuses on x-coordinate adjustments when basket re-trapping occurs, not recognizing that more vertical energy (higher y) is needed to break velocity coupling.",
+        "how_to_avoid": "When final basket_y is within 0.6 of green_ball_y, increase y by 0.15\u20130.20 on the next attempt rather than shifting x alone.",
+        "source_level": "pass_the_parcel",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "pas_err_002",
+        "description": "Agent ignores the simulation step budget as a hard physical constraint, repeatedly producing configurations where the green ball has the right direction but insufficient speed to reach the target within 2000 steps.",
+        "why_it_happens": "Agent interprets near-miss positions (green above blue) as close to success, when in fact the green ball has stopped moving with steps exhausted.",
+        "how_to_avoid": "Check final velocities \u2014 if green_ball velocity \u2248 0.0 at step 2000 with green still above blue, this is an energy-deficit failure requiring a y or r increase, not an x refinement.",
+        "source_level": "pass_the_parcel",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "pas_err_003",
+        "description": "Agent repeatedly attempts placements that overlap with nearby objects (ramp surface, ceiling), producing INVALID simulations and wasting iterations.",
+        "why_it_happens": "Agent does not verify geometric constraints before each simulation call.",
+        "how_to_avoid": "Before every simulate_action: verify x < ramp_center_x \u2212 0.10 and y + r \u2264 4.95.",
+        "source_level": "pass_the_parcel",
+        "source_seeds": [],
+        "generation": 12
+      },
+      {
+        "mistake_id": "pas_evo_004",
+        "description": "Agent continues parameter tuning when green ball stalls on the basket rim across all x/y/r variations, failing to recognize the structural ramp geometry incompatibility.",
+        "why_it_happens": "Agent assumes any failure is solvable by incremental adjustment. When ramp_y < 1.0, the geometry fundamentally limits energy transfer regardless of parameter choice.",
+        "how_to_avoid": "If green ball stalls on the rim (y \u2248 \u22123.0 to \u22123.7, velocity \u2248 0) across 5+ varied attempts spanning x \u2208 [2.0, 3.5], y \u2208 [3.8, 4.45], r \u2208 [0.45, 0.7], recognize this as a structural failure and attempt direct placement near the top basket instead of continued ramp-launch tuning.",
+        "source_level": "pass_the_parcel",
+        "source_seeds": [],
+        "generation": 13
+      }
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "run_dir": "skillrl/data/evolving/down_to_earth",
+  "level": "down_to_earth",
+  "training": {
+    "rounds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      20
+    ],
+    "successes": 33,
+    "seeds_total": 57,
+    "accuracy": 0.5789473684210527,
+    "time": 2489.9491656310056
+  },
+  "eval": {
+    "n": 40,
+    "successes": 31,
+    "accuracy": 0.775,
+    "avg_iters": 12.7,
+    "avg_time": 26.62254158032665,
+    "fresh_accuracy": 0.7837837837837838
+  }
+}

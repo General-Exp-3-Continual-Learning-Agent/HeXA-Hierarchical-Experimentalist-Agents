@@ -1,0 +1,125 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "two_body_problem": [
+      {
+        "skill_id": "two_sk_000",
+        "title": "Proper Horizontal Offset",
+        "principle": "Place the red ball to the left of the green ball to ensure a horizontal push towards the blue ball.",
+        "when_to_apply": "When the red ball needs to push the green ball horizontally towards the blue ball.",
+        "example": "x_red ~ -0.6826, y_red > -2.4769",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          52,
+          53,
+          51
+        ],
+        "generation": 11,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "two_ev_2_001",
+        "title": "Increase Radius for Stronger Push",
+        "principle": "Increasing the radius of the red ball increases its mass and the force of the push.",
+        "when_to_apply": "When a stronger push is needed to ensure the green ball contacts the blue ball.",
+        "example": "radius = 1.0",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          52,
+          53
+        ],
+        "generation": 11,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "two_ev_11_005",
+        "title": "Optimal Y-Coordinate for Red Ball",
+        "principle": "Placing the red ball at a y-coordinate around 3.5 provides a balanced initial push.",
+        "when_to_apply": "When the red ball needs to provide an initial push to the green ball.",
+        "example": "y_red = -2.0 or -1.0",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          52,
+          53
+        ],
+        "generation": 11,
+        "confidence": 0.8
+      },
+      {
+        "skill_id": "two_ev_10_002",
+        "title": "Adjust Y-Coordinate for Initial Velocity",
+        "principle": "Raising the y-coordinate of the red ball increases its gravitational potential energy, providing a stronger initial push.",
+        "when_to_apply": "When a stronger initial push is needed to ensure the green ball contacts the blue ball.",
+        "example": "y_red = -1.0 or -2.0",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          52,
+          53
+        ],
+        "generation": 11,
+        "confidence": 0.7
+      },
+      {
+        "skill_id": "two_ev_7_005",
+        "title": "Ensure Non-Overlap with Green and Blue Balls",
+        "principle": "Place the red ball such that it does not overlap with the green or blue balls to avoid invalid placement.",
+        "when_to_apply": "Whenever placing the red ball to ensure it does not overlap with other balls.",
+        "example": "Move at least 0.5713 units further away from the green ball.",
+        "source_level": "two_body_problem",
+        "source_type": "evolved",
+        "source_seeds": [
+          52,
+          53,
+          51
+        ],
+        "generation": 11,
+        "confidence": 0.9
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "two_body_problem": [
+      {
+        "mistake_id": "two_err_000",
+        "description": "Agent repeatedly fails to place the red ball far enough from the green ball.",
+        "why_it_happens": "Misunderstanding the required horizontal distance for non-overlap.",
+        "how_to_avoid": "Use the compute_relative_positions tool to calculate the correct distance.",
+        "source_level": "two_body_problem",
+        "source_seeds": [],
+        "generation": 11
+      },
+      {
+        "mistake_id": "two_evo_001",
+        "description": "Agent attempts to place the red ball too close to the right wall, leading to invalid placements.",
+        "why_it_happens": "Misinterpreting the world bounds.",
+        "how_to_avoid": "Ensure the red ball is placed within the valid range of the world bounds.",
+        "source_level": "two_body_problem",
+        "source_seeds": [],
+        "generation": 11
+      },
+      {
+        "mistake_id": "two_evo_002",
+        "description": "Agent fails to recognize that moving the red ball horizontally does not guarantee non-overlap with the green ball.",
+        "why_it_happens": "Overlooking the vertical positioning.",
+        "how_to_avoid": "Use the compute_relative_positions tool to check for overlap in both dimensions.",
+        "source_level": "two_body_problem",
+        "source_seeds": [],
+        "generation": 11
+      },
+      {
+        "mistake_id": "two_evo_003",
+        "description": "Agent places the red ball too low, causing it to be out of bounds and invalid.",
+        "why_it_happens": "Misunderstanding the y-axis limits.",
+        "how_to_avoid": "Ensure the y-coordinate of the red ball is within the valid range.",
+        "source_level": "two_body_problem",
+        "source_seeds": [],
+        "generation": 11
+      }
+    ]
+  }
+}

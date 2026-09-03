@@ -1,0 +1,12 @@
+{
+  "variant": "online_iterative",
+  "total_seeds": 50,
+  "successes": 28,
+  "failures": 22,
+  "accuracy": 0.56,
+  "total_time_seconds": 13540.377681890473,
+  "avg_time_per_seed": 270.80755363780946,
+  "avg_iterations_all": 18.66,
+  "avg_iterations_success": 14.178571428571429,
+  "avg_iterations_failure": 24.363636363636363
+}

@@ -1,0 +1,12 @@
+{
+  "variant": "O2Oevolving_3seeds",
+  "total_seeds": 45,
+  "successes": 27,
+  "failures": 18,
+  "accuracy": 0.6,
+  "total_time_seconds": 11042.075125541538,
+  "avg_time_per_seed": 245.3794472342564,
+  "avg_iterations_all": 17.288888888888888,
+  "avg_iterations_success": 12.148148148148149,
+  "avg_iterations_failure": 25.0
+}

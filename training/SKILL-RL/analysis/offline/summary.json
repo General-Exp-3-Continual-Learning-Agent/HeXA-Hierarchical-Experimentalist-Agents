@@ -1,0 +1,12 @@
+{
+  "variant": "offline",
+  "total_seeds": 51,
+  "successes": 24,
+  "failures": 27,
+  "accuracy": 0.47058823529411764,
+  "total_time_seconds": 17696.095499891555,
+  "avg_time_per_seed": 346.98226470375596,
+  "avg_iterations_all": 18.49019607843137,
+  "avg_iterations_success": 11.416666666666666,
+  "avg_iterations_failure": 24.77777777777778
+}

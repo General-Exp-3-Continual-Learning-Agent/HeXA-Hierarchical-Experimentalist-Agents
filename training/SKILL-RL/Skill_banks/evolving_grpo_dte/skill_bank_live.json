@@ -1,0 +1,201 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "down_to_earth": [
+      {
+        "skill_id": "dow_sk_000",
+        "title": "Correct Placement Strategy",
+        "principle": "Place the red ball near the edge of the platform to maximize the impulse force on the green ball.",
+        "when_to_apply": "When pushing the green ball off the platform.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          44,
+          10,
+          47
+        ],
+        "generation": 67,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "dow_sk_003",
+        "title": "Initial Velocity Consideration",
+        "principle": "Ensure the red ball imparts sufficient velocity to the green ball to push it off the platform.",
+        "when_to_apply": "When simulating the push action.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          44,
+          10,
+          47
+        ],
+        "generation": 67,
+        "confidence": 0.95
+      },
+      {
+        "skill_id": "dow_ev_54_002",
+        "title": "Diagonal Push Strategy",
+        "principle": "Use a diagonal push from below the green ball to effectively dislodge it off the platform.",
+        "when_to_apply": "When the green ball is positioned such that a direct push is insufficient.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          44,
+          10,
+          47
+        ],
+        "generation": 67,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "dow_ev_36_003",
+        "title": "Gap Width Analysis",
+        "principle": "Analyze the available gaps on the platform to determine the optimal direction to push the green ball.",
+        "when_to_apply": "Before placing the red ball to ensure the green ball falls into a gap.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          44,
+          10,
+          47
+        ],
+        "generation": 67,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "dow_ev_3_005",
+        "title": "Platform Edge Geometry",
+        "principle": "Understand the geometry of the platform edges to ensure the green ball falls into the gap.",
+        "when_to_apply": "When placing the red ball to push the green ball off the platform.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          44,
+          10,
+          47
+        ],
+        "generation": 67,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "dow_ev_14_006",
+        "title": "Optimal Ground Contact Duration",
+        "principle": "Ensure the green ball touches the purple ground for at least 3 seconds.",
+        "when_to_apply": "After the green ball is pushed off the platform.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          44,
+          10,
+          47
+        ],
+        "generation": 67,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "dow_ev_46_007",
+        "title": "Simulate Partial for Optimal Placement",
+        "principle": "Use simulate_partial to determine the best position for the red ball before finalizing the push.",
+        "when_to_apply": "Before placing the red ball to test the push action.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          44,
+          10,
+          47
+        ],
+        "generation": 67,
+        "confidence": 0.9
+      },
+      {
+        "skill_id": "dow_ev_67_007",
+        "title": "Push from Below with Height",
+        "principle": "Place the red ball below the green ball and push it off the platform to ensure it falls into a gap.",
+        "when_to_apply": "When the green ball is positioned above a gap.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          44,
+          10,
+          47
+        ],
+        "generation": 67,
+        "confidence": 0.88
+      },
+      {
+        "skill_id": "dow_ev_66_008",
+        "title": "Avoid Overlapping Objects",
+        "principle": "Ensure the red ball does not overlap with the green ball or the platform during the push.",
+        "when_to_apply": "Before and during the push action.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "evolved",
+        "source_seeds": [
+          44,
+          10,
+          47
+        ],
+        "generation": 67,
+        "confidence": 0.85
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "down_to_earth": [
+      {
+        "mistake_id": "dow_evo_000",
+        "description": "Incorrectly placed the red ball outside the world bounds.",
+        "why_it_happens": "Agents may misinterpret the coordinate system or boundary conditions.",
+        "how_to_avoid": "Always check the world bounds before placing objects.",
+        "source_level": "down_to_earth",
+        "source_seeds": [],
+        "generation": 67
+      },
+      {
+        "mistake_id": "dow_evo_001",
+        "description": "Failed to account for the green ball's velocity after being pushed off the platform.",
+        "why_it_happens": "Agents may not fully consider the dynamics of the push.",
+        "how_to_avoid": "Simulate the push action to observe the resulting velocities.",
+        "source_level": "down_to_earth",
+        "source_seeds": [],
+        "generation": 67
+      },
+      {
+        "mistake_id": "dow_evo_002",
+        "description": "Incorrectly interpreted the gap analysis results.",
+        "why_it_happens": "Complex geometries can lead to misinterpretations.",
+        "how_to_avoid": "Double-check the gap analysis before placing the red ball.",
+        "source_level": "down_to_earth",
+        "source_seeds": [],
+        "generation": 67
+      },
+      {
+        "mistake_id": "dow_evo_003",
+        "description": "Placed the red ball with an invalid radius.",
+        "why_it_happens": "Agents may not correctly set the radius when creating objects.",
+        "how_to_avoid": "Verify the radius setting before executing actions.",
+        "source_level": "down_to_earth",
+        "source_seeds": [],
+        "generation": 67
+      },
+      {
+        "mistake_id": "dow_evo_004",
+        "description": "Red ball position too close to the green ball, causing overlap.",
+        "why_it_happens": "Agents may not maintain sufficient spacing between objects.",
+        "how_to_avoid": "Ensure a safe distance between the red and green balls.",
+        "source_level": "down_to_earth",
+        "source_seeds": [],
+        "generation": 67
+      }
+    ]
+  }
+}

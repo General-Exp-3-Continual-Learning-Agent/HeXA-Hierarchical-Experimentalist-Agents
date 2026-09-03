@@ -1,0 +1,12 @@
+{
+  "variant": "online_evolving",
+  "total_seeds": 51,
+  "successes": 30,
+  "failures": 21,
+  "accuracy": 0.5882352941176471,
+  "total_time_seconds": 10482.633790388238,
+  "avg_time_per_seed": 205.54183902722033,
+  "avg_iterations_all": 16.50980392156863,
+  "avg_iterations_success": 10.566666666666666,
+  "avg_iterations_failure": 25.0
+}

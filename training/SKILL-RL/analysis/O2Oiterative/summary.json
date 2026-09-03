@@ -1,0 +1,12 @@
+{
+  "variant": "O2Oiterative",
+  "total_seeds": 45,
+  "successes": 21,
+  "failures": 24,
+  "accuracy": 0.4666666666666667,
+  "total_time_seconds": 12908.369595096912,
+  "avg_time_per_seed": 286.85265766882026,
+  "avg_iterations_all": 16.822222222222223,
+  "avg_iterations_success": 9.142857142857142,
+  "avg_iterations_failure": 23.541666666666668
+}

@@ -1,0 +1,194 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "two_body_problem": [
+      {
+        "skill_id": "two_sk_000",
+        "title": "Place Red on Opposite Side from Blue",
+        "principle": "The red ball must be placed on the side of green that is AWAY from blue. When red falls and collides with green from the right, the contact normal points left, transferring horizontal momentum toward blue. Placing red on the same side as blue produces a collision that pushes green away from blue instead.",
+        "when_to_apply": "After identifying whether blue is left or right of green, place red on the opposite horizontal side at a small offset.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "contrastive",
+        "source_seeds": [
+          1,
+          2,
+          3,
+          11
+        ],
+        "generation": 0,
+        "confidence": 0.53125
+      },
+      {
+        "skill_id": "two_sk_001",
+        "title": "Small Horizontal Offset Creates Glancing Push",
+        "principle": "The x-offset between the red ball center and the green ball center controls collision angle and therefore horizontal impulse. A small offset (0.1\u20130.6 units) on the far side produces a glancing blow that imparts significant horizontal velocity to green. Zero offset gives a pure vertical collision with no horizontal push; a large offset causes a near-miss.",
+        "when_to_apply": "After determining push direction, target x_red = x_green \u00b1 0.1\u20130.6 (+ if pushing left, - if pushing right).",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "contrastive",
+        "source_seeds": [
+          1,
+          3
+        ],
+        "generation": 0,
+        "confidence": 0.625
+      },
+      {
+        "skill_id": "two_sk_002",
+        "title": "Use Moderate Radius to Avoid Overlap and Wall Collisions",
+        "principle": "Radius directly sets sum_of_radii for overlap checks AND the edge-to-wall clearance. A radius of 0.5\u20130.6 gives enough mass for an effective push while keeping placement flexible near green and far from walls. Large radii (0.8+) dramatically increase overlap zone and cause wall violations when green is near an edge, consuming iterations without ever running a simulation.",
+        "when_to_apply": "Default to radius 0.5\u20130.6; only increase if the mass is clearly insufficient after a valid simulation attempt.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "contrastive",
+        "source_seeds": [
+          1,
+          3,
+          15
+        ],
+        "generation": 0,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "two_sk_003",
+        "title": "Place Red Just Above Green, Minimize Drop Height",
+        "principle": "Red must be above green to fall onto it, but excessive height wastes fall time and reduces control over landing angle. The working placements were only 0.5\u20131.2 units above green's initial y-position. A shorter drop means the collision geometry at impact closely matches the intended placement geometry.",
+        "when_to_apply": "Set y_red \u2248 y_green + (r_red + r_green) + 0.1\u20130.5 clearance margin, not arbitrarily high.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "contrastive",
+        "source_seeds": [
+          1,
+          3
+        ],
+        "generation": 0,
+        "confidence": 0.625
+      },
+      {
+        "skill_id": "two_sk_004",
+        "title": "Jump Geometrically Past Overlap, Not Incrementally",
+        "principle": "The overlap error message reports the exact gap needed ('move at least X units further away'). Using this value to compute the next candidate in one step is efficient. Micro-stepping by 0.05\u20130.1 at a time exhausts all available iterations on constraint resolution alone, leaving no budget for physics exploration.",
+        "when_to_apply": "When an INVALID placement reports a required gap, directly add that gap plus a 0.1 safety margin to the relevant axis instead of making small incremental adjustments.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "contrastive",
+        "source_seeds": [
+          11,
+          15
+        ],
+        "generation": 0,
+        "confidence": 0.25
+      },
+      {
+        "skill_id": "two_sk_005",
+        "title": "Confirm Push Direction Before Simulating",
+        "principle": "Green and blue spawn at random positions each seed, so the required push direction (left vs. right) varies. Using compute_relative_positions or get_level_state immediately disambiguates which horizontal side to target. Agents that skip this step risk wasting multiple simulations pushing green the wrong direction entirely.",
+        "when_to_apply": "Always call get_level_state or compute_relative_positions at the start before any simulate_action call.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "contrastive",
+        "source_seeds": [
+          1,
+          3
+        ],
+        "generation": 0,
+        "confidence": 0.625
+      },
+      {
+        "skill_id": "two_fsk_000",
+        "title": "Clearance Error as Direct Placement Calculator",
+        "principle": "The overlap error message reports the exact Euclidean shortfall: 'dist=D, sum_of_radii=R, move at least \u0394 units further away.' The valid placement radius from the green ball center is simply R + safety_margin. Given a desired approach angle \u03b8, the valid red ball center is (green_x + (R+\u03b5)\u00b7cos \u03b8, green_y + (R+\u03b5)\u00b7sin \u03b8). This eliminates all guesswork and resolves placement in exactly one step.",
+        "when_to_apply": "Any time a placement attempt returns an overlap error \u2014 use the reported numbers directly to compute a geometrically valid position rather than adjusting heuristically.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "failure",
+        "source_seeds": [
+          11,
+          15
+        ],
+        "generation": 0,
+        "confidence": 0.25
+      },
+      {
+        "skill_id": "two_fsk_001",
+        "title": "Collision Angle Determines Push Direction",
+        "principle": "In a 2D elastic collision, the impulse is transferred along the center-to-center line at the moment of contact. In Seed 11 the red ball was placed to the left of and above the green ball, so the collision line pointed left-and-down, pushing green further left away from blue. Placing the red ball directly above and slightly to the blue-ball side of green creates a center-to-center vector at impact that has a rightward horizontal component, converting vertical momentum into the needed horizontal push.",
+        "when_to_apply": "Whenever the goal is to redirect a stationary or falling ball horizontally \u2014 compute the desired post-collision direction first, then back-calculate the red ball's required position relative to the target.",
+        "example": "",
+        "source_level": "two_body_problem",
+        "source_type": "failure",
+        "source_seeds": [
+          11
+        ],
+        "generation": 0,
+        "confidence": 0.25
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "two_body_problem": [
+      {
+        "mistake_id": "two_err_000",
+        "description": "Agent makes tiny incremental moves (~0.05 units) to escape an overlap even when the error message explicitly states the required clearance (0.2\u20130.7 units).",
+        "why_it_happens": "The agent treats overlap resolution like gradient descent \u2014 small steps in the right direction will converge \u2014 but it ignores the exact minimum-clearance value that is handed to it in the error message.",
+        "how_to_avoid": "Read the 'Move at least X units further away' value from the error and immediately reposition the red ball at least X + 0.1 units from the green ball along the escape direction. One large corrective move, not a sequence of micro-steps.",
+        "source_level": "two_body_problem",
+        "source_seeds": [
+          11,
+          15
+        ],
+        "generation": 0
+      },
+      {
+        "mistake_id": "two_err_001",
+        "description": "Agent moves tangentially along the surface of the exclusion zone (diagonally in equal x/y increments) rather than radially away from the green ball center.",
+        "why_it_happens": "The agent treats 'move right and up simultaneously' as equivalent to 'move away from the ball,' but diagonal motion at 45\u00b0 along the surface barely increases the center-to-center distance \u2014 it mostly repositions along the edge of the forbidden region.",
+        "how_to_avoid": "Compute the vector from the green ball center to the desired red ball position, normalize it, then scale by (sum_of_radii + clearance_margin). This guarantees movement directly away from the obstacle.",
+        "source_level": "two_body_problem",
+        "source_seeds": [
+          11,
+          15
+        ],
+        "generation": 0
+      },
+      {
+        "mistake_id": "two_err_002",
+        "description": "Agent cycles back to previously-failed positions without maintaining any memory of what was tried (Seed 15: x=4.0 fails in step 1 and is repeated identically in step 10).",
+        "why_it_happens": "Each step is reasoned independently without tracking a list of failed positions, so the agent has no mechanism to detect that it is revisiting a dead end.",
+        "how_to_avoid": "Keep an explicit record of all (x, y, radius) attempts within the episode; if a new candidate is within 0.1 units of a previously-failed placement, reject it and try a qualitatively different region instead.",
+        "source_level": "two_body_problem",
+        "source_seeds": [
+          11,
+          15
+        ],
+        "generation": 0
+      },
+      {
+        "mistake_id": "two_err_003",
+        "description": "Agent fixes one spatial axis (y=2.0 in Seed 15, x sweeping in Seed 11) and searches only along the other, ignoring that placement above or to a completely different side trivially resolves the overlap.",
+        "why_it_happens": "The agent anchors on an initial coordinate it believes is strategically important (height or horizontal alignment) and treats it as a constraint rather than a free variable.",
+        "how_to_avoid": "When overlap persists after 2\u20133 adjustments along one axis, change the other axis by a large amount (\u2265 1.0 unit). Placing the red ball significantly above the target (higher y) almost always clears the overlap and still enables a top-down falling collision.",
+        "source_level": "two_body_problem",
+        "source_seeds": [
+          11,
+          15
+        ],
+        "generation": 0
+      },
+      {
+        "mistake_id": "two_err_004",
+        "description": "Agent places the red ball on the wrong side of the green ball, causing the push to move green away from blue rather than toward it (Seed 11: red at x\u2248\u22123.65 pushes green further left to x=\u22124.46, while blue is at x\u2248+3.85).",
+        "why_it_happens": "The agent focuses exclusively on avoiding overlap and achieving any contact, without reasoning about the post-collision trajectory: the push direction is determined by the center-to-center vector at impact, not by proximity alone.",
+        "how_to_avoid": "Before placing the red ball, determine which horizontal side of the green ball faces the blue ball. Place the red ball offset toward that side so the center-to-center collision vector at impact has a horizontal component pointing from green toward blue.",
+        "source_level": "two_body_problem",
+        "source_seeds": [
+          11,
+          15
+        ],
+        "generation": 0
+      }
+    ]
+  }
+}

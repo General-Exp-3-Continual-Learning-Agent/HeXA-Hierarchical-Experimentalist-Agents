@@ -1,0 +1,194 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "down_to_earth": [
+      {
+        "skill_id": "dow_sk_000",
+        "title": "Gap Analysis Determines Push Direction",
+        "principle": "Before any placement attempt, run compute_gap_analysis to identify which side of the platform has a gap wider than the green ball's diameter (1.0 unit). The platform may be asymmetric\u2014in Seed 4 the left gap was negative (-1.65), making right the only viable direction. Skipping this step wastes iterations pushing into a closed gap.",
+        "when_to_apply": "Always as the first or second action before attempting any placement in down_to_earth.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "contrastive",
+        "source_seeds": [
+          2,
+          4
+        ],
+        "generation": 0,
+        "confidence": 0.75
+      },
+      {
+        "skill_id": "dow_sk_001",
+        "title": "Place Red on the Opposite Side of the Target Gap",
+        "principle": "The collision impulse pushes the green ball away from the red ball's center. To push green RIGHT (toward the right gap), place red to the LEFT of green; to push green LEFT, place red to the RIGHT. In Seed 4 the agent placed red at x=-4.3 (left of green at x=-3.27) and green flew right to x=0.98. In Seed 0 the agent placed red at x=3.7 (right of green) and green moved left to x=-3.44.",
+        "when_to_apply": "After gap analysis identifies the target fall direction, choose the red ball x-coordinate on the opposite side of green.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "contrastive",
+        "source_seeds": [
+          0,
+          2,
+          4
+        ],
+        "generation": 0,
+        "confidence": 0.7083333333333334
+      },
+      {
+        "skill_id": "dow_sk_002",
+        "title": "Horizontal Separation Must Be Within Collision Range",
+        "principle": "A falling red ball only collides with the green ball if |x_red - x_green| \u2264 r_red + r_green at impact. Seed 2's first attempt placed red at x=1.0 while green was at x=-1.54, giving a separation of 2.54 >> 1.1, so no collision occurred and green stayed on the platform. The fix placed red at x=-0.5 (separation=1.04 < 1.1), guaranteeing contact.",
+        "when_to_apply": "When the simulation returns a failure with green resting on the platform\u2014check that |x_red - x_green| < r_red + r_green and move red closer horizontally.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "contrastive",
+        "source_seeds": [
+          2,
+          9
+        ],
+        "generation": 0,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "dow_sk_003",
+        "title": "Use Radius 0.6 for Larger Collision Cross-Section",
+        "principle": "A red ball with radius 0.6 gives a collision threshold of r_red + r_green = 1.1, providing 10% more horizontal tolerance than radius 0.5 (threshold 1.0). All three successful trajectories used r=0.6. Failed Seed 1 used r=0.5 and failed Seed 9 tried both 0.5 and 0.7\u2014the latter caused more overlap conflicts without improving success.",
+        "when_to_apply": "Default to radius=0.6 for the red ball; only deviate if boundary or overlap constraints specifically force a change.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "contrastive",
+        "source_seeds": [
+          0,
+          2,
+          4
+        ],
+        "generation": 0,
+        "confidence": 0.7083333333333334
+      },
+      {
+        "skill_id": "dow_sk_004",
+        "title": "Jump to Minimum Separation, Not Tiny Increments",
+        "principle": "The minimum valid x-distance from green's center is exactly r_red + r_green. Rather than approaching in 0.05-unit steps (as failed Seeds 1 and 9 did, consuming 10+ iterations), compute x_target = x_green \u00b1 (r_red + r_green + 0.05) directly and jump there in one step. Successful agents found valid placements in 1-3 attempts; failed agents spent their entire budgets on tiny increments and never recovered.",
+        "when_to_apply": "Whenever searching for a non-overlapping placement adjacent to the green ball\u2014calculate the separation threshold analytically instead of iterating.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "contrastive",
+        "source_seeds": [
+          1,
+          4,
+          9
+        ],
+        "generation": 0,
+        "confidence": 0.4166666666666667
+      },
+      {
+        "skill_id": "dow_sk_005",
+        "title": "Place Red Slightly Below Green's Height",
+        "principle": "Setting y_red = y_green - 0.5 (e.g., y=4.0 when green is at y=4.5) means red is already falling at speed when it contacts green, and the slight downward angle of the collision normal adds a downward impulse component that helps clear the platform edge. All three successful placements used y=4.0 with green consistently starting at y=4.5.",
+        "when_to_apply": "Set the red ball's y-coordinate to approximately green_y - 0.5, which is typically y=4.0 for this level.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "contrastive",
+        "source_seeds": [
+          0,
+          2,
+          4
+        ],
+        "generation": 0,
+        "confidence": 0.7083333333333334
+      },
+      {
+        "skill_id": "dow_fsk_000",
+        "title": "Lateral Offset Drop Produces Horizontal Push",
+        "principle": "Placing the red ball above and laterally offset from the green ball causes an oblique collision: the red ball gains downward velocity from free-fall but imparts a horizontal impulse on contact due to the offset. In Seed 9 Step 1, a red ball at (\u20131.05, 4.0) against a green ball roughly 1 unit to its left displaced the green ball all the way to x = \u20134.477, confirming that a ~1 ball-diameter lateral offset is sufficient to generate a large horizontal force component. The green ball moves away from the side where the red ball is placed.",
+        "when_to_apply": "Use when the green ball must be pushed horizontally toward a platform gap: place the red ball on the side OPPOSITE the target gap, within ~1 ball-diameter of the green ball's x-coordinate and at least 1.5 units above its y-coordinate.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "failure",
+        "source_seeds": [
+          9
+        ],
+        "generation": 0,
+        "confidence": 0.25
+      },
+      {
+        "skill_id": "dow_fsk_001",
+        "title": "Gap Exit Side Dictates Red Ball Starting Side",
+        "principle": "The target gap determines which horizontal side the red ball must be placed on. In Seed 9, the red ball placed to the RIGHT of the green ball (green at ~x=\u20132, red at x=\u20131.05) pushed the green ball consistently to the LEFT \u2014 toward the left edge. This directional rule is reliable because the collision normal points from the red ball center toward the green ball center, so the push is always away from the red ball's side.",
+        "when_to_apply": "As the first planning step, identify which platform gap the green ball should exit through. Place the red ball on the OPPOSITE horizontal side of the green ball from that gap to ensure the collision impulse is directed toward the gap.",
+        "example": "",
+        "source_level": "down_to_earth",
+        "source_type": "failure",
+        "source_seeds": [
+          9
+        ],
+        "generation": 0,
+        "confidence": 0.25
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "down_to_earth": [
+      {
+        "mistake_id": "dow_err_000",
+        "description": "Agent moves in the direction that brings the red ball closer to the green ball when trying to resolve an overlap, making the overlap worse rather than resolving it.",
+        "why_it_happens": "The agent does not check which side of the green ball the attempted placement falls on. In Seed 9 Steps 3\u201310, the green ball is to the LEFT of x=\u20131.05, so decrementing x (going left) reduces the inter-ball distance from 1.11 to 0.58 \u2014 the opposite of what is needed.",
+        "how_to_avoid": "Before adjusting, determine the direction vector from red_attempted to green_ball. A valid placement must lie in the OPPOSITE direction at distance = (r_red + r_green) + margin. Concretely: new_pos = green_pos + normalize(red_attempted \u2212 green_pos) * (r_red + r_green + 0.1).",
+        "source_level": "down_to_earth",
+        "source_seeds": [
+          1,
+          9
+        ],
+        "generation": 0
+      },
+      {
+        "mistake_id": "dow_err_001",
+        "description": "Agent takes tiny fixed 0.05-unit steps to escape overlap instead of using the exact 'must move at least X units further' distance supplied in the error message.",
+        "why_it_happens": "The agent treats overlap resolution as a blind grid search, not recognizing that the error feedback is an exact geometric constraint that allows a single-step jump to a valid position.",
+        "how_to_avoid": "Extract D from the error ('move at least D units further away') and displace the candidate position by D + 0.1 along the away-from-green direction in one step, completely skipping the incremental search.",
+        "source_level": "down_to_earth",
+        "source_seeds": [
+          1,
+          9
+        ],
+        "generation": 0
+      },
+      {
+        "mistake_id": "dow_err_002",
+        "description": "Agent increases ball radius to boost collision impulse without realizing the larger radius tightens the no-overlap constraint, invalidating positions that were previously valid.",
+        "why_it_happens": "The agent treats radius and position as independent parameters, not accounting for the fact that sum_of_radii = r_red + r_green grows with r_red, shrinking the feasible placement region around the green ball.",
+        "how_to_avoid": "After choosing a new radius, recompute the minimum required separation as (r_red_new + r_green) and verify the candidate placement satisfies it before calling validate_action. Prefer finding the right position with a fixed radius before experimenting with radius.",
+        "source_level": "down_to_earth",
+        "source_seeds": [
+          1,
+          9
+        ],
+        "generation": 0
+      },
+      {
+        "mistake_id": "dow_err_003",
+        "description": "Agent ignores the specific corrective action recommended by diagnose_last_simulation and instead adjusts an unrelated parameter (radius), leaving the diagnosed root cause unfixed.",
+        "why_it_happens": "The agent treats the diagnosis output as background context rather than a ranked action directive, so it defaults to a generic 'try something different' heuristic instead of executing the stated fix.",
+        "how_to_avoid": "After calling diagnose, parse the 'Corrections' list and implement the top-ranked correction directly in the next action. If the correction says 'align x_red closer to x_green', fix x first while holding all other parameters constant, and only change radius once x-alignment has been confirmed to produce a collision.",
+        "source_level": "down_to_earth",
+        "source_seeds": [
+          1,
+          9
+        ],
+        "generation": 0
+      },
+      {
+        "mistake_id": "dow_err_004",
+        "description": "Agent places the red ball at nearly the same height as the green ball, giving it insufficient falling distance to accumulate velocity before impact.",
+        "why_it_happens": "The agent reasons about horizontal proximity (x-alignment) for collision but neglects the vertical dimension, not accounting for the fact that gravitational free-fall is the primary source of the red ball's impact momentum.",
+        "how_to_avoid": "Place the red ball at least 1.5\u20132.0 units above the green ball's current y-position so it gains meaningful downward velocity (v = sqrt(2g*h)) before contact, producing a stronger collision impulse capable of dislodging the green ball.",
+        "source_level": "down_to_earth",
+        "source_seeds": [
+          1,
+          9
+        ],
+        "generation": 0
+      }
+    ]
+  }
+}
