@@ -241,14 +241,18 @@ close to saturated.
   Caveats section above.
 
 
-# Qwen3-8B — Design B (within-level)
+# Qwen3-8B — Design B and Design C
 
 Actor and teacher are both `Qwen/Qwen3-8B`, served on vLLM with
 `--reasoning-parser qwen3`. Sampling is ORBIT's published eval setting for both
 arms: temperature 0.6, top_p 0.95, **unseeded**, `--max-response-tokens 16384`.
 
-Same task config and same 40/80 partition as above. Training ran **8 rounds x
-batch 10 = 80 instances**, which is the whole training pool.
+Two levels are covered here: **Mastermind**, which has usable Design B and
+Design C results, and **Wordle-5**, whose within-level measurement was
+compromised — see *Wordle-5 on Qwen* below before quoting anything from it.
+
+For Mastermind: same task config and same 40/80 partition as above. Training ran
+**8 rounds x batch 10 = 80 instances**, which is the whole training pool.
 
 ## Results for Qwen 3B on Mastermind
 
@@ -316,6 +320,159 @@ against 0.101. Both HExA sds are below the binomial expectation at n=40
 above it.
 
 
+## Design C on Qwen — Mastermind ← Wordle-5 (near transfer)
+
+The same design as the gpt-oss lattice above: a Mastermind bank synthesised from
+the Qwen Wordle-5 bank plus a factual description of Mastermind, with **zero
+Mastermind trajectories** (`target_trajectories_used: 0`).
+
+| arm | runs | n | ep1 | ep2 | ep3 | `any` |
+|---|---|---|---|---|---|---|
+| baseline (no bank) | 3 | 40 | .092 | .142 | .283 | .367 |
+| **Design C near ← wordle** | **1** | 40 | .050 | **.300** | .275 | **.450** |
+| Design B — target-trained | 4 | ~40 | .089 | .229 | .443 | .576 |
+
+Paired McNemar against the three baseline replicates, n=40 matched:
+
+| metric | delta | significant |
+|---|---|---|
+| ep1 | −4.2pp | 0/3 |
+| ep2 | **+15.8pp** | 0/3 |
+| ep3 | −0.8pp | 0/3 |
+| **`any`** | **+8.3pp** | 0/3 |
+
+**Positive, not significant, and well short of Design B.** Design C lands between
+baseline (.367) and Design B (.576) on `any`, recovering about 40% of the
+within-level gain with no target trajectories. Nothing clears p<0.05 at n=40 with
+three pairings.
+
+### Why this is +8 on Qwen where it was +25 on gpt-oss
+
+The gpt-oss near ← wordle arm is the headline of this document (+28.3 ep3, 9/9).
+The Qwen arm has the same sign and a third of the magnitude. Two measured causes,
+and they compound.
+
+**1. The synthesised banks differ in one decisive skill.** Mastermind's code does
+not change between episodes, so solving it once and replaying it wins every
+remaining episode for free.
+
+| gpt-oss bank (8 skills) | Qwen bank (5 skills) |
+|---|---|
+| Immediate Single-Code Guess | Cross-Episode Peg Integration |
+| **Cross‑Episode Solution Recall** | White Peg Positional Refinement |
+| Cumulative Constraint Integration | Feedback-Driven Digit Elimination |
+| Black‑Peg Position Locking | Black Peg Position Fixation |
+| White‑Peg Presence Exclusion | White Peg Count Analysis |
+| Zero‑Score Digit Elimination | |
+| Information‑Maximizing Exploration Guess | |
+| **Avoid Repeating Uninformative Guesses (.78)** | |
+
+Every Qwen skill is about **how to read pegs** -- semantics the model already
+has. The gpt-oss bank carries *procedural* skills about turn economy and reuse.
+*Cross-Episode Peg Integration* sounds like the missing recall skill but is not:
+integrating constraints is not the instruction "replay the winning code".
+
+**2. The behaviour that skill produces is exactly where the arms separate.**
+
+| | replays the known code as the next episode's first guess | P(ep3 \| ep2) |
+|---|---|---|
+| gpt-oss baseline | 13/21 = 62% | .85 |
+| **gpt-oss Design B** | **18/18 = 100%** | **1.00** |
+| **gpt-oss Design C near** | **21/21 = 100%** | **1.00** |
+| Qwen baseline | 2/12 = 17% | .20 |
+| **Qwen Design C near** | 5/15 = 33% | .42 |
+
+gpt-oss with a bank never loses a solved code -- 39 of 39 opportunities across
+the two banked arms. Qwen reaches an episode-2 solve on 12 instances and fails to
+reproduce it in episode 3 on **seven** of them. That is why Qwen's ep3 (.275) is
+*below* its ep2 (.300), a shape no gpt-oss arm shows, and it is what caps `any`.
+
+The bank does move this: 17% → 33% replay is a doubling, and it is the source of
+the +15.8pp on ep2. It is simply nowhere near the 100% gpt-oss reaches unaided.
+
+Underneath both sits a raw-ability floor that retention does not explain: `any`
+measures ever solving the code at all, and gpt-oss reaches .925 against Qwen's
+.450.
+
+**The actionable read:** the highest-leverage change for Qwen Mastermind is
+getting *Cross-Episode Solution Recall* into the synthesised bank. It is
+mechanical, it is absent, and gpt-oss shows it is worth 62% → 100% retention.
+Whether Qwen's teacher can be induced to write it is untested.
+
+### Caveats
+
+- **n=1 synthesis run** against Design B's n=4. Zero of twelve metric-pairings
+  reach p<0.05.
+- **The eval pool is 40 instances.** A single instance is 2.5pp.
+- **Only one of four Design C arms exists for Qwen.** No far ← minesweeper, no
+  multi-source, no raw-dump ablation -- so nothing here tests whether synthesis
+  beats raw injection on this model.
+- **The source bank showed no within-level effect.** Qwen Wordle-5 Design B is
+  null on all four metrics (p=1.000, n=60 paired). A bank that did not help its
+  own level still produced a positive transfer arm.
+- **Injected budget differs**: 721 tokens for the Qwen arm against 946 for
+  gpt-oss's, partly because the Qwen bank is smaller.
+
+## Wordle-5 on Qwen — measurement is compromised
+
+**Do not quote a Qwen Wordle-5 number yet.** 35% of instances never run all
+three episodes because the actor exhausts its context window part-way through.
+
+| arm | n | `context_exhausted` | episodes actually run |
+|---|---|---|---|
+| Qwen baseline run0 | 60 | **21 (35.0%)** | 39 x 3, 3 x 2, 18 x 1 |
+| Qwen Design B, rounds 0-12 pooled | 130 | **45 (34.6%)** | — |
+| gpt-oss baseline run0 | 60 | **0** | 60 x 3 |
+| gpt-oss Design B eval_frozen run0 | 60 | **0** | 60 x 3 |
+
+Qwen3-8B emits ~4,500 completion tokens per Wordle turn at
+`--max-response-tokens 16384`. Three episodes of up to five guesses accumulate
+in one transcript against a 32,768-token window, so long games die mid-run.
+gpt-oss at 4096 tokens per response never comes close.
+
+**The exhaustion is almost perfectly confounded with failure:**
+
+| subset | baseline `any` | Design B `any` |
+|---|---|---|
+| completed 3 episodes | **1.000** (n=39) | **.988** (n=85) |
+| cut short | **.143** (n=21) | **.156** (n=45) |
+
+The causal order is failure -> long transcript -> exhaustion, not the reverse:
+an instance solved in two guesses produces a short transcript and survives.
+So both readings of the data are biased, in opposite directions:
+
+- **All 60 rows** (`any` .700 baseline / .700 Design B) scores a cut-off
+  instance as a loss on episodes that were never played.
+- **Complete-3 only** (`any` 1.000 / .988) selects precisely the instances that
+  were easy enough to finish, and hits the ceiling.
+
+Neither is a Wordle-5 skill measurement. Worse for this experiment specifically:
+HExA's mechanism is **cross-episode adaptation**, and a third of instances are
+cut off before episode 2 exists — the arm is measured on the metric it cannot
+move.
+
+Both arms sit at the same ~35%, so a paired baseline-vs-Design-B comparison on
+matched instances is still internally fair. It is the absolute numbers, and any
+comparison against gpt-oss Wordle, that are not usable.
+
+**What would fix it:** re-run both arms with the actor's response budget cut
+(gpt-oss uses 4096) or with a `trajectory_token_budget` set, so a full
+three-episode Wordle transcript fits in 32k. Until then Qwen Wordle-5 is a
+source of a *bank*, not a source of a *number* — the bank itself
+(`round11/bank.json`, 3 skills, 2 mistakes, confidences .98/.98/1.0, 0 flagged
+by audit) is unaffected by this, since it was evolved from the trajectories that
+did complete.
+
+### Status
+
+The Qwen Design B frozen eval was never run: job 63933190 was cancelled at
+round 9 and its continuation 63949042 died after writing round 12's rollouts but
+before evolving the bank. All 13 rounds of rollouts are on disk; the surviving
+bank is `round11/bank.json`. Job **63952946** was submitted 2026-09-03 to resume
+from `resume_state` (re-evolve round 12, then run `eval_frozen` on the same n=60
+pool the baseline used). Its numbers are not in this document yet.
+
+
 ## Retracted (Qwen)
 
 - **"+0.175 on ep3, from the first eval pair."** That compared a single HExA run
@@ -341,9 +498,15 @@ above it.
 | Design C evals | `results/design_c/phase4/mastermind_{near,far,both,rawdump}_*/run{0,1,2}` |
 | Minesweeper within-level | `results/Baseline_results_oss/orbit_minesweeper_baseline/run*`, `results/Hexa_results_oss/orbit_minesweeper_hexa/run*` |
 | Wordle-5 within-level | `results/Baseline_results_oss/orbit_wordle5_baseline/run*`, `results/Hexa_results_oss/orbit_wordle5_hexa/run*` |
-| **Qwen** baseline | `results/orbit_mastermind_baseline_qwen8{,_rep1,_rep2}` |
-| **Qwen** Design B training + bank | `results/orbit_mastermind_hexa_qwen8/round{0..7}` |
-| **Qwen** Design B evals | `results/orbit_mastermind_hexa_qwen8/eval_{frozen,rep3,rep4,rep5}` |
+| **Qwen** Mastermind baseline | `results/Baseline_results_qwen/orbit_mastermind_baseline_qwen8/run{0,1,2}` |
+| **Qwen** Mastermind Design B training + bank | `results/Hexa_results_qwen/orbit_mastermind_hexa_qwen8/round{0..7}` |
+| **Qwen** Mastermind Design B evals | `results/Hexa_results_qwen/orbit_mastermind_hexa_qwen8/eval_{frozen,rep3,rep4,rep5}` |
+| **Qwen** Wordle-5 baseline | `results/Baseline_results_qwen/orbit_wordle5_baseline_qwen8/run0` |
+| **Qwen** Wordle-5 Design B | `results/Hexa_results_qwen/orbit_wordle5_hexa_qwen8/run0` |
+| **Qwen** Wordle-5 Design B (rerun, clean) | `results/Hexa_results_qwen/orbit_wordle5_hexa_qwen8_b20/run0` |
+| **Qwen** Wordle-5 baseline (rerun, clean) | `results/Baseline_results_qwen/orbit_wordle5_baseline_qwen8_v2/run0` |
+| **Qwen** Design C bank (Mastermind ← wordle) | `results/design_c_qwen/mastermind_from_wordle/run0/skill_bank_xl_mastermind.json` |
+| **Qwen** Design C eval | `results/design_c_qwen/phase4/mastermind_near_wordle/run0` |
 | **Qwen** replicate driver | `scripts/replicate_mastermind_eval.py` |
 | **Qwen** retracted 4-of-8 runs | `results/orbit_mastermind_{baseline,hexa}_qwen8_ABANDONED_4of8/` |
 

@@ -223,6 +223,49 @@ def test_minesweeper_description_enumerates_the_action_set():
     assert "LAST" in desc
 
 
+def test_minesweeper_description_states_the_turn_budget():
+    """The 8-turn cap is the level's whole difficulty and the actor is never told it.
+
+    The environment prompt names no limit, maximum or budget -- verified against a
+    recorded observation. A teacher that does not know the cap writes skills for
+    unlimited probing, which is a different game.
+    """
+    from hexa_orbit.source_teacher import TASK_DESCRIPTIONS
+
+    desc = TASK_DESCRIPTIONS["minesweeper"]
+    assert "8 turns" in desc
+    assert "NEVER TOLD" in desc
+
+
+def test_minesweeper_description_names_both_information_free_moves():
+    """Flags and re-reveals each cost a turn and change nothing.
+
+    The evolved Qwen bank promoted *Count-Driven Flagging* at confidence 0.85 --
+    a skill for a move that cannot satisfy an `only-reveal` win condition. The
+    teacher had no way to know that from the old description.
+    """
+    from hexa_orbit.source_teacher import TASK_DESCRIPTIONS
+
+    desc = TASK_DESCRIPTIONS["minesweeper"]
+    assert "only-reveal" in desc
+    assert "Flagging never advances it" in desc
+    assert "already revealed" in desc
+
+
+def test_minesweeper_description_carries_no_cross_model_comparison():
+    """Actor and teacher are the same model; the prompt must not smuggle in another.
+
+    An earlier draft of this description quoted one actor's waste rate against
+    another's. Aggregate or not, that is one model's behaviour entering a second
+    model's teacher prompt, which is the thing Design C is supposed to isolate.
+    """
+    from hexa_orbit.source_teacher import TASK_DESCRIPTIONS
+
+    desc = TASK_DESCRIPTIONS["minesweeper"].lower()
+    for leak in ("stronger actor", "weaker actor", "gpt-oss", "qwen"):
+        assert leak not in desc
+
+
 def test_detects_a_bank_that_invents_terminate():
     bad = (r"[Strategy: Terminate only when board solved] The agent should only "
            r"issue the terminate action when all safe cells are revealed. "

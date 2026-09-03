@@ -37,7 +37,29 @@ action per turn. There is NO terminate, quit, stop, done, submit or unflag actio
 Anything else is rejected as "you did not provide a valid guess" and ENDS THE
 EPISODE. Only the LAST `\\boxed{...}` in a response is read, so a skill that tells
 the agent to emit several actions at once silently discards all but the last.
-Never write a skill that invokes an action outside this list.""",
+Never write a skill that invokes an action outside this list.
+
+THE TURN BUDGET IS THE WHOLE GAME. Each episode allows at most 8 turns to clear
+20 non-mine cells. The centre reveal is free and usually cascades several cells
+open, so a winning line is roughly 4-7 further reveals, each of which must open
+new ground. The agent is NEVER TOLD this limit -- the environment prompt does not
+mention it -- so a skill that assumes unlimited probing is writing for a game the
+agent is not playing.
+
+TWO MOVES COST A TURN AND REVEAL NOTHING:
+ 1. `flag R C`. This variant is `only-reveal`: the win condition is that every
+    non-mine cell has been REVEALED. Flagging never advances it. A flag is
+    bookkeeping the agent could do in its own reasoning instead, and it is
+    charged a full turn for it.
+ 2. `reveal R C` on a cell that is already revealed (or flagged). The environment
+    answers "you chose to reveal cell", the board does not change, and the turn
+    is gone. Every revealed cell is printed as its adjacent-mine count and every
+    unrevealed one as `.`, so the board in the prompt always says which is which.
+
+These two account for a large share of lost episodes on this level -- in the
+trajectories below, look at how many turns end with the board unchanged. Prefer
+skills that raise the share of turns which open new ground over skills that
+refine which cell to probe.""",
     "wordle": """\
 The agent must find a hidden 5-letter word. After each guess every position is
 marked G (right letter, right place), Y (letter is in the word, wrong place) or X

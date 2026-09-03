@@ -89,6 +89,37 @@ def boxed(value: str) -> str:
     return f"\\boxed{{{value}}}"
 
 
+#: Longest assistant turn written back into the transcript, in characters.
+#:
+#: A turn that hits ``max_response_tokens`` mid-reasoning emits no closing
+#: ``\\boxed{...}``, and ``extract_last_boxed`` -- a literal transcription of
+#: ORBIT's agent -- then returns the *whole response*. Under
+#: ``transcript_mode="final"`` ``final_text`` is empty for such a turn, so
+#: ``spoken`` falls back to that entire dump and it lands in ``self.messages``.
+#: The next call then sends a ~16k-token prompt while still reserving
+#: ``max_response_tokens`` on top, vLLM rejects it with a 400 naming the context
+#: length, and the instance dies with ``context_exhausted`` -- its remaining
+#: episodes never played.
+#:
+#: Measured on Qwen3-8B Wordle-5: 39 of 122 instances died this way, and the
+#: correspondence is exact -- **every** context-exhausted instance had precisely
+#: one truncated turn, and no surviving instance had any. One over-long turn
+#: killed the instance outright.
+#:
+#: The cap applies only to the transcript copy. ``env_action`` is left whole so
+#: the environment still receives, and rejects, the malformed action exactly as
+#: ORBIT's agent would -- the step is still scored a failure, it just no longer
+#: takes the rest of the instance with it.
+_MAX_SPOKEN_CHARS = 2000
+
+
+def _cap_spoken(spoken: str) -> str:
+    """Bound one assistant turn so a runaway response cannot end the instance."""
+    if len(spoken) <= _MAX_SPOKEN_CHARS:
+        return spoken
+    return spoken[:_MAX_SPOKEN_CHARS].rstrip() + f" ...[{len(spoken)} chars, unparsed]"
+
+
 class ContextExhausted(RuntimeError):
     """The cumulative transcript outgrew the model's context window.
 
@@ -655,7 +686,9 @@ class MazeActor:
                 spoken = generation.raw_text or env_action
             else:
                 spoken = generation.final_text or env_action
-            self.messages.append({"role": "assistant", "content": spoken})
+            self.messages.append(
+                {"role": "assistant", "content": _cap_spoken(spoken)}
+            )
 
             spent_tokens += self._completion_tokens(generation)
             if not (generation.usage or {}).get("completion_tokens"):

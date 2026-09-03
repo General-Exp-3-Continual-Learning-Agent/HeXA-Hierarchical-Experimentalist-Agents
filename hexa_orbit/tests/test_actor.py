@@ -10,7 +10,7 @@ from __future__ import annotations
 import pytest
 from hexa_core.llm.base import Generation
 
-from hexa_orbit import oracle
+from hexa_orbit import actor, oracle
 from hexa_orbit.actor import (
     BOXED_PATTERN,
     ActorConfig,
@@ -372,3 +372,22 @@ def test_actor_config_manifest_includes_the_new_fields():
     assert d["transcript_mode"] == "raw"
     assert d["trajectory_token_budget"] == 31744
     assert d["truncation_scoring"] == "orbit"
+
+
+def test_a_runaway_turn_cannot_kill_the_instance():
+    """The transcript copy is capped; see `_MAX_SPOKEN_CHARS`.
+
+    A turn truncated mid-reasoning has no `\\boxed{}`, so `extract_last_boxed`
+    returns the whole response and it used to land in `self.messages` whole --
+    blowing the next prompt past the context window and ending the instance.
+    """
+    runaway = "Let me reconsider the constraints. " * 800
+    capped = actor._cap_spoken(runaway)
+    assert len(capped) < actor._MAX_SPOKEN_CHARS + 100
+    assert "unparsed" in capped
+    assert capped.startswith("Let me reconsider the constraints.")
+
+
+def test_a_normal_turn_is_written_back_untouched():
+    for text in (r"\boxed{CRANE}", "CRANE", "reveal 2 3", ""):
+        assert actor._cap_spoken(text) == text
