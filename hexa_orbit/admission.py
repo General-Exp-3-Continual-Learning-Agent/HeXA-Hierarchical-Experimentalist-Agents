@@ -31,6 +31,7 @@ Two responses, and this module implements both:
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Callable, Iterable, Optional, Sequence
 
 from hexa_core.admission import AdmissionResult, accept_rate  # noqa: F401  (re-export)
@@ -45,6 +46,12 @@ DEFAULT_TRIALS = 3
 #: Fraction of the shortest path a trial must cover to count as a pass, when
 #: scoring on progress rather than success. 1.0 means "reached the goal".
 DEFAULT_PROGRESS_THRESHOLD = 1.0
+
+#: How far a candidate must beat the no-skill control to be admitted. Small but
+#: nonzero: with three trials the paired means are noisy, and admitting on a tie
+#: would let a skill that does nothing occupy a slot and cost tokens on every turn
+#: of every future episode. Expressed in the same [0,1] units as `progress_score`.
+DEFAULT_ADMISSION_MARGIN = 0.05
 
 
 def _solo_bank(skill: Any) -> Any:
@@ -81,6 +88,34 @@ def progress_score(instance: Any, reached_goal: bool) -> float:
     except ValueError:  # unreachable from where it ended up -- no progress credited
         return 0.0
     return max(0.0, (start_distance - remaining) / start_distance)
+
+
+def run_instance_trial(
+    block: Optional[str],
+    spec: MazeInstanceSpec,
+    task: Any,
+    actor_factory: Callable[..., Any],
+) -> float:
+    """Score one *whole instance* -- all three episodes -- under *block*.
+
+    ``1.0`` if any episode reached the goal, else the best progress any episode
+    made. ``block=None`` runs the same instance with no bank at all, which is the
+    control this gate compares against.
+
+    **Why a whole instance and not the single episode `run_trial` uses.** A trial
+    on ``new_episode()`` has no earlier episode, so a cross-episode skill -- "stop
+    retracing your episode-1 route once you reach a junction it already failed at"
+    -- cannot express itself and scores like a null skill. That is the wrong gate
+    for an episode-3 endpoint: it would reject precisely the skills the measured
+    driver points at (instances later solved depart from their own episode-1 route
+    at turn 1.6 against 2.6 for those never solved). Costs ~27 calls instead of ~9.
+    """
+    instance = task.instance(spec)
+    actor = actor_factory(block, instance)
+    run = actor.run_instance(instance, leaked=False)
+    if any(e.success for e in instance.episodes):
+        return 1.0
+    return float(getattr(run, "best_progress", 0.0) or 0.0)
 
 
 def run_trial(
@@ -122,6 +157,52 @@ def run_trial(
     return reached_goal, progress_score(instance, reached_goal)
 
 
+def _run_parallel(thunks: Sequence[Callable[[], Any]], concurrency: int) -> list[Any]:
+    """Run *thunks* concurrently, preserving order.
+
+    Trials are independent -- different skills, different instances, no shared
+    state -- but `admit_skills` ran them one call at a time while `loop.play_batch`
+    used a 12-way pool for the same work. Measured cost of that asymmetry on v7:
+    ~950 sequential calls for one round's gate, about 2h15m, against ~35 minutes
+    for the round itself. Ten rounds would have exceeded the job's 6h walltime
+    around round 2, with no eval.
+    """
+    if concurrency <= 1 or len(thunks) <= 1:
+        return [t() for t in thunks]
+    with ThreadPoolExecutor(max_workers=min(concurrency, len(thunks))) as pool:
+        return list(pool.map(lambda t: t(), thunks))
+
+
+def control_mean_score(
+    trial_specs: Sequence[MazeInstanceSpec],
+    task: Any,
+    actor_factory: Callable[..., Any],
+    *,
+    trials: int = DEFAULT_TRIALS,
+    budget: Any = None,
+    concurrency: int = 1,
+) -> float:
+    """Mean whole-instance score on *trial_specs* with **no bank injected**.
+
+    Computed once per round and shared by every candidate that round, so the gate
+    costs one extra set of trials rather than one per skill. Pairing matters more
+    than freshness here: the comparison must be against the same instances, since
+    instance difficulty varies far more than the effect being measured.
+    """
+    chosen = list(trial_specs[:trials])
+    if not chosen:
+        return 0.0
+    if budget is not None:
+        for _ in chosen:
+            budget.charge_admission(1)
+    scores = _run_parallel(
+        [lambda spec=spec: run_instance_trial(None, spec, task, actor_factory)
+         for spec in chosen],
+        concurrency,
+    )
+    return sum(scores) / len(scores)
+
+
 def admit_skills(
     skills: Iterable[Any],
     trial_specs: Sequence[MazeInstanceSpec],
@@ -134,6 +215,10 @@ def admit_skills(
     threshold: float = DEFAULT_PROGRESS_THRESHOLD,
     max_tests: Optional[int] = None,
     budget: Any = None,
+    control_mean: Optional[float] = None,
+    margin: float = DEFAULT_ADMISSION_MARGIN,
+    whole_instance: bool = False,
+    concurrency: int = 1,
 ) -> tuple[list[Any], list[AdmissionResult]]:
     """Gate candidate skills. Returns ``(admitted, all_results)``.
 
@@ -182,26 +267,52 @@ def admit_skills(
 
         judged += 1
         chosen = list(trial_specs[:trials])
-        scores: list[float] = []
-        passes = 0
-        for spec in chosen:
-            if budget is not None:
+        if budget is not None:
+            for _ in chosen:
                 budget.charge_admission(1)
-            reached, score = run_trial(
-                skill, spec, task, actor_factory, render_block=render_block
+
+        block = render_block(_solo_bank(skill)) if whole_instance else None
+
+        def _one(spec, _skill=skill, _block=block):
+            if whole_instance:
+                score = run_instance_trial(_block, spec, task, actor_factory)
+                return score >= 1.0, score
+            return run_trial(
+                _skill, spec, task, actor_factory, render_block=render_block
             )
-            scores.append(score)
-            passes += int(score >= threshold if threshold < 1.0 else reached)
+
+        outcomes = _run_parallel(
+            [lambda spec=spec: _one(spec) for spec in chosen], concurrency
+        )
+        scores = [score for _, score in outcomes]
+        passes = sum(
+            int(score >= threshold if threshold < 1.0 else reached)
+            for reached, score in outcomes
+        )
 
         mean_score = sum(scores) / len(scores) if scores else 0.0
-        keep = passes > 0
+        # Admit on a *paired* comparison against the same instances run with no
+        # bank, not on an absolute pass count. `passes > 0` at a ~28% base rate
+        # over three trials admits roughly two thirds of candidates on luck alone,
+        # which is not a gate. The control is computed once per round and shared
+        # across candidates, so it costs one set of trials rather than one per
+        # skill. `margin` keeps a skill that merely ties from displacing nothing:
+        # a tie is not evidence of use.
+        if control_mean is None:
+            keep = passes > 0
+        else:
+            keep = mean_score >= control_mean + margin
         results.append(AdmissionResult(
             skill_id=skill_id,
             problem_id=chosen[0].instance_id if chosen else "",
             admitted=keep,
             trials=len(chosen),
             successes=passes,
-            reason=f"mean_progress={mean_score:.2f}" + ("" if keep else " below threshold"),
+            reason=(
+                f"mean={mean_score:.2f}"
+                + (f" vs control {control_mean:.2f}" if control_mean is not None else "")
+                + ("" if keep else " -- not above control")
+            ),
             injected=True,
         ))
         if keep:

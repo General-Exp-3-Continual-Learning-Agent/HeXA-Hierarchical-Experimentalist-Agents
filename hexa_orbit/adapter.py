@@ -40,6 +40,7 @@ removed.
 
 from __future__ import annotations
 
+import threading
 from dataclasses import dataclass, field
 from typing import Any, Callable, Iterator, Sequence
 
@@ -49,8 +50,16 @@ from .pools import (
     EVAL_POOL_SIZE,
     MazeInstanceSpec,
     build_pool,
+    dedup_by_layout,
     published_maze_config,
 )
+
+#: Guards maze generation against concurrent resets. Module-level because the RNG
+#: it protects is global to the process, so a per-instance lock would guard
+#: nothing. `test_maze_generation_stays_correct_under_thread_pressure` is the
+#: probe: with this removed it reports ~5/144 mazes corrupted.
+_GENERATION_LOCK = threading.Lock()
+
 
 #: D2: episodes per instance, counted rather than derived from a step budget.
 EPISODES_PER_INSTANCE = 3
@@ -99,6 +108,14 @@ class EpisodeRecord:
     #: per episode because the reward mapping's "exploratory failure" vs "no
     #: adaptation across own episodes" bins compare episodes *to each other*.
     visited: set[tuple[int, int]] = field(default_factory=set)
+    #: Fraction of the shortest path this episode closed at its best, in [0, 1]:
+    #: 1.0 on a solve, 0.0 if the agent never left the start cell. Computed from
+    #: the known map (`oracle.optimal_steps`) and therefore NEVER shown to the
+    #: agent -- it is a grading signal only. `reward.graded_failure_reward` needs
+    #: it because 46% of arm-A instances are unsolved and collapse to a single
+    #: -0.5, leaving the evolver's "most damning failure" sort a tie broken by
+    #: list order.
+    progress: float = 0.0
 
 
 class MazeInstance:
@@ -140,6 +157,7 @@ class MazeInstance:
         self._episode_step = 0
         self._total_steps = 0
         self._visited: set[tuple[int, int]] = set()
+        self._episode_cells: set[tuple[int, int]] = set()
         self._done = True
 
     # ── identity ──────────────────────────────────────────────────────────
@@ -160,16 +178,55 @@ class MazeInstance:
     # ── driving ───────────────────────────────────────────────────────────
 
     def _reset_inner(self) -> str:
-        obs, _ = self._env.reset(seed=self.spec.dataset_seed)
+        # Serialised: `MazeEnvAdapter.reset` is the only RNG-touching call, and it
+        # reseeds the *global* numpy RNG before making hundreds of draws from it.
+        # Two concurrent resets interleave those draws and one instance gets a maze
+        # that is not the one its `maze_hash` identifies -- silently, since both
+        # mazes are individually valid. That breaks instance identity (D6), which
+        # every disjointness and leakage claim rests on. Held only around
+        # generation, so the model calls that dominate wall-clock stay concurrent.
+        with _GENERATION_LOCK:
+            obs, _ = self._env.reset(seed=self.spec.dataset_seed)
         self._episode_step = 0
         self._track()
         return obs
 
     def _track(self) -> None:
         try:
-            self._visited.add(tuple(self._env.get_state_id()))
+            cell = tuple(self._env.get_state_id())
+            self._visited.add(cell)
+            # Kept separately from `_visited`, which is instance-wide on purpose
+            # (it feeds ORBIT's trajectory-wide `maze/unique_visited_states`).
+            # Progress is per episode, so it needs a set that resets with one.
+            self._episode_cells.add(cell)
         except Exception:  # never let bookkeeping break the env loop
             pass
+
+    def _episode_progress(self, success: bool) -> float:
+        """Best fraction of the shortest path closed during this episode.
+
+        ``1.0`` on a solve without consulting the map -- the goal is distance 0 by
+        definition, and short-circuiting avoids depending on whether the terminal
+        cell was tracked before the env reset. Otherwise the closest cell reached
+        is scored by its remaining known-map distance. Defensive throughout for the
+        same reason as :meth:`_track`: this is grading, and a grading failure must
+        never take down the episode loop.
+        """
+        if success:
+            return 1.0
+        try:
+            from . import oracle  # noqa: PLC0415
+
+            total = int(self.spec.shortest_path_len)
+            if total <= 0 or self._env.map is None or not self._episode_cells:
+                return 0.0
+            remaining = min(
+                oracle.optimal_steps(self._env.map, cell)
+                for cell in self._episode_cells
+            )
+            return max(0.0, min(1.0, (total - remaining) / total))
+        except Exception:
+            return 0.0
 
     def reset(self) -> str:
         """Start the instance. Returns the first observation, header included."""
@@ -177,6 +234,7 @@ class MazeInstance:
         self._episode_index = 0
         self._total_steps = 0
         self._visited = set()
+        self._episode_cells = set()
         self._done = False
         return format_observation(self._reset_inner(), self._episode_index)
 
@@ -208,8 +266,10 @@ class MazeInstance:
                 steps=self._episode_step,
                 reached_goal=bool(info.get("is_correct", success)),
                 visited=set(self._visited),
+                progress=self._episode_progress(success),
             )
         )
+        self._episode_cells = set()
 
         # D2: count episodes, not steps. This is the whole point of the class.
         if len(self.episodes) >= self.num_episodes:
@@ -310,10 +370,22 @@ class MazeTask:
         self.global_seed = global_seed
         self.num_episodes = num_episodes
 
-    def train_specs(self, n: int, seed: int | None = None) -> list[MazeInstanceSpec]:
-        return build_pool(
+    def train_specs(
+        self, n: int, seed: int | None = None, *, dedup_layouts: bool = True
+    ) -> list[MazeInstanceSpec]:
+        """The training pool, deduplicated by maze layout by default.
+
+        ``dedup_layouts`` drops seeds resolving to a maze already in the pool, so
+        the result is shorter than the ``n`` seeds drawn -- 512 seeds give 459
+        layouts. Without it a long run eventually replays a maze the bank was
+        distilled from and trips ``HexaRunResult.streaming_leak``, which is what
+        ended the v2 run after ten rounds. Pass ``False`` to reproduce a pool built
+        before this existed.
+        """
+        specs = build_pool(
             self.task_cfg, n, is_train=True, global_seed=seed or self.global_seed
         )[:n]
+        return dedup_by_layout(specs) if dedup_layouts else specs
 
     def eval_specs(self, n: int = EVAL_POOL_SIZE) -> list[MazeInstanceSpec]:
         """ORBIT's published eval pool, optionally truncated to a prefix.

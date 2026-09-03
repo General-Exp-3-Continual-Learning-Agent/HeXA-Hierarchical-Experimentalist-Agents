@@ -160,6 +160,8 @@ def instance_trajectory(
         "success_count": run.success_count,
         "first_success_episode": first_success_episode(run.episode_successes),
         "adapted_across_episodes": run.adapted_across_episodes,
+        "best_progress": run.best_progress,
+        "episode_progress": list(run.episode_progress),
         "shortest_path_len": run.shortest_path_len,
         "num_episodes": EPISODES_PER_INSTANCE,
         "leaked": run.leaked,
@@ -239,7 +241,19 @@ def load_instance_trajectories(
         print(f"[Warning] Run directory not found: {traj_dir}")
         return successes, failures
 
-    for file in sorted(traj_dir.glob("*.jsonl")):
+    # `runs.jsonl` only, NOT `*.jsonl`. A round directory also holds
+    # `runs.partial.jsonl` -- the crash-safety file written per instance as it lands
+    # -- which contains the same runs. Globbing `*.jsonl` loaded all 20 instances
+    # TWICE (measured: 16 successes + 24 failures from 20 instances), so the
+    # evolver's 6 slots could be filled with duplicate transcripts and the reported
+    # "of N available" counts were doubled. Confidences were unaffected, since
+    # `_compute_initial_confidence` dedups by seed.
+    candidates = sorted(traj_dir.glob("runs.jsonl"))
+    if not candidates:
+        # A round interrupted before its ordered file was written still has its
+        # partial rows; better to evolve from those than from nothing.
+        candidates = sorted(traj_dir.glob("runs.partial.jsonl"))
+    for file in candidates:
         for run in read_runs(file):
             if run.error is not None:
                 continue

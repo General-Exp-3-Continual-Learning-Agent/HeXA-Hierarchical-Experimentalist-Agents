@@ -234,3 +234,25 @@ def test_accepts_a_bank_using_only_real_actions():
     good = (r"[Strategy: Reveal deduced-safe cells] Example: \boxed{reveal 2 3}. "
             r"Flag a cell only when forced: \boxed{flag 0 1}.")
     assert bank_invokes_unknown_action(good, "minesweeper") == []
+
+
+def test_a_runaway_turn_cannot_blow_up_the_teacher_prompt():
+    """A turn that emits no `\\boxed{}` must not paste its reasoning into the prompt.
+
+    `extract_last_boxed` returns the whole response when no box is present, and
+    that string is recorded as the step's action. Unclamped, one runaway turn made
+    a single Wordle trajectory 24,749 tokens against a ~1,800-token norm, which
+    overflowed the 32k Qwen context on every round and silently froze the bank for
+    a whole 13-round run.
+    """
+    runaway = "Okay, let me think about this. " * 1000
+    rendered = source_teacher._render_action(runaway)
+    assert len(rendered) < 200
+    assert "unparsed" in rendered
+    assert rendered.startswith("Okay, let me think about this.")
+
+
+def test_a_normal_action_is_rendered_untouched():
+    assert source_teacher._render_action(r"\boxed{CRANE}") == "CRANE"
+    assert source_teacher._render_action(r"\boxed{reveal 2 3}") == "reveal 2 3"
+    assert source_teacher._render_action("") == "(none)"

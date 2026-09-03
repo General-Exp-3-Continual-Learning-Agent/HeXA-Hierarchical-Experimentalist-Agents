@@ -147,6 +147,39 @@ def _register_envs_package(root: Path) -> None:
     sys.modules["envs"] = pkg
 
 
+def _add_vendored_gem(root: Path) -> bool:
+    """Put ORBIT's vendored GEM on ``sys.path``. Returns whether it is importable.
+
+    Needed for any GEM-backed task (Mastermind, Minesweeper): the adapters do
+    ``import gem``, and GEM ships inside ORBIT at ``third_party/gem`` rather than
+    being installed. Unlike the ``envs`` package this is a *real* import -- GEM's
+    ``__init__`` builds the environment registry that ``gem.make`` reads, so it
+    cannot be skipped the way ``envs/__init__`` is.
+
+    ``gem.envs.__init__`` imports ``reasoning_gym`` at module level, so that
+    package must be installed (``pip install reasoning-gym``) even for tasks that
+    do not use it. Returns False rather than raising when it is missing, so a
+    maze-only run is unaffected by a GEM dependency it never touches.
+    """
+    vendored = root / "third_party" / "gem"
+    if not (vendored / "gem" / "__init__.py").exists():
+        return False
+    if str(vendored) not in sys.path:
+        sys.path.append(str(vendored))
+    try:
+        import gem  # noqa: F401,PLC0415
+    except ImportError:
+        return False
+    return True
+
+
+@lru_cache(maxsize=1)
+def gem_available() -> bool:
+    """Whether GEM-backed tasks can be constructed in this environment."""
+    install_orbit_on_path()
+    return _add_vendored_gem(orbit_repo_root())
+
+
 @lru_cache(maxsize=1)
 def install_orbit_on_path() -> str:
     """Put ORBIT's root on ``sys.path`` and install the rLLM shim.

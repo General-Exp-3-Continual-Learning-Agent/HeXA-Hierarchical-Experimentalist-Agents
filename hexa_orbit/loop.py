@@ -21,8 +21,12 @@ evolution from the runs on disk) from "died mid-batch" (redo the round).
 
 from __future__ import annotations
 
+import copy
 import json
+import re
 import logging
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Iterable, Optional, Sequence
@@ -32,6 +36,7 @@ from . import report as report_mod
 from . import teacher as teacher_mod
 from . import trajectory as trajectory_mod
 from .actor import ActorConfig, GenerationFailed, InstanceRun, MazeActor
+from . import admission as admission_mod
 from .admission import accept_rate, admit_skills
 from .adapter import MazeTask
 from .pools import MazeInstanceSpec, leakage_split
@@ -48,6 +53,25 @@ MAX_MISTAKES = 5
 #: Token budget for the injected block, tracking CORE's reported 0.92k so the
 #: added-token axis stays comparable across our own arms.
 INJECTION_BUDGET_TOKENS = 1000
+
+#: Task family the bank is keyed under. Mutable because the loop is otherwise
+#: task-agnostic -- it drives whatever `task` object it is handed -- and the only
+#: maze-specific things left are this string, the type annotations (structural,
+#: not enforced) and the leakage split. Wrapped in a list for the same reason
+#: `reward.GRADED_FAILURES` is: a module-level rebind would not reach callers that
+#: already did `from .loop import LEVEL`.
+_LEVEL = ["maze"]
+
+
+def level() -> str:
+    """The task family currently being run."""
+    return _LEVEL[0]
+
+
+def set_level(name: str) -> None:
+    """Point the loop at a different task family (e.g. ``"mastermind"``)."""
+    _LEVEL[0] = str(name)
+
 
 LEVEL = "maze"
 
@@ -70,6 +94,13 @@ class RoundRecord:
     injection: dict[str, Any]
     confidence_stats: dict[str, int]
     n_errored: int = 0
+    #: True when evolution returned a bank identical to the one it started from.
+    #: `evolve_skill_bank` handles an unparseable teacher response by printing a
+    #: warning and **returning the previous bank**, so a round that taught the
+    #: bank nothing is otherwise indistinguishable from one where the teacher had
+    #: nothing to add. That matters much more with a small teacher: a 7B model
+    #: emitting strict JSON for a whole bank is exactly where this fails.
+    bank_unchanged: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -85,6 +116,7 @@ class RoundRecord:
             "injection": self.injection,
             "confidence_stats": self.confidence_stats,
             "n_errored": self.n_errored,
+            "bank_unchanged": self.bank_unchanged,
         }
 
 
@@ -92,7 +124,7 @@ class RoundRecord:
 class HexaRunResult:
     """Everything a run produced, plus the assertions that make it trustworthy."""
 
-    task_name: str = LEVEL
+    task_name: str = field(default_factory=level)
     rounds: list[RoundRecord] = field(default_factory=list)
     consumed_ids: set[str] = field(default_factory=set)
     manifest: dict[str, Any] = field(default_factory=dict)
@@ -121,6 +153,7 @@ class HexaRunResult:
             "manifest": self.manifest,
             "rounds": [r.to_dict() for r in self.rounds],
             "rounds_completed": len(self.rounds),
+            "rounds_bank_unchanged": sum(1 for r in self.rounds if r.bank_unchanged),
             "n_consumed_instances": len(self.consumed_ids),
             "streaming_leak": self.streaming_leak,
             "stopped_early": self.stopped_early,
@@ -131,17 +164,132 @@ class HexaRunResult:
 
 # ── retrieval and injection ──────────────────────────────────────────────
 
-def render_block(bank: Any, *, budget_tokens: int = INJECTION_BUDGET_TOKENS) -> Any:
-    """Retrieve a token-capped block from *bank* (M7). Returns a ``RetrievedBlock``."""
+def render_block(
+    bank: Any,
+    *,
+    budget_tokens: int = INJECTION_BUDGET_TOKENS,
+    top_k: Optional[int] = None,
+) -> Any:
+    """Retrieve a token-capped block from *bank* (M7). Returns a ``RetrievedBlock``.
+
+    ``top_k`` caps how many skills are injected, highest-confidence first, instead
+    of the full :data:`MAX_SKILLS`. It exists to separate two things the design
+    conflates: whether the bank *contains* useful skills, and whether injecting all
+    of them helps. On gpt-oss-120b the distilled bank was good -- procedures with
+    explicit triggers, including the cross-episode divergence rule that the
+    trajectory analysis independently identifies as the driver -- and injecting all
+    seven of them cost 15.2 points of episode-3 accuracy against no bank at all
+    (p=0.0002), with the bankless round of that same run scoring 0.750 against a
+    banked mean near 0.35. Mistakes are dropped with ``top_k`` too: the point is to
+    test a minimal injection, not a slightly smaller one.
+    """
     from hexa_core.hexa_bridge import retrieve_within_token_budget  # noqa: PLC0415
 
     return retrieve_within_token_budget(
         bank,
-        LEVEL,
+        level(),
         budget_tokens,
         max_general=0,       # single task family; cross-task transfer is Design C
-        max_specific=MAX_SKILLS,
-        max_mistakes=MAX_MISTAKES,
+        max_specific=MAX_SKILLS if top_k is None else int(top_k),
+        max_mistakes=MAX_MISTAKES if top_k is None else 0,
+    )
+
+
+#: A skill that only makes sense once an earlier episode exists. Matched on the
+#: rendered text because that is what the agent reads; the teacher is not asked to
+#: label this, so the classifier has to work on banks already on disk.
+_NEEDS_PRIOR_EPISODE = re.compile(
+    r"episode\s*1|earlier episode|prior episode|previous episode|previously "
+    r"(?:visited|explored)|prior exploration|later episode|subsequent episode|"
+    r"across episodes|from the (?:first|last) episode",
+    re.IGNORECASE,
+)
+
+
+def requires_prior_episode(item: Any) -> bool:
+    """Whether *item* (a Skill or Mistake) is unusable in episode 1."""
+    parts = [
+        str(getattr(item, field, "") or "")
+        for field in (
+            "principle", "when_to_apply", "example",
+            "description", "why_it_happens", "how_to_avoid",
+        )
+    ]
+    return bool(_NEEDS_PRIOR_EPISODE.search(" ".join(parts)))
+
+
+def _filtered_bank(bank: Any, level_name: Optional[str] = None) -> Any:
+    """A shallow copy of *bank* holding only what episode 1 can act on."""
+    level_name = level_name or level()
+    clone = copy.copy(bank)
+    clone.level_skills = {
+        lvl: [s for s in skills if not requires_prior_episode(s)]
+        for lvl, skills in (getattr(bank, "level_skills", {}) or {}).items()
+    }
+    clone.level_mistakes = {
+        lvl: [m for m in mistakes if not requires_prior_episode(m)]
+        for lvl, mistakes in (getattr(bank, "level_mistakes", {}) or {}).items()
+    }
+    clone.general_skills = [
+        s for s in (getattr(bank, "general_skills", []) or [])
+        if not requires_prior_episode(s)
+    ]
+    clone.common_mistakes = [
+        m for m in (getattr(bank, "common_mistakes", []) or [])
+        if not requires_prior_episode(m)
+    ]
+    return clone
+
+
+def render_blocks_by_episode(
+    bank: Any, *, budget_tokens: int = INJECTION_BUDGET_TOKENS
+) -> dict[int, str]:
+    """``{0: episode-1 block, 1: full block}`` for per-episode injection.
+
+    **Why the bank is split rather than injected whole.** A block is paid for on
+    every turn of every episode, but much of it is inert in episode 1: in v3's
+    final bank, 3 of 5 skills and 1 of 2 mistakes are phrased "based on prior
+    exploration data", so ~60% of ~700 tokens described data the agent did not yet
+    have. Across v1/v2/v3 episode-1 accuracy came in at -4.1, -1.6 and -2.9 points
+    against the no-bank baseline while multi-episode success rose to +9.5 -- the
+    shape you get when a block helps later episodes and taxes the first.
+
+    Episodes 2+ get the whole bank, including the reuse skills, which is where
+    those skills are worth their tokens. Returns an empty dict for a bank with
+    nothing to say, so the caller injects nothing rather than an empty heading.
+    """
+    if bank is None:
+        return {}
+    first = render_block(_filtered_bank(bank), budget_tokens=budget_tokens)
+    rest = render_block(bank, budget_tokens=budget_tokens)
+    out: dict[int, str] = {}
+    def _has_content(block: Any) -> bool:
+        # `RetrievedBlock` exposes `skills`/`mistakes` lists, not counts -- reading
+        # `n_skills` off it silently yields the getattr default and drops the block.
+        if block is None:
+            return False
+        return bool(getattr(block, "skills", []) or getattr(block, "mistakes", []))
+
+    if _has_content(first):
+        out[0] = first.block_text
+    if _has_content(rest):
+        out[1] = rest.block_text
+    return out
+
+
+def bank_fingerprint(bank: Any, level_name: Optional[str] = None) -> frozenset[tuple[str, str]]:
+    """Content identity of a bank: the (title, principle) pairs it holds.
+
+    Compared across a round to detect an evolution that changed nothing. Ignores
+    ids, confidence and generation on purpose -- those move even when the advice
+    does not, so including them would mask exactly the case this exists to catch.
+    """
+    level_name = level_name or level()
+    if bank is None:
+        return frozenset()
+    skills = list((getattr(bank, "level_skills", {}) or {}).get(level_name, []))
+    return frozenset(
+        (getattr(s, "title", ""), getattr(s, "principle", "")) for s in skills
     )
 
 
@@ -170,19 +318,68 @@ def play_batch(
     leaked_ids: Optional[set[str]] = None,
     budget: Any = None,
     on_instance: Optional[Callable[[int, InstanceRun], None]] = None,
+    concurrency: int = 1,
+    partial_path: Optional[Path] = None,
+    carry_over: str = "",
 ) -> tuple[list[InstanceRun], list[InstanceRun]]:
-    """Play a batch serially (D5). Returns ``(completed, errored)``.
+    """Play a batch. Returns ``(completed, errored)``, in input order.
+
+    ``concurrency`` runs that many instances at once. Reproducibility survives it
+    because :data:`~hexa_orbit.adapter._RESET_LOCK` serialises the only part of the
+    environment that touches the global RNG (maze generation); everything a
+    concurrent thread does afterwards -- stepping, and the model call that dominates
+    the wall clock -- is instance-local. See D5 for why this is a refinement of
+    "run serially" rather than an abandonment of it.
+
+    Results come back in **input order** regardless of completion order, so
+    ``runs.jsonl`` is byte-comparable between a serial and a concurrent run of the
+    same batch.
+
+    ``partial_path`` appends each run **as it finishes**, which is crash safety for
+    long runs: a 256-instance arm is ~2 hours at ``concurrency=8``, and a walltime
+    kill or a server death at 90 minutes must not lose the work. The partial file is
+    in *completion* order and is therefore not the artifact of record -- the caller
+    writes the ordered ``runs.jsonl`` from the return value once the batch is done.
+    Keeping the two separate is what lets crash safety and order stability coexist.
 
     An instance whose generation fails is recorded with ``error`` set and excluded
     from everything downstream -- a transport failure is evidence of nothing, and
     folding it in as a failure would depress the round's reward distribution for a
     reason unrelated to the agent.
     """
-    completed: list[InstanceRun] = []
-    errored: list[InstanceRun] = []
     leaked_ids = leaked_ids or set()
+    partial_lock = threading.Lock()
+    done_count = [0]
+    if partial_path is not None:
+        Path(partial_path).parent.mkdir(parents=True, exist_ok=True)
+        # `carry_over` preserves rows from an earlier, interrupted pass; empty
+        # truncates, which is what a fresh run wants.
+        Path(partial_path).write_text(carry_over)
 
-    for position, spec in enumerate(specs, start=1):
+    def record_partial(run: InstanceRun) -> None:
+        if partial_path is None:
+            return
+        # Serialised and flushed per run: an unflushed buffer is not crash safety.
+        with partial_lock, Path(partial_path).open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(run.to_dict(), ensure_ascii=False) + "\n")
+            handle.flush()
+
+    def report_progress(run: InstanceRun) -> None:
+        """Call ``on_instance`` as each run lands, not after the whole batch.
+
+        ``pool.map`` does not yield until every task is done, so reporting from the
+        collection loop would print nothing for the hours a 256-instance arm takes
+        and then everything at once. The counter is completion order, which is what
+        a progress line wants; ordered results still come from the return value.
+        """
+        if on_instance is None:
+            return
+        with partial_lock:
+            done_count[0] += 1
+            position = done_count[0]
+        on_instance(position, run)
+
+    def play(spec: MazeInstanceSpec) -> InstanceRun:
         instance = task.instance(spec)
         # The instance is passed as well as the guidelines: a stub or oracle-driven
         # actor legitimately needs the live environment (it reads the map), and
@@ -192,7 +389,8 @@ def play_batch(
         try:
             run = actor.run_instance(instance, leaked=spec.instance_id in leaked_ids)
         except GenerationFailed as exc:
-            run = InstanceRun(
+            logger.warning("instance %s errored: %s", spec.instance_id, exc)
+            failed = InstanceRun(
                 instance_id=spec.instance_id,
                 dataset_seed=spec.dataset_seed,
                 resolved_seed=spec.resolved_seed,
@@ -203,17 +401,31 @@ def play_batch(
                 success_count=0, added_tokens=0, token_counter="",
                 error=f"{type(exc).__name__}: {exc}",
             )
+            record_partial(failed)
+            report_progress(failed)
+            return failed
+        record_partial(run)
+        report_progress(run)
+        return run
+
+    specs = list(specs)
+    if concurrency > 1 and len(specs) > 1:
+        with ThreadPoolExecutor(max_workers=min(concurrency, len(specs))) as pool:
+            runs = list(pool.map(play, specs))
+    else:
+        runs = [play(spec) for spec in specs]
+
+    completed: list[InstanceRun] = []
+    errored: list[InstanceRun] = []
+    for run in runs:
+        if run.error is not None:
             errored.append(run)
-            logger.warning("instance %s errored: %s", spec.instance_id, exc)
         else:
             completed.append(run)
             if budget is not None:
                 budget.charge_train_solve(len(run.steps))
-        if on_instance is not None:
-            on_instance(position, run)
 
     return completed, errored
-
 
 # ── evolution ────────────────────────────────────────────────────────────
 
@@ -242,7 +454,7 @@ def evolve(
 
     if round_index > 0 and prev_bank is not None:
         return evolve_skill_bank(
-            LEVEL,
+            level(),
             prev_bank,
             round_dir,
             output_path,
@@ -251,12 +463,19 @@ def evolve(
             teacher_model=teacher_model,
         )
 
-    successes, failures = trajectory_mod.load_instance_trajectories(round_dir)
+    # Whatever the task installed, not Maze's: `hexa_bridge.patch` rebinds
+    # `load_trajectories` in both distillation consumers, and reading through that
+    # binding is what keeps the seeding path on the same trajectories the evolver
+    # will see. Hardcoding `trajectory_mod` here fed Mastermind runs through Maze's
+    # position parser, which yields a turn table of "?" for every guess.
+    from skillrl.distillation.distill import load_trajectories  # noqa: PLC0415
+
+    successes, failures = load_trajectories(round_dir, level())
     bank = SkillBank()
-    skills = distill_contrastive(LEVEL, successes, failures, teacher_model=teacher_model)
-    mistakes, partial = distill_mistakes(LEVEL, failures, teacher_model=teacher_model)
-    bank.level_skills[LEVEL] = (skills + partial)[:MAX_SKILLS]
-    bank.level_mistakes[LEVEL] = mistakes[:MAX_MISTAKES]
+    skills = distill_contrastive(level(), successes, failures, teacher_model=teacher_model)
+    mistakes, partial = distill_mistakes(level(), failures, teacher_model=teacher_model)
+    bank.level_skills[level()] = (skills + partial)[:MAX_SKILLS]
+    bank.level_mistakes[level()] = mistakes[:MAX_MISTAKES]
     bank.save(output_path)
     return bank
 
@@ -317,6 +536,11 @@ def run_hexa_loop(
     admission_enabled: bool = False,
     admission_trials: int = 3,
     injection_budget_tokens: int = INJECTION_BUDGET_TOKENS,
+    concurrency: int = 1,
+    evolver_v2: bool = False,
+    teacher_install: Optional[Callable[[], None]] = None,
+    per_episode_injection: bool = False,
+    inject_top_k: Optional[int] = None,
     resume: bool = True,
     manifest: Optional[dict[str, Any]] = None,
 ) -> HexaRunResult:
@@ -324,7 +548,17 @@ def run_hexa_loop(
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    teacher_mod.install()
+    # Which task's prompts, formatter and trajectory loader the shared distillation
+    # code runs with. Defaults to Maze so every existing caller is unchanged; a
+    # different task passes its own. This was hardcoded, and because
+    # `hexa_bridge.patch` rebinds `load_trajectories` in both consumers, a
+    # Mastermind run that had already installed its own loader had it silently
+    # replaced here -- the evolver then read the round with Maze's loader and
+    # reported "0 successes, 0 failures" on a directory holding six runs.
+    if teacher_install is not None:
+        teacher_install()
+    else:
+        teacher_mod.install(reward_bin_selection=evolver_v2)
 
     start_round, bank, consumed = (
         resume_state(out_dir) if resume else (0, None, set())
@@ -347,14 +581,26 @@ def run_hexa_loop(
         round_dir.mkdir(parents=True, exist_ok=True)
 
         # Retrieve once per round; the bank does not move during it.
-        block = render_block(bank, budget_tokens=injection_budget_tokens) if bank else None
-        guidelines = block.block_text if block else None
+        block = render_block(
+            bank, budget_tokens=injection_budget_tokens, top_k=inject_top_k
+        ) if bank else None
+        # A dict here is an episode-indexed injection (see
+        # `render_blocks_by_episode`); `MazeActor` accepts either shape, and a
+        # plain string reproduces the behaviour every completed run used.
+        guidelines: Any
+        if per_episode_injection and bank is not None:
+            guidelines = render_blocks_by_episode(
+                bank, budget_tokens=injection_budget_tokens
+            ) or None
+        else:
+            guidelines = block.block_text if block else None
 
-        n_before = len((getattr(bank, "level_skills", {}) or {}).get(LEVEL, [])) if bank else 0
+        n_before = len((getattr(bank, "level_skills", {}) or {}).get(level(), [])) if bank else 0
         teacher_mod.reset_confidence_stats()
 
         completed, errored = play_batch(
             task, batch, actor_factory, guidelines, budget=budget,
+            concurrency=concurrency, partial_path=round_dir / "runs.partial.jsonl",
             on_instance=lambda i, r: logger.info(
                 "round %d [%d/%d] %s R=%d/3", round_index, i, len(batch),
                 r.instance_id, r.success_count),
@@ -363,15 +609,40 @@ def run_hexa_loop(
         result.consumed_ids |= {s.instance_id for s in batch}
 
         # Evolve. bank.json is written by `evolve`, AFTER the round's runs exist.
+        before_fingerprint = bank_fingerprint(bank)
         new_bank = evolve(
             round_dir, bank, round_index=round_index, teacher_model=teacher_model
         )
+        bank_unchanged = (
+            round_index > 0 and bank_fingerprint(new_bank) == before_fingerprint
+        )
+        if bank_unchanged:
+            logger.warning(
+                "round %d: evolution returned an IDENTICAL bank. Either the teacher "
+                "had nothing to add, or its response failed to parse and "
+                "evolve_skill_bank fell back to the previous bank. Check the round "
+                "log for a teacher warning before reading this as convergence.",
+                round_index,
+            )
 
         # Admission: trial candidates on training instances outside this round.
         candidates = [
-            s for s in (getattr(new_bank, "level_skills", {}) or {}).get(LEVEL, [])
+            s for s in (getattr(new_bank, "level_skills", {}) or {}).get(level(), [])
             if getattr(s, "is_new", True)
         ] if admission_enabled else []
+        # The no-bank control on the same trial instances, computed once and
+        # shared by every candidate this round. Without it the gate reduces to
+        # "did three trials contain a success", which at this base rate admits
+        # about two thirds of candidates on luck. Skipped entirely when the gate
+        # is off, so an ungated run costs exactly what it did before.
+        control_mean = None
+        if admission_enabled and candidates:
+            control_mean = admission_mod.control_mean_score(
+                remaining[:admission_trials], task, actor_factory,
+                trials=admission_trials, budget=budget, concurrency=concurrency,
+            )
+            logger.info("admission control (no bank): mean score %.3f", control_mean)
+
         admitted, admission_results = admit_skills(
             candidates,
             remaining[:admission_trials],
@@ -381,14 +652,19 @@ def run_hexa_loop(
             trials=admission_trials,
             enabled=admission_enabled,
             budget=budget,
+            control_mean=control_mean,
+            # Whole-instance trials: a single-episode trial cannot express a
+            # cross-episode skill, and episode 3 is the endpoint.
+            whole_instance=True,
+            concurrency=concurrency,
         )
         if admission_enabled:
             kept = {getattr(s, "skill_id", None) for s in admitted}
             surviving = [
-                s for s in (getattr(new_bank, "level_skills", {}) or {}).get(LEVEL, [])
+                s for s in (getattr(new_bank, "level_skills", {}) or {}).get(level(), [])
                 if not getattr(s, "is_new", True) or getattr(s, "skill_id", None) in kept
             ]
-            new_bank.level_skills[LEVEL] = surviving
+            new_bank.level_skills[level()] = surviving
             new_bank.save(round_dir / "bank.json")
 
         trajectories = [trajectory_mod.instance_trajectory(r) for r in completed]
@@ -399,7 +675,7 @@ def run_hexa_loop(
 
         round_audit = audit_mod.audit_bank(
             new_bank,
-            level_name=LEVEL,
+            level_name=level(),
             round_index=round_index,
             known_ids=[t["seed"] for t in trajectories],
         )
@@ -416,13 +692,14 @@ def run_hexa_loop(
             summary=report_mod.arm_summary(completed),
             reward_bins=bins,
             n_skills_before=n_before,
-            n_skills_after=len((getattr(new_bank, "level_skills", {}) or {}).get(LEVEL, [])),
-            n_mistakes_after=len((getattr(new_bank, "level_mistakes", {}) or {}).get(LEVEL, [])),
+            n_skills_after=len((getattr(new_bank, "level_skills", {}) or {}).get(level(), [])),
+            n_mistakes_after=len((getattr(new_bank, "level_mistakes", {}) or {}).get(level(), [])),
             admission=accept_rate(admission_results),
             audit=round_audit,
             injection={k: v for k, v in injection.items() if k != "block_text"},
             confidence_stats=teacher_mod.confidence_stats(),
             n_errored=len(errored),
+            bank_unchanged=bank_unchanged,
         ))
         bank = new_bank
         logger.info(audit_mod.format_audit(round_audit))
@@ -448,6 +725,9 @@ def frozen_eval(
     train_specs: Sequence[MazeInstanceSpec] = (),
     injection_budget_tokens: int = INJECTION_BUDGET_TOKENS,
     budget: Any = None,
+    concurrency: int = 1,
+    per_episode_injection: bool = False,
+    inject_top_k: Optional[int] = None,
 ) -> dict[str, Any]:
     """Evaluate on held-out instances with the bank frozen -- no writes, ever.
 
@@ -459,16 +739,35 @@ def frozen_eval(
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    block = render_block(bank, budget_tokens=injection_budget_tokens) if bank else None
-    guidelines = block.block_text if block else None
-    leaked_ids = {
-        s.instance_id
-        for s in leakage_split(eval_specs, list(train_specs))["leaked"]
-    } if train_specs else set()
+    block = render_block(
+        bank, budget_tokens=injection_budget_tokens, top_k=inject_top_k
+    ) if bank else None
+    # A dict here is an episode-indexed injection (see `render_blocks_by_episode`);
+    # `MazeActor` accepts either shape, and a plain string reproduces the behaviour
+    # every completed run used.
+    guidelines: Any
+    if per_episode_injection and bank is not None:
+        guidelines = render_blocks_by_episode(
+            bank, budget_tokens=injection_budget_tokens
+        ) or None
+    else:
+        guidelines = block.block_text if block else None
+    # Maze-only: 19% of Maze eval layouts also appear in the train pool, which is
+    # tolerated and reported as a split. Mastermind pools are disjoint by
+    # construction -- the code *is* the instance, so a shared code would be the
+    # answer, and `mastermind.assert_disjoint` refuses it outright. Guarded on the
+    # field rather than on a task name so a new task gets the safe default.
+    leaked_ids: set[str] = set()
+    if train_specs and hasattr(eval_specs[0], "maze_hash"):
+        leaked_ids = {
+            s.instance_id
+            for s in leakage_split(eval_specs, list(train_specs))["leaked"]
+        }
 
     completed, errored = play_batch(
         task, eval_specs, actor_factory, guidelines,
-        leaked_ids=leaked_ids, budget=budget,
+        leaked_ids=leaked_ids, budget=budget, concurrency=concurrency,
+        partial_path=out_dir / "runs.partial.jsonl",
         on_instance=lambda i, r: logger.info(
             "eval [%d/%d] %s R=%d/3%s", i, len(eval_specs), r.instance_id,
             r.success_count, " LEAKED" if r.leaked else ""),

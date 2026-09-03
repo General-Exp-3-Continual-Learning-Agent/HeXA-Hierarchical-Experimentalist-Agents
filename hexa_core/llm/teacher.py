@@ -69,6 +69,30 @@ TEACHER_TEMPERATURE = 0.3
 # truncation, because "could not be parsed" points at the wrong culprit.
 TEACHER_MAX_TOKENS = 32768
 
+
+def teacher_max_tokens() -> int:
+    """Output budget for one teacher call, overridable per run.
+
+    32768 is right when the server has room for it -- gpt-oss-120b is served at
+    ``MAX_MODEL_LEN=65536``, so a 4k prompt plus a 32k completion fits. It is
+    *wrong* against a 32k-context server: vLLM rejects the request outright with
+    ``This model's maximum context length is 32768 tokens. However, you requested
+    32768 output tokens``, the teacher call fails, and `evolve_skill_bank` falls
+    back to the previous bank -- an entire round silently learning nothing.
+
+    Resolved at call time rather than bound as a default argument, so setting
+    ``HEXA_TEACHER_MAX_TOKENS`` works even after this module is imported.
+    """
+    raw = os.getenv("HEXA_TEACHER_MAX_TOKENS")
+    if raw:
+        try:
+            value = int(raw)
+        except ValueError:
+            return TEACHER_MAX_TOKENS
+        if value > 0:
+            return value
+    return TEACHER_MAX_TOKENS
+
 # Model names that mean "our local vLLM endpoint". Used only for auto-detection when
 # the caller did not say `vllm:` explicitly; see `resolve_teacher_model`.
 VLLM_MODEL_HINTS = ("gpt-oss",)
@@ -131,13 +155,13 @@ class VLLMTeacher:
         base_url: str | None = None,
         *,
         temperature: float = TEACHER_TEMPERATURE,
-        max_tokens: int = TEACHER_MAX_TOKENS,
+        max_tokens: int | None = None,
         seed: int | None = None,
         reasoning_effort: str | None = "high",
     ) -> None:
         self.model = model
         self.temperature = temperature
-        self.max_tokens = max_tokens
+        self.max_tokens = max_tokens if max_tokens is not None else teacher_max_tokens()
         self.seed = seed
         # A teacher call is not a scored rollout, so it is deliberately NOT charged
         # to RolloutBudget here; the loop decides that (PHASE3_DESIGN.md §2b/§5c
@@ -146,7 +170,7 @@ class VLLMTeacher:
             model=model,
             base_url=base_url or teacher_base_url(),
             temperature=temperature,
-            max_tokens=max_tokens,
+            max_tokens=self.max_tokens,
             reasoning_effort=reasoning_effort,
             seed=seed,
         )

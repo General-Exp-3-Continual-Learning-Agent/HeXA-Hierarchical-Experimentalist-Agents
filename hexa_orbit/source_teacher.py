@@ -154,9 +154,26 @@ def _already_known(level: str) -> str:
 
 # ── trajectory rendering ───────────────────────────────────────────────
 
+#: Longest action text rendered into a teacher prompt, in characters.
+#: `extract_last_boxed` is a literal transcription of ORBIT's agent and returns
+#: the *whole response* when a turn emits no `\\boxed{...}`. That is correct for
+#: the environment -- the garbage is what the env rejects -- but the same string
+#: is recorded as the step's action, so one runaway turn puts its entire
+#: reasoning into the evolver's prompt. Qwen3-8B on Wordle truncated 13.2% of its
+#: turns this way and produced single trajectories of 24,749 tokens against a
+#: 1,825-token norm, overflowing a 32k context on every round and silently
+#: freezing the bank for a whole run.
+_MAX_ACTION_CHARS = 120
+
+
 def _render_action(action: Any) -> str:
     text = str(action or "").strip()
-    return text.replace("\\boxed{", "").rstrip("}") or "(none)"
+    text = text.replace("\\boxed{", "").rstrip("}")
+    if len(text) > _MAX_ACTION_CHARS:
+        # Keep the head: a malformed action is diagnosed from how it starts, and
+        # the marker tells the teacher this was a non-answer rather than a guess.
+        text = text[:_MAX_ACTION_CHARS].rstrip() + f" ...[{len(text)} chars, unparsed]"
+    return text or "(none)"
 
 
 def formatter_for(level: str):

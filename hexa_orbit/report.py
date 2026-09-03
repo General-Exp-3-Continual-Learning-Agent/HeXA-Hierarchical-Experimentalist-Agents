@@ -41,7 +41,14 @@ def episode_success_rates(runs: Sequence[InstanceRun]) -> dict[str, float]:
     """
     out: dict[str, float] = {}
     for index in range(EPISODES_PER_INSTANCE):
-        present = [r.episode_successes[index] for r in runs if len(r.episode_successes) > index]
+        # `episode_successes_scored` applies the run's truncation convention: under
+        # ORBIT's, an episode the instance never reached counts as a failure; under
+        # ours it is absent and therefore omitted here.
+        present = [
+            r.episode_successes_scored[index]
+            for r in runs
+            if len(r.episode_successes_scored) > index
+        ]
         out[f"episode_{index + 1}"] = _rate(present)
     return out
 

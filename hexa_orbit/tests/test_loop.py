@@ -320,3 +320,91 @@ def test_load_trajectories_is_rebound_by_install():
     teacher.install()
     assert _distill.load_trajectories is load_instance_trajectories
     assert _evolving.load_trajectories is load_instance_trajectories
+
+
+def test_bank_unchanged_is_detected(task, tmp_path, monkeypatch):
+    """A teacher whose JSON fails to parse makes evolution a silent no-op.
+
+    `evolve_skill_bank` handles an unparseable response by printing a warning and
+    returning the *previous* bank. Nothing in the round record would otherwise
+    distinguish "the teacher had nothing to add" from "the teacher's output was
+    garbage" -- and with a 7B teacher emitting strict JSON for a whole bank, the
+    second is the likely case.
+    """
+    def call_teacher(prompt: str, model: str = "stub") -> str:
+        if "CURRENT SKILL BANK" in prompt:
+            return "not json at all"          # forces the fallback
+        if "partial_skills" in prompt:
+            return MISTAKES_JSON
+        return SKILLS_JSON
+
+    import skillrl.distillation.distill as _distill
+    import skillrl.distillation.evolving_distill as _evolving
+
+    monkeypatch.setattr(_distill, "call_teacher", call_teacher)
+    monkeypatch.setattr(_evolving, "call_teacher", call_teacher, raising=False)
+
+    specs = task.train_specs(4)
+    result = loop.run_hexa_loop(
+        task, specs, wallbang_actor_factory([]), tmp_path,
+        rounds=2, batch_size=2, teacher_model="stub", resume=False,
+    )
+    assert result.rounds[0].bank_unchanged is False   # round 0 distils, nothing to match
+    assert result.rounds[1].bank_unchanged is True
+    assert result.to_dict()["rounds_bank_unchanged"] == 1
+
+
+def test_a_real_evolution_is_not_flagged_unchanged(task, stub_teacher, tmp_path):
+    """The detector must not cry wolf when the teacher genuinely changed the bank."""
+    specs = task.train_specs(4)
+    result = loop.run_hexa_loop(
+        task, specs, wallbang_actor_factory([]), tmp_path,
+        rounds=2, batch_size=2, teacher_model="stub", resume=False,
+    )
+    # The stub returns the same single skill each round, so this asserts the
+    # fingerprint really is content-based: identical advice IS unchanged.
+    assert result.rounds[1].bank_unchanged is True
+    assert loop.bank_fingerprint(None) == frozenset()
+
+
+def test_partial_file_is_written_as_instances_complete(task, tmp_path):
+    """Crash safety for multi-hour runs: every finished run must already be on disk.
+
+    The regression this guards: routing the baseline runner through `play_batch`
+    replaced its per-instance flush with a single write after the whole batch, so a
+    256-instance arm killed at 90 minutes would have left an empty file.
+    """
+    from hexa_orbit import trajectory
+
+    specs = task.eval_specs(4)
+    partial = tmp_path / "runs.partial.jsonl"
+    seen_during: list[int] = []
+
+    def probe(position, run):
+        # Read the partial file mid-batch: it must already contain this run.
+        seen_during.append(len(partial.read_text().splitlines()))
+
+    runs, errored = loop.play_batch(
+        task, specs, wallbang_actor_factory([]), None,
+        on_instance=probe, partial_path=partial,
+    )
+    assert len(runs) == 4
+    lines = partial.read_text().splitlines()
+    assert len(lines) == 4
+    # Progress fires live, so the file grows 1..4 as callbacks arrive rather than
+    # being complete at the first one. That is the regression this pins: reporting
+    # after `pool.map` would leave a multi-hour arm silent until it finished.
+    assert seen_during == [1, 2, 3, 4], seen_during
+
+    revived = trajectory.read_runs(partial)
+    assert {r.instance_id for r in revived} == {r.instance_id for r in runs}
+
+
+def test_partial_file_is_truncated_not_appended_across_runs(task, tmp_path):
+    """A resumed round must not inherit the previous attempt's partial rows."""
+    specs = task.eval_specs(2)
+    partial = tmp_path / "runs.partial.jsonl"
+    partial.write_text('{"stale": true}\n')
+    loop.play_batch(task, specs, wallbang_actor_factory([]), None, partial_path=partial)
+    assert "stale" not in partial.read_text()
+    assert len(partial.read_text().splitlines()) == 2

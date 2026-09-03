@@ -323,3 +323,88 @@ def test_regret_is_zero_on_optimal_play(task: MazeTask, eval_specs):
     report = oracle.regret(instance)
     assert report["n_failed"] == 0
     assert report["mean_excess_on_success"] == 0
+
+
+# ── D5: concurrency must not change a single bit ──────────────────────────
+
+def test_concurrent_runs_are_bit_identical_to_serial(task: MazeTask):
+    """The claim `--concurrency` rests on, tested rather than argued.
+
+    ORBIT's generator seeds the **global** RNG (``random.seed`` /
+    ``np.random.seed`` at ``envs/maze_env_adapter.py:42-43``), so interleaved
+    ``generate()`` calls would hand threads mazes neither asked for. The reset lock
+    is supposed to make that impossible while leaving the expensive part -- the
+    model call -- concurrent. This drives 8 instances both ways and requires the
+    serialised records to match exactly.
+    """
+    import json
+
+    from hexa_orbit import loop, trajectory
+    from hexa_orbit.actor import MazeActor
+    from hexa_orbit.tests.test_actor import gen
+
+    specs = task.eval_specs(8)
+
+    class LazyOracleStub:
+        """Resolves the route at generate time, not factory time.
+
+        ``play_batch`` builds the instance and hands it to the factory *before*
+        anything resets it, so the map is not readable yet -- reading it eagerly
+        raises. Deferring is what the CLIs' ``OracleStub`` does for the same reason.
+        """
+
+        def __init__(self, instance):
+            self.instance = instance
+            self.queue: list[str] = []
+
+        def generate_structured(self, *, messages, **_):
+            if not self.queue:
+                self.queue = oracle.instance_optimal_actions(self.instance)
+            return gen(oracle.boxed(self.queue.pop(0)))
+
+    def factory(guidelines, instance=None):
+        # Deterministic per instance: replay its own optimal route, so any maze
+        # mix-up between threads shows up as a changed step count or outcome.
+        return MazeActor(client=LazyOracleStub(instance), guidelines=guidelines)
+
+    serial, _ = loop.play_batch(task, specs, factory, None, concurrency=1)
+    parallel, _ = loop.play_batch(task, specs, factory, None, concurrency=4)
+
+    # Input order is preserved, so this is a positional comparison.
+    assert [r.instance_id for r in parallel] == [r.instance_id for r in serial]
+    assert [json.dumps(r.to_dict(), sort_keys=True) for r in parallel] == [
+        json.dumps(r.to_dict(), sort_keys=True) for r in serial
+    ]
+    assert all(r.success_count == EPISODES_PER_INSTANCE for r in serial)
+
+
+def test_maze_generation_stays_correct_under_thread_pressure(task: MazeTask):
+    """Resolve the same specs from many threads; every maze must match its hash.
+
+    A tighter probe than the run-level test: it hammers `reset` specifically,
+    which is the only RNG-touching call, and checks the resulting layout against
+    the identity computed single-threaded at pool-build time.
+    """
+    from concurrent.futures import ThreadPoolExecutor
+
+    from hexa_orbit.pools import maze_hash
+
+    # Sized to make the race near-certain rather than merely possible. Measured
+    # against a build with the lock removed, 12 specs x 8 workers caught the
+    # corruption only ~1 run in 6 -- a guard that weak is barely a guard. 24 specs
+    # x 6 repeats x 16 workers puts ~144 concurrent `generate()` calls in flight,
+    # each of which reseeds the global RNG and then makes hundreds of draws from
+    # it. Measured detection with the lock removed: 5 runs in 6, up from 1 in 6.
+    # A race test is a probabilistic detector and this one is not an exception --
+    # treat a single green run as weak evidence, not proof.
+    specs = task.eval_specs(24)
+
+    def check(spec):
+        instance = task.instance(spec)
+        instance.reset()
+        env = instance._env
+        return maze_hash(env.map, env.init_position) == spec.maze_hash
+
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        results = list(pool.map(check, specs * 6))
+    assert all(results), f"{results.count(False)}/{len(results)} mazes were corrupted"

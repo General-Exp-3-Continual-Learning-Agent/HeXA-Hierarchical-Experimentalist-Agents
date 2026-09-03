@@ -107,6 +107,46 @@ def pool_seeds(
     return rng.integers(0, _SEED_HI, size=size).tolist()
 
 
+#: Global seed for the held-out confirmation pool. Different from
+#: :data:`DEFAULT_GLOBAL_SEED`, so :func:`pool_seeds` draws from a different RNG
+#: stream and the reserve shares no dataset seed with either working pool.
+#:
+#: **Why a reserve exists.** ``pools`` otherwise derives exactly one train pool
+#: and one eval pool, and the eval pool is ORBIT's published 256. Every design
+#: iteration -- a reworded evolution prompt, a different trajectory selector, a
+#: new admission rule -- is chosen after looking at results, and if each candidate
+#: is then scored on those same 256 instances, the surviving design is partly
+#: fitted to them. That is the garden of forking paths, and it needs no privileged
+#: information to manufacture a lift that will not replicate; it is the likeliest
+#: way this experiment produces a number that does not survive contact with a
+#: fresh draw.
+#:
+#: So: iterate against the working eval pool, then run the *one* surviving design
+#: against the reserve, once. A second run against the reserve spends it.
+#: 2718 rather than a rounder number for one reason: at 512 train + 256 eval
+#: draws from a 1e6 seed space, a resolved-seed collision has ~13% probability by
+#: birthday, and 4242 and 1337 both produced two. This value was chosen as the
+#: first candidate with zero overlap on *both* dataset_seed and resolved_seed
+#: against both working pools -- a property `assert_disjoint` enforces, so a future
+#: change to train_size can invalidate it and will say so loudly.
+RESERVE_GLOBAL_SEED = 2718
+
+
+def build_reserve_pool(
+    task_cfg: Mapping[str, Any], size: int = EVAL_POOL_SIZE
+) -> list[MazeInstanceSpec]:
+    """The held-out confirmation pool. See :data:`RESERVE_GLOBAL_SEED`.
+
+    Uses the same generator and the same eval-side draw as :func:`build_pool`, so
+    a reserve instance is distributionally identical to a working-eval instance --
+    only the RNG stream differs. Callers should assert disjointness against both
+    working pools with :func:`assert_disjoint` before using it.
+    """
+    return build_pool(
+        task_cfg, size, is_train=False, global_seed=RESERVE_GLOBAL_SEED
+    )
+
+
 def published_maze_config(config_name: str = "eval_config.yaml") -> dict[str, Any]:
     """ORBIT's Maze task config, loaded verbatim from its checked-in YAML.
 
@@ -268,6 +308,40 @@ def build_pool(
             )
         )
     return specs
+
+
+def dedup_by_layout(specs: Sequence[MazeInstanceSpec]) -> list[MazeInstanceSpec]:
+    """Drop specs whose ``maze_hash`` already appeared, keeping the first.
+
+    **Why the train pool needs this and the eval pool must not get it.** Instance
+    identity is the maze layout, not the seed (D6): distinct dataset seeds
+    routinely resolve to byte-identical mazes, and a 512-seed train draw yields
+    only 459 unique layouts -- 46 layouts appearing twice or more. The training
+    loop consumes specs in order and tracks what it has consumed by
+    ``instance_id`` (the layout hash), so once a run draws deep enough into the
+    pool the two definitions disagree and ``HexaRunResult.streaming_leak`` fires:
+    the bank meets a maze it was distilled from. That is what killed the v2 run
+    after ten rounds -- 7 of 200 round-slots were repeats -- and it is a function
+    of draw depth, which is why an 8-round run never saw it.
+
+    Deduplicating changes which instances a pool contains, so it is opt-in and
+    applied to the *train* pool only. The eval pool is fixed: arm A and every
+    completed eval were drawn from it as-is, and silently redrawing it would make
+    new numbers incomparable with the ones already on disk. Eval-side layout
+    overlap is a separate, expected phenomenon handled by :func:`leakage_split`.
+    """
+    # Keyed on `instance_id`, not `maze_hash`: `instance_id` is the truncation the
+    # rest of the system actually compares (it is what lands in `runs.jsonl` and
+    # what `HexaRunResult.streaming_leak` checks), so deduplicating on anything
+    # else would leave a gap between what is removed and what is guarded against.
+    seen: set[str] = set()
+    out: list[MazeInstanceSpec] = []
+    for spec in specs:
+        if spec.instance_id in seen:
+            continue
+        seen.add(spec.instance_id)
+        out.append(spec)
+    return out
 
 
 # ── Disjointness and leakage (D6, and the leakage-split requirement) ──────

@@ -89,6 +89,17 @@ def boxed(value: str) -> str:
     return f"\\boxed{{{value}}}"
 
 
+class ContextExhausted(RuntimeError):
+    """The cumulative transcript outgrew the model's context window.
+
+    Under ``transcript_mode="raw"`` this is an expected outcome, not a bug: ORBIT
+    reports the same condition and handles it by truncating the trajectory and
+    assigning zero reward (§4.2). Raised as its own type so the runner can record it
+    as a *result* -- remaining episodes counted as failures -- rather than discarding
+    the instance the way a transport failure is discarded.
+    """
+
+
 class GenerationFailed(RuntimeError):
     """The client exhausted its retries and returned no generation.
 
@@ -119,6 +130,56 @@ class ActorConfig:
     #: (D5 -- ORBIT's env seeding is global).
     seed: Optional[int] = None
 
+    #: What goes into the transcript as the assistant turn.
+    #:
+    #: ``"final"`` stores only the final channel -- for Qwen3 that is roughly
+    #: ``"\n\n\boxed{down}"``, ~15 tokens. ``"raw"`` stores ``reasoning + final``,
+    #: which is what ORBIT's own agent does (``agents/gem_text_agent.py`` appends the
+    #: whole ``response``) and is ~800 tokens per turn with thinking enabled.
+    #:
+    #: This is not a cosmetic choice. Over 27 turns ``"raw"`` accumulates ~22k tokens
+    #: against a 32k context, which is why ORBIT §4.2 needs the sentence
+    #: *"trajectories that exceed this limit are truncated and assigned zero reward"*
+    #: -- observations alone would never approach 32k. ``"final"`` keeps the context
+    #: near 4k and can never truncate, so it hands the model a clean history where
+    #: ORBIT hands it one filled with its own discarded reasoning.
+    #:
+    #: Our stock Qwen3-8B scored 0.53 episode-3 under ``"final"`` against ORBIT's
+    #: reported 0.22 for the same base weights (Table 2, derived). ``"raw"`` exists to
+    #: test whether that gap is this setting.
+    transcript_mode: str = "final"
+
+    #: Total completion tokens allowed across a whole instance, or ``None`` for no
+    #: trajectory-level cap.
+    #:
+    #: ORBIT sets ``data.max_response_length=31744`` -- a **trajectory** budget, not
+    #: a per-call one (``scripts/train_multi_task_multi_episode.sh``), and §4.2 says
+    #: *"trajectories that exceed this limit are truncated and assigned zero
+    #: reward."* Our ``max_response_tokens`` is per call and so can never bind: at
+    #: ~800 completion tokens/turn over ≤27 turns we reach ~22k and stop.
+    #:
+    #: This exists to test whether that difference explains why our stock Qwen3-8B
+    #: scores 0.49 episode-3 (clean, n=206) against ORBIT's reported 0.22 for the
+    #: same base weights. Set it to 31744 to impose their budget.
+    #:
+    #: Note the *other* half of their truncation pressure is NOT transplantable:
+    #: ``trajectory_timeout=600`` binds only under their 512-concurrent-on-4-GPU
+    #: contention, where per-trajectory latency is far higher than our measured
+    #: ~227 s. Copying the number would not copy the constraint.
+    trajectory_token_budget: Optional[int] = None
+
+    #: How to score episodes an instance never reached.
+    #:
+    #: ``"exclude"`` (ours) leaves them out: an episode that never ran is not
+    #: evidence about the agent. ``"orbit"`` scores them **0**, reproducing
+    #: ``MultiEpisodeEnv.get_metrics``'s early-termination branch
+    #: (``envs/multi_episode_env.py:383-396``), which writes ``0`` for a missing
+    #: episode where its *normal* branch writes ``-1.0`` -- a sentinel the
+    #: aggregator filters. So the same missing episode is excluded on one path and
+    #: counted as a failure on the other, and a trajectory cut short during episode
+    #: 2 reports ``episode_3/success_rate = 0``.
+    truncation_scoring: str = "exclude"
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "model": self.model,
@@ -128,6 +189,9 @@ class ActorConfig:
             "max_response_tokens": self.max_response_tokens,
             "reasoning_effort": self.reasoning_effort,
             "seed": self.seed,
+            "transcript_mode": self.transcript_mode,
+            "trajectory_token_budget": self.trajectory_token_budget,
+            "truncation_scoring": self.truncation_scoring,
         }
 
 
@@ -229,6 +293,46 @@ class InstanceRun:
     token_counter: str
     guidelines: Optional[str] = None
     error: Optional[str] = None
+    #: True when the instance ended because the transcript outgrew the context.
+    #: ORBIT's equivalent condition zeroes the trajectory reward; recorded rather
+    #: than hidden so a run's episode counts can be read honestly.
+    context_exhausted: bool = False
+    #: True when the instance stopped on ``trajectory_token_budget``.
+    budget_exhausted: bool = False
+    #: Total completion tokens spent across the instance.
+    completion_tokens: int = 0
+    #: ``"usage"`` if the server reported token counts, ``"estimated"`` otherwise.
+    token_accounting: str = "usage"
+    #: Which convention ``episode_successes_scored`` follows.
+    truncation_scoring: str = "exclude"
+    #: Best per-episode :attr:`~hexa_orbit.adapter.EpisodeRecord.progress` over the
+    #: instance. Feeds the graded failure reward.
+    best_progress: float = 0.0
+    #: Per-episode progress, so the evolver can see whether episode 2 got further
+    #: than episode 1 -- adaptation that a bin-only reward cannot express.
+    episode_progress: list[float] = field(default_factory=list)
+
+    @property
+    def truncated_early(self) -> bool:
+        return self.context_exhausted or self.budget_exhausted
+
+    @property
+    def episode_successes_scored(self) -> list[bool]:
+        """Per-episode successes under the configured truncation convention.
+
+        Under ``"orbit"``, episodes an instance never reached are appended as
+        ``False`` up to the three-episode cap, which is what
+        ``MultiEpisodeEnv.get_metrics`` does on its early-termination branch. Under
+        ``"exclude"`` the list is returned as-is and a short list stays short, so
+        `report.episode_success_rates` omits it rather than counting it against the
+        agent.
+        """
+        if self.truncation_scoring != "orbit":
+            return list(self.episode_successes)
+        padded = list(self.episode_successes)
+        while len(padded) < 3:
+            padded.append(False)
+        return padded
 
     @property
     def n_truncated(self) -> int:
@@ -270,7 +374,17 @@ class InstanceRun:
         """
         if not self.guidelines:
             return None
-        return hashlib.sha256(self.guidelines.encode("utf-8")).hexdigest()[:16]
+        # A per-episode injection is a mapping, which has no `.encode`. Hash the
+        # blocks in key order so the digest is stable across runs and still
+        # distinguishes two banks that differ only in one episode's block.
+        if isinstance(self.guidelines, dict):
+            payload = "\n\n".join(
+                f"[episode {k}]\n{self.guidelines[k]}"
+                for k in sorted(self.guidelines)
+            )
+        else:
+            payload = self.guidelines
+        return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 
     def to_dict(self, *, include_transcript: bool = True) -> dict[str, Any]:
         out: dict[str, Any] = {
@@ -289,6 +403,13 @@ class InstanceRun:
             "n_unparsed": self.n_unparsed,
             "adapted_across_episodes": self.adapted_across_episodes,
             "guidelines_hash": self.guidelines_hash,
+            "context_exhausted": self.context_exhausted,
+            "budget_exhausted": self.budget_exhausted,
+            "completion_tokens": self.completion_tokens,
+            "token_accounting": self.token_accounting,
+            "truncation_scoring": self.truncation_scoring,
+            "best_progress": self.best_progress,
+            "episode_progress": self.episode_progress,
             "error": self.error,
         }
         if include_transcript:
@@ -324,6 +445,13 @@ class InstanceRun:
             token_counter=data.get("token_counter", ""),
             guidelines=None,
             error=data.get("error"),
+            context_exhausted=bool(data.get("context_exhausted", False)),
+            budget_exhausted=bool(data.get("budget_exhausted", False)),
+            completion_tokens=int(data.get("completion_tokens", 0)),
+            token_accounting=data.get("token_accounting", "usage"),
+            truncation_scoring=data.get("truncation_scoring", "exclude"),
+            best_progress=float(data.get("best_progress", 0.0)),
+            episode_progress=list(data.get("episode_progress", [])),
         )
 
 
@@ -352,6 +480,19 @@ class MazeActor:
             guidelines: the retrieved skill/mistake block (Phase 3). ``None`` is
                 the no-bank baseline and leaves the system prompt untouched, so
                 the baseline prompt is byte-identical to ORBIT's.
+
+                May also be a mapping ``{episode_index: block}`` to inject a
+                different block per episode. That exists because a bank is not
+                uniformly applicable across episodes: 3 of the 5 skills and 1 of
+                the 2 mistakes in v3's final bank are phrased "based on prior
+                exploration data" and are unusable in episode 1, so roughly 60% of
+                ~700 injected tokens described data the agent did not yet have --
+                during the one episode the whole claim is about. Measured ep1
+                effect across three runs with a single static block: -4.1, -1.6,
+                -2.9 points against the no-bank baseline, while multi-episode
+                success rose. Keys are 0-based; a missing key injects nothing for
+                that episode, and the largest key present covers any episode beyond
+                it.
         """
         self.config = config or ActorConfig()
         self.base_system_prompt = system_prompt
@@ -379,28 +520,82 @@ class MazeActor:
 
     # ── prompt assembly ───────────────────────────────────────────────────
 
-    @property
-    def system_prompt(self) -> str:
-        """ORBIT's prompt, plus the bank block when one is injected.
+    def block_for_episode(self, episode_index: int) -> Optional[str]:
+        """The block to inject for *episode_index*, or ``None``.
+
+        A plain string is episode-independent -- the original behaviour, and what
+        every completed run used. A mapping is looked up by episode, falling back
+        to the largest key at or below it so ``{0: explore, 1: reuse}`` covers
+        episode 2 without repeating itself.
+        """
+        if self.guidelines is None or isinstance(self.guidelines, str):
+            return self.guidelines
+        keys = [k for k in self.guidelines if int(k) <= int(episode_index)]
+        return self.guidelines[max(keys)] if keys else None
+
+    def system_prompt_for(self, episode_index: int) -> str:
+        """ORBIT's prompt, plus this episode's block when one is injected.
 
         Appending keeps the baseline byte-identical to ORBIT's and confines every
         added token to one attributable place (M7).
         """
-        if not self.guidelines:
+        block = self.block_for_episode(episode_index)
+        if not block:
             return self.base_system_prompt
-        return f"{self.base_system_prompt}\n\n{self.guidelines}"
+        return f"{self.base_system_prompt}\n\n{block}"
+
+    @property
+    def system_prompt(self) -> str:
+        """The episode-0 prompt. Kept for callers that predate per-episode blocks."""
+        return self.system_prompt_for(0)
 
     @property
     def added_tokens(self) -> int:
+        """Tokens the largest injected block adds -- the worst case, not a mean.
+
+        With a per-episode mapping the cost differs by episode; reporting the
+        maximum keeps this an upper bound on the budget the injection consumes.
+        """
+        if isinstance(self.guidelines, dict):
+            prompts = [self.system_prompt_for(k) for k in self.guidelines]
+            return max(
+                (tokens.added_tokens(self.base_system_prompt, p) for p in prompts),
+                default=0,
+            )
         return tokens.added_tokens(self.base_system_prompt, self.system_prompt)
 
     # ── one turn ──────────────────────────────────────────────────────────
 
+    def _completion_tokens(self, generation: Generation) -> int:
+        """Completion tokens for one call, from usage when the server reports it.
+
+        Falls back to a token estimate of the raw text. The fallback matters: a
+        budget enforced on an estimate is not ORBIT's budget, so
+        :attr:`InstanceRun.token_accounting` records which path was used.
+        """
+        usage = generation.usage or {}
+        for key in ("completion_tokens", "output_tokens"):
+            value = usage.get(key)
+            if isinstance(value, int) and value > 0:
+                return value
+        return tokens.count_tokens(generation.raw_text)
+
     def _generate(self) -> Generation:
-        generation = self.client.generate_structured(
-            messages=list(self.messages),
-            max_new_tokens=self.config.max_response_tokens,
-        )
+        try:
+            generation = self.client.generate_structured(
+                messages=list(self.messages),
+                max_new_tokens=self.config.max_response_tokens,
+            )
+        except Exception as exc:  # noqa: BLE001 - classified, then re-raised
+            # vLLM rejects an over-long prompt with a deterministic 400 rather than a
+            # transient error, so the client raises instead of retrying. Duck-typed on
+            # the message because the exception class depends on the openai version.
+            text = str(exc).lower()
+            if "context" in text and ("length" in text or "window" in text):
+                raise ContextExhausted(str(exc)) from exc
+            if "maximum context" in text or "longer than the maximum" in text:
+                raise ContextExhausted(str(exc)) from exc
+            raise
         if generation is None:
             raise GenerationFailed(
                 f"{self.config.model} returned no generation after retries"
@@ -417,21 +612,54 @@ class MazeActor:
         Raises :class:`GenerationFailed` if the client gives up; the caller
         decides whether to drop the instance or abort the run.
         """
-        self.messages = [{"role": "system", "content": self.system_prompt}]
+        self.messages = [{"role": "system", "content": self.system_prompt_for(0)}]
         steps: list[StepRecord] = []
+        injected_episode = 0
 
         observation = instance.reset()
+        context_exhausted = False
+        budget_exhausted = False
+        spent_tokens = 0
+        exact_usage = True
         while not instance.done:
+            # Re-point the system message when the episode advances, so a
+            # per-episode block reaches the model. Rewriting slot 0 rather than
+            # appending keeps exactly one system turn in the transcript -- ORBIT's
+            # shape -- and the model sees the whole conversation re-sent each call
+            # anyway, so the new block governs from here on. A plain-string
+            # `guidelines` makes this a no-op: the content is identical every time.
+            if instance._episode_index != injected_episode:
+                injected_episode = instance._episode_index
+                self.messages[0] = {
+                    "role": "system",
+                    "content": self.system_prompt_for(injected_episode),
+                }
             self.messages.append({"role": "user", "content": observation})
-            generation = self._generate()
+            try:
+                generation = self._generate()
+            except ContextExhausted:
+                # ORBIT's own failure mode under "raw" transcripts. Stop the instance
+                # and let the episodes recorded so far stand; the unplayed ones are
+                # absent rather than counted as failures, and `context_exhausted`
+                # says why the count is short.
+                context_exhausted = True
+                break
 
             parsed = extract_last_boxed(generation.raw_text)
             env_action = boxed(parsed)
-            # ORBIT stores the completion; for a reasoning model that is the
-            # final channel. Empty final -> store the action, never an empty turn.
-            self.messages.append(
-                {"role": "assistant", "content": generation.final_text or env_action}
-            )
+            # See ActorConfig.transcript_mode. "raw" reproduces ORBIT's own agent,
+            # which appends the whole response; "final" keeps only the answer channel.
+            # Either way an empty result falls back to the action, so the transcript
+            # never contains an empty assistant turn.
+            if self.config.transcript_mode == "raw":
+                spoken = generation.raw_text or env_action
+            else:
+                spoken = generation.final_text or env_action
+            self.messages.append({"role": "assistant", "content": spoken})
+
+            spent_tokens += self._completion_tokens(generation)
+            if not (generation.usage or {}).get("completion_tokens"):
+                exact_usage = False
 
             episode_index = instance._episode_index
             episode_step = instance._episode_step + 1
@@ -455,6 +683,13 @@ class MazeActor:
             )
             observation = next_observation
 
+            budget = self.config.trajectory_token_budget
+            if budget is not None and spent_tokens >= budget:
+                # ORBIT's condition: the trajectory outgrew its response budget. Stop
+                # here; episodes never reached are scored by `truncation_scoring`.
+                budget_exhausted = True
+                break
+
         # The final observation is never answered, but ORBIT's agent still sees
         # it (`update_from_env` is called on the terminal step), so the
         # transcript the evolver reads must include it.
@@ -475,4 +710,11 @@ class MazeActor:
             added_tokens=self.added_tokens,
             token_counter=tokens.counter_name(),
             guidelines=self.guidelines,
+            context_exhausted=context_exhausted,
+            budget_exhausted=budget_exhausted,
+            completion_tokens=spent_tokens,
+            token_accounting="usage" if exact_usage else "estimated",
+            truncation_scoring=self.config.truncation_scoring,
+            best_progress=max((e.progress for e in instance.episodes), default=0.0),
+            episode_progress=[e.progress for e in instance.episodes],
         )

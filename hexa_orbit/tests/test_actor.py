@@ -219,3 +219,156 @@ def test_config_defaults_match_orbit_sampling():
     assert (config.temperature, config.top_p) == (0.6, 0.95)
     assert config.model == "openai/gpt-oss-120b"
     assert config.max_response_tokens == 2048
+
+
+# ── transcript mode (ORBIT-faithful vs compact) ───────────────────────────
+
+def test_raw_transcript_mode_stores_the_reasoning(task: MazeTask, spec):
+    """ORBIT's agent appends the whole response; "raw" reproduces that.
+
+    Not cosmetic: at ~800 reasoning tokens per turn this accumulates ~22k over 27
+    turns against a 32k context, which is the condition ORBIT §4.2 handles by
+    truncating the trajectory and zeroing its reward.
+    """
+    long_reasoning = "DELIBERATION " * 50
+    client = StubClient(default=gen(oracle.boxed("up"), reasoning=long_reasoning))
+    actor = MazeActor(ActorConfig(transcript_mode="raw"), client=client)
+    run = actor.run_instance(task.instance(spec))
+
+    assistants = [m["content"] for m in run.messages if m["role"] == "assistant"]
+    assert all("DELIBERATION" in a for a in assistants)
+    # And the compact mode must not.
+    compact = MazeActor(
+        ActorConfig(transcript_mode="final"),
+        client=StubClient(default=gen(oracle.boxed("up"), reasoning=long_reasoning)),
+    ).run_instance(task.instance(spec))
+    assert all(
+        "DELIBERATION" not in m["content"]
+        for m in compact.messages
+        if m["role"] == "assistant"
+    )
+    # Same actions either way -- only the transcript differs.
+    assert [s.parsed_action for s in run.steps] == [s.parsed_action for s in compact.steps]
+
+
+def test_raw_mode_still_falls_back_when_the_model_says_nothing(task: MazeTask, spec):
+    client = StubClient(default=gen("", reasoning=""))
+    actor = MazeActor(ActorConfig(transcript_mode="raw"), client=client)
+    run = actor.run_instance(task.instance(spec))
+    assert all(m["content"] for m in run.messages)
+
+
+def test_context_exhaustion_is_a_result_not_a_lost_instance(task: MazeTask, spec):
+    """A context refusal must end the instance, not discard it.
+
+    ORBIT hits the same wall and handles it by truncating the trajectory. Treating
+    it like a transport failure would throw away a real measurement; treating it
+    like a normal finish would silently report a 1-episode instance as complete.
+    """
+    class OverflowAfter:
+        def __init__(self, n): self.n, self.calls = n, 0
+
+        def generate_structured(self, **_):
+            self.calls += 1
+            if self.calls > self.n:
+                raise RuntimeError(
+                    "This model's maximum context length is 32768 tokens, however "
+                    "you requested 33000 tokens."
+                )
+            return gen(oracle.boxed("up"))
+
+    actor = MazeActor(ActorConfig(transcript_mode="raw"), client=OverflowAfter(5))
+    run = actor.run_instance(task.instance(spec))
+
+    assert run.context_exhausted is True
+    assert run.error is None            # a result, not a failure
+    assert len(run.steps) == 5
+    assert len(run.episode_successes) < EPISODES_PER_INSTANCE
+    assert run.to_dict()["context_exhausted"] is True
+    from hexa_orbit.actor import InstanceRun
+    assert InstanceRun.from_dict(run.to_dict()).context_exhausted is True
+
+
+def test_a_real_transport_failure_still_raises(task: MazeTask, spec):
+    """Only context errors are reclassified; everything else must stay loud."""
+    class Broken:
+        def generate_structured(self, **_):
+            raise RuntimeError("connection reset by peer")
+
+    with pytest.raises(RuntimeError, match="connection reset"):
+        MazeActor(client=Broken()).run_instance(task.instance(spec))
+
+
+# ── ORBIT's trajectory budget and truncation scoring ─────────────────────
+
+def test_trajectory_token_budget_stops_the_instance(task: MazeTask, spec):
+    """ORBIT's budget is per trajectory, so it can cut an instance short."""
+    client = StubClient(default=gen(oracle.boxed("up"), reasoning="x " * 200))
+    actor = MazeActor(
+        ActorConfig(transcript_mode="raw", trajectory_token_budget=600), client=client
+    )
+    run = actor.run_instance(task.instance(spec))
+
+    assert run.budget_exhausted is True
+    assert run.truncated_early is True
+    assert run.completion_tokens >= 600
+    assert len(run.episode_successes) < EPISODES_PER_INSTANCE
+    assert run.error is None          # a measurement, not a failure
+
+
+def test_no_budget_means_no_early_stop(task: MazeTask, spec):
+    client = StubClient(default=gen(oracle.boxed("up"), reasoning="x " * 200))
+    run = MazeActor(ActorConfig(), client=client).run_instance(task.instance(spec))
+    assert run.budget_exhausted is False
+    assert len(run.episode_successes) == EPISODES_PER_INSTANCE
+
+
+def test_orbit_scoring_counts_unreached_episodes_as_failures(task: MazeTask, spec):
+    """The asymmetry that likely explains the gap to their Table 2 number.
+
+    `MultiEpisodeEnv.get_metrics` writes 0 for a missing episode on its
+    early-termination branch and -1.0 (filtered) on its normal branch. So a
+    trajectory cut short in episode 2 reports episode_3 as a failure.
+    """
+    client = StubClient(default=gen(oracle.boxed("up"), reasoning="x " * 200))
+    ours = MazeActor(
+        ActorConfig(transcript_mode="raw", trajectory_token_budget=600,
+                    truncation_scoring="exclude"), client=client,
+    ).run_instance(task.instance(spec))
+    theirs = MazeActor(
+        ActorConfig(transcript_mode="raw", trajectory_token_budget=600,
+                    truncation_scoring="orbit"),
+        client=StubClient(default=gen(oracle.boxed("up"), reasoning="x " * 200)),
+    ).run_instance(task.instance(spec))
+
+    assert len(ours.episode_successes_scored) < EPISODES_PER_INSTANCE
+    assert len(theirs.episode_successes_scored) == EPISODES_PER_INSTANCE
+    assert theirs.episode_successes_scored[-1] is False
+
+    from hexa_orbit import report
+    # Under ORBIT's convention the unreached episode drags the rate down; under ours
+    # it is simply absent from the denominator.
+    assert report.episode_success_rates([theirs])["episode_3"] == 0.0
+    assert report.episode_success_rates([ours])["episode_3"] == 0.0  # no data -> 0/0
+
+
+def test_token_accounting_records_whether_usage_was_reported(task: MazeTask, spec):
+    """A budget enforced on an estimate is not ORBIT's budget; say which it was."""
+    from hexa_core.llm.base import Generation
+
+    class NoUsage:
+        def generate_structured(self, **_):
+            return Generation.from_parts("", oracle.boxed("up"), finish_reason="stop")
+
+    run = MazeActor(ActorConfig(), client=NoUsage()).run_instance(task.instance(spec))
+    assert run.token_accounting == "estimated"
+    assert run.completion_tokens > 0
+
+
+def test_actor_config_manifest_includes_the_new_fields():
+    """The arm A summary recorded transcript_mode as null -- to_dict had drifted."""
+    d = ActorConfig(transcript_mode="raw", trajectory_token_budget=31744,
+                    truncation_scoring="orbit").to_dict()
+    assert d["transcript_mode"] == "raw"
+    assert d["trajectory_token_budget"] == 31744
+    assert d["truncation_scoring"] == "orbit"

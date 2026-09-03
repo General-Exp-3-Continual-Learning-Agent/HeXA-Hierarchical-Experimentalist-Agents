@@ -31,6 +31,17 @@ from typing import Any, Mapping, Optional
 
 from .actor import InstanceRun
 
+#: Whether :func:`instance_reward` uses the graded failure scale. A one-element list
+#: so :func:`set_graded_failures` can flip it after import, which a module constant
+#: bound into default arguments could not. Off by default: a run already in progress
+#: must not have its rewards silently rescored mid-flight.
+GRADED_FAILURES = [False]
+
+
+def set_graded_failures(enabled: bool) -> None:
+    """Enable or disable the graded failure scale for this process."""
+    GRADED_FAILURES[0] = bool(enabled)
+
 #: Reward for a first success at episode 1, 2, 3. The episode-1 value is a
 #: ceiling that the efficiency term erodes; the others are flat, because with a
 #: 1-2 move slack budget an episode-2 success has almost no room to vary.
@@ -47,10 +58,31 @@ FAST_SUCCESS_FLOOR = 0.7
 #: Never solved, but later episodes tried something different.
 EXPLORATORY_FAILURE_REWARD = -0.5
 
+#: Range a graded failure reward spans, worst to best, when progress is available.
+#:
+#: Measured on the arm-A baseline: **118 of 255 instances never solved, and 0.0% of
+#: them repeated the same action sequence**, so the ``-1.00`` bin never fires and 46%
+#: of the data collapses to the single value ``-0.5``. Nearly half the dataset then
+#: carries no ranking signal: the evolver's "most damning failure" sort is a tie
+#: broken by list order, and every failure-derived skill gets confidence 0.25.
+#:
+#: Grading by :attr:`~hexa_orbit.adapter.EpisodeRecord.progress` -- the fraction of
+#: the shortest path the instance closed at its best -- restores discrimination
+#: between "ended one cell short" and "bounced off a wall nine times", while keeping
+#: every failure strictly below the worst success (``+0.30``).
+FAILURE_REWARD_RANGE: tuple[float, float] = (-0.8, -0.2)
+
 #: Never solved and every episode repeated the same action sequence -- the failure
 #: mode ORBIT's Table 2 shows their single-episode RL baseline falling into on
 #: Mastermind. Isolated at the floor so the evolver is pushed hardest against it.
 NO_ADAPTATION_REWARD = -1.0
+
+
+def graded_failure_reward(best_progress: float) -> float:
+    """Map best-progress in ``[0,1]`` onto :data:`FAILURE_REWARD_RANGE`."""
+    low, high = FAILURE_REWARD_RANGE
+    clamped = max(0.0, min(1.0, float(best_progress)))
+    return low + (high - low) * clamped
 
 
 def reward_from_parts(
@@ -59,9 +91,17 @@ def reward_from_parts(
     episode_1_steps: Optional[int],
     shortest_path_len: int,
     adapted: bool,
+    best_progress: Optional[float] = None,
 ) -> float:
-    """The reward as a pure function of its four inputs. See the module docstring."""
+    """The reward as a pure function of its inputs. See the module docstring.
+
+    ``best_progress`` opts into the graded failure scale. Left ``None`` the original
+    two-value failure binning applies, so a run started before this existed is
+    unaffected -- the change is additive, not a silent rescoring.
+    """
     if first_success_episode is None:
+        if best_progress is not None:
+            return graded_failure_reward(best_progress)
         return EXPLORATORY_FAILURE_REWARD if adapted else NO_ADAPTATION_REWARD
 
     if first_success_episode != 1:
@@ -89,6 +129,7 @@ def instance_reward(run: InstanceRun) -> float:
         episode_1_steps=run.episode_lengths[0] if run.episode_lengths else None,
         shortest_path_len=run.shortest_path_len,
         adapted=run.adapted_across_episodes,
+        best_progress=run.best_progress if GRADED_FAILURES[0] else None,
     )
     if not -1.0 <= value <= 1.0:  # pragma: no cover - guards the constants above
         raise AssertionError(
@@ -112,6 +153,7 @@ def trajectory_reward(trajectory: Mapping[str, Any]) -> float:
         episode_1_steps=(trajectory.get("episode_lengths") or [None])[0],
         shortest_path_len=int(trajectory.get("shortest_path_len", 8)),
         adapted=bool(trajectory.get("adapted_across_episodes", True)),
+        best_progress=trajectory.get("best_progress") if GRADED_FAILURES[0] else None,
     )
 
 
