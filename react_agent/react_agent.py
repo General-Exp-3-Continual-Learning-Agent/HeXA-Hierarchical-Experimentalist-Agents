@@ -3,6 +3,7 @@ Core ReAct loop that orchestrates model <-> tool interaction for solving
 Interphyre physics puzzles.
 """
 
+import os
 import re
 import json
 import time
@@ -101,6 +102,19 @@ _JSON_FN_CALL_RE = re.compile(
     re.DOTALL,
 )
 
+# Matches gpt-oss-120b's OWN convention when it does NOT receive a tool schema
+# (load_openai_compatible_model has no _oss_tools support -- see the fix note
+# at load_openai_compatible_model): a single FLAT object with the tool name
+# under "action" and every parameter inline, e.g.
+#   {"action":"predict_first_contact","x":0.8,"y":0.0,"radius":1.0}
+#   {"action":"finish"}
+# This matches neither _JSON_FN_CALL_RE (no "arguments"/"parameters" key) nor
+# the harmony `to=functions.X` syntax, so without this the model's tool calls
+# were unparseable on every turn -- confirmed live: every iteration of a real
+# training episode logged "No action found in model output. Retrying..." and
+# the episode burned its full budget without a single successful dispatch.
+_JSON_ACTION_CALL_RE = re.compile(r'\{[^{}]*"action"\s*:\s*"(\w+)"[^{}]*\}')
+
 
 def _truncate_messages(messages: List[Dict[str, Any]], keep_recent: int = 8) -> List[Dict[str, Any]]:
     """
@@ -183,6 +197,21 @@ def _detect_tool_mention(text: str, thought: str) -> Optional[str]:
     a valid ReAct action.  Called only when all structured patterns have failed.
     Returns a ReAct-formatted string or None.
     """
+    # Check for gpt-oss-120b's flat convention FIRST: {"action": "tool", ...}
+    # is fully self-contained (name + every param in one parseable object), so
+    # it's more reliable than the generic name-mention scan below and should
+    # win over it whenever both would otherwise fire on the same text.
+    for m in _JSON_ACTION_CALL_RE.finditer(text):
+        tool = m.group(1)
+        if tool not in _ALL_KNOWN_TOOLS:
+            continue
+        try:
+            obj = json.loads(m.group(0))
+        except json.JSONDecodeError:
+            continue
+        obj.pop("action", None)
+        return f"Thought: {thought}\nAction: {tool}\nAction Input: {json.dumps(obj)}"
+
     # Check for JSON-encoded function call: {"name": "tool", "arguments": {...}}
     json_fn_m = _JSON_FN_CALL_RE.search(text)
     if json_fn_m:
@@ -531,10 +560,33 @@ def load_gpt_oss_model(model_name: str, temperature: float = 0.3, max_new_tokens
 
 def load_openai_compatible_model(
     model_name: str,
-    base_url: str = "http://localhost:8000/v1",
-    api_key: str = "EMPTY",
+    # NOTE: the default honours $OPENAI_BASE_URL so a job can serve vLLM on a
+    # non-default port. Previously this was a hard-coded literal, so a script
+    # that served on e.g. 8001 still had the agent dial 8000 and die with
+    # "Connection refused" -- the server was healthy, nothing was listening
+    # where the client looked. An explicit base_url argument still wins.
+    base_url: str = os.environ.get("OPENAI_BASE_URL", "http://localhost:8000/v1"),
+    # Same reasoning as base_url above: a hosted endpoint (e.g. api.openai.com)
+    # needs a real bearer key, and hard-coding "EMPTY" made every call to a real
+    # API 401 silently disguised as a generic request error. Local vLLM servers
+    # ignore the key entirely, so this default is a no-op for that path.
+    api_key: str = os.environ.get("OPENAI_API_KEY", "EMPTY"),
     temperature: float = 0.3,
     max_new_tokens: int = 800,
+    # Only meaningful for reasoning-family models (see is_reasoning_api below);
+    # ignored (never sent) for everything else, so this is safe to leave at the
+    # default for a non-reasoning model. Confirmed live against gpt-6-astra:
+    # 'low' -> 0 reasoning tokens on a trivial prompt, 'high' -> accepted too;
+    # unset leaves it at whatever the API's own implicit default is (measured
+    # non-zero on a real physics prompt -- not "off").
+    #
+    # Reads $OPENAI_REASONING_EFFORT so a job script can set it ONCE
+    # (export OPENAI_REASONING_EFFORT=low) and have it apply everywhere this
+    # loader is used -- actor rollouts (react_agent.py, run_skill_agent.py,
+    # evolving_loop.py) AND the teacher/evolver (distill.py's
+    # _get_openai_teacher), which has no --reasoning-effort CLI flag of its
+    # own. An explicit function argument still wins over the env var.
+    reasoning_effort: Optional[str] = os.environ.get("OPENAI_REASONING_EFFORT"),
 ):
     """
     Load a model via an OpenAI-compatible API endpoint (e.g. a vLLM server).
@@ -557,18 +609,120 @@ def load_openai_compatible_model(
 
     is_oss = "gpt-oss" in model_name.lower()
 
+    # Reasoning-family hosted models (o1/o3/o4, gpt-5.x, gpt-6.x, ...) use a
+    # different Chat Completions contract than vLLM/gpt-oss: `max_tokens` is
+    # rejected in favour of `max_completion_tokens`, and any explicit
+    # `temperature` other than the model's fixed default (1) is rejected too --
+    # confirmed against gpt-6-astra, both as literal 400s, not a guess. Reasoning
+    # tokens are billed against max_completion_tokens, so a ReAct-sized budget
+    # (700-800) risks a silently empty completion; the floor here is deliberately
+    # generous rather than tuned down after the fact.
+    _REASONING_PREFIXES = ("o1", "o3", "o4", "gpt-5", "gpt-6")
+    is_reasoning_api = model_name.lower().startswith(_REASONING_PREFIXES)
+    if is_reasoning_api and max_new_tokens < 4000:
+        print(
+            f"[load_openai_compatible_model] {model_name} looks like a reasoning-"
+            f"family model; raising max_new_tokens {max_new_tokens} -> 4000 so "
+            f"reasoning tokens don't starve the visible answer. Pass "
+            f"max_new_tokens explicitly to override.",
+            flush=True,
+        )
+        max_new_tokens = 4000
+
     def generate(
         messages: List[Dict[str, str]],
         temp: float = temperature,
         max_tokens: int = max_new_tokens,
     ) -> str:
-        response = client.chat.completions.create(
-            model=model_name,
-            messages=messages,
-            temperature=temp,
-            max_tokens=max_tokens,
-        )
-        content = response.choices[0].message.content.strip()
+        kwargs = dict(model=model_name, messages=messages)
+        if is_reasoning_api:
+            kwargs["max_completion_tokens"] = max_tokens
+            # temp is left out entirely -- passing even the model's own default
+            # (1) as an explicit float once triggered the same rejection on a
+            # differently-configured reasoning deployment; omitting it is safe
+            # everywhere and lets the API's fixed default apply.
+            if reasoning_effort is not None:
+                kwargs["reasoning_effort"] = reasoning_effort
+        else:
+            kwargs["temperature"] = temp
+            kwargs["max_tokens"] = max_tokens
+        # ReactAgent attaches this externally (self.model_fn._oss_tools = ...)
+        # once per episode, same pattern as last_usage below. Without it, an
+        # is_oss model served via vLLM has NO schema to anchor its tool calls
+        # to -- confirmed live: across two runs it improvised three mutually
+        # incompatible ad-hoc JSON conventions ({"action":...}, {"cmd":...,
+        # "params":...}, ...), none of which any text parser can chase
+        # indefinitely. Sending the real schema lets vLLM's own tool-call
+        # parser (server started with --enable-auto-tool-choice
+        # --tool-call-parser openai, i.e. GptOssToolParser) populate a proper
+        # structured message.tool_calls instead.
+        oss_tools = getattr(generate, "_oss_tools", None)
+        if oss_tools:
+            kwargs["tools"] = oss_tools
+        # Retry transient server errors instead of letting them kill the whole
+        # (multi-hour) training/eval process. Confirmed live: gpt-oss-120b's
+        # harmony chat template occasionally raised "openai.InternalServerError:
+        # ... Unexpected token N while expecting start token 200006" on a single
+        # call, with no retry -- the exception propagated out of generate(),
+        # out of ReactAgent.solve(), out of the per-seed loop in
+        # evolving_loop.py/run_skill_agent.py (none of which catch it), and
+        # killed the whole sbatch job 3-5 minutes after a successful vLLM
+        # server start, losing every round's progress since the last saved
+        # bank. A fresh call with the same messages has succeeded before on
+        # retry (harmony encoding glitches are not deterministic per-input);
+        # if it isn't transient, the last attempt's exception still propagates
+        # so a persistent failure is not silently swallowed.
+        _last_exc = None
+        for _attempt in range(3):
+            try:
+                response = client.chat.completions.create(**kwargs)
+                break
+            except Exception as e:
+                _last_exc = e
+                if _attempt < 2:
+                    print(
+                        f"[load_openai_compatible_model] {model_name} call failed "
+                        f"({type(e).__name__}: {e}); retrying ({_attempt + 1}/3)...",
+                        flush=True,
+                    )
+                    time.sleep(2 * (_attempt + 1))
+        else:
+            raise _last_exc
+        choice = response.choices[0]
+        content = (choice.message.content or "").strip()
+        tool_calls = getattr(choice.message, "tool_calls", None)
+        if tool_calls:
+            # Build the canonical ReAct string directly from the structured
+            # call rather than handing raw text to parse_react_output --
+            # this is exactly what a correct is_oss turn should look like,
+            # with no regex guessing involved.
+            call = tool_calls[0]
+            reasoning = getattr(choice.message, "reasoning_content", None) or content
+            args = call.function.arguments or "{}"
+            content = f"Thought: {reasoning}\nAction: {call.function.name}\nAction Input: {args}"
+        # Attached rather than returned: every existing caller treats this
+        # function as str-in str-out (ReactAgent, the Direct-answer baselines,
+        # Reflexion), so changing the return type would break all of them.
+        # Callers that want token accounting read generate.last_usage right
+        # after the call instead -- see run_react.py's per-iteration usage_log
+        # and run_direct_answer_openai.py's per-seed usage field.
+        usage = getattr(response, "usage", None)
+        reasoning = getattr(getattr(usage, "completion_tokens_details", None), "reasoning_tokens", None)
+        generate.last_usage = {
+            "prompt_tokens": getattr(usage, "prompt_tokens", None),
+            "completion_tokens": getattr(usage, "completion_tokens", None),
+            "reasoning_tokens": reasoning,
+            "finish_reason": choice.finish_reason,
+        } if usage is not None else None
+        if is_reasoning_api and not content:
+            print(
+                f"[load_openai_compatible_model] {model_name} returned no visible "
+                f"content (finish_reason={choice.finish_reason}, "
+                f"usage={getattr(response, 'usage', None)}) -- likely the "
+                f"reasoning budget consumed max_completion_tokens. Consider "
+                f"raising max_new_tokens further.",
+                flush=True,
+            )
         if is_oss:
             content = _strip_harmony_tags(content)
             content = _truncate_at_observation(content)
@@ -740,6 +894,51 @@ def parse_react_output(text: str) -> Tuple[str, Optional[str], Optional[dict]]:
     else:
         action_args = {}
 
+    # Fallback for gpt-oss-120b served via an OpenAI-compatible endpoint
+    # (load_openai_compatible_model has no _oss_tools/native tool-calling
+    # support, unlike the local-HF load_qwen_model path's _parse_oss_native).
+    # Without a tool schema the model improvises its OWN convention: a flat
+    # JSON object with the tool name under "action" and every parameter
+    # inline, e.g. {"action":"predict_first_contact","x":0.8,"y":0.0,"radius":1.0}
+    # or a bare {"action":"finish"}. This never matches the literal "Action:"
+    # text pattern above, so action_name stayed None on every single turn --
+    # confirmed live: a real training episode logged "No action found in
+    # model output. Retrying..." every iteration and burned its full budget
+    # without one successful tool dispatch.
+    # Also retry when the primary regex captured something that isn't even a
+    # plausible identifier (e.g. gpt-oss-120b's "**Action:** trace_green_ball"
+    # markdown-bold formatting makes r"Action:\s*(\S+)" grab "**" instead of
+    # the tool name -- confirmed live). NOTE: this is deliberately an
+    # identifier-SHAPE check, not membership in _ALL_KNOWN_TOOLS -- that
+    # registry is a fixed generic set that does not include level-specific
+    # tools (e.g. catapult's trace_green_ball, describe_scene_geometry), so
+    # gating on it would silently discard a correctly-parsed, genuinely valid
+    # level-specific action. dispatch_tool is the actual authority on which
+    # names are real; an unrecognized-but-identifier-shaped name reaches it
+    # unchanged and gets its own clean "ERROR: Unknown tool" observation,
+    # exactly as a mistyped tool name in the standard text format already does.
+    if action_name is None or not re.fullmatch(r"[A-Za-z_]\w*", action_name):
+        recovered = False
+        for m in _JSON_ACTION_CALL_RE.finditer(text):
+            candidate = m.group(1)
+            try:
+                obj = json.loads(m.group(0))
+            except json.JSONDecodeError:
+                continue
+            obj.pop("action", None)
+            action_name = candidate
+            action_args = obj
+            if not thought:
+                thought = text[:m.start()].strip()[-300:] or "(gpt-oss flat-JSON action)"
+            recovered = True
+            break
+        if not recovered:
+            # An invalid capture (e.g. "**") must not leak through as a fake
+            # action_name -- the caller's "no action found, retry" path keys
+            # specifically on None, and a garbage name would instead reach
+            # dispatch_tool as an unrecognized tool.
+            action_name = None
+
     return thought, action_name, action_args
 
 
@@ -756,6 +955,7 @@ class ReactAgent:
         temperature: float = 0.3,
         max_new_tokens: int = 800,
         is_oss: bool = False,
+        on_turn_end=None,
     ):
         self.model_fn = model_fn
         self.toolkit = toolkit
@@ -765,6 +965,11 @@ class ReactAgent:
         self.temperature = temperature
         self.max_new_tokens = max_new_tokens
         self.is_oss = is_oss
+        # Optional within-seed hook: called after every non-terminal tool turn
+        # as on_turn_end(iteration, trajectory) and may return a replacement
+        # system prompt (e.g. re-rendered from a refined skill bank). None --
+        # the default -- keeps solve() byte-for-byte identical to before.
+        self.on_turn_end = on_turn_end
 
     @staticmethod
     def _make_tool_call_id(iteration: int) -> str:
@@ -783,7 +988,9 @@ class ReactAgent:
                 - final_observation: str
         """
         system_prompt = build_system_prompt(self.level_name, is_oss=self.is_oss)
-        initial_message = build_initial_user_message(self.level_name, is_oss=self.is_oss)
+        initial_message = build_initial_user_message(
+            self.level_name, is_oss=self.is_oss, max_iterations=self.max_iterations
+        )
 
         # For OSS models, register tool schemas on the generate function so
         # the template can render TypeScript definitions the model recognises.
@@ -810,6 +1017,12 @@ class ReactAgent:
         trajectory = []
         final_action = None
         final_observation = ""
+        # Per-iteration token usage, when the model_fn reports it (OpenAI-compatible
+        # backends only; None entries for backends that don't, e.g. Claude CLI).
+        # Threaded into every return dict below so a reasoning-family actor's
+        # cost (and specifically its reasoning-token spend) is recoverable from
+        # the saved trajectory rather than lost once the process exits.
+        usage_log = []
         # Track last valid coordinates for OSS empty-args recovery
         _last_valid_coords = {}
 
@@ -844,6 +1057,7 @@ class ReactAgent:
                 max_tokens=self.max_new_tokens,
             )
             gen_time = time.time() - start_time
+            usage_log.append(getattr(self.model_fn, "last_usage", None))
 
             # Handle thinking models (return dict) vs standard models (return str)
             if isinstance(raw_response, dict):
@@ -933,6 +1147,7 @@ class ReactAgent:
                     "iterations": iteration,
                     "trajectory": trajectory,
                     "final_observation": final_observation,
+                    "usage_log": usage_log,
                 }
 
             # Execute the tool
@@ -975,6 +1190,7 @@ class ReactAgent:
                     "iterations": iteration,
                     "trajectory": trajectory,
                     "final_observation": final_observation,
+                    "usage_log": usage_log,
                 }
 
             # Append to conversation history — use the model's native tool
@@ -1000,6 +1216,22 @@ class ReactAgent:
                 messages.append({"role": "assistant", "content": response})
                 messages.append({"role": "user", "content": format_observation(observation)})
 
+            # Within-seed refinement: swap in the refreshed system prompt for the
+            # next turn. Skipped after the last turn, where nothing would read it.
+            if self.on_turn_end is not None and iteration < self.max_iterations:
+                new_system = self.on_turn_end(iteration, trajectory)
+                # The hook may return the new system prompt, or a dict with
+                # "system" and "append_to_observation" (text added to the tool
+                # result the model reads next, e.g. a within-seed skill update).
+                append = None
+                if isinstance(new_system, dict):
+                    append = new_system.get("append_to_observation")
+                    new_system = new_system.get("system")
+                if new_system:
+                    messages[0]["content"] = new_system
+                if append:
+                    messages[-1]["content"] = (messages[-1].get("content") or "") + "\n\n" + append
+
         # Max iterations reached without finish
         if self.verbose:
             print(f"\n[Max iterations reached ({self.max_iterations})]")
@@ -1010,4 +1242,5 @@ class ReactAgent:
             "iterations": self.max_iterations,
             "trajectory": trajectory,
             "final_observation": "Max iterations reached without calling finish.",
+            "usage_log": usage_log,
         }

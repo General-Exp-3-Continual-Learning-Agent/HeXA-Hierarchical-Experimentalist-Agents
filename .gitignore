@@ -44,6 +44,7 @@ logs/
 Plots/
 *.gif
 *.mp4
+INSTALL.md
 
 # OS thumbnails
 Thumbs.db
@@ -51,3 +52,18 @@ Thumbs.db
 # vLLM / FlashInfer JIT scratch (serve_gpt_oss_vllm.sh)
 .cache/
 tiktoken_encodings/
+
+# Experiment outputs live outside this repo (code-only release)
+Results_New_Env/
+results_core_baselines/
+DOC_Results/
+baselines/data/
+skillrl/data/
+skillrl/loops/data/
+discovery-agents/hexa_discovery/data/
+training/SKILL-RL/analysis/
+training/SKILL-RL/data/
+training/SKILL-RL/cross_banks/
+training/SKILL-RL/FirstFiveTrajs/
+training/SKILL-RL/Skill_banks/
+*.pdf

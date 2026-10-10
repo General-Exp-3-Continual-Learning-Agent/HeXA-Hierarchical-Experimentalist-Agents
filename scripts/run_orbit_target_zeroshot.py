@@ -67,6 +67,12 @@ def main() -> int:
     ap.add_argument("--base-url", default=None)
     ap.add_argument("--concurrency", type=int, default=8)
     ap.add_argument("--max-response-tokens", type=int, default=4096)
+    ap.add_argument("--reasoning-effort", default=ActorConfig.reasoning_effort,
+                    help="Passed straight to ActorConfig. gpt-oss honours this "
+                         "as a hard cap on reasoning depth (harmony format); "
+                         "Qwen3's chat template does not throttle equivalently "
+                         "at 'low', so the two models are not symmetric here -- "
+                         "see qwen3-thinking-fills-the-budget.")
     ap.add_argument("--injection-budget-tokens", type=int,
                     default=loop.INJECTION_BUDGET_TOKENS)
     args = ap.parse_args()
@@ -81,6 +87,7 @@ def main() -> int:
 
     cfg = ActorConfig(model=args.model, base_url=args.base_url,
                       max_response_tokens=args.max_response_tokens,
+                      reasoning_effort=args.reasoning_effort,
                       seed=RUN_SEED_STRIDE * args.run_index)
 
     def actor_factory(guidelines, instance=None):

@@ -15,7 +15,7 @@
 # Variant: evolving-skilled (single verl process, file-based bank)
 #
 #   Phase 0 (once, before verl starts):
-#     5 base-model trajectories (FirstFiveTrajs/) → Qwen 7B teacher → skill_bank_round_0.json
+#     5 base-model trajectories ($INIT_TRAJ_JSONL) → Qwen 7B teacher → skill_bank_round_0.json
 #
 #   Continuous training:
 #     One verl process for all 500 steps. The dataset reads skill_bank.json on
@@ -25,7 +25,7 @@
 #     No checkpoint reload, no Adam reset, no Ray/FSDP re-init.
 #
 # Pre-requisites:
-#   1. FirstFiveTrajs available: SKILL-RL/FirstFiveTrajs/tbp_epoch0_trajectories.jsonl
+#   1. FirstFiveTrajs available: $INIT_TRAJ_JSONL (5 base-model rollouts, JSONL)
 #   2. vLLM teacher running:     sbatch slurm_vllm_7b_teacher.sh  (writes endpoint file)
 #      OR set VLLM_ENDPOINT env var: e.g. http://gpu014:8000
 # ─────────────────────────────────────────────────────────────────────────────
@@ -34,7 +34,7 @@ set -euo pipefail
 
 # ─── Config ──────────────────────────────────────────────────────────────────
 SKILL_EVOLVE_FREQ="${SKILL_EVOLVE_FREQ:-3}"        # steps between teacher calls
-INIT_TRAJ_SEEDS="${INIT_TRAJ_SEEDS:-1 2 3 4 5}"     # seeds assigned to FirstFiveTrajs lines
+INIT_TRAJ_SEEDS="${INIT_TRAJ_SEEDS:-1 2 3 4 5}"     # seeds assigned to $INIT_TRAJ_JSONL lines
 TRAIN_SEED_START="${TRAIN_SEED_START:-1}"
 NUM_TRAIN_SEEDS="${NUM_TRAIN_SEEDS:-50}"
 VAL_SEED_START="${VAL_SEED_START:-51}"
@@ -44,15 +44,16 @@ MAX_MISTAKES="${MAX_MISTAKES:-5}"
 LEVEL="two_body_problem"
 
 # ─── Paths ────────────────────────────────────────────────────────────────────
-PROJECT_DIR="/project/pi_sniekum_umass_edu/vgandhi"
-VERL_TOOL_DIR="$PROJECT_DIR/HeXA-Hierarchical-Experimentalist-Agents/training"
-export PYTHONPATH="$(dirname "$VERL_TOOL_DIR")/interphyre:${PYTHONPATH:-}"   # makes repo-level interphyre package importable
-CONDA_ENV="$PROJECT_DIR/conda/envs/VerlToolInterphyre"
+# Paths: every one can be overridden from the environment.
+VERL_TOOL_DIR="${VERL_TOOL_DIR:-${SLURM_SUBMIT_DIR:-$PWD}}"   # this training/ dir; sbatch from here
+CKPT_ROOT="${CKPT_ROOT:-$VERL_TOOL_DIR/checkpoints}"
+export PYTHONPATH="$(dirname "$VERL_TOOL_DIR")/interphyre:$(dirname "$VERL_TOOL_DIR"):${PYTHONPATH:-}"   # repo-level interphyre package + skillrl
+CONDA_ENV="${CONDA_ENV:?set CONDA_ENV to the VerlToolInterphyre conda env path}"
 PYTHON="$CONDA_ENV/bin/python"
 
-INIT_TRAJ_JSONL="$VERL_TOOL_DIR/SKILL-RL/FirstFiveTrajs/tbp_epoch0_trajectories.jsonl"
-SKILLRL_INIT_DIR="$VERL_TOOL_DIR/SKILL-RL/data/initial/$LEVEL"
-SKILL_BANK_DIR="$VERL_TOOL_DIR/SKILL-RL/Skill_banks/evolving_grpo_tbp"
+INIT_TRAJ_JSONL="${INIT_TRAJ_JSONL:-$VERL_TOOL_DIR/skill_data/first_five_trajs/tbp_epoch0_trajectories.jsonl}"
+SKILLRL_INIT_DIR="$VERL_TOOL_DIR/skill_data/initial/$LEVEL"
+SKILL_BANK_DIR="$VERL_TOOL_DIR/skill_banks/evolving_grpo_tbp"
 DATA_DIR="$VERL_TOOL_DIR/data/interphyre_tbp_evolving_continuous"
 
 # The dataset reads this path at every __getitem__; the hook rewrites it.
@@ -101,7 +102,7 @@ strategy=fsdp
 module load conda/latest
 module load cuda/12.8
 export PATH="$CONDA_ENV/bin:${PATH:-}"
-export HF_HOME="/scratch4/workspace/svaidyanatha_umass_edu-phyre/hf_cache"
+export HF_HOME="${HF_HOME:-$HOME/.cache/huggingface}"
 
 cd "$VERL_TOOL_DIR"
 mkdir -p logs "$SKILL_BANK_DIR" "$SKILLRL_INIT_DIR"
@@ -171,7 +172,7 @@ echo "════════════════════════�
 
 if [ ! -f "$INIT_SKILL_BANK" ]; then
     echo "Converting initial trajectories (seeds: $INIT_TRAJ_SEEDS)..."
-    $PYTHON SKILL-RL/tools/convert_training_trajs.py \
+    $PYTHON tools/convert_training_trajs.py \
         --input "$INIT_TRAJ_JSONL" \
         --output "$SKILLRL_INIT_DIR" \
         --seeds $INIT_TRAJ_SEEDS
@@ -344,7 +345,7 @@ PYTHONUNBUFFERED=1 $PYTHON -m verl_tool.trainer.main_ppo \
     trainer.experiment_name=$run_name \
     trainer.val_before_train=True \
     trainer.default_hdfs_dir=null \
-    trainer.default_local_dir=/scratch4/workspace/svaidyanatha_umass_edu-phyre/checkpoints/interphyre/${run_name}/run${run_num} \
+    trainer.default_local_dir=$CKPT_ROOT/interphyre/${run_name}/run${run_num} \
     trainer.resume_mode=disable \
     trainer.n_gpus_per_node=1 \
     trainer.nnodes=1 \

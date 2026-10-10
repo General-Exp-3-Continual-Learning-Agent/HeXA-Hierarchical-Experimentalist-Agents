@@ -79,7 +79,6 @@ The environment is a 2D box with coordinates ranging from -5 to 5 on both axes. 
 - **Basket (Gray):** A dynamic basket sitting on the right ledge.
 - **Blue Ball (Target):** A dynamic ball inside the basket.
 
-Use more radius for better energy (r>1)
 **The Goal:**
 Place ONE Red Ball somewhere in the box so that, once the simulation runs, the green ball contacts the blue ball for at least 3 seconds. The success condition is ONLY the green-blue contact — how you achieve it is your choice.
 
@@ -94,7 +93,7 @@ Place ONE Red Ball somewhere in the box so that, once the simulation runs, the g
 {react_format}"""
 
 CATAPULT_INITIAL = """\
-Solve the Catapult puzzle. You have 25 iterations to solve it. The success condition is: green_ball must contact blue_ball. Use tools effectively and think about alternate approaches if one does not work.
+Solve the Catapult puzzle. You have {max_iterations} iterations to solve it. The success condition is: green_ball must contact blue_ball. Use tools effectively and think about alternate approaches if one does not work.
 - **ALWAYS call predict_first_contact first** — it is cheap and tells you if your red ball hits the intended object.
 - Only if predict confirms the right contact: call trace_green_ball to track green ball.
 """
@@ -128,7 +127,7 @@ Placement Constraints:
 When your trace shows green_ball in continuous contact with blue_ball for 3 seconds, call finish."""
 
 OSS_CATAPULT_INITIAL = """\
-Solve the Catapult puzzle. You have 25 iterations to solve it. The success condition is: green_ball must contact blue_ball. Use tools effectively and think about alternate approaches if one does not work.
+Solve the Catapult puzzle. You have {max_iterations} iterations to solve it. The success condition is: green_ball must contact blue_ball. Use tools effectively and think about alternate approaches if one does not work.
 - **ALWAYS call predict_first_contact first** — it is cheap and tells you if your red ball hits the intended object.
 - Only if predict confirms the right contact: call trace_green_ball to track green ball."""
 

@@ -319,3 +319,9 @@ verl_step_records/
 /ray-logs
 /models
 /sft_models
+# Run outputs / inputs not shipped with the code
+/checkpoints
+/data
+/skill_data
+/skill_banks
+/logs

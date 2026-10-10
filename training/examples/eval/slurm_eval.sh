@@ -23,14 +23,14 @@
 # Examples:
 #   # non-skilled down_to_earth
 #   sbatch examples/eval/slurm_eval.sh \
-#       --checkpoint /scratch4/workspace/svaidyanatha_umass_edu-phyre/checkpoints/interphyre/interphyre-a100-1gpu-qwen_qwen2.5-3b-instruct-grpo-n4-b1-t1.0-lr1e-6/run24/global_step_1000/actor/huggingface \
+#       --checkpoint $CKPT_ROOT/interphyre/interphyre-a100-1gpu-qwen_qwen2.5-3b-instruct-grpo-n4-b1-t1.0-lr1e-6/run24/global_step_1000/actor/huggingface \
 #       --level down_to_earth
 #
 #   # skilled two_body_problem
 #   sbatch examples/eval/slurm_eval.sh \
-#       --checkpoint /scratch4/workspace/svaidyanatha_umass_edu-phyre/checkpoints/interphyre/interphyre-a100-1gpu-qwen_qwen2.5-3b-instruct-grpo-n4-b1-t1.0-lr1e-6-skilled-tbp/run34/global_step_50/actor/huggingface \
+#       --checkpoint $CKPT_ROOT/interphyre/interphyre-a100-1gpu-qwen_qwen2.5-3b-instruct-grpo-n4-b1-t1.0-lr1e-6-skilled-tbp/run34/global_step_50/actor/huggingface \
 #       --level two_body_problem \
-#       --skill_bank SKILL-RL/Skill_banks/skill_bank_evolving_two_body.json
+#       --skill_bank <path/to/skill_bank.json>
 # ─────────────────────────────────────────────────────────────────────────────
 
 set -euo pipefail
@@ -66,10 +66,11 @@ if [[ -z "$CHECKPOINT" || -z "$LEVEL" ]]; then
 fi
 
 # ─── Paths ───────────────────────────────────────────────────────────────────
-PROJECT_DIR="/project/pi_sniekum_umass_edu/vgandhi"
-VERL_TOOL_DIR="$PROJECT_DIR/HeXA-Hierarchical-Experimentalist-Agents/training"
+# Paths: every one can be overridden from the environment.
+VERL_TOOL_DIR="${VERL_TOOL_DIR:-${SLURM_SUBMIT_DIR:-$PWD}}"   # this training/ dir; sbatch from here
+CKPT_ROOT="${CKPT_ROOT:-$VERL_TOOL_DIR/checkpoints}"
 export PYTHONPATH="$(dirname "$VERL_TOOL_DIR")/interphyre:${PYTHONPATH:-}"   # makes repo-level interphyre package importable
-CONDA_ENV="$PROJECT_DIR/conda/envs/VerlToolInterphyre"
+CONDA_ENV="${CONDA_ENV:?set CONDA_ENV to the VerlToolInterphyre conda env path}"
 PYTHON="$CONDA_ENV/bin/python"
 
 module load conda/latest

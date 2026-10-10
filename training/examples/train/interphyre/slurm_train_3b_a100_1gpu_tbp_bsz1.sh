@@ -29,10 +29,11 @@
 set -euo pipefail
 
 # ─── Paths ───────────────────────────────────────────────────────────────────
-PROJECT_DIR="/project/pi_sniekum_umass_edu/vgandhi"
-VERL_TOOL_DIR="$PROJECT_DIR/HeXA-Hierarchical-Experimentalist-Agents/training"
+# Paths: every one can be overridden from the environment.
+VERL_TOOL_DIR="${VERL_TOOL_DIR:-${SLURM_SUBMIT_DIR:-$PWD}}"   # this training/ dir; sbatch from here
+CKPT_ROOT="${CKPT_ROOT:-$VERL_TOOL_DIR/checkpoints}"
 export PYTHONPATH="$(dirname "$VERL_TOOL_DIR")/interphyre:${PYTHONPATH:-}"   # makes repo-level interphyre package importable
-CONDA_ENV="$PROJECT_DIR/conda/envs/VerlToolInterphyre"
+CONDA_ENV="${CONDA_ENV:?set CONDA_ENV to the VerlToolInterphyre conda env path}"
 DATA_DIR="$VERL_TOOL_DIR/data/interphyre_tbp_s1_50"
 
 # ─── Model & Data ────────────────────────────────────────────────────────────
@@ -289,7 +290,7 @@ PYTHONUNBUFFERED=1 $PYTHON -m verl_tool.trainer.main_ppo \
     trainer.experiment_name=$run_name \
     trainer.val_before_train=True \
     trainer.default_hdfs_dir=null \
-    trainer.default_local_dir=/scratch4/workspace/svaidyanatha_umass_edu-phyre/checkpoints/interphyre/${run_name}/run${run_num} \
+    trainer.default_local_dir=$CKPT_ROOT/interphyre/${run_name}/run${run_num} \
     trainer.resume_mode=disable \
     trainer.n_gpus_per_node=$n_gpus_per_node \
     trainer.nnodes=$n_nodes \

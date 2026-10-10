@@ -51,6 +51,7 @@ from .pools import (
     MazeInstanceSpec,
     build_pool,
     dedup_by_layout,
+    DEFAULT_MAZE_CONFIG,
     published_maze_config,
 )
 
@@ -365,8 +366,17 @@ class MazeTask:
         *,
         global_seed: int = DEFAULT_GLOBAL_SEED,
         num_episodes: int = EPISODES_PER_INSTANCE,
+        config_name: str = DEFAULT_MAZE_CONFIG,
     ) -> None:
-        self.task_cfg = published_maze_config()
+        """``config_name`` selects which of ORBIT's two Maze val configs to draw
+        pools from. It defaults to the historical one; pass
+        :data:`~hexa_orbit.pools.PAPER_QWEN_CONFIG` for the pool behind the
+        paper's Qwen3-8B table. The two pools are **disjoint** -- see
+        :func:`~hexa_orbit.pools.published_maze_config` -- so results across
+        them are not paired and must not be pooled.
+        """
+        self.task_cfg = published_maze_config(config_name)
+        self.config_name = config_name
         self.global_seed = global_seed
         self.num_episodes = num_episodes
 
@@ -411,6 +421,7 @@ class MazeTask:
 
         return {
             "task": self.name,
+            "maze_config": self.config_name,
             "task_cfg": dict(self.task_cfg),
             "global_seed": self.global_seed,
             "episodes_per_instance": self.num_episodes,

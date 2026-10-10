@@ -147,19 +147,47 @@ def build_reserve_pool(
     )
 
 
-def published_maze_config(config_name: str = "eval_config.yaml") -> dict[str, Any]:
+#: ORBIT's Maze val task as ``scripts/eval/openai.sh`` runs it (``total_step_cap: 45``).
+#: The historical default -- every Maze result before 2026-09-04 uses this pool.
+DEFAULT_MAZE_CONFIG = "eval_config.yaml"
+
+#: ORBIT's Maze val task as ``scripts/eval/benchmark.sh`` runs it
+#: (``total_step_cap: 27``) -- the config behind the paper's Qwen3-8B Maze
+#: numbers. Disjoint from :data:`DEFAULT_MAZE_CONFIG`'s pool, because
+#: ``total_step_cap`` is inside :func:`task_specific_seed`'s hash.
+PAPER_QWEN_CONFIG = "multi_task_multi_episode_config.yaml"
+
+
+def published_maze_config(config_name: str = DEFAULT_MAZE_CONFIG) -> dict[str, Any]:
     """ORBIT's Maze task config, loaded verbatim from its checked-in YAML.
 
     Loaded rather than transcribed for the reason given in
     :func:`task_specific_seed`: the hash depends on value *types*, so YAML is the
-    only safe source. Returned unmodified -- in particular ``total_step_cap: 45``
-    is preserved even though D3 runs at 27, because mutating it here would redraw
-    every seed in both pools and silently replace ORBIT's published 256-instance
-    eval set with a different one.
+    only safe source. Returned unmodified -- in particular ``total_step_cap`` is
+    never rewritten here, because it is inside the seed hash and mutating it
+    would redraw every seed in both pools.
 
-    ``configs/eval_config.yaml`` is the default because it is what
-    ``scripts/eval/openai.sh`` uses, and therefore what most likely produced
-    ORBIT's Table 2 Maze numbers (D3).
+    **Two configs, two disjoint pools.** ORBIT ships the Maze val task twice with
+    different ``total_step_cap``, and the choice silently selects which 256 mazes
+    you evaluate on:
+
+    ==========================================  ================  ==============
+    config                                      ``total_step_cap``  used by ORBIT for
+    ==========================================  ================  ==============
+    ``eval_config.yaml``                        45                ``scripts/eval/openai.sh`` -- the GPT-4o / GPT-5.2 numbers (Fig. 1 right)
+    ``multi_task_multi_episode_config.yaml``    27                ``scripts/eval/benchmark.sh`` -- the **Qwen3-8B** base / RL / ORBIT numbers (Table 2, Fig. 3, Fig. 5)
+    ==========================================  ================  ==============
+
+    ``eval_config.yaml`` remains the default so that every Maze result recorded
+    before 2026-09-04 stays reproducible. It is **not** the config behind the
+    paper's Qwen table: an earlier version of this docstring inferred that it was,
+    from ``openai.sh`` alone, without checking ``benchmark.sh``. Pass
+    :data:`PAPER_QWEN_CONFIG` for the pool the Qwen numbers actually used.
+
+    Note also ``multi_episode_env.py:370``: ORBIT reports
+    ``total_step_cap // max_turns`` episodes, so cap 45 is a *five*-episode
+    protocol in ORBIT's own terms and cap 27 is the three-episode one that
+    HExA's hard T=3 loop was built to match.
     """
     install_orbit_on_path()
     path = Path(orbit_repo_root()) / "configs" / config_name

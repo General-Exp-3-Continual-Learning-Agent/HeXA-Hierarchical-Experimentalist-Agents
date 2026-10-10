@@ -6,7 +6,7 @@
 
 This repository contains the HeXA implementation, **five configuration variants** (Init × Update rule), **two ablations** (reward, skills-only), **three ReAct-style baselines**, and a cross-level meta-transfer pipeline. Everything runs through the [Claude Code CLI](https://claude.ai/code) — no API keys, no Anthropic SDK.
 
-See [docs/HEXA.md](docs/HEXA.md) for the method, [docs/CONFIGS.md](docs/CONFIGS.md) for the variant matrix, [docs/BASELINES.md](docs/BASELINES.md) for the baselines, and [docs/ABLATIONS.md](docs/ABLATIONS.md) for the ablations.
+See [docs/HEXA.md](docs/HEXA.md) for the method, [docs/CONFIGS.md](docs/CONFIGS.md) for the variant matrix, and [docs/ABLATIONS.md](docs/ABLATIONS.md) for the ablations.
 
 ---
 
@@ -76,7 +76,6 @@ Wrappers forward every flag to the underlying module — `python scripts/run_hex
 
 - [docs/HEXA.md](docs/HEXA.md) — method walkthrough: distil → evolve cycle, bank capacity, evolution rule
 - [docs/CONFIGS.md](docs/CONFIGS.md) — variant matrix: Init × Update rule, mapped to scripts and files
-- [docs/BASELINES.md](docs/BASELINES.md) — ReAct, Reflexion, Direct
 - [docs/CROSS_LEVEL.md](docs/CROSS_LEVEL.md) — meta-transfer (no target trajectories used)
 - [docs/ABLATIONS.md](docs/ABLATIONS.md) — reward ablation (contrastive-only) and skills-only ablation
 

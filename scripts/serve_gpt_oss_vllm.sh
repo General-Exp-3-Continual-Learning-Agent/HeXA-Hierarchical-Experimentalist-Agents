@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 #SBATCH --gpus=4
 #SBATCH -c 16
-#SBATCH -t 1-00:00:00
+#SBATCH -t 3-00:00:00
 #SBATCH --mem=480G
 #SBATCH -o logs/gpt_oss_120b_vllm_%j.out
 #SBATCH -e logs/gpt_oss_120b_vllm_%j.err
@@ -14,6 +14,13 @@
 #
 # Serves the actor/evolver for hexa_core. Both the Phase 2 reproduction gate
 # (scripts/run_repro_gate.py) and everything after it talk to this endpoint.
+#
+# Walltime is 3 days, not 1: job 64581745 hit the old 24h cap mid-run (SLURM
+# TIMEOUT, not a crash) while `scripts/run_core_memory_baseline_arm.sh` was
+# still mid-flight, aborting 31 in-flight requests and corrupting one eval
+# pass with connection-error "failures" indistinguishable from real ones at
+# the time. superpod-a100's own MaxTime is 30 days, so this was purely our
+# own default, not a cluster limit.
 #
 #   sbatch scripts/serve_gpt_oss_vllm.sh          # 4x A100 (superpod-a100), TP=4
 #   H100=1 bash scripts/serve_gpt_oss_vllm.sh     # 2x H100 (gpu),           TP=2

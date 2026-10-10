@@ -1345,7 +1345,44 @@ def test_evolution_prompt_is_back_to_the_v3_shape():
                  "acts_on_invariant", "departs_from_earlier_path",
                  "what separated the solves"):
         assert gone not in text, gone
-    assert len(text) < 8600, f"prompt is {len(text)} chars; v3 was ~8135"
+    # v7 adds rules 7-8 (two-way confidence, keep the mechanism) from the catapult
+    # truncation postmortem. Both are evidenced in the banked maze rounds -- see
+    # `test_evolution_prompt_carries_the_postmortem_rules` -- so the budget moves,
+    # but only by what they cost. The guard remains: v6's failure was 3.4k chars of
+    # instructions the teacher banked nothing from, and nothing may be added here
+    # without an equivalent measurement.
+    assert len(text) < 9800, f"prompt is {len(text)} chars; v3 was ~8135, v6 ~11500"
+
+
+def test_evolution_prompt_carries_the_postmortem_rules():
+    """The two fixes the catapult truncation postmortem left to the prompt.
+
+    Maze banks show both failure modes. Confidence is a one-way ratchet:
+    `orbit_maze_hexa_qwen8_16k/run0` holds three skills pinned at 0.85/0.82/0.78 for
+    nine consecutive rounds, moving only upward (0.78 -> 0.82), while confidence is
+    the retriever's ranking key. And principles are compressed on every rewrite:
+    round 0 (seeded, no bank in the prompt) averages 168 chars; from round 1, the
+    first round fed back through the teacher, every round averages 100-110 and the
+    "record which side of which cell" mechanism thins to a restatement of the title.
+
+    Rules 9-10 of the postmortem (ban unfalsifiable skills, ban commit-gating
+    skills) are deliberately NOT ported: a scan of 287 unique skills across 80 maze
+    banks found no "this maze may be unsolvable" hedge and no budget-burning gate,
+    and `_ALREADY_KNOWN` already covers the "adapt to the situation" class.
+    """
+    from hexa_orbit.teacher import SKILL_BANK_EVOLUTION_PROMPT_MAZE as prompt
+
+    text = prompt.format(
+        level_name="maze", level_description="d", existing_skills_block="B",
+        n_successes=8, n_failures=12, new_trajectories_block="T",
+        max_skills=10, max_mistakes=5,
+    )
+    assert "Confidence moves in both directions" in text
+    assert "least 0.1" in text  # wrapped: "lower it by at\n   least 0.1"
+    assert "confidence_changes" in text
+    assert "keeping its mechanism" in text
+    # Rule 1 must not re-freeze what rule 7 unfreezes.
+    assert "preserving their confidence" not in text
 
 
 def test_evolver_block_uses_the_pooled_aggregate_not_the_contrastive_one():

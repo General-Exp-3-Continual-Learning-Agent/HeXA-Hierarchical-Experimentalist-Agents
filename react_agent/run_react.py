@@ -86,6 +86,20 @@ def save_results(results: list, log_dir: str, args):
     """Save results and trajectories to the log directory."""
     os.makedirs(log_dir, exist_ok=True)
 
+    # Run-level token totals across every seed's usage_log entries, when the
+    # backend reports usage (OpenAI-compatible only; empty for Claude/mock).
+    all_usage = [
+        u for r in results for u in (r.get("usage_log") or []) if u
+    ]
+    usage_totals = None
+    if all_usage:
+        usage_totals = {
+            "prompt_tokens": sum(u.get("prompt_tokens") or 0 for u in all_usage),
+            "completion_tokens": sum(u.get("completion_tokens") or 0 for u in all_usage),
+            "reasoning_tokens": sum(u.get("reasoning_tokens") or 0 for u in all_usage),
+            "n_calls_with_usage": len(all_usage),
+        }
+
     # Summary
     summary = {
         "model": args.model,
@@ -97,6 +111,7 @@ def save_results(results: list, log_dir: str, args):
         "successes": sum(1 for r in results if r["success"]),
         "success_rate": sum(1 for r in results if r["success"]) / len(results) if results else 0,
         "avg_iterations": sum(r["iterations"] for r in results) / len(results) if results else 0,
+        "usage_totals": usage_totals,
         "results": [],
     }
 
@@ -132,6 +147,11 @@ def save_results(results: list, log_dir: str, args):
                 {"thought": t, "action": a, "observation": o}
                 for t, a, o in r.get("trajectory", [])
             ],
+            # Per-iteration token usage from an OpenAI-compatible backend, when
+            # reported (None entries for backends that don't, e.g. Claude CLI).
+            # Lets a reasoning-family actor's reasoning-token spend be audited
+            # per seed after the fact instead of only at call time.
+            "usage_log": r.get("usage_log"),
         }
         with open(traj_path, "w") as f:
             json.dump(traj_data, f, indent=2)

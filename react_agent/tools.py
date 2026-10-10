@@ -20,6 +20,39 @@ from interphyre.config import SimulationConfig
 # Success requires 3s (180 steps) of contact.
 _SIM_CONFIG = SimulationConfig(max_steps=2000)
 
+# predict_first_contact used to report the centre-to-centre direction as the
+# "contact normal". For a bar that points at the bar's centre, not the touched
+# surface (a ball landing on top of the catapult arm read as ~(0.96, 0.27)
+# instead of ~(0, 1)). It now reports Box2D's world manifold. All results
+# produced before 2026-10-02 used the old output; set
+# INTERPHYRE_LEGACY_CONTACT_NORMAL=1 to reproduce them exactly.
+_LEGACY_CONTACT_NORMAL = os.environ.get("INTERPHYRE_LEGACY_CONTACT_NORMAL") == "1"
+
+
+def _contact_manifold(red_body, other_body):
+    """(normal pointing from other toward red, contact point) for the red ball's
+    touching contact with other_body, from Box2D's world manifold; None if absent."""
+    if other_body is None:
+        return None
+    # pybox2d returns fresh wrapper objects per access, so match bodies by name.
+    red_name, other_name = red_body.userData, other_body.userData
+    for edge in red_body.contacts:
+        c = edge.contact
+        if not c.touching or edge.other.userData != other_name:
+            continue
+        n_points = c.manifold.pointCount
+        if n_points < 1:
+            continue
+        wm = c.worldManifold
+        nx, ny = wm.normal  # points from fixtureA toward fixtureB
+        if c.fixtureA.body.userData == red_name:
+            nx, ny = -nx, -ny
+        pts = list(wm.points)[:n_points]
+        px = sum(p[0] for p in pts) / n_points
+        py = sum(p[1] for p in pts) / n_points
+        return (nx, ny), (px, py)
+    return None
+
 
 class InterphyreToolkit:
     """Toolkit wrapping Interphyre API for physics puzzle levels."""
@@ -445,8 +478,42 @@ class InterphyreToolkit:
             f"Min contact distance (sum of radii): {green['radius'] + blue['radius']:.4f}",
             "",
             f"Blue is to the {direction} of Green.",
-            f"Push the Green Ball to the {direction}."
+            # Kept deliberately. The goal is "green touches blue" and blue's side is
+            # already printed above, so this is inference from stated facts, not
+            # privileged insight -- and every existing TBP baseline was measured
+            # with it present, so removing it would invalidate those comparisons.
+            # The privileged step is WHERE RED GOES, which is never revealed.
+            f"Push the Green Ball to the {direction}.",
+            "",
+            # Placement feasibility. This is constraint arithmetic the agent can
+            # already derive from get_level_state plus the rejection messages it
+            # gets after the fact -- stating it up front saves it from spending
+            # the budget rediscovering it one rejected placement at a time
+            # (measured: 492/1033 = 47.6% of actions rejected as overlapping).
+            #
+            # It is strategy-NEUTRAL: it describes both balls symmetrically and
+            # says nothing about which side of Green to strike from, which is the
+            # insight the level exists to test.
+            "Placement feasibility (red must not overlap either ball at t=0):",
+            f"  centre must be >= {green['radius']:.4f} + r_red from Green "
+            f"({green['x']:.4f}, {green['y']:.4f})",
+            f"  centre must be >= {blue['radius']:.4f} + r_red from Blue  "
+            f"({blue['x']:.4f}, {blue['y']:.4f})",
+            f"  worked example at r_red=0.6: >= {green['radius'] + 0.6:.4f} from Green, "
+            f">= {blue['radius'] + 0.6:.4f} from Blue",
         ]
+        # NOTE: `red_side` (computed above) is deliberately NOT emitted.
+        #
+        # Naming the striking side gives away the level's core insight -- that Red
+        # must be placed on the side of Green AWAY from Blue -- which is the one
+        # thing the agent is supposed to discover here. Emitting it turns
+        # two_body_problem from a discovery task into offset tuning and removes
+        # the headroom the skill bank is meant to fill.
+        #
+        # This was briefly emitted (job 64318497, cancelled) because the tool's
+        # docstring in level_prompts/two_body_problem.py advertises a "recommended
+        # red ball placement direction". That docstring promises privileged
+        # information; the right fix is to correct the docstring, not to leak it.
 
         return "\n".join(lines)
 
@@ -779,7 +846,12 @@ class InterphyreToolkit:
                         rx, ry = red_body.position.x, red_body.position.y
                         rvx, rvy = red_body.linearVelocity.x, red_body.linearVelocity.y
                         approach_speed = math.hypot(rvx, rvy)
-                        if other_body is not None:
+                        manifold = None if _LEGACY_CONTACT_NORMAL else _contact_manifold(red_body, other_body)
+                        if manifold is not None:
+                            normal, contact_point = manifold
+                        elif other_body is not None:
+                            # Centre-to-centre fallback. Exact for ball-ball contacts only:
+                            # for a bar it points at the bar's centre, not the touched surface.
                             ox, oy = other_body.position.x, other_body.position.y
                             nx = rx - ox
                             ny = ry - oy
@@ -817,9 +889,16 @@ class InterphyreToolkit:
         if "approach_speed" in hit:
             lines.append(f"approach_speed: {hit['approach_speed']:.3f}")
             cp = hit["contact_point"]
-            lines.append(f"contact_point (approx midpoint): ({cp[0]:.3f}, {cp[1]:.3f})")
             sn = hit["surface_normal"]
-            lines.append(f"contact_normal (red->other inverted): ({sn[0]:.3f}, {sn[1]:.3f})")
+            if _LEGACY_CONTACT_NORMAL:
+                lines.append(f"contact_point (approx midpoint): ({cp[0]:.3f}, {cp[1]:.3f})")
+                lines.append(f"contact_normal (red->other inverted): ({sn[0]:.3f}, {sn[1]:.3f})")
+            else:
+                lines.append(f"contact_point: ({cp[0]:.3f}, {cp[1]:.3f})")
+                lines.append(
+                    f"contact_normal (surface normal of the touched object, pointing toward red): "
+                    f"({sn[0]:.3f}, {sn[1]:.3f})"
+                )
         return "\n".join(lines)
 
     def trace_green_ball(self, x: float, y: float, radius: float) -> str:

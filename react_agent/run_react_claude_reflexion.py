@@ -6,7 +6,7 @@ https://arxiv.org/pdf/2303.11366).
 
 Usage:
     python -m react_agent.run_react_claude_reflexion \\
-        --level catapult --seeds 10 --k-trials 2 --verbose
+        --level catapult --seeds 10 --k-trials 2 --verbose --max
 
 Both the actor and the reflection step use `claude -p` (no Anthropic SDK,
 no API key — same auth as run_react_claude.py).
@@ -88,7 +88,7 @@ def main():
     )
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--seeds", type=int, nargs="+", default=None)
-    parser.add_argument("--max-iterations", type=int, default=25)
+    parser.add_argument("--max-iterations", type=int, default=12)
     parser.add_argument("--temperature", type=float, default=0.3)
     parser.add_argument("--max-new-tokens", type=int, default=700)
     parser.add_argument("--verbose", action="store_true")

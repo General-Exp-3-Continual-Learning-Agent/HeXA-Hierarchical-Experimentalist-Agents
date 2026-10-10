@@ -1,23 +1,22 @@
 """Direct-answer baseline for Interphyre puzzles using the Claude CLI.
 
 No ReAct loop, no agentic tool dispatch. Protocol per seed:
-  1. Call `get_level_state` directly via the Interphyre toolkit (real
+  1. We call `get_level_state` directly via the Interphyre toolkit (real
      simulator-API call returning all object positions, sizes, properties).
   2. ONE Claude call: system prompt + user prompt that embeds the scene
      observation AND asks for the final placement as JSON.
   3. Parse JSON, run `simulate_action`, record success/failure.
 
-Two answer-prompt variants control whether the model may reason before answering:
-  --variant cot    : 2-3 sentence Thought line before the JSON (default)
-  --variant no_cot : JSON only, no prose
+Two answer-prompt variants control whether the model is allowed to write
+short reasoning before the JSON:
+  - --variant no_cot : JSON only, no prose.
 
 Prompts here are self-contained — they intentionally do NOT reuse
 `react_agent.level_prompts` so this baseline cannot accidentally inherit
-ReAct framing.
+ReAct framing. Add new levels by extending LEVEL_BLURBS.
 
 Usage:
-    python -m react_agent.run_direct_answer_claude \\
-        --level catapult --variant cot --seeds $(seq 0 49)
+    python -m react_agent.run_direct_answer_claude --level catapult --variant cot --seeds $(seq 0 49)
 """
 
 import argparse
@@ -37,13 +36,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "interphyre"))
 from react_agent.tools import InterphyreToolkit
 
 
-# ─── Claude CLI model loader ─────────────────────────────────────────────────
-
 def load_claude_cli_model(model_name: str = "claude-sonnet-4-6"):
-    """Return a generate(messages, temp, max_tokens) callable backed by `claude -p`.
+    """Local model_fn that calls `claude -p` with a configurable --model.
 
-    Default model matches run_react_claude.py so any performance gap between
-    this baseline and ReAct is attributable to method, not model strength.
+    Default is `claude-sonnet-4-6` to match the actor model used by
+    run_react_claude.py:45 — the direct-answer baseline must share the actor
+    model with ReAct/Reflexion so any performance gap is attributable to the
+    method, not to model strength.
     """
     def generate(messages: list, temp: float = 0.3, max_tokens: int = 800) -> str:
         prompt = ""
@@ -51,9 +50,9 @@ def load_claude_cli_model(model_name: str = "claude-sonnet-4-6"):
             role = msg["role"].upper()
             content = msg["content"]
             prompt += f"{role}:\n{content}\n\n"
-        # Same trailer as run_react_claude.py — without it Sonnet enters
-        # extended-thinking mode (~200 s/call); with it a single structured
-        # turn is emitted (~27 s).
+        # SAME trailer as run_react_claude.py:37 — without this, Sonnet treats
+        # the prompt as an open-ended decision and triggers extended thinking
+        # (~200s/call). With it, Sonnet emits a single structured turn (~27s).
         prompt += (
             "USER:\nIMPORTANT: Output ONLY your single Action (and Action Input "
             "if needed). Do NOT write any Observation or additional steps. "
@@ -103,20 +102,37 @@ def load_claude_cli_model(model_name: str = "claude-sonnet-4-6"):
     return generate
 
 
-# ─── Per-level prompt blurbs ─────────────────────────────────────────────────
-# Self-contained: no ReAct framing, no tool list. Add new levels here.
+# ─── Per-level prompt blurbs (rewritten, no ReAct framing) ───────────────────
 
 LEVEL_BLURBS = {
+    "catapult": {
+        "name": "Catapult",
+        "elements": (
+            "- Green Ball (dynamic): the object you want to bring into contact with the blue ball.\n"
+            "- Blue Ball (dynamic): rests in a basket on a ledge; this is the success target.\n"
+            "- Gray Platform (dynamic): a long bar resting across a small pivot — behaves as a lever / catapult arm.\n"
+            "- Pivot Ball (static gray ball): the lever's fulcrum.\n"
+            "- Basket (static): holds the blue ball on a ledge above ground.\n"
+            "- Black ceiling bar / blocker (static): obstacles that may also be used as ricochet surfaces.\n"
+        ),
+        "goal": (
+            "Place ONE red ball so that, after the simulation runs, the green ball "
+            "touches the blue ball for at least 3 seconds."
+        ),
+        # No explicit radius bound in react_agent/level_prompts/down_to_earth.py or
+        # catapult.py -- the shared 0.1-2.0 default (below) matches those levels.
+    },
     "down_to_earth": {
         "name": "Down to Earth",
         "elements": (
-            "- Green Ball (dynamic): falls under gravity. Without intervention it lands on the platform and stays there.\n"
-            "- Black High Platform (static): a horizontal bar below the green ball that blocks its fall to the ground.\n"
-            "- Purple Ground (static): the floor at the very bottom of the box (y ≈ -5). This is the success target.\n"
+            "- Green Ball (dynamic, target): will fall under gravity.\n"
+            "- Black High Platform (static): a horizontal platform below the green ball. "
+            "Without intervention, the green ball lands on this platform and stays there.\n"
+            "- Purple Ground (static): the floor at the very bottom of the box (y ~ -5).\n"
         ),
         "goal": (
-            "Place ONE red ball so that the green ball is knocked off the platform "
-            "and touches the purple ground for at least 3 seconds."
+            "Place ONE red ball so that the green ball is knocked off the platform and "
+            "touches the purple ground for at least 3 seconds."
         ),
     },
     "two_body_problem": {
@@ -124,115 +140,71 @@ LEVEL_BLURBS = {
         "elements": (
             "- Green Ball (dynamic): falls under gravity from rest.\n"
             "- Blue Ball (dynamic): falls under gravity from rest, separated horizontally from the green ball.\n"
-            "- Without intervention both balls fall straight down and NEVER meet.\n"
         ),
         "goal": (
-            "Place ONE red ball so that the green ball collides with the blue ball "
-            "and stays in contact. The red ball must be placed ABOVE the green ball "
-            "with a slight horizontal offset AWAY from the blue ball so the collision "
-            "deflects green toward blue."
+            "Place ONE red ball at t=0 so that the green ball collides with the blue "
+            "ball and stays in contact."
         ),
-    },
-    "catapult": {
-        "name": "Catapult",
-        "elements": (
-            "- Green Ball (dynamic): small ball sitting on the LEFT end of the gray catapult arm.\n"
-            "- Gray Bar / Catapult Arm (dynamic): a long lever resting across the gray pivot ball. Green ball sits on its left end.\n"
-            "- Gray Ball / Pivot (dynamic): fulcrum sitting on the left black platform.\n"
-            "- Black Ball (static): ceiling blocker near the top of the scene.\n"
-            "- Black Platform (left, static): horizontal platform on the left side.\n"
-            "- Black Ledge (right, static): platform on the right side.\n"
-            "- Basket (gray, dynamic): sits on the right ledge.\n"
-            "- Blue Ball (dynamic): sits inside the basket on the right ledge. This is the success target.\n"
-        ),
-        "goal": (
-            "Place ONE red ball so that the green ball contacts the blue ball for at least 3 seconds. "
-            "Use more radius for better energy (r > 1). "
-            "The most reliable approach: drop the red ball on the RIGHT end of the catapult arm to "
-            "launch the green ball upward and to the right toward the blue ball."
-        ),
-    },
-    "falling_into_place": {
-        "name": "Falling Into Place",
-        "elements": (
-            "- Green Ball (dynamic): sits on one of the two black platforms (left or right side).\n"
-            "- Left Platform / Right Platform (black, static): two horizontal bars with a gap between them in the center.\n"
-            "- Bottom Ramp (black, static): a slightly angled bar near the bottom of the scene.\n"
-            "- Blue Jar (dynamic basket): a basket positioned above the scene with its opening facing DOWNWARD. It falls due to gravity.\n"
-        ),
-        "goal": (
-            "Place ONE red ball so that the green ball touches the blue jar for at least 3 seconds. "
-            "Place the red ball HIGH ABOVE the green ball (at least 2-3 units higher in y) "
-            "with a slight horizontal offset AWAY from the jar's side, so it falls onto the green ball "
-            "and deflects it off the platform edge toward where the jar will land."
-        ),
-    },
-    "basket_case": {
-        "name": "Basket Case",
-        "elements": (
-            "- Green Ball (dynamic): positioned high above the basket. Falls straight down due to gravity.\n"
-            "- Basket (gray, dynamic): a container sitting near the purple ground with its opening facing UPWARD. "
-            "Without intervention the green ball falls directly into it and gets trapped.\n"
-            "- Purple Ground (static): the floor at the very bottom of the box (y ≈ -5). This is the success target.\n"
-        ),
-        "goal": (
-            "Place ONE red ball so that the green ball touches the purple ground for at least 3 seconds. "
-            "You must deflect the green ball sideways so it misses the basket and lands on the ground. "
-            "Place the red ball just to the side of the green ball's fall path to nudge it away from the basket."
-        ),
+        # react_agent/level_prompts/two_body_problem.py:50 -- narrower than the
+        # 0.1-2.0 default used by catapult/down_to_earth.
+        "radius_range": "0.1 <= radius <= 1.5",
     },
     "pass_the_parcel": {
         "name": "Pass The Parcel",
         "elements": (
-            "- Top Basket (gray, inverted, dynamic): sits on the black platform with its opening facing DOWNWARD, trapping the green ball underneath.\n"
+            "- Top Basket (dynamic, inverted): sits on the platform with its opening "
+            "facing DOWNWARD, trapping the green ball underneath it.\n"
             "- Green Ball (dynamic): trapped beneath the inverted top basket on the platform.\n"
-            "- Bottom Basket (gray, upright, dynamic): below the platform with its opening facing UPWARD, holds the blue ball.\n"
-            "- Blue Ball (dynamic): inside the bottom basket. This is the success target.\n"
-            "- Black Platform (static): horizontal bar. The top basket sits on it.\n"
-            "- Ramp (black, static): an angled bar rising from the platform's left edge upward to the right.\n"
+            "- Bottom Basket (dynamic, upright): sits below the platform with its opening "
+            "facing UPWARD, holds the blue ball.\n"
+            "- Blue Ball (dynamic): sits inside the bottom basket; the success target.\n"
+            "- Black Platform (static): a horizontal bar the top basket rests on.\n"
+            "- Ramp (static): an angled bar rising from the platform's left edge upward "
+            "to the right, useful for rolling the red ball onto the top basket.\n"
         ),
         "goal": (
-            "Place ONE red ball so that the green ball contacts the blue ball for at least 3 seconds. "
-            "You must knock the inverted top basket off the platform to release the green ball. "
-            "Place the red ball on or above the ramp so it rolls/falls and strikes the top basket, "
-            "toppling it and freeing the green ball to fall into the bottom basket where the blue ball is."
+            "Place ONE red ball so that the green ball is released from under the "
+            "inverted top basket and contacts the blue ball for at least 3 seconds."
         ),
+        # react_agent/level_prompts/pass_the_parcel.py:50 -- same as the default.
+    },
+    "basket_case": {
+        "name": "Basket Case",
+        "elements": (
+            "- Green Ball (dynamic): positioned high above the basket. Falls straight "
+            "down under gravity.\n"
+            "- Basket (Gray, dynamic): sits near the purple ground with its opening "
+            "facing UPWARD. Without intervention, the green ball falls directly into "
+            "it and gets trapped.\n"
+            "- Purple Ground (static): the target surface at the very bottom of the "
+            "box (y ~ -5).\n"
+        ),
+        "goal": (
+            "Place ONE red ball so that the green ball is deflected sideways, misses "
+            "the basket, and touches the purple ground for at least 3 seconds."
+        ),
+        # react_agent/level_prompts/basket_case.py -- same as the default.
     },
     "tipping_point": {
         "name": "Tipping Point",
         "elements": (
-            "- Green Bar (dynamic): a vertical bar (length 2.0–5.0) resting upright inside a small gray basket on the ground. "
-            "Small horizontal pushes near its top can topple it.\n"
-            "- Gray Basket (small, dynamic): holds the green bar near the bottom of the box.\n"
-            "- Purple Wall (static): a vertical bar flush against either the LEFT (x ≈ -4.9) or RIGHT (x ≈ 4.9) side of the box, "
-            "spanning nearly the full height. This is the success target.\n"
+            "- Green Bar (dynamic, vertical, length 2.0-5.0): rests upright inside a "
+            "small gray basket on the ground. Its center of mass sits above the "
+            "basket floor; small horizontal pushes at the top can topple it.\n"
+            "- Gray Basket (dynamic): a small basket sitting near the bottom of the "
+            "box, holding the green bar. Can slide if struck hard.\n"
+            "- Purple Wall (static, vertical, spans top to bottom): standing flush "
+            "against either the LEFT side (x ~ -4.9) or the RIGHT side (x ~ 4.9) of "
+            "the box.\n"
         ),
         "goal": (
-            "Place ONE red ball so that the green bar contacts the purple wall and stays in contact "
-            "for the success-time duration. "
-            "Drop the red ball from ABOVE near the TOP of the green bar, slightly offset toward the purple wall, "
-            "to topple the bar in the correct direction."
+            "Place ONE red ball so that the green bar tips over and contacts the "
+            "purple wall for at least 3 seconds."
         ),
-    },
-    "cliffhanger": {
-        "name": "Cliffhanger",
-        "elements": (
-            "- Green Bar (dynamic): a vertical bar (length 2.0–3.0) standing upright on the black platform near one of its edges.\n"
-            "- Black Platform (static): a horizontal bar (length 4.0–6.0) at variable height y ∈ [-3, 0]. The green bar stands on top of it.\n"
-            "- Ceiling (static): a horizontal bar above the platform.\n"
-            "- Purple Ground (static): the floor at the bottom of the box (y ≈ -5). This is the success target.\n"
-        ),
-        "goal": (
-            "Place ONE red ball so that the green bar contacts the purple ground for at least 3 seconds. "
-            "You must tip the green bar off the platform edge so it falls to the ground. "
-            "Place the red ball above the platform near the top of the green bar, slightly offset toward the closer edge, "
-            "to push it off."
-        ),
+        # react_agent/level_prompts/tipping_point.py -- same as the default.
     },
 }
 
-
-# ─── Prompt templates ────────────────────────────────────────────────────────
 
 DIRECT_SYSTEM_TEMPLATE = """You are a physics reasoning agent answering a 2D physics puzzle in a single shot.
 
@@ -247,19 +219,25 @@ Goal: {goal}
 Placement constraints:
 - Red ball must be inside the box: -5 + radius <= x <= 5 - radius, -5 + radius <= y <= 5 - radius.
 - Red ball must NOT overlap with any existing object at t=0.
-- 0.1 <= radius <= 2.0.
+- {radius_range}.
 
 You will be given ONE inspection of the scene (output of get_level_state with object positions and sizes). There is no simulator access — no testing, no retries. One inspection, one final answer."""
 
 
-USER_TEMPLATE = """Here is the current scene state from `get_level_state` (actual simulator output — object positions, sizes, dynamic flags):
+# User prompt template — scene observation is embedded directly.
+# {scene_obs} is filled in at call time with the real get_level_state output.
+# {answer_block} is one of the variants below.
+USER_TEMPLATE = """Here is the current scene state from `get_level_state` (this is the actual output of the simulator API — object positions, sizes, dynamic flags):
 
 {scene_obs}
 
 {answer_block}"""
 
 
-# Variant 1: NO chain-of-thought. Single Action turn.
+# Variant 1: NO chain-of-thought. Single Action turn, no Thought.
+# Format mirrors ReAct's per-iteration output shape so Sonnet treats this as a
+# routine structured turn (~27s) rather than an open-ended one-shot decision
+# (which triggers extended thinking, ~200s).
 ANSWER_BLOCK_NO_COT = """Submit your FINAL red ball placement now using the finish action.
 
 Output EXACTLY this format and NOTHING else (no Thought line, no preamble, no commentary):
@@ -269,7 +247,8 @@ Action Input: {"x": <X>, "y": <Y>, "radius": <R>}
 Replace <X>, <Y>, <R> with your chosen floating-point numbers (subject to the placement constraints above)."""
 
 
-# Variant 2: short chain-of-thought Thought line, then Action.
+# Variant 2: short chain-of-thought via a Thought line, then Action.
+# Same per-iteration shape as ReAct — Sonnet is trained on this and emits it fast.
 ANSWER_BLOCK_COT = """Submit your FINAL red ball placement now using the finish action.
 
 Output EXACTLY this format and NOTHING else (no preamble, no commentary outside the Thought line):
@@ -288,25 +267,25 @@ _ANSWER_BLOCKS = {
 
 # ─── JSON extraction ─────────────────────────────────────────────────────────
 
-_ACTION_INPUT_RE = re.compile(r"Action\s+Input\s*:\s*(\{.*?\})", re.DOTALL | re.IGNORECASE)
 _JSON_FALLBACK_RE = re.compile(
     r'\{[^{}]*?"x"\s*:\s*(-?\d+\.?\d*)[^{}]*?"y"\s*:\s*(-?\d+\.?\d*)[^{}]*?"radius"\s*:\s*(-?\d+\.?\d*)[^{}]*?\}',
     re.DOTALL,
 )
+_ACTION_INPUT_RE = re.compile(r"Action\s+Input\s*:\s*(\{.*?\})", re.DOTALL | re.IGNORECASE)
 
 
 def extract_placement(response: str):
-    """Return (x, y, radius) tuple from model response, or None on parse failure.
+    """Return (x, y, radius) tuple, or None if parsing fails.
 
     Handles three response shapes:
-      1. ReAct-style:  'Action Input: {"x":..., "y":..., "radius":...}'
+      1. ReAct-style: '... Action Input: {"x":..., "y":..., "radius":...}'
       2. Bare JSON on a line: '{"x":..., "y":..., "radius":...}'
       3. JSON embedded in prose (regex fallback).
     """
     if not response:
         return None
 
-    # Pass 1: ReAct format.
+    # Pass 1: ReAct format — extract from `Action Input: {...}`.
     m = _ACTION_INPUT_RE.search(response)
     if m:
         try:
@@ -316,7 +295,7 @@ def extract_placement(response: str):
         except Exception:
             pass
 
-    # Pass 2: last bare-JSON line.
+    # Pass 2: try parsing each line, last-first, as bare JSON.
     for line in reversed(response.strip().splitlines()):
         s = line.strip().rstrip("`").strip()
         if not s.startswith("{"):
@@ -328,7 +307,7 @@ def extract_placement(response: str):
         except Exception:
             continue
 
-    # Pass 3: regex fallback.
+    # Pass 3: regex over the whole response (handles JSON embedded in prose).
     m = _JSON_FALLBACK_RE.search(response)
     if m:
         try:
@@ -342,7 +321,7 @@ def extract_placement(response: str):
 
 def run_single_seed_direct(model_fn, seed: int, args) -> dict:
     print(f"\n{'#'*60}")
-    print(f"  Direct-Answer Seed: {seed}  (level={args.level} variant={args.variant})")
+    print(f"  Direct-Answer Seed: {seed}")
     print(f"{'#'*60}")
 
     blurb = LEVEL_BLURBS.get(args.level)
@@ -365,12 +344,13 @@ def run_single_seed_direct(model_fn, seed: int, args) -> dict:
         puzzle_name=blurb["name"],
         elements=blurb["elements"],
         goal=blurb["goal"],
+        radius_range=blurb.get("radius_range", "0.1 <= radius <= 2.0"),
     )
 
     trajectory = []
     start = time.time()
 
-    # Step 1: real simulator call — fetch scene state.
+    # ── Step 1: real simulator API call — fetch the scene state ──
     scene_obs = toolkit.dispatch_tool("get_level_state", {})
     trajectory.append((
         "(direct-answer baseline: scripted peek)",
@@ -378,9 +358,11 @@ def run_single_seed_direct(model_fn, seed: int, args) -> dict:
         scene_obs,
     ))
     if args.verbose:
-        print(f"\n--- get_level_state ({len(scene_obs)} chars) ---\n{scene_obs}\n")
+        print(f"\n--- get_level_state (Interphyre toolkit) returned {len(scene_obs)} chars ---")
+        print(scene_obs)
+        print()
 
-    # Step 2: ONE model call — system + user with embedded scene.
+    # ── Step 2: ONE Claude call — system + user (with embedded scene state) ──
     answer_block = _ANSWER_BLOCKS[args.variant]
     user_msg = USER_TEMPLATE.format(scene_obs=scene_obs, answer_block=answer_block)
     msgs = [
@@ -392,12 +374,18 @@ def run_single_seed_direct(model_fn, seed: int, args) -> dict:
         print(f"--- USER (variant={args.variant}, {len(user_msg)} chars) ---\n{user_msg}\n")
 
     resp = model_fn(msgs, args.temperature, args.max_new_tokens)
+    # OpenAI-compatible model_fns attach usage after the call (see
+    # load_openai_compatible_model in react_agent.py); the Claude CLI model_fn
+    # has no such attribute, so this is None there rather than an error.
+    usage = getattr(model_fn, "last_usage", None)
     if args.verbose:
         print(f"--- ASSISTANT ---\n{resp}\n")
+        if usage:
+            print(f"--- USAGE --- {usage}\n")
 
     placement = extract_placement(resp)
 
-    # Step 3: simulate and record.
+    # ── Simulate ────────────────────────────────────────────
     if placement is None:
         print("[Direct] Failed to parse JSON placement from response.")
         action = None
@@ -430,14 +418,15 @@ def run_single_seed_direct(model_fn, seed: int, args) -> dict:
         "seed": seed,
         "success": success,
         "action": action,
-        "iterations": 2,           # peek + answer (for summary compat)
+        "iterations": 2,                  # peek + answer (for summary compat)
         "elapsed_time": elapsed,
         "trajectory": trajectory,
         "final_observation": sim_obs,
+        "usage": usage,
     }
 
 
-# ─── Persistence helpers ──────────────────────────────────────────────────────
+# ─── Save / main ─────────────────────────────────────────────────────────────
 
 def save_trajectory(result: dict, log_dir: str, model: str) -> None:
     os.makedirs(log_dir, exist_ok=True)
@@ -452,6 +441,10 @@ def save_trajectory(result: dict, log_dir: str, model: str) -> None:
             {"thought": t, "action": a, "observation": o}
             for t, a, o in result["trajectory"]
         ],
+        # Token usage from an OpenAI-compatible backend (None for Claude CLI,
+        # which reports no usage). See load_openai_compatible_model in
+        # react_agent.py for what this dict contains.
+        "usage": result.get("usage"),
     }
     with open(path, "w") as f:
         json.dump(data, f, indent=2)
@@ -463,6 +456,15 @@ def save_aggregate(results: list, log_dir: str, args) -> None:
     n = len(results)
     succ = sum(1 for r in results if r["success"])
     parse_failures = sum(1 for r in results if r["action"] is None)
+    usages = [r.get("usage") for r in results if r.get("usage")]
+    usage_totals = None
+    if usages:
+        usage_totals = {
+            "prompt_tokens": sum(u.get("prompt_tokens") or 0 for u in usages),
+            "completion_tokens": sum(u.get("completion_tokens") or 0 for u in usages),
+            "reasoning_tokens": sum(u.get("reasoning_tokens") or 0 for u in usages),
+            "n_calls_with_usage": len(usages),
+        }
     summary = {
         "model": args.model,
         "level": args.level,
@@ -473,12 +475,16 @@ def save_aggregate(results: list, log_dir: str, args) -> None:
         "successes": succ,
         "success_rate": succ / n if n else 0.0,
         "parse_failures": parse_failures,
+        # Run-level token totals from an OpenAI-compatible backend, when
+        # reported. None if the actor doesn't report usage (e.g. Claude CLI).
+        "usage_totals": usage_totals,
         "results": [
             {
                 "seed": r["seed"],
                 "success": r["success"],
                 "action": list(r["action"]) if r["action"] else None,
                 "elapsed_time": r.get("elapsed_time"),
+                "usage": r.get("usage"),
             }
             for r in sorted(results, key=lambda x: x["seed"])
         ],
@@ -489,27 +495,22 @@ def save_aggregate(results: list, log_dir: str, args) -> None:
     print(f"Aggregate summary saved → {path}")
 
 
-# ─── Entry point ─────────────────────────────────────────────────────────────
-
 def main():
     p = argparse.ArgumentParser(
-        description="Direct-answer baseline (no ReAct loop) for Interphyre with Claude CLI",
+        description="Direct-answer baseline (no ReAct) for Interphyre with Claude CLI",
     )
-    p.add_argument(
-        "--level", type=str, default="catapult",
-        choices=list(LEVEL_BLURBS.keys()),
-    )
+    p.add_argument("--level", type=str, default="catapult", choices=list(LEVEL_BLURBS.keys()))
     p.add_argument(
         "--variant", type=str, default="cot", choices=["no_cot", "cot"],
-        help="no_cot = JSON-only answer. cot = 2-3 sentence Thought then JSON.",
+        help="no_cot = JSON-only answer, no reasoning. cot = 2-3 sentences of reasoning then JSON.",
     )
-    p.add_argument(
-        "--model", type=str, default="claude",
-        help="Logging label only (does not select the model).",
-    )
+    p.add_argument("--model", type=str, default="claude",
+                   help="Logging label only.")
     p.add_argument(
         "--actor-model", type=str, default="claude-sonnet-4-6",
-        help="Model passed to `claude -p --model`. Default matches run_react_claude.py.",
+        help="Model passed to `claude -p --model`. Default matches "
+             "run_react_claude.py for like-for-like comparison with the "
+             "ReAct/Reflexion baselines.",
     )
     p.add_argument("--seed", type=int, default=None)
     p.add_argument("--seeds", type=int, nargs="+", default=None)
@@ -518,8 +519,7 @@ def main():
     p.add_argument("--verbose", action="store_true")
     p.add_argument(
         "--eval-dir", type=str, default=None,
-        help="Where to save trajectories + summary. "
-             "Defaults to eval_results_<level>_claude_direct_<variant>.",
+        help="Where to save trajectories + summary. Defaults to eval_results_<level>_claude_direct.",
     )
     p.add_argument(
         "--resume", action="store_true",
@@ -540,18 +540,16 @@ def main():
 
     print(
         f"[Direct-Answer Runner] level={args.level} variant={args.variant} "
-        f"actor_model={args.actor_model} seeds={seeds} eval_dir={args.eval_dir}"
+        f"seeds={seeds} eval_dir={args.eval_dir}"
     )
 
-    model_fn = load_claude_cli_model(args.actor_model)
+    model_fn = load_claude_cli_model()
 
-    # Resume: skip seeds with existing trajectory files.
+    # Resume
     completed = set()
     results = []
     if args.resume and args.eval_dir:
-        for fp in sorted(glob.glob(
-            os.path.join(args.eval_dir, f"trajectory_seed*_raw{args.model}.json")
-        )):
+        for fp in sorted(glob.glob(os.path.join(args.eval_dir, f"trajectory_seed*_raw{args.model}.json"))):
             with open(fp) as f:
                 prior = json.load(f)
             sd = prior.get("seed")
@@ -568,6 +566,7 @@ def main():
                         for t in prior.get("trajectory", [])
                     ],
                     "final_observation": "",
+                    "usage": prior.get("usage"),
                 })
         if completed:
             print(f"[Resume] Skipping {len(completed)} completed seeds: {sorted(completed)}")
@@ -581,21 +580,17 @@ def main():
         save_trajectory(r, args.eval_dir, args.model)
         save_aggregate(results, args.eval_dir, args)
 
-    # Final summary.
+    # Final overview
     print(f"\n{'='*60}")
     print(f"  DIRECT-ANSWER SUMMARY")
     print(f"{'='*60}")
     succ = sum(1 for r in results if r["success"])
     print(f"  Level         : {args.level}")
-    print(f"  Variant       : {args.variant}")
     print(f"  Total seeds   : {len(results)}")
     print(
         f"  Success rate  : {succ}/{len(results)}"
         + (f" ({100*succ/len(results):.1f}%)" if results else "")
     )
-    parse_failures = sum(1 for r in results if r["action"] is None)
-    if parse_failures:
-        print(f"  Parse failures: {parse_failures}")
     print()
     for r in sorted(results, key=lambda x: x["seed"]):
         status = "✓" if r["success"] else "✗"

@@ -408,3 +408,35 @@ def test_maze_generation_stays_correct_under_thread_pressure(task: MazeTask):
     with ThreadPoolExecutor(max_workers=16) as pool:
         results = list(pool.map(check, specs * 6))
     assert all(results), f"{results.count(False)}/{len(results)} mazes were corrupted"
+
+
+def test_default_maze_config_is_unchanged():
+    """The historical pool must not move. Every Maze result recorded before
+    2026-09-04 is keyed on these instance ids."""
+    task = MazeTask()
+    assert task.config_name == pools.DEFAULT_MAZE_CONFIG == "eval_config.yaml"
+    assert task.task_cfg["total_step_cap"] == 45
+    assert len({s.instance_id for s in task.eval_specs()}) == 243
+
+
+def test_paper_qwen_config_is_a_separate_disjoint_pool():
+    """ORBIT's ``benchmark.sh`` -- which produced the paper's Qwen3-8B Maze
+    numbers -- runs ``total_step_cap: 27``, and that value is inside
+    ``task_specific_seed``'s hash, so it selects a different 256 mazes."""
+    paper = MazeTask(config_name=pools.PAPER_QWEN_CONFIG)
+    assert paper.task_cfg["total_step_cap"] == 27
+    assert paper.manifest()["maze_config"] == pools.PAPER_QWEN_CONFIG
+
+    default_ids = {s.instance_id for s in MazeTask().eval_specs()}
+    paper_ids = {s.instance_id for s in paper.eval_specs()}
+    # Not disjoint by construction -- distinct seeds can land on the same layout
+    # -- but overlapping only at the background layout-collision rate, far from
+    # the same pool. Guards against a config change silently becoming a no-op.
+    assert len(paper_ids & default_ids) / len(paper_ids) < 0.20
+
+    # Everything except the cap is identical, so this really is one knob.
+    differing = {
+        k for k in paper.task_cfg
+        if paper.task_cfg[k] != MazeTask().task_cfg.get(k)
+    }
+    assert differing == {"total_step_cap"}

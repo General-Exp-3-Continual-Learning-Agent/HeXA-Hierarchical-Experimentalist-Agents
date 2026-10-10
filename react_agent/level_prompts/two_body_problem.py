@@ -54,7 +54,7 @@ Place ONE Red Ball at t=0 so that the Green Ball collides with the Blue Ball and
 {react_format}"""
 
 TWO_BODY_INITIAL = """\
-Solve the Two Body Problem puzzle. You have 25 iterations to solve the puzzle. Start by inspecting the level state with get_level_state, then use compute_relative_positions to understand where the blue ball is relative to green.
+Solve the Two Body Problem puzzle. You have {max_iterations} iterations to solve the puzzle. Start by inspecting the level state with get_level_state, then use compute_relative_positions to understand where the blue ball is relative to green.
 
 Remember: use the tools to test your ideas before submitting your final answer with the finish tool."""
 
@@ -83,11 +83,11 @@ Placement Constraints:
 """
 
 OSS_TWO_BODY_INITIAL = """\
-Solve the Two Body Problem.You have 25 iterations to solve. Start by calling get_level_state, then call compute_relative_positions to see where blue is relative to green.
+Solve the Two Body Problem.You have {max_iterations} iterations to solve. Start by calling get_level_state, then call compute_relative_positions to see where blue is relative to green.
 
 """
 
-# Ablation blocks for Two Body Problem
+
 _OSS_TBP_HOW_TO_PUSH_BLOCK = """
 How to Push Toward Blue:
 1. Determine if Blue is left or right of Green.

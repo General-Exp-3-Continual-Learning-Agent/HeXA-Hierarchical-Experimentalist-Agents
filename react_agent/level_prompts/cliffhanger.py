@@ -57,7 +57,7 @@ Place ONE Red Ball somewhere in the box so that, once the simulation runs, the g
 {react_format}"""
 
 CLIFFHANGER_INITIAL = """\
-Solve the Cliffhanger puzzle. You have 25 iterations to solve it. The success condition is: green_bar must contact purple_ground for at least 3 seconds. Use tools effectively and think about alternate approaches if one does not work.
+Solve the Cliffhanger puzzle. You have {max_iterations} iterations to solve it. The success condition is: green_bar must contact purple_ground for at least 3 seconds. Use tools effectively and think about alternate approaches if one does not work.
 
 Start by calling compute_cliffhanger_analysis — it returns the green bar's bottom and top point coordinates, the platform extents, which edge is closer, and the falling gap width — then inspect the level state for any extra context before placing the red ball."""
 
@@ -87,6 +87,6 @@ Placement Constraints:
 When your simulation shows green_bar in continuous contact with purple_ground for 3 seconds, call finish."""
 
 OSS_CLIFFHANGER_INITIAL = """\
-Solve the Cliffhanger puzzle. You have 25 iterations to solve it. The success condition is: green_bar must contact purple_ground for at least 3 seconds.
+Solve the Cliffhanger puzzle. You have {max_iterations} iterations to solve it. The success condition is: green_bar must contact purple_ground for at least 3 seconds.
 
 Start with compute_cliffhanger_analysis to get the green bar's bottom/top point coordinates, the platform extents, and the closer edge (the side the bar must topple past). Use simulate_action to test placements; when one succeeds, call finish."""

@@ -100,6 +100,39 @@ def reflect_on_trajectory(
         f"ASSISTANT:\n"
     )
 
+    # OpenAI-compatible backend (local vLLM). Dispatch on the `openai:` prefix so
+    # the Claude CLI path below is untouched and every existing Reflexion number
+    # stays reproducible. The reflection uses the SAME served model as the actor,
+    # which is what makes this self-improvement rather than distillation from a
+    # stronger critic -- the point reviewer r3fT raised against the NeurIPS draft.
+    if model.startswith("openai:"):
+        from react_agent.react_agent import load_openai_compatible_model
+        served = model.split(":", 1)[1]
+        print(
+            f"\n[Reflexion] Reflecting via {served} — prompt length: {len(prompt)}",
+            flush=True,
+        )
+        call_start = time.time()
+        try:
+            generate = load_openai_compatible_model(served)
+            reflection = generate(
+                [
+                    {"role": "system", "content": REFLECTION_SYSTEM},
+                    {"role": "user", "content": user_msg},
+                ],
+                0.3,
+                512,
+            ).strip()
+        except Exception as exc:  # noqa: BLE001 - an empty reflection is the defined fallback
+            print(f"[Reflexion Error] {type(exc).__name__}: {exc}", flush=True)
+            return ""
+        elapsed = time.time() - call_start
+        print(
+            f"[Reflexion] Got reflection in {elapsed:.1f}s ({len(reflection)} chars).",
+            flush=True,
+        )
+        return reflection
+
     print(f"\n[Reflexion] Reflecting on failed trial — prompt length: {len(prompt)}", flush=True)
     call_start = time.time()
     try:

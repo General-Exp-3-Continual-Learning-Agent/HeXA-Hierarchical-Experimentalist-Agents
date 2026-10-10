@@ -580,6 +580,24 @@ class MazeActor:
         """The episode-0 prompt. Kept for callers that predate per-episode blocks."""
         return self.system_prompt_for(0)
 
+    def on_episode_boundary(
+        self, instance: MazeInstance, finished_episode: int, steps: list[StepRecord]
+    ) -> None:
+        """The instance just advanced past *finished_episode*. No-op by default.
+
+        Called from :meth:`run_instance` immediately before the system message is
+        rebuilt for the new episode, so an override may write into
+        ``self.guidelines`` (a per-episode mapping is looked up by
+        :meth:`block_for_episode`) and may truncate ``self.messages`` -- both take
+        effect for the episode about to start. ``instance.episodes[
+        finished_episode]`` is already recorded by the time this runs.
+
+        Exists for the episode-level Reflexion baseline
+        (`baselines/orbit/reflexion.py`), which reflects here and resets the chat.
+        Every other arm inherits the no-op and is unchanged.
+        """
+        return None
+
     @property
     def added_tokens(self) -> int:
         """Tokens the largest injected block adds -- the worst case, not a mean.
@@ -660,7 +678,13 @@ class MazeActor:
             # anyway, so the new block governs from here on. A plain-string
             # `guidelines` makes this a no-op: the content is identical every time.
             if instance._episode_index != injected_episode:
+                finished_episode = injected_episode
                 injected_episode = instance._episode_index
+                # Hook first, prompt second: a subclass that wants to change what
+                # episode `injected_episode` sees -- by writing a new entry into
+                # `guidelines`, or by truncating the chat -- has to run before the
+                # system message is rebuilt from it. Inert on this class.
+                self.on_episode_boundary(instance, finished_episode, steps)
                 self.messages[0] = {
                     "role": "system",
                     "content": self.system_prompt_for(injected_episode),

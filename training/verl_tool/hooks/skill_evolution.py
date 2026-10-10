@@ -36,9 +36,9 @@ _processed_files: set = set()
 
 
 def _ensure_skillrl_path():
-    """Make `skillrl.*` importable. The repo has a symlink skillrl -> SKILL-RL
-    at the project root, so inserting cwd is sufficient when training is
-    launched from the repo root (as our SLURM scripts do)."""
+    """Make `skillrl.*` importable. The evolving SLURM scripts put the repo
+    root (the parent of training/) on PYTHONPATH; inserting cwd is a fallback
+    for launches from the repo root."""
     if "skillrl" in sys.modules:
         return
     here = Path.cwd()
@@ -49,7 +49,7 @@ def _ensure_skillrl_path():
 def _parse_react_steps(text: str) -> list[dict]:
     """Parse ReAct text into thought/action/observation dicts.
 
-    Mirrors the logic in SKILL-RL/tools/convert_training_trajs.py:parse_react_steps
+    Mirrors the logic in training/tools/convert_training_trajs.py:parse_react_steps
     so the converted trajectories look identical to the existing batch tool.
     """
     import re
@@ -131,7 +131,7 @@ def _stage_one_per_seed(new_files: list[Path], staging_dir: Path, level_name: st
         rec = _full_to_skillrl_record(full)
         step = full.get("step", 0)
         # Filename MUST start with "trajectory_seed" — load_trajectories in
-        # SKILL-RL/distillation/distill.py globs for "trajectory_seed*.json".
+        # skillrl/distillation/distill.py globs for "trajectory_seed*.json".
         fname = f"trajectory_seed{seed}_step{step}.json"
         (staging_dir / fname).write_text(json.dumps(rec, indent=2))
         written += 1

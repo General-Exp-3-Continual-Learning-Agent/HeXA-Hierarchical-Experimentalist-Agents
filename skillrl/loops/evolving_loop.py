@@ -1,7 +1,7 @@
 """Iterative skill refinement loop using evolving skill banks (v2 variant).
 
 Usage:
-    python -m skillrl.evolving_loop \
+    python -m skillrl.loops.evolving_loop \
         --level pass_the_parcel \
         --initial-traj-dir results/pass_the_parcel \
         --num-rounds 3 \

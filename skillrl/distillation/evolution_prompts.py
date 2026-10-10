@@ -47,7 +47,19 @@ def format_skill_bank_for_teacher(bank: SkillBank, level_name: str) -> str:
     if level_mistakes:
         lines.append("EXISTING MISTAKES:")
         for mistake in level_mistakes:
+            # NOTE: all three fields are shown. Previously only `description`
+            # reached the teacher, so it could not see -- and therefore could not
+            # repair -- a corrective action that was vague or circular (e.g.
+            # "Apply the proper horizontal offset principle"). This is the same
+            # failure mode as the truncated skill principle above, one field over:
+            # the ACTOR saw how_to_avoid (skill_bank.py:175) while the EVOLVER
+            # never did. Measured cost on two_body_problem: suppressing these
+            # mistakes at retrieval moved the frozen bank from 35.3% to 59.3%.
             lines.append(f"  - {mistake.description}")
+            if mistake.why_it_happens:
+                lines.append(f"      why it happens: {mistake.why_it_happens}")
+            if mistake.how_to_avoid:
+                lines.append(f"      how to avoid:   {mistake.how_to_avoid}")
         lines.append("")
 
     if not level_skills and not level_mistakes:
@@ -120,7 +132,54 @@ RULES:
    (e.g. "only call simulate_action when within X units"). The agent has a bounded
    iteration budget; a gate that never opens burns the entire budget and guarantees
    failure. Prefer skills that say what to try next over skills that forbid acting.
-11. Do not remove mistakes unless the new trajectories show they're no longer common.
+11. MISTAKES ARE HELD TO THE SAME BAR AS SKILLS, and you may delete them freely.
+   A mistake record is injected into the agent's context and costs it attention, so
+   a weak one is worse than none. Apply all of the following:
+   - "how_to_avoid" must name a SPECIFIC THING TO DO, with values where the level
+     has them. It must NOT refer the reader to another skill by name
+     ("apply the proper offset principle", "use the non-overlap principle") --
+     that is circular and tells the agent nothing it can act on. Rewrite any such
+     record so the fix is self-contained, or delete it.
+   - DROP mistakes that are only about action VALIDITY (out of bounds, overlapping
+     another object, malformed placement) rather than about SOLVING the level. The
+     environment already rejects invalid actions and reports why; spending context
+     on them makes the agent search timidly inside a "safe" region instead of
+     exploring placements that actually work.
+   - DROP a mistake that no longer appears in the new trajectories, and DROP the
+     weakest one when you are at the cap and a better-evidenced one is available.
+     Keeping a stale mistake is not the safe default.
+   - Prefer few, sharp mistakes over a full set. Returning fewer than the cap is
+     correct when the remainder would be vague.
+
+12. MISTAKES MUST BE CONTRASTIVE, NOT FAILURE-ONLY. This is the most important
+   rule for mistakes. Do not write a mistake by looking at a failed trajectory in
+   isolation -- that produces a restatement of the SYMPTOM ("the agent overlapped
+   the blue ball", "the placement was out of bounds") instead of the CAUSE.
+   For every mistake you keep or create:
+   - Identify what the SUCCESSFUL trajectories in this batch did differently at
+     the same decision point. "how_to_avoid" must state THAT, concretely.
+     Bad : "Agent places the red ball too close to the green ball."
+           -> how_to_avoid: "Ensure sufficient separation from the green ball."
+     Good: "Agent kept aiming at the green ball; the successful runs did not."
+           -> how_to_avoid: "Target the OTHER body instead: on seeds 61/68 the
+              solve came from placing red beyond the blue ball at x=+1.2 from it,
+              driving blue back into green."
+   - If you cannot point to a contrasting success for a mistake, DROP IT. A
+     failure you cannot contrast is not yet understood, and shipping it as advice
+     guesses at the cause. This mirrors the rule that a skill drawn only from
+     failures starts at confidence <= 0.4.
+   - DO NOT anchor every mistake on the same object or sub-goal. If the successes
+     acted on a DIFFERENT object, a different sub-goal, or a different order of
+     operations than the failures, the mistake must say so explicitly. A bank
+     whose mistakes all discuss one object teaches the agent to fixate on it.
+
+13. THE BANK MUST BE SELF-CONSISTENT. Before returning, check every skill and
+   mistake against every other one. If two entries give opposing guidance on the
+   same quantity (e.g. one says to INCREASE a separation and another says
+   DECREASING it works better), you must resolve it, not ship both: keep the one
+   the trajectories in this batch actually support, cite the seed, and delete or
+   rewrite the other. Contradictory guidance is worse than no guidance -- the
+   agent cannot act on it and will oscillate.
 
 OUTPUT JSON OBJECT:
 {{

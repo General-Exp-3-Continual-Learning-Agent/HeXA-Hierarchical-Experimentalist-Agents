@@ -112,23 +112,10 @@ The environment is a 2D box with coordinates ranging from -5 to 5 on both axes. 
 **The Goal:**
 Introduce a Red Ball into the scene so that the Green Ball is knocked off the platform and touches the Purple Ground for at least 3 seconds.
 
-**Physics Rules:**
-- Both balls are released at t=0 and fall under gravity simultaneously.
-- A larger ball has more mass (constant density). Bigger balls push smaller ones in collisions.
-- To push the green ball RIGHT, place the red ball to its LEFT. To push LEFT, place to the RIGHT.
-- The green ball can only fall off the platform if the gap between the platform edge and the wall is wider than the green ball's diameter.
-
 **Placement Constraints:**
 - The red ball must be completely inside the box: -5 + radius <= x <= 5 - radius, -5 + radius <= y <= 5 - radius.
 - The red ball must NOT overlap with the green ball at t=0: distance between centers > sum of radii.
 - The red ball must NOT overlap with the black platform at t=0.
-
-**Strategy Tips:**
-- First, use get_level_state to understand the scene layout.
-- Use compute_gap_analysis to determine which side the green ball can fall off.
-- The red ball should collide with the green ball on the platform to push it toward the wider gap.
-- Use simulate_action to test your ideas and observe what happens.
-- If a simulation fails, analyze WHY and adjust your approach.
 
 {tool_descriptions}
 

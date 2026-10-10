@@ -52,7 +52,7 @@ Place ONE Red Ball so that the Green Ball touches the Purple Ground for at least
 {react_format}"""
 
 BASKET_CASE_INITIAL = """\
-Solve the Basket Case puzzle. You have 25 iterations to solve it. Start by inspecting the level state, then use compute_basket_analysis to find the basket position, scale, and recommended push direction.
+Solve the Basket Case puzzle. You have {max_iterations} iterations to solve it. Start by inspecting the level state, then use compute_basket_analysis to find the basket position, scale, and recommended push direction.
 
 Your goal: deflect the green ball sideways so it misses the basket and lands on the purple ground for 3 seconds.
 

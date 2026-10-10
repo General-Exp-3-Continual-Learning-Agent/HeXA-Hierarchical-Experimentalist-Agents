@@ -52,7 +52,7 @@ Place ONE Red Ball so that the Green Ball touches the Blue Jar for at least 3 se
 {react_format}"""
 
 FALLING_INTO_PLACE_INITIAL = """\
-Solve the Falling Into Place puzzle. You have 25 iterations to solve. Start by inspecting the level state, then use compute_intercept_setup to find which direction the green ball must travel.
+Solve the Falling Into Place puzzle. You have {max_iterations} iterations to solve. Start by inspecting the level state, then use compute_intercept_setup to find which direction the green ball must travel.
 
 ."""
 

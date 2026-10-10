@@ -12,18 +12,19 @@
 
 set -euo pipefail
 
-PROJECT_DIR="/project/pi_sniekum_umass_edu/vgandhi"
-VERL_TOOL_DIR="$PROJECT_DIR/HeXA-Hierarchical-Experimentalist-Agents/training"
+# Paths: every one can be overridden from the environment.
+VERL_TOOL_DIR="${VERL_TOOL_DIR:-${SLURM_SUBMIT_DIR:-$PWD}}"   # this training/ dir; sbatch from here
+CKPT_ROOT="${CKPT_ROOT:-$VERL_TOOL_DIR/checkpoints}"
 export PYTHONPATH="$(dirname "$VERL_TOOL_DIR")/interphyre:${PYTHONPATH:-}"   # makes repo-level interphyre package importable
-CONDA_ENV="$PROJECT_DIR/conda/envs/VerlToolInterphyre"
+CONDA_ENV="${CONDA_ENV:?set CONDA_ENV to the VerlToolInterphyre conda env path}"
 
-MODEL_PATH="/scratch4/workspace/svaidyanatha_umass_edu-phyre/hf_cache/hub/models--Qwen--Qwen2.5-7B-Instruct/snapshots/a09a35458c702b33eeacc393d103063234e8bc28"
+MODEL_PATH="${MODEL_PATH:-Qwen/Qwen2.5-7B-Instruct}"
 PORT="${VLLM_PORT:-8000}"
 
 module load conda/latest
 module load cuda/12.8
 export PATH="$CONDA_ENV/bin:${PATH:-}"
-export HF_HOME="/scratch4/workspace/svaidyanatha_umass_edu-phyre/hf_cache"
+export HF_HOME="${HF_HOME:-$HOME/.cache/huggingface}"
 
 cd "$VERL_TOOL_DIR"
 mkdir -p logs

@@ -1,12 +1,8 @@
 """Online-start iterative skill refinement loop.
 
 Usage:
-    python -m skillrl.online_loop \
-        --level pass_the_parcel \
-        --initial-traj-dir results/pass_the_parcel \
-        --num-rounds 3 \
-        --seeds-per-round 5 \
-        --start-seed 6
+python -m skillrl.loops.online_loop --level catapult --num-rounds 3 --seeds-per-round 5 --start-seed 6 --verbose --initial-traj-dir Initial_trajectories/catapult --output-dir hexa_online_iterative_catapult
+
 
 Round 1: No skill bank — agent runs fully online (baseline).
 Round 2+: Distill a new skill bank from the latest round's trajectories

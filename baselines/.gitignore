@@ -1,0 +1,7 @@
+# Run outputs and caches live here (baselines/data/) so results sit beside the
+# code, but stay untracked: they are multi-MB JSON dumps and regenerable, and
+# the upstream repo ships code only ("run outputs are not bundled" — README).
+# Remove this file, or `git add -f`, if you do want a run committed.
+data/
+tests/_teststore/
+__pycache__/

@@ -19,6 +19,15 @@
 #   sbatch scripts/serve_qwen_vllm.sh
 #   PORT=8123 MODEL_DIR=/path/to/other sbatch scripts/serve_qwen_vllm.sh
 #
+# NOTE: the defaults below serve **Qwen2.5-7B-Instruct**. Every ORBIT arm in
+# MAZE_RESULTS.md / MASTERMIND_RESULTS.md runs Qwen3-8B, which needs all three
+# overrides -- omitting them yields a healthy server that 404s on the model name
+# the arm asks for, several minutes into the run:
+#
+#   MODEL_DIR=/datasets/ai/qwen3/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218 \
+#   SERVED_MODEL_NAME=Qwen/Qwen3-8B REASONING_PARSER=qwen3 \
+#     sbatch scripts/serve_qwen_vllm.sh
+#
 # Deliberately much leaner than serve_gpt_oss_vllm.sh, because almost everything
 # that script fights with is gpt-oss-specific and does not apply here:
 #

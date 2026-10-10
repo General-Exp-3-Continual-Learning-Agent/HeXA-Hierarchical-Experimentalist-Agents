@@ -269,7 +269,9 @@ whether what you saw was the maze or the agent.
 
 Revise the bank against this new evidence. Rules:
 
-1. **Keep** skills the new instances still support, preserving their confidence.
+1. **Keep** skills the new instances still support. Keeping is not freezing: reassess
+   the confidence against this round (rule 7), and leave the wording alone unless the
+   new evidence actually sharpens it (rule 8).
 2. **Update** a skill whose wording is right but whose trigger condition or reasoning the new evidence sharpens.
 3. **Add** a skill for a pattern the new instances support and no existing entry covers. The bank holds at most {max_skills} skills and at most {max_mistakes} mistakes; count the entries above before deciding which case you are in.
    - **Below the cap, add it.** A free slot is not a reward for restraint, and an addition there displaces nothing, so the only question is whether the pattern is real and transferable -- not whether the existing skills are good. A round that ends with fewer entries than it started and nothing added has thrown away that round's evidence.
@@ -286,6 +288,18 @@ Revise the bank against this new evidence. Rules:
    A skill that cannot be tied to a specific turn in a specific transcript is an
    aphorism: it will read as sound, cost context in every future episode, and change
    no decision. If you cannot find the turn, drop the skill rather than reword it.
+7. **Confidence moves in both directions.** The whole bank above was in the prompt of
+   every instance this round. Raise a skill only where an agent acted on it and solved;
+   where an agent could have acted on it and the instance went unsolved, lower it by at
+   least 0.1; otherwise leave it. Confidence is the retriever's ranking key, so a number
+   that only ever rises makes a skill permanent however little it does. Put every
+   movement in "confidence_changes".
+8. **Keeping a skill means keeping its mechanism**: which observation to record, in what
+   form, and which later decision it changes, plus any quantity the evidence established
+   ("a cell reporting three walls"). Copy those through verbatim, and change a quantity
+   only when an instance this round shows a different one. A retained principle
+   compressed into a restatement of its own title is an aphorism carrying the old
+   confidence, and no single round makes that loss visible.
 
 """ + _ALREADY_KNOWN + """
 
@@ -317,7 +331,10 @@ OUTPUT JSON OBJECT:
     }}
   ],
   "removed_skill_titles": ["<title of removed skill 1>", ...],
-  "reasoning": "<what was removed, what was added, why -- and for any invariant you stated but banked no skill from, name it and say why it is unactionable>"
+  "confidence_changes": [
+    {{"title": "<skill title>", "from": <old confidence>, "to": <new confidence>, "why": "<acted on in <instance id>, solved / in the prompt for unsolved <instance id> and changed nothing / no occasion to apply>"}}
+  ],
+  "reasoning": "<what was removed, what was added, why -- and for any invariant you stated but banked no skill from, name it and say why it is unactionable. If a quantity inside a retained skill changed, name the instance that justified it>"
 }}
 
 Be concise but precise. Focus on transferable exploration strategy grounded in the trajectories.

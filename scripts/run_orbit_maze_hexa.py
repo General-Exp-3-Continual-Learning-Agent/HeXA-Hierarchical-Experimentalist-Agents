@@ -87,6 +87,14 @@ def install_stub_teacher() -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--maze-config", default=pools.DEFAULT_MAZE_CONFIG,
+        choices=[pools.DEFAULT_MAZE_CONFIG, pools.PAPER_QWEN_CONFIG],
+        help="Which ORBIT Maze val config to draw pools from. The default is the "
+             "historical pool (total_step_cap 45, ORBIT's openai.sh). "
+             "multi_task_multi_episode_config.yaml is total_step_cap 27 -- the pool "
+             "behind the paper's Qwen3-8B table. The two pools are DISJOINT; never "
+             "pair or pool results across them.")
     parser.add_argument("--rounds", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=20)
     parser.add_argument("--train-size", type=int, default=512,
@@ -198,7 +206,7 @@ def main() -> int:
     if args.stub:
         install_stub_teacher()
 
-    task = MazeTask()
+    task = MazeTask(config_name=args.maze_config)
     train_specs = task.train_specs(args.train_size)
     eval_specs = task.eval_specs(args.eval_size)
     pools.assert_disjoint(train_specs, eval_specs)

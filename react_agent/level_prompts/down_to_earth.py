@@ -53,7 +53,7 @@ Introduce a Red Ball into the scene so that the Green Ball is knocked off the pl
 {react_format}"""
 
 DOWN_TO_EARTH_INITIAL = """\
-Solve the Down to Earth puzzle. You have exactly 25 iterations to solve the puzzle. Start by inspecting the level state, then figure out where to place the red ball to knock the green ball off the platform and onto the purple ground.
+Solve the Down to Earth puzzle. You have exactly {max_iterations} iterations to solve the puzzle. Start by inspecting the level state, then figure out where to place the red ball to knock the green ball off the platform and onto the purple ground.
 
 Remember: use the tools to test your ideas before submitting your final answer with the finish tool."""
 

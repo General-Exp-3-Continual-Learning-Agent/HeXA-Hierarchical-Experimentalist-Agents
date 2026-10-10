@@ -200,41 +200,62 @@ def build_system_prompt(level_name: str = "down_to_earth", is_oss: bool = False)
         )
 
 
-def build_initial_user_message(level_name: str = "down_to_earth", is_oss: bool = False) -> str:
+def build_initial_user_message(
+    level_name: str = "down_to_earth",
+    is_oss: bool = False,
+    # NOTE: every non-OSS level's INITIAL message states its own iteration
+    # budget in prose ("You have {max_iterations} iterations..."). This used
+    # to be a literal number (25, or 12 for pass_the_parcel) with NO connection
+    # to the --max-iterations actually enforced by ReactAgent -- so a run
+    # configured for e.g. 12 iterations (Reflexion's per-trial cap) told the
+    # model it had 25, and the model had no way to know it was about to be cut
+    # off. Default stays 25 so any caller that doesn't pass this explicitly
+    # gets byte-identical output to before.
+    #
+    # The OSS variants were originally written with no stated count, but
+    # catapult/tipping_point/cliffhanger/two_body_problem later picked up the
+    # same "{max_iterations}" placeholder as the non-OSS templates without
+    # this branch ever being updated to .format() it in -- every prior
+    # gpt-oss-120b run on those 4 levels sent the model the literal text
+    # "You have {max_iterations} iterations" verbatim. All 8 OSS templates
+    # format safely with this kwarg (verified: the 4 without the placeholder
+    # round-trip unchanged), so .format() is applied unconditionally here.
+    max_iterations: int = 25,
+) -> str:
     """Build the initial user message for the given level."""
     if is_oss:
         if level_name == "two_body_problem":
-            return OSS_TWO_BODY_INITIAL
+            return OSS_TWO_BODY_INITIAL.format(max_iterations=max_iterations)
         elif level_name == "catapult":
-            return OSS_CATAPULT_INITIAL
+            return OSS_CATAPULT_INITIAL.format(max_iterations=max_iterations)
         elif level_name == "falling_into_place":
-            return OSS_FALLING_INTO_PLACE_INITIAL
+            return OSS_FALLING_INTO_PLACE_INITIAL.format(max_iterations=max_iterations)
         elif level_name == "basket_case":
-            return OSS_BASKET_CASE_INITIAL
+            return OSS_BASKET_CASE_INITIAL.format(max_iterations=max_iterations)
         elif level_name == "pass_the_parcel":
-            return OSS_PASS_THE_PARCEL_INITIAL
+            return OSS_PASS_THE_PARCEL_INITIAL.format(max_iterations=max_iterations)
         elif level_name == "cliffhanger":
-            return OSS_CLIFFHANGER_INITIAL
+            return OSS_CLIFFHANGER_INITIAL.format(max_iterations=max_iterations)
         elif level_name == "tipping_point":
-            return OSS_TIPPING_POINT_INITIAL
+            return OSS_TIPPING_POINT_INITIAL.format(max_iterations=max_iterations)
         else:
-            return OSS_DOWN_TO_EARTH_INITIAL
+            return OSS_DOWN_TO_EARTH_INITIAL.format(max_iterations=max_iterations)
     if level_name == "two_body_problem":
-        return TWO_BODY_INITIAL
+        return TWO_BODY_INITIAL.format(max_iterations=max_iterations)
     elif level_name == "catapult":
-        return CATAPULT_INITIAL
+        return CATAPULT_INITIAL.format(max_iterations=max_iterations)
     elif level_name == "falling_into_place":
-        return FALLING_INTO_PLACE_INITIAL
+        return FALLING_INTO_PLACE_INITIAL.format(max_iterations=max_iterations)
     elif level_name == "basket_case":
-        return BASKET_CASE_INITIAL
+        return BASKET_CASE_INITIAL.format(max_iterations=max_iterations)
     elif level_name == "pass_the_parcel":
-        return PASS_THE_PARCEL_INITIAL
+        return PASS_THE_PARCEL_INITIAL.format(max_iterations=max_iterations)
     elif level_name == "cliffhanger":
-        return CLIFFHANGER_INITIAL
+        return CLIFFHANGER_INITIAL.format(max_iterations=max_iterations)
     elif level_name == "tipping_point":
-        return TIPPING_POINT_INITIAL
+        return TIPPING_POINT_INITIAL.format(max_iterations=max_iterations)
     else:
-        return DOWN_TO_EARTH_INITIAL
+        return DOWN_TO_EARTH_INITIAL.format(max_iterations=max_iterations)
 
 
 __all__ = [

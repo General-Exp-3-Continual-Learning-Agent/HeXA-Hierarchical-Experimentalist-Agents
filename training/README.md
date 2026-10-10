@@ -18,14 +18,17 @@ All variants: 1×A100, batch size 1, 500 steps, train seeds 1–50, val seeds 51
 
 ## Setup
 
-Scripts use the `VerlToolInterphyre` conda env and auto-set `PYTHONPATH` to the
-repo-level `../interphyre` package (so `import interphyre` resolves). Run all
-`sbatch` commands from this `training/` directory.
+Scripts use a `VerlToolInterphyre` conda env (set `CONDA_ENV` to its path) and
+auto-set `PYTHONPATH` to the repo-level `../interphyre` package (so `import
+interphyre` resolves); the evolving scripts also add the repo root so the shared
+`skillrl` package imports. Run all `sbatch` commands from this `training/`
+directory. Other paths are overridable: `CKPT_ROOT` (default `checkpoints/`),
+`HF_HOME`, and for the teacher `MODEL_PATH`.
 
 ## Data
 
-Each script expects pre-built parquet data (already present under `data/`). To
-regenerate, e.g. for baseline dte:
+Each script expects pre-built parquet data under `data/` (not shipped). To
+build it, e.g. for baseline dte:
 
 ```bash
 python examples/data_preprocess/interphyre_data.py \
@@ -58,7 +61,12 @@ sbatch examples/train/interphyre/slurm_evolving_grpo_tbp.sh
 
 **Outputs:** per-run logs, metrics, and trajectories in `logs/run<N>/`
 (`trajectories.jsonl`); checkpoints (every 50 steps) under
-`/scratch4/workspace/svaidyanatha_umass_edu-phyre/checkpoints/interphyre/<run_name>/run<N>/`.
+`$CKPT_ROOT/interphyre/<run_name>/run<N>/`.
+
+The evolving variant starts from 5 base-model rollouts per level: point
+`INIT_TRAJ_JSONL` at them (default `skill_data/first_five_trajs/<dte|tbp>_epoch0_trajectories.jsonl`).
+It then writes the converted trajectories to `skill_data/` and the evolving banks to
+`skill_banks/`.
 
 > Don't launch multiple runs in the same second — the run-dir picker isn't atomic
 > and concurrent jobs can collide on `logs/run<N>`.
@@ -77,7 +85,7 @@ sbatch examples/eval/slurm_eval.sh \
 # Skilled checkpoint (match the bank used at train time)
 sbatch examples/eval/slurm_eval.sh \
     --checkpoint <hub_id_or_path> --level down_to_earth \
-    --skill_bank SKILL-RL/Skill_banks/skill_bank_evolving_DTE.json
+    --skill_bank <path/to/skill_bank.json>
 ```
 
 Results are written to `logs/eval/eval<N>.jsonl` with a printed solve rate.

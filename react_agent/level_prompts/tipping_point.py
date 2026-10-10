@@ -58,7 +58,7 @@ Place ONE Red Ball somewhere in the box so that, once the simulation runs, the g
 {react_format}"""
 
 TIPPING_POINT_INITIAL = """\
-Solve the Tipping Point puzzle. You have 25 iterations to solve it. The success condition is: green_bar must contact purple_wall for the success-time duration. Use tools effectively and think about alternate approaches if one does not work.
+Solve the Tipping Point puzzle. You have {max_iterations} iterations to solve it. The success condition is: green_bar must contact purple_wall for the success-time duration. Use tools effectively and think about alternate approaches if one does not work.
 
 Start by calling compute_tipping_point_analysis — it returns the green bar's endpoints, the purple wall's position, which side of the bar the wall is on, the suggested tip direction, and a starting placement region. """
 
@@ -88,6 +88,6 @@ Placement Constraints:
 When your simulation shows green_bar in continuous contact with purple_wall for the required duration, call finish."""
 
 OSS_TIPPING_POINT_INITIAL = """\
-Solve the Tipping Point puzzle. You have 25 iterations to solve it. The success condition is: green_bar must contact purple_wall for the success-time duration.
+Solve the Tipping Point puzzle. You have {max_iterations} iterations to solve it. The success condition is: green_bar must contact purple_wall for the success-time duration.
 
 Start with compute_tipping_point_analysis to get the green bar's endpoints, the purple wall's x position, which side of the bar the wall is on, the suggested tip direction, and a starting placement region. The basket pins the bar's base, so applying force near the bar's TOP end (typically by dropping the red ball from above) tips it much more efficiently than placements at basket level. Use simulate_action to test placements; when one succeeds, call finish."""

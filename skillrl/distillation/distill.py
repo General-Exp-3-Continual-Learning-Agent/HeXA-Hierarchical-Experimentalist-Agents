@@ -49,11 +49,43 @@ def _get_hf_teacher(model: str, max_new_tokens: int = 2048):
     return _HF_TEACHER_CACHE[model]
 
 
+_OPENAI_TEACHER_CACHE: dict = {}
+
+
+def _get_openai_teacher(model: str, max_new_tokens: int = 2048):
+    """Lazy-load and cache an OpenAI-compatible (vLLM) teacher client.
+
+    Cached per model name so the client is built once per process, mirroring
+    _get_hf_teacher. The default base_url (localhost:8000/v1) is what the serve
+    scripts bind, so actor and teacher share one server -- except for a hosted
+    reasoning-family teacher (e.g. gpt-6-astra), which points OPENAI_BASE_URL
+    at the real API instead.
+
+    2048 is fine for a Qwen/vLLM teacher, whose full response is visible text.
+    A reasoning-family teacher spends most of its completion budget on
+    invisible reasoning tokens (measured: 97-98% on this project's catapult
+    actor calls) before it ever writes the skill-bank text the evolver has to
+    parse -- at 2048 (or even load_openai_compatible_model's own default
+    auto-raise to 4000) that leaves too little room and risks a
+    finish_reason="length" truncation mid-JSON. Raised well past that for
+    anything matching the same reasoning-model heuristic used there.
+    """
+    if model not in _OPENAI_TEACHER_CACHE:
+        from react_agent.react_agent import load_openai_compatible_model
+        is_reasoning = model.lower().startswith(("o1", "o3", "o4", "gpt-5", "gpt-6"))
+        budget = max(max_new_tokens, 12000) if is_reasoning else max_new_tokens
+        _OPENAI_TEACHER_CACHE[model] = load_openai_compatible_model(
+            model, temperature=0.3, max_new_tokens=budget,
+        )
+    return _OPENAI_TEACHER_CACHE[model]
+
+
 def call_teacher(prompt: str, model: str = TEACHER_MODEL) -> str:
     """Call the teacher model and return the text response.
 
     Dispatches based on model name:
       - names starting with "claude-"  → Claude CLI subprocess
+      - names starting with "openai:"  → OpenAI-compatible endpoint (actor's vLLM)
       - "vllm:<name>", or a gpt-oss name with an endpoint configured
                                        → local vLLM, OpenAI-compatible, no API key
       - anything else                  → local HuggingFace model (Qwen by default)
@@ -64,7 +96,48 @@ def call_teacher(prompt: str, model: str = TEACHER_MODEL) -> str:
     ``re.search(r"\\[.*\\]")``, which would span from a draft bracket in the analysis
     channel to the real closing bracket and fail to parse, yielding zero skills with
     only a printed warning. See ``hexa_core.llm.teacher`` for the demonstration.
+
+    The "openai:" branch exists so the teacher can share the same vLLM server the
+    actor uses. Without it a Qwen teacher forced the WHOLE run onto HF
+    transformers -- ~870 actor generations dragged onto the slow path to
+    accommodate 17 teacher calls -- because the actor and teacher must agree on
+    one backend when they are the same model.
     """
+    if model.startswith("openai:"):
+        try:
+            from react_agent.react_agent import load_openai_compatible_model
+            actual = model.split(":", 1)[1]
+            generate = _get_openai_teacher(actual)
+            return generate([{"role": "user", "content": prompt}]).strip()
+        except Exception as e:
+            print(f"[Teacher Error] openai-compatible '{model}' — {type(e).__name__}: {e}")
+            return ""
+
+    # "vllm:<server URL>" (e.g. "vllm:http://gpu014:8000") is the form the GRPO
+    # training scripts and verl_tool's skill_evolution hook pass. It must not reach
+    # the "vllm:<served model name>" branch below, which would treat the URL as a
+    # model name and apply gpt-oss settings. Kept identical to the teacher those
+    # training runs used: Qwen-7B, temperature 0.3, 2048 tokens.
+    if model.startswith(("vllm:http://", "vllm:https://")):
+        endpoint = model[len("vllm:"):]
+        import requests
+        try:
+            resp = requests.post(
+                f"{endpoint}/v1/chat/completions",
+                json={
+                    "model": os.environ.get("TEACHER_SERVED_MODEL", "Qwen/Qwen2.5-7B-Instruct"),
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": 0.3,
+                    "max_tokens": 2048,
+                },
+                timeout=300,
+            )
+            resp.raise_for_status()
+            return resp.json()["choices"][0]["message"]["content"].strip()
+        except Exception as e:
+            print(f"[Teacher Error] vLLM at {endpoint} — {type(e).__name__}: {e}")
+            return ""
+
     # Imported lazily, mirroring _get_hf_teacher's local import of react_agent:
     # hexa_core imports skillrl (hexa_bridge patches it), so a module-level import
     # here would be circular.

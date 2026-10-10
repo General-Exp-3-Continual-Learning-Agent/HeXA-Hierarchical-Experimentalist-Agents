@@ -57,6 +57,14 @@ class OracleStub:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--maze-config", default=pools.DEFAULT_MAZE_CONFIG,
+        choices=[pools.DEFAULT_MAZE_CONFIG, pools.PAPER_QWEN_CONFIG],
+        help="Which ORBIT Maze val config to draw pools from. The default is the "
+             "historical pool (total_step_cap 45, ORBIT's openai.sh). "
+             "multi_task_multi_episode_config.yaml is total_step_cap 27 -- the pool "
+             "behind the paper's Qwen3-8B table. The two pools are DISJOINT; never "
+             "pair or pool results across them.")
     parser.add_argument("--n", type=int, default=50, help="eval instances (prefix of the pool)")
     parser.add_argument("--out", type=Path, default=Path("results/orbit_maze_baseline"))
     parser.add_argument("--train-size", type=int, default=512, help="pool used for the leakage split")
@@ -133,7 +141,7 @@ def main() -> int:
         seed=args.seed,
     )
 
-    task = MazeTask()
+    task = MazeTask(config_name=args.maze_config)
     eval_specs = task.eval_specs(args.n)
     train_specs = task.train_specs(args.train_size)
     pools.assert_disjoint(train_specs, eval_specs)

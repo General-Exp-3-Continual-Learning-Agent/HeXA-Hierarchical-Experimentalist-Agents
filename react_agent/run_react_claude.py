@@ -2,7 +2,7 @@
 CLI entry point for the ReAct agent using Claude Code CLI.
 
 Usage:
-    python -m react_agent.run_react_claude --level down_to_earth --seed 42 --verbose
+    python -m react_agent.run_react_claude --level catapult --seed 6 --verbose --eval-dir catapult_react_claude_run2
 """
 
 import argparse
@@ -41,6 +41,9 @@ def load_claude_cli_model():
     Returns a callable `model_fn` that is compatible with `ReactAgent`
     and calls the `claude -p` CLI command.
     """
+    CLI_TIMEOUT_S = int(os.environ.get("CLAUDE_CLI_TIMEOUT", "300"))
+    CLI_ATTEMPTS = int(os.environ.get("CLAUDE_CLI_ATTEMPTS", "3"))
+
     def generate(messages: list, temp: float = 0.3, max_tokens: int = 800) -> str:
         # Convert messages to a single flat prompt
         prompt = ""
@@ -51,6 +54,17 @@ def load_claude_cli_model():
         prompt += "USER:\nIMPORTANT: Output ONLY your next single Thought and Action (and Action Input if needed). Do NOT write any Observation or additional steps. Stop after the Action Input.\n\nASSISTANT:\n"
 
         print(f"\n[Claude CLI] Prompt length: {len(prompt)} — waiting for response...", flush=True)
+        # A normal call takes ~4-10s; occasionally one hangs indefinitely (seen
+        # 2026-10-04: three catapult runs lost to a single 2000s hang each).
+        # Retry hung calls with a shorter timeout instead of ending the episode.
+        for attempt in range(1, CLI_ATTEMPTS + 1):
+            out = _call_once(prompt, attempt)
+            if out is not None:
+                return out
+        return "Thought: I encountered an error communicating with Claude CLI.\nAction: finish\nAction Input: {}"
+
+    def _call_once(prompt: str, attempt: int):
+        """One CLI call. Returns the text, or None after a timeout (retryable)."""
         call_start = time.time()
         try:
             result = subprocess.run(
@@ -67,7 +81,7 @@ def load_claude_cli_model():
     text=True,
     env=os.environ.copy(),
     stdin=subprocess.DEVNULL,
-    timeout=2000,
+    timeout=CLI_TIMEOUT_S,
 )
             elapsed = time.time() - call_start
 
@@ -98,8 +112,9 @@ def load_claude_cli_model():
              print("[Claude Error] The 'claude' CLI command was not found. Install: https://claude.ai/code", flush=True)
              return "Thought: I encountered an error communicating with Claude CLI.\nAction: finish\nAction Input: {}"
         except subprocess.TimeoutExpired:
-             print(f"[Claude Error] Claude CLI timed out after {time.time() - call_start:.1f}s.", flush=True)
-             return "Thought: I encountered an error communicating with Claude CLI.\nAction: finish\nAction Input: {}"
+             print(f"[Claude Error] Claude CLI timed out after {time.time() - call_start:.1f}s "
+                   f"(attempt {attempt}/{CLI_ATTEMPTS}).", flush=True)
+             return None
         except SessionLimitError:
              raise  # propagate — do not turn a session limit into a fake failure
         except Exception as e:

@@ -97,6 +97,24 @@ def evolve_skill_bank(
         print(f"  Saved previous bank (unchanged) to: {output_path}")
         return prev_bank
 
+    # A parse that succeeds but carries no skills is the same event as a parse
+    # failure -- the teacher returned nothing to evolve -- and must be handled the
+    # same way. Without this, the rewrite below saves an EMPTY bank for the level
+    # and every accumulated skill is gone: measured at 6 of 57 round transitions
+    # (11%) on the 2026-09-09 gpt-oss Maze build, where two of three replicates
+    # were wiped after round 14 and finished carrying only generation-2 skills.
+    # The teacher there emitted well-formed invariants and an empty `skills` list,
+    # so the failure is silent -- the round looks like a normal evolution.
+    # Note this checks the teacher's own output, BEFORE the citation verifier runs.
+    # A round the verifier empties by rejecting every skill as fabricated still
+    # wipes the bank; that is a different event (evidence rejected, not absent)
+    # and is left alone here rather than folded into this guard silently.
+    if not parsed.get("skills"):
+        print(f"  [Warning] Teacher returned no skills. Returning previous bank unchanged.")
+        prev_bank.save(output_path)
+        print(f"  Saved previous bank (unchanged) to: {output_path}")
+        return prev_bank
+
     # Extract previous bank's generation for reference
     prev_gen = 0
     for skill in prev_bank._all_skills():

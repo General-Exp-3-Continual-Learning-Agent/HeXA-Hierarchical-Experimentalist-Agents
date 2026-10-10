@@ -351,6 +351,41 @@ def test_bank_unchanged_is_detected(task, tmp_path, monkeypatch):
     )
     assert result.rounds[0].bank_unchanged is False   # round 0 distils, nothing to match
     assert result.rounds[1].bank_unchanged is True
+
+
+def test_empty_skills_does_not_wipe_the_bank(task, tmp_path, monkeypatch):
+    """A teacher returning `{"skills": []}` must not erase the accumulated bank.
+
+    This parses cleanly, so it misses the unparseable guard above and reaches the
+    rewrite, which builds a fresh SkillBank and copies over only *other* levels'
+    skills -- saving an empty bank for the level under training. On the 2026-09-09
+    gpt-oss Maze build this fired at 6 of 57 round transitions and left two of
+    three replicates finishing 20 rounds with generation-2 skills. The round looks
+    normal in every log line except the bank size, which is why it needs a test.
+    """
+    def call_teacher(prompt: str, model: str = "stub") -> str:
+        if "CURRENT SKILL BANK" in prompt:
+            return '{"skills": [], "removed_skill_titles": [], "mistakes": []}'
+        if "partial_skills" in prompt:
+            return MISTAKES_JSON
+        return SKILLS_JSON
+
+    import skillrl.distillation.distill as _distill
+    import skillrl.distillation.evolving_distill as _evolving
+
+    monkeypatch.setattr(_distill, "call_teacher", call_teacher)
+    monkeypatch.setattr(_evolving, "call_teacher", call_teacher, raising=False)
+
+    specs = task.train_specs(4)
+    result = loop.run_hexa_loop(
+        task, specs, wallbang_actor_factory([]), tmp_path,
+        rounds=2, batch_size=2, teacher_model="stub", resume=False,
+    )
+    seeded = json.loads((tmp_path / "round0" / "bank.json").read_text())
+    evolved = json.loads((tmp_path / "round1" / "bank.json").read_text())
+    assert sum(len(v) for v in seeded["level_skills"].values()) > 0, "round 0 seeded nothing"
+    assert evolved["level_skills"] == seeded["level_skills"]
+    assert result.rounds[1].bank_unchanged is True
     assert result.to_dict()["rounds_bank_unchanged"] == 1
 
 

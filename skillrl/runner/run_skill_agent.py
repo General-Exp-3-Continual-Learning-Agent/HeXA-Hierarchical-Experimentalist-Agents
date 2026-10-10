@@ -18,6 +18,7 @@ from skillrl.core.config import (
     DEFAULT_MAX_ITERATIONS,
     DEFAULT_TEMPERATURE,
     DEFAULT_MAX_NEW_TOKENS,
+    TEACHER_MODEL,
 )
 from skillrl.core.skill_bank import SkillBank
 from skillrl.runner.augmented_runner import run_skill_augmented
@@ -52,9 +53,12 @@ def run_batch(
     results = []
     level_dir = eval_dir / level_name
     level_dir.mkdir(parents=True, exist_ok=True)
+    # Separate filenames so a within-seed run never resumes from (or is
+    # mistaken for) static-injection results in the same eval dir.
+    suffix = "skillrl_ws" if kwargs.get("within_seed") else "skillrl"
 
     for seed in seeds:
-        traj_path = level_dir / f"trajectory_seed{seed}_skillrl.json"
+        traj_path = level_dir / f"trajectory_seed{seed}_{suffix}.json"
 
         # Skip seeds that already have a completed trajectory file
         if traj_path.exists():
@@ -113,11 +117,16 @@ def run_batch(
                 "iterations": r.get("iterations"),
                 "elapsed_time": r.get("elapsed_time"),
                 "skills_used": r.get("skill_titles", []),
+                "within_seed_evolver_calls": r.get("within_seed_evolver_calls"),
             }
             for r in results
         ],
     }
-    summary_path = level_dir / "summary_skillrl.json"
+    if kwargs.get("within_seed"):
+        summary["inference_mode"] = "within_seed_free" if kwargs.get("ws_free") else "within_seed"
+        summary["refine_on"] = kwargs.get("refine_on")
+        summary["teacher_model"] = kwargs.get("teacher_model")
+    summary_path = level_dir / f"summary_{suffix}.json"
     summary_path.write_text(json.dumps(summary, indent=2))
 
     print(f"\n{'='*60}")
@@ -153,6 +162,45 @@ def main():
     parser.add_argument("--xl-framing", action="store_true",
                         help="Label level skills as cross-level transferred "
                              "(use when --skill-bank is a cross-level synthesised bank).")
+    parser.add_argument("--within-seed", action="store_true",
+                        help="Within-seed experimentation: refine a seed-local copy of the "
+                             "bank after each turn (default: static injection).")
+    parser.add_argument("--teacher-model", type=str, default=TEACHER_MODEL,
+                        help="Evolver for --within-seed refinement")
+    parser.add_argument("--refine-on", choices=["all", "sim", "event"], default="all",
+                        help="When to call the within-seed evolver: every tool turn (all), "
+                             "after simulation turns (sim), or when code detects a new valid "
+                             "simulation result -- new best, new green behaviour, 2nd failure "
+                             "in a region, or every 3rd new simulation (event)")
+    parser.add_argument("--ws-announce", action="store_true",
+                        help="With --ws-free: tell the actor (system prompt) that skills are "
+                             "updated during the episode, tag seed skills '(this episode)', and "
+                             "append each evolver update to the tool result")
+    parser.add_argument("--ws-require-numbers", action="store_true",
+                        help="With --ws-free: during an invalid streak, re-ask the evolver once "
+                             "if no skill quotes a range from the computed valid-placement lines")
+    parser.add_argument("--ws-regions", action="store_true",
+                        help="With --ws-free: the evolver may rule out placement regions "
+                             "(>=2 cited failed simulations inside, <=2.0 wide); the tools "
+                             "refuse simulations inside them")
+    parser.add_argument("--ws-max-new-skills", type=int, default=2,
+                        help="Seed-specific skills allowed on top of the bank during --within-seed")
+    parser.add_argument("--ws-max-new-mistakes", type=int, default=1,
+                        help="Seed-specific mistakes allowed on top of the bank during --within-seed")
+    parser.add_argument("--no-evolver", action="store_true",
+                        help="With --within-seed: notes-only ablation (episode notes "
+                             "recomputed each turn, evolver never called, bank stays K*)")
+    parser.add_argument("--ws-free", action="store_true",
+                        help="With --within-seed: unguarded evolver -- may rewrite, re-weight "
+                             "or delete any entry (incl. K*) and add seed-specific skills/mistakes up to "
+                             "--ws-max-new-skills/--ws-max-new-mistakes; the actor sees the refined "
+                             "bank each turn under the same --max-specific-skills/--max-mistakes caps")
+    parser.add_argument("--prediction-cap", type=int, default=None,
+                        help="Max predict_first_contact calls between simulations "
+                             "(default: unlimited)")
+    parser.add_argument("--explore", action="store_true",
+                        help="Enforce test-time exploration: radius-band coverage over "
+                             "the first simulations + stall breaker (ExploreToolkit)")
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
 
@@ -184,6 +232,19 @@ def main():
         max_specific_skills=args.max_specific_skills,
         max_mistakes=args.max_mistakes,
         xl_framing=args.xl_framing,
+        model_label=args.model,
+        within_seed=args.within_seed,
+        teacher_model=args.teacher_model,
+        refine_on=args.refine_on,
+        ws_max_new_skills=args.ws_max_new_skills,
+        ws_max_new_mistakes=args.ws_max_new_mistakes,
+        ws_evolver=not args.no_evolver,
+        ws_free=args.ws_free,
+        ws_regions=args.ws_regions,
+        ws_announce=args.ws_announce,
+        ws_require_numbers=args.ws_require_numbers,
+        prediction_cap=args.prediction_cap,
+        explore=args.explore,
     )
 
 
