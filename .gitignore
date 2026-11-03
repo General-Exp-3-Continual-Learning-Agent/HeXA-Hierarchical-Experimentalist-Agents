@@ -67,3 +67,8 @@ training/SKILL-RL/cross_banks/
 training/SKILL-RL/FirstFiveTrajs/
 training/SKILL-RL/Skill_banks/
 *.pdf
+
+# Local agent instructions and progress notes
+/AGENTS.md
+/CLAUDE.md
+/CURRENT_PROGRESS.md

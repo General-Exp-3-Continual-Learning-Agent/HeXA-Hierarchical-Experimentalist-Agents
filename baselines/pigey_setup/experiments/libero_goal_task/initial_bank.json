@@ -1,0 +1,196 @@
+{
+  "general_skills": [],
+  "level_skills": {
+    "libero_goal_task": [
+      {
+        "skill_id": "lib_sk_000",
+        "title": "Retry flat-object grasp at the rim",
+        "principle": "A grasp at the centroid of a flat object (plate) returned NOTHING HELD and the PCA fallback burned 375-380 sim steps, nearly 20% of the budget, for no gain. Failed centre grasps were followed by a repeat on the same detection or an erroring call. The one retry that worked used a bbox fallback on the plate's near rim, but the plate was then dropped in transit. So after one centre miss, switch to a rim bbox and avoid repeating the same detection.",
+        "when_to_apply": "When Grasp on a plate or other flat, thin object returns NOTHING HELD, especially after the PCA fallback has already run.",
+        "example": "After 'NOTHING HELD ... PCA-fallback ran 375 steps', GoHome, Perceive, then Grasp({\"x1\":255,\"y1\":388,\"x2\":285,\"y2\":402,\"description\":\"plate near rim\"}) gave HELD (t01_e00). Do not re-issue Grasp on the same centre box.",
+        "source_level": "libero_goal_task",
+        "source_type": "contrastive",
+        "source_seeds": [
+          "t01_e00",
+          "t04_e00",
+          "t01_e05"
+        ],
+        "generation": 0,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "lib_sk_001",
+        "title": "Budget sim steps before expensive calls",
+        "principle": "Failed trials died on the 2000 sim-step horizon after only 2-4 LLM steps. A failed VLARollout (500 steps), a GoHome (~220 steps in some cases), a missed Grasp (400-600 steps) and a Place with slow descent (140-240 steps) each eat large fractions. Successes finished in 57-530 steps. Before each costly call, estimate what remains. Do not chain a GoHome plus a fresh Grasp plus a Place after a failed VLA rollout unless the remaining budget covers them.",
+        "when_to_apply": "When more than ~1000 sim steps are spent and the next action is a Grasp, GoHome, or VLARollout.",
+        "example": "t00_e00: VLA 500 + GoHome 216 + Grasp 520 + GoHome 216 left no budget, and the final grasp errored on a terminated episode. Check the step= counter in each result.",
+        "source_level": "libero_goal_task",
+        "source_type": "contrastive",
+        "source_seeds": [
+          "t00_e00",
+          "t03_e00",
+          "t04_e00",
+          "t01_e00"
+        ],
+        "generation": 0,
+        "confidence": 0.25
+      },
+      {
+        "skill_id": "lib_sk_002",
+        "title": "Container drop needs a low, centred release",
+        "principle": "For a bottle into a bowl, the success used Place container with a 0.0 m descent over the bowl centre, and the task flipped to done only after GoHome let the bottle settle. The failures released from a high hover or off-centre, so the bottle ended up leaning on the rim and the bowl tipped. Re-grasping a bottle that is leaning or lying often topples the bowl and worsens the scene. After a release that is not done, GoHome and Perceive once to let the object settle and check before regrasping.",
+        "when_to_apply": "When placing a tall or long object into a bowl, and Place says released but task done=False.",
+        "example": "t06_e00: Place(container) on the bowl then GoHome gave task done=True. In t06_e01 and t02_e00, repeated regrasp-and-release cycles tipped the bowl and exhausted the budget.",
+        "source_level": "libero_goal_task",
+        "source_type": "contrastive",
+        "source_seeds": [
+          "t06_e00",
+          "t06_e01",
+          "t02_e00"
+        ],
+        "generation": 0,
+        "confidence": 0.5
+      },
+      {
+        "skill_id": "lib_sk_003",
+        "title": "Use bbox Place when destination is occluded",
+        "principle": "After a Grasp the arm often hides the destination, so it gets no detection index. In the successful push tasks the agent re-Perceived, saw the stove was missing, and passed a bbox of the empty table region instead of an index with surface_type flat. That solved the push-to-front goal in about 136 sim steps. A push task can be treated as a pick and place at the goal region.",
+        "when_to_apply": "When the held object's destination is missing from the detection list, or the task is a push to a region near a landmark.",
+        "example": "Place({\"surface_type\":\"flat\",\"x1\":100,\"y1\":295,\"x2\":170,\"y2\":360,\"description\":\"table in front of stove\"}) -> TASK SUCCESS (t05_e06).",
+        "source_level": "libero_goal_task",
+        "source_type": "contrastive",
+        "source_seeds": [
+          "t05_e04",
+          "t05_e06"
+        ],
+        "generation": 0,
+        "confidence": 1.0
+      },
+      {
+        "skill_id": "lib_sk_004",
+        "title": "Chain VLA for drawer, then geometric place",
+        "principle": "For open-drawer-and-put-inside, the success ran VLARollout with the full task string; it opened the drawer and left the cream cheese held. It then Placed into the drawer interior with surface_type container. The failure shortened the string to just the opening step, so the VLA did not pick the object, and it wandered. Then a Grasp ran past the horizon. Check what is held after the rollout and finish with a geometric Place.",
+        "when_to_apply": "When a task combines an articulated step (open drawer) with a pick-and-place and phase 0 has not solved it.",
+        "example": "VLARollout('Open the top layer of the drawer and put the cream cheese inside'); Perceive; Place(target_index=<drawer interior>, surface_type='container') (t03_e06).",
+        "source_level": "libero_goal_task",
+        "source_type": "contrastive",
+        "source_seeds": [
+          "t03_e06",
+          "t03_e00"
+        ],
+        "generation": 0,
+        "confidence": 0.625
+      },
+      {
+        "skill_id": "lib_sk_005",
+        "title": "Verify HELD against gripper width",
+        "principle": "A Grasp reporting HELD with gripper q\u22480.001 and the EE barely moved means the fingers closed on nothing, as in the drawer-handle grasp. Real holds show q of roughly 0.005-0.03 and a lifted EE. Treat a fully closed gripper as a miss and do not proceed to Place or pull. Drawer handles also need a different approach than top-down on table-height z.",
+        "when_to_apply": "When Grasp says HELD but the gripper q is near 0.00 or the target did not move.",
+        "example": "t00_e00: 'HELD ... gripper=closed (q=0.001,-0.000)' was a false positive; contrast with a true hold at q=0.021 in t05_e04.",
+        "source_level": "libero_goal_task",
+        "source_type": "contrastive",
+        "source_seeds": [
+          "t00_e00",
+          "t05_e04"
+        ],
+        "generation": 0,
+        "confidence": 0.625
+      },
+      {
+        "skill_id": "lib_fsk_000",
+        "title": "Rim grasp succeeds where center fails",
+        "principle": "On a flat plate, a bbox-input Grasp aimed at a narrow strip on the near rim returned HELD in about 120 sim steps, after two center grasps had each cost ~600 steps and gripped nothing. Thin, flat objects are graspable only at their edges.",
+        "when_to_apply": "When the grasp target is a plate or other flat, thin object and a center grasp returned NOTHING HELD (or before trying one).",
+        "example": "",
+        "source_level": "libero_goal_task",
+        "source_type": "failure",
+        "source_seeds": [
+          "t01_e00"
+        ],
+        "generation": 0,
+        "confidence": 0.25
+      },
+      {
+        "skill_id": "lib_fsk_001",
+        "title": "Re-perceive after state changes",
+        "principle": "Detection indices shift after every Perceive, and the orchestrator who re-read them after GoHome or a disturbed scene picked the correct stove, bowl or drawer target each time. Indices used from an older Perceive pointed at the wrong object in one trial.",
+        "when_to_apply": "Whenever a call moved or knocked objects, or before using a target_index from an earlier Perceive.",
+        "example": "",
+        "source_level": "libero_goal_task",
+        "source_type": "failure",
+        "source_seeds": [
+          "t01_e00",
+          "t02_e00",
+          "t06_e01"
+        ],
+        "generation": 0,
+        "confidence": 0.25
+      }
+    ]
+  },
+  "common_mistakes": [],
+  "level_mistakes": {
+    "libero_goal_task": [
+      {
+        "mistake_id": "lib_err_000",
+        "description": "On plate-pick tasks the orchestrator grasped the plate at its center bbox, got NOTHING HELD (top-down plus PCA fallback, ~600 sim steps), and in one trial repeated the same center grasp before moving to the rim; the other trial ended on the budget.",
+        "why_it_happens": "It treats the plate as an ordinary object whose detection center is graspable, but a flat plate has no graspable body at its center, so the gripper closes on nothing.",
+        "how_to_avoid": "For a plate, aim the first Grasp with a bbox fallback on the plate's rim, a narrow strip at its edge, instead of target_index at the center. After one NOTHING HELD, do not repeat the same box; move to the rim immediately, since each failed center grasp costs about 600 sim steps.",
+        "source_level": "libero_goal_task",
+        "source_seeds": [
+          "t00_e00",
+          "t00_e01",
+          "t00_e02",
+          "t00_e03",
+          "t00_e04"
+        ],
+        "generation": 0
+      },
+      {
+        "mistake_id": "lib_err_001",
+        "description": "Grasp returned 'HELD' even though the gripper had fully closed (q\u22480.001) and the EE had not moved, and the orchestrator carried on as if the grasp had worked (drawer handle). In the plate trial the plate was held loosely and dropped in transit.",
+        "why_it_happens": "It trusts the harness HELD label and does not check the gripper width, Perceive image or object motion.",
+        "how_to_avoid": "After a Grasp, read the finger opening: q near 0.00 means the gripper is empty, and q of a few mm to a few cm means something is held. Confirm with Perceive that the object is actually in the gripper before Place.",
+        "source_level": "libero_goal_task",
+        "source_seeds": [
+          "t00_e00",
+          "t00_e01",
+          "t00_e02",
+          "t00_e03",
+          "t00_e04"
+        ],
+        "generation": 0
+      },
+      {
+        "mistake_id": "lib_err_002",
+        "description": "On put-the-bottle-in-the-bowl, the orchestrator repeatedly released the bottle from a high hover with a 'container' Place (descent 0.0m). The bottle ended up leaning on the rim, tipping the bowl, or landing beside it, and the loop of regrasp, place and GoHome burned the whole simulator budget.",
+        "why_it_happens": "It believes a container release from above will drop the object in, but a long bottle held by its neck or lying across the rim does not fall into a bowl's cavity, and each attempt pushed the bowl further out of position.",
+        "how_to_avoid": "Before releasing, make sure the bottle is held upright near its middle or top and centered over the bowl's center. Prefer a lower release (surface_type flat, which descends) and do not grasp or place bowl and bottle that are tilted or knocked over without re-perceiving first. Cap attempts at two, and spend the remaining budget on one different approach.",
+        "source_level": "libero_goal_task",
+        "source_seeds": [
+          "t00_e00",
+          "t00_e01",
+          "t00_e02",
+          "t00_e03",
+          "t00_e04"
+        ],
+        "generation": 0
+      },
+      {
+        "mistake_id": "lib_err_003",
+        "description": "On drawer tasks the orchestrator ran VLARollout (500 sim steps), then GoHome, and then spent the remaining budget on a geometric handle grasp, and in the cream-cheese task it assumed the drawer was open without verification and went on to a Grasp that exhausted the budget.",
+        "why_it_happens": "It assumes one 500-step VLA call is cheap, but with a 2000-step horizon it plus GoHome (~200 steps) and a Grasp leaves room for almost nothing else.",
+        "how_to_avoid": "Count the simulator budget before every call: VLARollout costs about 500, GoHome about 25 to 225, and a Grasp up to 600 or more. For multi-stage tasks, confirm the drawer predicate with Perceive and skip GoHome when the arm is not in the way; abandon a geometric handle grasp when the computed world z is just table height.",
+        "source_level": "libero_goal_task",
+        "source_seeds": [
+          "t00_e00",
+          "t00_e01",
+          "t00_e02",
+          "t00_e03",
+          "t00_e04"
+        ],
+        "generation": 0
+      }
+    ]
+  }
+}
