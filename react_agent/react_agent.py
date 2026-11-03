@@ -448,12 +448,16 @@ def load_qwen_model(model_name: str, temperature: float = 0.3, max_new_tokens: i
             )
         inputs = tokenizer(text, return_tensors="pt").to(model.device)
         eos_ids = _oss_eos_ids if is_oss else tokenizer.eos_token_id
+        # temp <= 0 means greedy. transformers rejects temperature=0.0 when
+        # do_sample=True (TemperatureLogitsWarper raises), so a caller asking for
+        # temperature 0 (e.g. ACE's Reflector/Curator) used to error out here.
+        # Sampling at temp > 0 (the actor's 0.3) is unchanged.
+        sampling = {"do_sample": True, "temperature": temp} if temp and temp > 0 else {"do_sample": False}
         with torch.no_grad():
             output = model.generate(
                 **inputs,
                 max_new_tokens=max_tokens,
-                do_sample=True,
-                temperature=temp,
+                **sampling,
                 pad_token_id=tokenizer.eos_token_id,
                 eos_token_id=eos_ids,
             )

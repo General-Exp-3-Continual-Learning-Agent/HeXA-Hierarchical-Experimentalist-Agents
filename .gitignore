@@ -58,6 +58,8 @@ Results_New_Env/
 results_core_baselines/
 DOC_Results/
 baselines/data/
+baselines/data_ace/
+baselines/tests/_teststore_rb/
 skillrl/data/
 skillrl/loops/data/
 discovery-agents/hexa_discovery/data/

@@ -30,9 +30,11 @@ Correspondence to the reference implementation, and the deliberate departures:
     training-accuracy log and costs one more episode per seed.
   * `curate_every>1` concatenates the reflections since the last curation; the
     reference loop would silently drop all but the last.  Default 1 (= paper).
-  * Grow-and-refine dedup is not run (reference default
-    `use_bulletpoint_analyzer=False`), and the reference Curator only supports
-    ADD, so the playbook grows monotonically.  Its size is logged every seed.
+  * Grow-and-refine dedup is OFF by default (reference default
+    `use_bulletpoint_analyzer=False`); `dedup=True` runs ACE's own
+    BulletpointAnalyzer after every Curator update (`baselines/ace/dedup.py`).
+    The reference Curator only supports ADD, so without dedup the playbook
+    grows monotonically.  Its size is logged every seed.
   * Offline warmup (paper Table 3, "offline warmup"): when initial trajectories
     are given, the Reflector and Curator run over them once before the stream,
     the same Off2On head start HeXA and the memory baselines get.
@@ -57,6 +59,10 @@ from types import SimpleNamespace
 from typing import Any, Callable, Optional, Sequence
 
 from baselines.ace import playbook as pb
+from baselines.ace.prune import prune_to_cap
+from baselines.ace.edit_ops import (
+    CURATOR_PROMPT_EDIT, apply_edit_operations, validate_edit_operations,
+)
 from baselines.ace.prompts import (
     CURATOR_PROMPT,
     EMPTY_PLAYBOOK,
@@ -95,6 +101,10 @@ class ACEConfig:
     role_max_tokens: int = 4096       # reference `max_tokens` for Reflector/Curator
     max_obs_chars: int = 600          # per-observation cap in the Reflector's trajectory
     max_traj_steps: Optional[int] = None  # None = whole trajectory to the Reflector
+    dedup: bool = False               # reference `use_bulletpoint_analyzer` (grow-and-refine)
+    dedup_threshold: float = 0.90     # reference `bulletpoint_analyzer_threshold`
+    token_cap: Optional[int] = None   # deviation: paper's pruning trigger, absent in the reference (prune.py)
+    edit_ops: bool = False            # deviation: Curator may also UPDATE/MERGE/DELETE (edit_ops.py)
 
 
 @dataclass
@@ -116,6 +126,14 @@ class ACEState:
         "non_add_ops_ignored": 0,
         "training_episodes": 0,
         "training_simulator_calls": 0,
+        "dedup_runs": 0,
+        "dedup_bullets_removed": 0,
+        "bullets_updated": 0,           # --edit-ops only
+        "bullets_merged_away": 0,
+        "bullets_deleted": 0,
+        "edit_ops_skipped": 0,
+        "cap_prunes": 0,                # --token-cap only
+        "cap_bullets_removed": 0,
     })
 
     @classmethod
@@ -135,6 +153,43 @@ class ACEState:
         tmp = path.with_suffix(path.suffix + ".tmp")
         tmp.write_text(json.dumps(asdict(self), indent=2))
         os.replace(tmp, path)
+
+
+def seed_state_from(src_dir: Path, out_dir: Path, *, allow_unfinished: bool = False) -> dict:
+    """Start `out_dir` from the final playbook of the finished run in `src_dir`.
+
+    Used for frozen held-out evaluation.  Only the playbook and the bullet-ID
+    counter carry over; stream bookkeeping and role counters start fresh, so
+    the new run's summary counts nothing it did not do.  On resume the existing
+    state must hold the same playbook, or the eval would silently mix two.
+    """
+    src_dir, out_dir = Path(src_dir), Path(out_dir)
+    src_state = src_dir / "ace_state.json"
+    if not src_state.exists():
+        raise SystemExit(f"--init-from: no ace_state.json in {src_dir}")
+    if not allow_unfinished and not (src_dir / f"summary_{METHOD}.json").exists():
+        raise SystemExit(f"--init-from: {src_dir} has no summary_{METHOD}.json (run not finished)")
+    src = ACEState.load(src_state)
+    if src.pending_reflections:
+        raise SystemExit(f"--init-from: {src_dir} has uncurated reflections pending")
+    info = {
+        "init_from": str(src_dir.resolve()),
+        "init_playbook_digest": playbook_digest(src.playbook),
+        "init_playbook_bullets": pb.get_playbook_stats(src.playbook)["total_bullets"],
+        "init_playbook_tokens": count_tokens(src.playbook),
+    }
+    dst_state = out_dir / "ace_state.json"
+    if dst_state.exists():
+        have = playbook_digest(ACEState.load(dst_state).playbook)
+        if have != info["init_playbook_digest"]:
+            raise SystemExit(
+                f"--init-from: {dst_state} holds playbook {have}, not "
+                f"{info['init_playbook_digest']} from {src_dir}; use a fresh --output-dir"
+            )
+        return info
+    ACEState(playbook=src.playbook, next_global_id=src.next_global_id).save(dst_state)
+    (out_dir / "playbook.txt").write_text(src.playbook)
+    return info
 
 
 # ── pure helpers (unit-tested, no LLM) ─────────────────────────────────────
@@ -244,6 +299,12 @@ class ACE:
         self.calls_path = self.out / "ace_calls.jsonl"
         self.episodes_path = self.out / "episodes.jsonl"
         self.state = ACEState.load(self.state_path)
+        self.dedup = None
+        if config.dedup:
+            from baselines.ace.dedup import DEDUP_AVAILABLE, BulletpointAnalyzer
+            if not DEDUP_AVAILABLE:
+                raise SystemExit("--dedup needs sentence-transformers")
+            self.dedup = BulletpointAnalyzer(text_llm, "same-as-roles", config.role_max_tokens)
 
     # logging --------------------------------------------------------------
     def _log_call(self, role: str, tag: str, prompt: str, response: str, **extra) -> None:
@@ -292,7 +353,8 @@ class ACE:
 
     # Curator --------------------------------------------------------------
     def curate(self, reflection: str, step: int, total: int, tag: str) -> list[dict]:
-        prompt = CURATOR_PROMPT.format(
+        template = CURATOR_PROMPT_EDIT if self.cfg.edit_ops else CURATOR_PROMPT
+        prompt = template.format(
             current_step=step,
             total_samples=total,
             token_budget=self.cfg.token_budget,
@@ -312,6 +374,21 @@ class ACE:
         else:
             try:
                 ops = validate_operations(response)
+                if self.cfg.edit_ops:
+                    applied = validate_edit_operations(ops)
+                    if applied:
+                        self.state.playbook, self.state.next_global_id, st = apply_edit_operations(
+                            self.state.playbook, applied, self.state.next_global_id
+                        )
+                        c["bullets_added"] += st["added"]
+                        c["bullets_updated"] += st["updated"]
+                        c["bullets_merged_away"] += st["merged_sources_removed"]
+                        c["bullets_deleted"] += st["deleted"]
+                        c["edit_ops_skipped"] += st["skipped_unknown_id"] + st["skipped_unknown_type"]
+                        self._refine(tag)
+                    self._log_call("curator", tag, prompt, response, operations=applied, error=None,
+                                   edit_stats=st if applied else None)
+                    return applied
                 applied = [op for op in ops if op.get("type") == "ADD"]
                 c["non_add_ops_ignored"] += len(ops) - len(applied)
                 if applied:
@@ -319,12 +396,37 @@ class ACE:
                         self.state.playbook, applied, self.state.next_global_id
                     )
                     c["bullets_added"] += len(applied)
+                    self._refine(tag)
             except (ValueError, KeyError, TypeError, json.JSONDecodeError) as exc:
                 # Reference behaviour: skip the update and keep training.
                 c["curator_invalid"] += 1
                 error = f"{type(exc).__name__}: {exc}"
         self._log_call("curator", tag, prompt, response, operations=applied, error=error)
         return applied
+
+    def _refine(self, tag: str) -> None:
+        """Grow-and-refine, run after every Curator update as in the reference
+        (`ace/ace.py:600-606`), then the paper's pruning trigger if --token-cap."""
+        if self.dedup is not None:
+            self._dedup(tag)
+        if self.cfg.token_cap:
+            self.state.playbook, removed = prune_to_cap(self.state.playbook, self.cfg.token_cap)
+            if removed:
+                self.state.counters["cap_prunes"] += 1
+                self.state.counters["cap_bullets_removed"] += len(removed)
+                self._log_call("prune", tag, "", "", cap=self.cfg.token_cap, removed=removed,
+                               tokens_after=count_tokens(self.state.playbook))
+
+    def _dedup(self, tag: str) -> None:
+        before = pb.get_playbook_stats(self.state.playbook)["total_bullets"]
+        self.state.playbook = self.dedup.analyze(
+            playbook=self.state.playbook, threshold=self.cfg.dedup_threshold, merge=True
+        )
+        after = pb.get_playbook_stats(self.state.playbook)["total_bullets"]
+        self.state.counters["dedup_runs"] += 1
+        self.state.counters["dedup_bullets_removed"] += before - after
+        if before != after:
+            self._log_call("dedup", tag, "", "", bullets_before=before, bullets_after=after)
 
     def _maybe_curate(self, reflection: str, step: int, total: int, tag: str, force: bool = False):
         self.state.pending_reflections.append(reflection)
@@ -394,6 +496,17 @@ class ACE:
         total = n_off + len(self.cfg.seeds)
         if offline_trajectories:
             self.warmup(offline_trajectories, total)
+        if self.cfg.token_cap and self.cfg.freeze_after != 0:
+            # A cap added on resume applies before the next seed, not after its curation.
+            self.state.playbook, removed = prune_to_cap(self.state.playbook, self.cfg.token_cap)
+            if removed:
+                self.state.counters["cap_prunes"] += 1
+                self.state.counters["cap_bullets_removed"] += len(removed)
+                self._log_call("prune", "start", "", "", cap=self.cfg.token_cap, removed=removed,
+                               tokens_after=count_tokens(self.state.playbook))
+                self.state.save(self.state_path)
+                print(f"  [ACE prune] start: dropped {len(removed)} bullets -> "
+                      f"{count_tokens(self.state.playbook)} tokens (cap {self.cfg.token_cap})")
 
         records: list[dict] = []
         for step_index, seed in enumerate(self.cfg.seeds):

@@ -353,6 +353,10 @@ class InterphyreToolkit:
         if err:
             return f"{err}\nThe simulation was not run. Fix the placement and try again."
 
+        # Cap stop_step at max_steps (2000) like simulate_with_trace: a 3B actor asked for 1e9 steps and
+        # hung a run for hours; nothing changes for any stop_step <= max_steps.
+        stop_step = max(1, min(int(stop_step), int(self.env.config.max_steps)))
+
         self._reset_env()
 
         try:

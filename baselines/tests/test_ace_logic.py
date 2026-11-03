@@ -33,7 +33,7 @@ sys.modules["baselines.runner.memory_runner"] = mr
 from baselines.ace import playbook as pb
 from baselines.ace.loop import (
     ACE, ACEConfig, ACEState, cited_bullet_ids, extract_bullet_tags,
-    validate_operations,
+    seed_state_from, validate_operations,
 )
 from baselines.ace.prompts import EMPTY_PLAYBOOK
 
@@ -188,6 +188,155 @@ st = ACEState.load(OUT / "ace_state.json")
 check(solve_calls == [(20, False), (20, True), (20, True)], f"2 retries with reflection: {solve_calls}")
 check(st.counters["training_episodes"] == 2 and st.counters["training_simulator_calls"] == 2, "retry cost logged")
 check(s["successes"] == 0 and s["total_simulator_calls"] == 1, "retries not scored")
+
+# ── 5. frozen held-out eval from a finished run ──────────────────────────
+SRC = OUT
+FRZ = ROOT / "baselines" / "tests" / "_test_ace_frozen"
+shutil.rmtree(FRZ, ignore_errors=True)
+FRZ.mkdir()
+src_state = ACEState.load(SRC / "ace_state.json")
+(SRC / "summary_ace.json").rename(SRC / "summary_ace.json.bak")
+try:
+    seed_state_from(SRC, FRZ)
+    check(False, "unfinished source must be refused")
+except SystemExit:
+    check(True, "")
+(SRC / "summary_ace.json.bak").rename(SRC / "summary_ace.json")
+info = seed_state_from(SRC, FRZ)
+check(info["init_playbook_bullets"] == pb.get_playbook_stats(src_state.playbook)["total_bullets"], "init info")
+fresh = ACEState.load(FRZ / "ace_state.json")
+check(fresh.playbook == src_state.playbook and fresh.curated_through == -1
+      and fresh.counters["curator_calls"] == 0, "only the playbook carries over")
+check(seed_state_from(SRC, FRZ) == info, "resume onto the same playbook is allowed")
+other = ACEState.load(FRZ / "ace_state.json"); other.playbook += "\n[x] helpful=0 harmful=0 :: y"
+other.save(FRZ / "ace_state.json")
+try:
+    seed_state_from(SRC, FRZ)
+    check(False, "resume onto a different playbook must be refused")
+except SystemExit:
+    check(True, "")
+fresh.save(FRZ / "ace_state.json")
+
+n_llm = len(llm_log); solve_calls.clear()
+cfg = ACEConfig(level="down_to_earth", seeds=[57, 58], output_dir=FRZ, freeze_after=0)
+fs = ACE(cfg, model_fn=None, text_llm=fake_llm, task_text=lambda: "t", solve=fake_solve).run()
+after = ACEState.load(FRZ / "ace_state.json")
+check(len(llm_log) == n_llm, "frozen eval makes no Reflector/Curator calls")
+check(after.playbook == src_state.playbook, "frozen playbook unchanged")
+check(all(p["memory_frozen"] for p in fs["per_seed"]) and len(solve_calls) == 2, "both seeds frozen, solved once")
+shutil.rmtree(FRZ, ignore_errors=True)
+
+# ── 6. grow-and-refine dedup (stub embedder, scripted merge) ───────────────
+import numpy as np
+from baselines.ace import dedup as dd
+from baselines.ace.llm import make_text_llm
+
+class StubEmbedder:
+    """Same vector for texts sharing their first word, orthogonal otherwise."""
+    def encode(self, texts, convert_to_numpy=True, show_progress_bar=False):
+        keys = sorted({t.split()[0] for t in texts})
+        return np.array([[1.0 if t.split()[0] == k else 0.0 for k in keys] for t in texts], dtype=np.float32)
+
+merge_calls = []
+def merge_llm(prompt, max_tokens, temperature=None):
+    merge_calls.append(temperature)
+    bid = re.search(r"Keep the ID from the first entry: \[([^\]]+)\]", prompt).group(1)
+    h = re.search(r"combined counts: helpful=(\d+) harmful=(\d+)", prompt)
+    return f"[{bid}] helpful={h.group(1)} harmful={h.group(2)} :: Simulate first; merged."
+
+import re
+dd.DEDUP_AVAILABLE = True
+an = dd.BulletpointAnalyzer(merge_llm, "m", 512)
+an.embedding_model = StubEmbedder()
+book = EMPTY_PLAYBOOK.replace("## STRATEGIES & INSIGHTS\n", "## STRATEGIES & INSIGHTS\n"
+    "[sai-00001] helpful=2 harmful=1 :: Simulate before finishing.\n"
+    "[sai-00002] helpful=0 harmful=3 :: Simulate twice before finishing.\n"
+    "[sai-00003] helpful=1 harmful=0 :: Place red near the edge.\n")
+out = an.analyze(book, threshold=0.9, merge=True)
+ids = re.findall(r"^\[([^\]]+)\]", out, re.M)
+check(ids == ["sai-00001", "sai-00003"], f"duplicates merged into first id: {ids}")
+check("[sai-00001] helpful=2 harmful=4 :: Simulate first; merged." in out, "counts summed in merge")
+check(merge_calls == [0.3], "merge runs at the reference temperature 0.3")
+check(an.analyze(EMPTY_PLAYBOOK) == EMPTY_PLAYBOOK, "empty playbook untouched")
+
+# temperature forwarding through make_text_llm, and the greedy path
+seen = []
+fn = lambda msgs, t, m: (seen.append(t), "x")[1]
+call = make_text_llm("hf", fn)
+call("p", 8); call("p", 8, temperature=0.3)
+check(seen == [0.0, 0.3], f"role temp 0 by default, per-call override: {seen}")
+src = open(ROOT / "react_agent" / "react_agent.py").read()
+check('{"do_sample": False}' in src and "temp and temp > 0" in src, "load_qwen_model decodes greedily at temp 0")
+
+# ── edit ops (--edit-ops): UPDATE / MERGE / DELETE ──────────────────────────
+from baselines.ace.edit_ops import apply_edit_operations, validate_edit_operations, CURATOR_PROMPT_EDIT
+book = EMPTY_PLAYBOOK.replace("## STRATEGIES & INSIGHTS\n", "## STRATEGIES & INSIGHTS\n"
+    "[sai-00001] helpful=2 harmful=1 :: Simulate before finishing.\n"
+    "[sai-00002] helpful=0 harmful=3 :: Simulate twice.\n"
+    "[sai-00003] helpful=1 harmful=0 :: Place red near the edge.\n")
+eops = validate_edit_operations([
+    {"type": "UPDATE", "bullet_id": "sai-00003", "content": "Place red at the ramp edge."},
+    {"type": "MERGE", "source_ids": ["sai-00001", "sai-00002"], "content": "Always simulate first."},
+    {"type": "DELETE", "bullet_id": "[sai-00099]"},
+    {"type": "ADD", "section": "common_mistakes_to_avoid", "content": "Do not guess radii."},
+    {"type": "ADD", "section": "no_such_section", "content": "Misc note."},
+    {"type": "CREATE_META", "section_name": "x"},
+])
+out, nid, st = apply_edit_operations(book, eops, 4)
+check("[sai-00003] helpful=1 harmful=0 :: Place red at the ramp edge." in out, "UPDATE keeps id+counts")
+check("[sai-00001] helpful=2 harmful=4 :: Always simulate first." in out and "sai-00002" not in out,
+      "MERGE keeps first id, sums counts, drops the rest")
+check("[err-00004] helpful=0 harmful=0 :: Do not guess radii." in out, "ADD into named section")
+check("[misc-00005] helpful=0 harmful=0 :: Misc note." in out and nid == 6, "unknown section -> OTHERS")
+check(out.index("err-00004") < out.index("## PROBLEM-SOLVING"), "ADD lands inside its section")
+check(st == {"added": 2, "updated": 1, "merged_sources_removed": 1, "merges": 1, "deleted": 0,
+             "skipped_unknown_id": 1, "skipped_unknown_type": 1}, f"edit stats {st}")
+out2, _, st2 = apply_edit_operations(out, [{"type": "DELETE", "bullet_id": "sai-00003"}], nid)
+check("sai-00003" not in out2 and st2["deleted"] == 1, "DELETE removes the bullet")
+for bad in ([{"type": "UPDATE", "bullet_id": "a"}], [{"type": "MERGE", "source_ids": ["a"], "content": "c"}]):
+    try:
+        validate_edit_operations(bad); check(False, f"should reject {bad}")
+    except ValueError:
+        check(True, "")
+CURATOR_PROMPT_EDIT.format(current_step=1, total_samples=2, token_budget=3, playbook_stats="{}",
+                           recent_reflection="r", current_playbook="p", question_context="q")
+
+# edit ops end to end through ACE.curate
+EDT = OUT.parent / "_ace_edit_test"
+shutil.rmtree(EDT, ignore_errors=True)
+resp = json.dumps({"reasoning": "r", "operations": [
+    {"type": "ADD", "section": "strategies_and_insights", "content": "A."},
+    {"type": "ADD", "section": "strategies_and_insights", "content": "B."},
+    {"type": "MERGE", "source_ids": ["sai-00001", "sai-00002"], "content": "A and B."},
+    {"type": "UPDATE", "bullet_id": "sai-00001", "content": "A and B, refined."}]})
+seen_prompts = []
+ed = ACE(ACEConfig(level="down_to_earth", seeds=[1], output_dir=EDT, edit_ops=True), model_fn=None,
+         text_llm=lambda p, m, **k: (seen_prompts.append(p), resp)[1], task_text=lambda: "t", solve=None)
+ed.curate("refl", 1, 1, "t")
+c = ed.state.counters
+check("[sai-00001] helpful=0 harmful=0 :: A and B, refined." in ed.state.playbook
+      and "sai-00002" not in ed.state.playbook, "edit ops applied through curate")
+check((c["bullets_added"], c["bullets_merged_away"], c["bullets_updated"]) == (2, 1, 1), f"edit counters {c}")
+check("DELETE" in seen_prompts[0] and "only supports ADD" not in seen_prompts[0], "edit curator prompt used")
+shutil.rmtree(EDT, ignore_errors=True)
+
+# pruning trigger (--token-cap): lowest utility first, oldest on ties
+from baselines.ace.prune import prune_to_cap
+from baselines.memory.blocks import count_tokens as _ct
+book = EMPTY_PLAYBOOK.replace("## STRATEGIES & INSIGHTS\n", "## STRATEGIES & INSIGHTS\n"
+    "[sai-00001] helpful=3 harmful=0 :: " + "keep this useful one " * 20 + "\n"
+    "[sai-00002] helpful=0 harmful=0 :: " + "old untagged " * 20 + "\n"
+    "[sai-00003] helpful=0 harmful=2 :: " + "harmful advice " * 20 + "\n"
+    "[sai-00004] helpful=0 harmful=0 :: " + "new untagged " * 20 + "\n")
+same, rm0 = prune_to_cap(book, 10**6)
+check(same == book and rm0 == [], "under cap: untouched")
+full = _ct(book)
+out, rm = prune_to_cap(book, full - 1)
+check([r["id"] for r in rm] == ["sai-00003"], f"net-harmful bullet pruned first: {rm}")
+out, rm = prune_to_cap(book, full - 70)
+check([r["id"] for r in rm] == ["sai-00003", "sai-00002"] and "sai-00004" in out and "sai-00001" in out,
+      f"then oldest untagged: {rm}")
+check(_ct(out) <= full - 70 and "## OTHERS" in out, "result under cap, headers kept")
 
 shutil.rmtree(OUT, ignore_errors=True)
 print(f"OK: {ok} checks passed")

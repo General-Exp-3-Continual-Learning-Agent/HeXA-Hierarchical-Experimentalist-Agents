@@ -15,6 +15,13 @@ Sources (github.com/ace-agent/ace @ 82709de and the paper's appendix F):
                     reference answer, so only the no-ground-truth variant
                     exists here -- the simulator verdict is the feedback, as in
                     the paper's label-free AppWorld setting.
+                    One fix: the reference's example JSON tags "calc-00001",
+                    which is also the real ID of the first FORMULAS bullet
+                    (slug `calc`), so a model that copies the template credits
+                    that bullet on every seed.  Measured on the first Qwen2.5-7B
+                    smoke run: 10/10 tags landed on uncited bullets and
+                    calc-00001 read helpful=3 before any agent had seen it.
+                    The examples use "xmpl-", which no section slug produces.
   CURATOR_PROMPT    `ace/prompts/curator.py:CURATOR_PROMPT_NO_GT`, verbatim apart
                     from the task-context label.
 
@@ -80,8 +87,8 @@ Your output should be a json object, which contains the following fields
   "correct_approach": "[What should the agent have done instead?]",
   "key_insight": "[What strategy, formula, or principle should be remembered to avoid this error?]",
   "bullet_tags": [
-    {{"id": "calc-00001", "tag": "helpful"}},
-    {{"id": "fin-00002", "tag": "harmful"}}
+    {{"id": "xmpl-00001", "tag": "helpful"}},
+    {{"id": "xmpl-00002", "tag": "harmful"}}
   ]
 }}
 
