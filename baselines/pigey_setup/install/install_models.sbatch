@@ -10,7 +10,7 @@
 # the ER perception VLM, SAM ViT-B, and the pi0.5 LIBERO checkpoint.
 set -euo pipefail
 : "${SLURM_JOB_ID:?Submit this installation with sbatch}"
-export REPO_DIR="${REPO_DIR:-/project/pi_sniekum_umass_edu/vgandhi/HeXA-Hierarchical-Experimentalist-Agents}"
+export REPO_DIR="${REPO_DIR:-/home/udhanuka_umass_edu/Scalar_Research/HeXA}"
 export PIGEY_ROOT="${PIGEY_ROOT:-/scratch/workspace/vgandhi_umass_edu-roboprobe-sim/pigey}"
 export PIGEY_ER_MODEL="${PIGEY_ER_MODEL:-Qwen/Qwen3-VL-8B-Instruct}"
 export UV_CACHE_DIR="$PIGEY_ROOT/cache/uv"

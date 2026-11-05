@@ -8,7 +8,7 @@
 
 set -euo pipefail
 : "${SLURM_JOB_ID:?Run runtime validation inside a Slurm allocation}"
-export REPO_DIR="${REPO_DIR:-/project/pi_sniekum_umass_edu/vgandhi/HeXA-Hierarchical-Experimentalist-Agents}"
+export REPO_DIR="${REPO_DIR:-/home/udhanuka_umass_edu/Scalar_Research/HeXA}"
 source "$REPO_DIR/baselines/pigey_setup/activate.sh"
 export OMP_NUM_THREADS="$SLURM_CPUS_PER_TASK"
 export OPENBLAS_NUM_THREADS="$SLURM_CPUS_PER_TASK"

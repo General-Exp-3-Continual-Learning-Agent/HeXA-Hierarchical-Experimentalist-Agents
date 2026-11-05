@@ -8,7 +8,7 @@
 
 set -euo pipefail
 : "${SLURM_JOB_ID:?Submit this installation with sbatch}"
-export REPO_DIR="${REPO_DIR:-/project/pi_sniekum_umass_edu/vgandhi/HeXA-Hierarchical-Experimentalist-Agents}"
+export REPO_DIR="${REPO_DIR:-/home/udhanuka_umass_edu/Scalar_Research/HeXA}"
 export PIGEY_ROOT="${PIGEY_ROOT:-/scratch/workspace/vgandhi_umass_edu-roboprobe-sim/pigey}"
 export UV_CACHE_DIR="$PIGEY_ROOT/cache/uv"
 export UV_PYTHON_INSTALL_DIR="$PIGEY_ROOT/python"

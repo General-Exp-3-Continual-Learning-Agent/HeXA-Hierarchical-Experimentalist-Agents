@@ -25,7 +25,7 @@
 # the array index is the task: sbatch --array=0-9%4 --export=ALL,PIGEY_EPISODES="0 1 2" ...
 set -euo pipefail
 : "${SLURM_JOB_ID:?Submit this trial with sbatch}"
-export REPO_DIR="${REPO_DIR:-/project/pi_sniekum_umass_edu/vgandhi/HeXA-Hierarchical-Experimentalist-Agents}"
+export REPO_DIR="${REPO_DIR:-/home/udhanuka_umass_edu/Scalar_Research/HeXA}"
 SETUP="$REPO_DIR/baselines/pigey_setup"
 hostname
 date

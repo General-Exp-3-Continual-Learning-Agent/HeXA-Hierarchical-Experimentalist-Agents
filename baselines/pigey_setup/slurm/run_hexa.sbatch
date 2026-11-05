@@ -21,7 +21,7 @@
 #       sbatch --export=ALL slurm/run_hexa.sbatch --model claude-sonnet-5-5 --rounds 15
 set -euo pipefail
 : "${SLURM_JOB_ID:?Submit this loop with sbatch}"
-export REPO_DIR="${REPO_DIR:-/project/pi_sniekum_umass_edu/vgandhi/HeXA-Hierarchical-Experimentalist-Agents}"
+export REPO_DIR="${REPO_DIR:-/home/udhanuka_umass_edu/Scalar_Research/HeXA}"
 SETUP="$REPO_DIR/baselines/pigey_setup"
 hostname
 date

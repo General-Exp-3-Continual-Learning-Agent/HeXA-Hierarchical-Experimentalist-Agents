@@ -14,7 +14,7 @@ set -euo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 SETUP="$(cd -- "$HERE/../.." && pwd)"
 export REPO_DIR="${REPO_DIR:-$(cd -- "$SETUP/../.." && pwd)}"
-export PIGEY_ROOT="${PIGEY_ROOT:-/scratch/workspace/vgandhi_umass_edu-roboprobe-sim/pigey}"
+export PIGEY_ROOT="${PIGEY_ROOT:-/scratch3/workspace/udhanuka_umass_edu-pigey}"
 ACCOUNT="${SLURM_ACCOUNT:-pi_sniekum_umass_edu}"
 source "$HERE/protocol.env"
 

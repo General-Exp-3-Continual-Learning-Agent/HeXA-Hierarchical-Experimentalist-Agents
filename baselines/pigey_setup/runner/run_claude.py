@@ -142,7 +142,7 @@ def main(argv=None):
     args, remaining = parser.parse_known_args(argv)
     if not is_claude_model(args.model) or (args.verifier == "claude" and not is_claude_model(args.verify_model)):
         parser.error("Use a Claude model ID or a Claude Code alias such as sonnet or opus.")
-    root = Path(os.environ.get("PIGEY_ROOT", "/scratch/workspace/vgandhi_umass_edu-roboprobe-sim/pigey"))
+    root = Path(os.environ.get("PIGEY_ROOT", "/scratch3/workspace/udhanuka_umass_edu-pigey"))
     executable = os.environ.get("CLAUDE_BINARY", "claude")
     backend = ClaudeCodeBackend(root / "tmp/claude-code", model=args.model, timeout=args.claude_timeout,
                                 max_turns=args.claude_max_turns, executable=executable)

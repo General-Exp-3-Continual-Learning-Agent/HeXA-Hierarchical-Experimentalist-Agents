@@ -11,7 +11,7 @@
 # (detection + SAM-masked depth unprojection) on a few LIBERO frames. No pi0.5 checkpoint, Claude, or Gemini calls are needed.
 set -euo pipefail
 : "${SLURM_JOB_ID:?Submit this check with sbatch}"
-export REPO_DIR="${REPO_DIR:-/project/pi_sniekum_umass_edu/vgandhi/HeXA-Hierarchical-Experimentalist-Agents}"
+export REPO_DIR="${REPO_DIR:-/home/udhanuka_umass_edu/Scalar_Research/HeXA}"
 SETUP="$REPO_DIR/baselines/pigey_setup"
 hostname
 date
