@@ -5,22 +5,66 @@ import copy
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
 import uuid
 
 from jsonschema import validate, ValidationError
 
+#: Longest one CLI call waits out usage limits in total before failing (seconds).
+#: Claude subscriptions limit usage per five-hour window, so the default covers one.
+RATE_LIMIT_MAX_WAIT = int(os.environ.get("PIGEY_RATE_LIMIT_MAX_WAIT", str(6 * 3600)))
+_REJECTED_RESET = re.compile(r'"status":"rejected","resetsAt":(\d+)|"resetsAt":(\d+),"status":"rejected"')
+
 
 class ClaudeCodeError(RuntimeError):
     def __init__(self, kind: str, detail: str):
         # Pigey retries messages containing rate/connection/timeout markers
-        # indefinitely. CLI failures must stop the trial, including usage limits.
+        # indefinitely. CLI failures must stop the trial; usage limits are
+        # waited out here instead (rate_limit_wait), within RATE_LIMIT_MAX_WAIT.
         super().__init__(f"Claude Code backend failed ({kind}); see backend_errors in trial.json.")
         self.kind = kind
         self.detail = detail
+
+
+class UsageLimitReached(Exception):
+    """The CLI refused the call because a usage window is exhausted; ``output`` is its stdout+stderr."""
+
+    def __init__(self, output: str):
+        super().__init__("Claude Code usage limit reached")
+        self.output = output
+
+
+def rate_limit_wait(output: str, attempt: int, now: float | None = None) -> float | None:
+    """Seconds to wait before retrying a CLI call that hit a usage limit, or None if it did not.
+
+    The CLI reports each rejected usage window with its reset time (``resetsAt``,
+    epoch seconds): wait until the latest one plus a minute. Without one, back
+    off 1, 2, 4, ... minutes, at most 30.
+    """
+    if '"error":"rate_limit"' not in output and '"api_error_status":429' not in output:
+        return None
+    now = time.time() if now is None else now
+    resets = [int(a or b) for a, b in _REJECTED_RESET.findall(output)]
+    if resets and max(resets) > now:
+        return max(resets) - now + 60
+    return float(min(60 * 2 ** attempt, 1800))
+
+
+def wait_for_usage_limit(output: str, attempt: int, waited: float, label: str) -> float | None:
+    """Sleep out a usage limit and return the seconds slept, or None when the total would pass the cap."""
+    wait = rate_limit_wait(output, attempt)
+    if wait is None or waited + wait > RATE_LIMIT_MAX_WAIT:
+        return None
+    resume = time.strftime("%H:%M UTC", time.gmtime(time.time() + wait))
+    print(f"[{label}] Claude usage limit reached; waiting {wait / 60:.0f} min (until {resume}) and retrying",
+          file=sys.stderr, flush=True)
+    time.sleep(wait)
+    return wait
 
 
 def action_schema(tools: list[dict]) -> dict:
@@ -128,16 +172,30 @@ class ClaudeCodeBackend:
             raise ValueError("CLI timeout and max turns must be positive")
         self.calls = []
         self.errors = []
+        self.rate_limit_waits = []  # waits are not errors: the call went through afterwards
 
     def __call__(self, api_key: str, model: str, messages: list, system: str, tools: list) -> dict:
-        try:
-            return self._invoke(api_key, model, messages, system, tools)
-        except ClaudeCodeError:
-            raise
-        except Exception as exc:
-            error = ClaudeCodeError("adapter_error", f"{type(exc).__name__}: {exc}")
-            self.errors.append({"kind": error.kind, "detail": error.detail})
-            raise error from exc
+        waited, attempt = 0.0, 0
+        while True:
+            try:
+                return self._invoke(api_key, model, messages, system, tools)
+            except UsageLimitReached as limit:
+                wait = wait_for_usage_limit(limit.output, attempt, waited, "claude-code")
+                if wait is None:
+                    error = ClaudeCodeError("rate_limit", f"usage limit still reached after waiting {waited / 60:.0f} min "
+                                            f"(cap {RATE_LIMIT_MAX_WAIT / 60:.0f} min); " + limit.output[-3000:])
+                    self.errors.append({"kind": error.kind, "detail": error.detail})
+                    raise error from None
+                self.rate_limit_waits.append({"seconds": round(wait), "model": self.model,
+                                              "resumed": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())})
+                waited += wait
+                attempt += 1
+            except ClaudeCodeError:
+                raise
+            except Exception as exc:
+                error = ClaudeCodeError("adapter_error", f"{type(exc).__name__}: {exc}")
+                self.errors.append({"kind": error.kind, "detail": error.detail})
+                raise error from exc
 
     def _invoke(self, api_key: str, model: str, messages: list, system: str, tools: list) -> dict:
         del api_key, model  # Authentication belongs to the existing CLI login.
@@ -181,6 +239,8 @@ class ClaudeCodeBackend:
                 env["CLAUDE_CODE_DISABLE_BACKGROUND_TASKS"] = "1"
                 completed = subprocess.run(command, input=json.dumps(request) + "\n", text=True,
                                            capture_output=True, cwd=work, env=env, timeout=self.timeout)
+            if completed.returncode and rate_limit_wait(completed.stdout + completed.stderr, 0) is not None:
+                raise UsageLimitReached(completed.stdout + completed.stderr)
             if completed.returncode:
                 raise ClaudeCodeError("nonzero_exit", f"exit={completed.returncode}; " +
                                       (completed.stderr or completed.stdout)[-3000:])

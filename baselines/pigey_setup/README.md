@@ -42,11 +42,19 @@ pigey_setup/
 ├── slurm/
 │   ├── run_trial.sbatch         Pigey episodes on one A100 (eval arms, baselines); resumable
 │   ├── run_hexa.sbatch          the HeXA training loop on one A100; resumable
+│   ├── run_raw.sbatch           the paper's pi0.5-alone baseline (no LLM); resumable
+│   ├── run_hexa_arm.sbatch      seed episodes (optional) + training + with-bank eval in one job
 │   └── check_perception.sbatch  detector smoke test
-├── experiments/libero_goal_task/
-│   ├── protocol.env             the split (init states 0-9 / 10-24 / 25-49), models, walltimes
-│   ├── initial_bank.json        the bank training starts from (8 skills, 4 mistakes)
-│   └── submit.sh                submits train -> eval-bank, eval-nobank, compare
+├── experiments/
+│   ├── submit.sh                submits one directory's protocol: [seed ->] train -> eval-bank,
+│   │                            eval-nobank, compare
+│   ├── libero_goal_task/
+│   │   ├── protocol.env         the split (init states 0-9 / 10-24 / 25-49), models, walltimes
+│   │   ├── initial_bank.json    the bank training starts from (8 skills, 4 mistakes)
+│   │   └── submit.sh            shortcut for ../submit.sh on this directory
+│   └── libero_{object_swap,object_task,spatial_swap,spatial_task,goal_swap}/
+│       └── protocol.env         same splits; no initial bank, so a seed job (init states 0-9,
+│                                no bank) runs first and training distills round 1's bank from it
 ├── install/                     one-time setup jobs (environments, models, LIBERO-PRO assets, validation)
 └── tests/                       offline tests, no GPU or API: python -m pytest tests
 ```
@@ -83,6 +91,11 @@ PIGEY_TASKS="0 8" PIGEY_EPISODES="2" PIGEY_ER_MODEL=Qwen/Qwen3-VL-32B-Instruct-F
 # 4. The whole HeXA protocol (train, both eval arms, comparison)
 bash baselines/pigey_setup/experiments/libero_goal_task/submit.sh --dry-run   # shows the four sbatch commands
 bash baselines/pigey_setup/experiments/libero_goal_task/submit.sh
+# Other LIBERO-PRO suites: seed -> train -> eval arms -> comparison (EXCLUDE_NODES=... skips bad nodes)
+bash baselines/pigey_setup/experiments/submit.sh baselines/pigey_setup/experiments/libero_object_swap --dry-run
+# --one-job: seed + training + with-bank eval as one GPU job (slurm/run_hexa_arm.sbatch, 36 h),
+# so no phase waits in the queue again; the no-bank arm and the comparison stay separate
+bash baselines/pigey_setup/experiments/submit.sh baselines/pigey_setup/experiments/libero_object_swap --one-job
 ```
 
 Results go under `$PIGEY_ROOT/results/`, logs under `$PIGEY_ROOT/logs/`. The
@@ -151,6 +164,15 @@ arguments go to `run_claude.sh`. A failed episode is recorded and the rest still
 seed round 1; `PIGEY_HEXA_EPISODES` is the pool of init states consumed
 `PIGEY_HEXA_EPISODES_PER_ROUND` at a time; `PIGEY_HEXA_OUT` names the run directory
 and resumes it. `--rounds`, `--model` and other options pass through.
+
+`slurm/run_raw.sbatch` is the paper's "pi0.5 alone" baseline: Pigey's
+`agent_sim.py --mode raw` gives pi0.5 the task string once and runs it closed-loop
+until success or Pigey's step limit for the suite (`SUITE_MAX_STEPS`; 400 for
+`libero_goal_task`, which has no entry). No Claude, no detector: `start_servers.sh`
+starts only the policy (`PIGEY_POLICY_ONLY=1`) and `HARNESS_PERCEPTION=none` keeps
+`agent_sim` from calling Gemini. Same `PIGEY_TASKS`/`PIGEY_EPISODES`/`PIGEY_SUITE`/
+`PIGEY_OUT_DIR` variables and resume as `run_trial.sbatch`; each trial also saves
+`rollout.mp4`.
 
 ## HeXA's skill bank over Pigey
 
@@ -302,3 +324,9 @@ conversion and reward, teacher selection and installation (distillation and
 evolution against a fake teacher), block rendering within the budget, skill
 injection into the runner, teacher logging, initial-bank seeding, resume listing and
 the paired comparison. No GPU, simulator or API call.
+
+## Teammate resume handoff (2026-11-08)
+
+See [RESUME_TEAMMATE.md](RESUME_TEAMMATE.md) for shared scratch access, own-account
+authentication, and the eval-only `experiments/resume_eval.sh` commands for the
+remaining goal-swap and spatial-task episodes.

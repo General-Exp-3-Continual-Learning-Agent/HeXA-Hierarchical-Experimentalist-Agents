@@ -33,6 +33,7 @@ import tempfile
 import time
 
 from hexa.trajectory import format_trajectory_for_teacher, load_trial_trajectories, trajectory_reward
+from runner.claude_code import rate_limit_wait, wait_for_usage_limit
 
 DEFAULT_SUITE = "libero_goal_task"
 DEFAULT_TEACHER_MODEL = "claude-sonnet-5-5"
@@ -41,6 +42,21 @@ SKILLS_BLOCK_HEADING = "=== LEARNED ROBOT MANIPULATION SKILLS ==="
 
 # Facts and scoring rules only, no approach implied: any strategy the teacher
 # banks should come out of the trajectories, not out of this description.
+_TRIAL_RULES = (
+    "Each task has many initial states (object placements); a trial is one task on one "
+    "initial state. Success is decided only by the simulator's predicates (for example "
+    "'on' requires contact and the object's centre within 3 cm horizontally of the "
+    "support's centre); the orchestrator is never told the predicate and sees only camera "
+    "images and tool results. Budgets: 35 LLM steps and 2000 simulator steps per trial. "
+    "Every tool call consumes simulator steps (a single Grasp can take over a thousand) "
+    "and the trial ends as a failure when either budget runs out."
+)
+_OBJECT_SCENES = (
+    "LIBERO-Object: each task has its own floor scene with a basket and several packaged "
+    "grocery items (alphabet soup, bbq sauce, butter, chocolate pudding, cream cheese, "
+    "ketchup, milk, orange juice, salad dressing, tomato sauce). Every task is 'pick the "
+    "named item and place it in the basket'. "
+)
 TASK_DESCRIPTIONS = {
     "libero_goal_task": (
         "LIBERO-Goal: one fixed tabletop scene with a stove (with a knob), a flat-topped "
@@ -49,13 +65,45 @@ TASK_DESCRIPTIONS = {
         "sentence: putting one object on or in another, opening a drawer, pushing an object, "
         "turning the stove off. The sentences are LIBERO-PRO rewrites, so the wording and the "
         "goal can differ from the strings the VLA policy pi0.5 was trained on in this scene. "
-        "Each task has many initial states (object placements); a trial is one task on one "
-        "initial state. Success is decided only by the simulator's predicates (for example "
-        "'on' requires contact and the object's centre within 3 cm horizontally of the "
-        "support's centre); the orchestrator is never told the predicate and sees only camera "
-        "images and tool results. Budgets: 35 LLM steps and 2000 simulator steps per trial. "
-        "Every tool call consumes simulator steps (a single Grasp can take over a thousand) "
-        "and the trial ends as a failure when either budget runs out."
+        + _TRIAL_RULES
+    ),
+    "libero_object_swap": (
+        _OBJECT_SCENES
+        + "This is LIBERO-PRO's position-swap variant: the instruction is the one the VLA "
+        "policy pi0.5 was trained on, but items start in each other's places, so the target's "
+        "position differs from the training scenes. " + _TRIAL_RULES
+    ),
+    "libero_object_task": (
+        _OBJECT_SCENES
+        + "This is LIBERO-PRO's task variant: the scene and layout are those pi0.5 was trained "
+        "on, but the instruction names a different item that is already in the scene, so it "
+        "differs from the string pi0.5 learned for that scene. " + _TRIAL_RULES
+    ),
+    "libero_spatial_swap": (
+        "LIBERO-Spatial: a tabletop with a wooden cabinet, a flat stove, a plate, a cookies box, "
+        "a glazed ramekin and two identical black bowls. Every task is 'pick the black bowl "
+        "<location> and place it on the plate'; the location phrase is what identifies the "
+        "bowl. This is LIBERO-PRO's position-swap variant: the instruction is the one the VLA "
+        "policy pi0.5 was trained on, but objects start in each other's places (for example "
+        "the plate and the cookies box exchange regions). " + _TRIAL_RULES
+    ),
+    "libero_spatial_task": (
+        "LIBERO-Spatial: a tabletop with a wooden cabinet, a flat stove, a plate, a cookies box, "
+        "a glazed ramekin and two identical black bowls. Every task is 'pick the black bowl "
+        "<location> and place it on the plate'; the location phrase is what identifies the "
+        "bowl. This is LIBERO-PRO's task variant: the scene and layout are those the VLA policy "
+        "pi0.5 was trained on, but the location phrase is rewritten to name the other bowl "
+        "(one phrase is a negation, 'not between'), so it differs from the string pi0.5 learned "
+        "for that scene. " + _TRIAL_RULES
+    ),
+    "libero_goal_swap": (
+        "LIBERO-Goal: one fixed tabletop scene with a stove (with a knob), a flat-topped "
+        "cabinet with drawers, a wine rack, and movable objects (plate, bowl, wine bottle, "
+        "cream cheese box, ...). Ten tasks share the scene and differ only in the goal "
+        "sentence: putting one object on or in another, opening a drawer, pushing an object, "
+        "turning the stove on. This is LIBERO-PRO's position-swap variant: the sentences are "
+        "the ones the VLA policy pi0.5 was trained on, but the movable objects start in each "
+        "other's places, so their positions differ from the training scenes. " + _TRIAL_RULES
     ),
 }
 
@@ -369,15 +417,27 @@ class ClaudeTeacher:
         env["CLAUDE_CODE_DISABLE_BACKGROUND_TASKS"] = "1"
         started = time.monotonic()
         record = {"index": index, "model": model, "prompt_chars": len(prompt)}
-        with tempfile.TemporaryDirectory(prefix="teacher-", dir=self.log_dir, ignore_cleanup_errors=True) as work:
-            try:
-                completed = subprocess.run(command, input=CONTEXT_TO_IGNORE + prompt, text=True, capture_output=True,
-                                           cwd=work, env=env, timeout=self.timeout)
-            except subprocess.TimeoutExpired:
-                record.update(error=f"timeout after {self.timeout}s", duration_s=round(time.monotonic() - started, 1))
-                self.calls.append(record)
-                print(f"[Teacher Error] {record['error']}")
-                return ""
+        waited, attempt = 0.0, 0
+        while True:
+            with tempfile.TemporaryDirectory(prefix="teacher-", dir=self.log_dir, ignore_cleanup_errors=True) as work:
+                try:
+                    completed = subprocess.run(command, input=CONTEXT_TO_IGNORE + prompt, text=True,
+                                               capture_output=True, cwd=work, env=env, timeout=self.timeout)
+                except subprocess.TimeoutExpired:
+                    record.update(error=f"timeout after {self.timeout}s",
+                                  duration_s=round(time.monotonic() - started, 1))
+                    self.calls.append(record)
+                    print(f"[Teacher Error] {record['error']}")
+                    return ""
+            # A usage limit is waited out (as for the actor) rather than costing the round its evolution.
+            if not completed.returncode or rate_limit_wait(completed.stdout + completed.stderr, 0) is None:
+                break
+            wait = wait_for_usage_limit(completed.stdout + completed.stderr, attempt, waited, "teacher")
+            if wait is None:
+                break
+            record.setdefault("rate_limit_waits", []).append(round(wait))
+            waited += wait
+            attempt += 1
         record["duration_s"] = round(time.monotonic() - started, 1)
         if completed.returncode:
             record["error"] = f"exit={completed.returncode}: {(completed.stderr or completed.stdout)[-1000:]}"

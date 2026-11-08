@@ -140,6 +140,7 @@ def build_bank(args, round_num: int, out: Path, teacher, suite: str) -> Path | N
     has_initial = initial.exists() and any(initial.rglob("trial.json"))
     previous_bank = out / f"bank_round_{round_num - 1}.json"
     previous_round = out / f"round_{round_num - 1}"
+    calls_before = len(teacher.calls)
 
     if round_num == 1:
         if not has_initial:
@@ -162,6 +163,15 @@ def build_bank(args, round_num: int, out: Path, teacher, suite: str) -> Path | N
                           teacher_model=args.teacher_model)
     if not bank_path.exists():
         raise RuntimeError(f"teacher produced no bank at {bank_path}; see {out / 'teacher'}")
+    failed = [call for call in teacher.calls[calls_before:] if call.get("error")]
+    if failed:
+        # A failed teacher call leaves the previous bank in place under this round's
+        # name; set it aside so a rerun builds this bank again instead of reusing it.
+        aside = out / f"bank_round_{round_num}.teacher_error.json"
+        bank_path.replace(aside)
+        raise SystemExit(f"[hexa] stopping: {len(failed)} teacher call(s) failed while building round "
+                         f"{round_num}'s bank ({failed[0]['error'][:200]}); kept the output as {aside.name}. "
+                         "Rerunning rebuilds this bank.")
     return bank_path
 
 
@@ -205,6 +215,9 @@ def main(argv=None) -> int:
     parser.add_argument("--max-llm-steps", type=int, default=35)
     parser.add_argument("--max-steps-per-rollout", type=int, default=500)
     parser.add_argument("--distill-only", action="store_true", help="Build (or copy) round 1's bank and stop")
+    parser.add_argument("--min-round-fraction", type=float, default=0.5,
+                        help="Stop, without recording the round or evolving from it, when fewer than this share "
+                             "of its trials finish (backend errors); rerunning resumes the round")
     args, extra = parser.parse_known_args(argv)
 
     out = Path(args.out_dir)
@@ -263,6 +276,13 @@ def main(argv=None) -> int:
                     failed_runs.append({"task": task, "episode": episode, "exit": code})
 
         trials = completed_trials(round_dir, suite)
+        planned = len(tasks) * len(episodes)
+        if len(trials) < args.min_round_fraction * planned:
+            print(f"[hexa] stopping: round {round_num} finished only {len(trials)}/{planned} trials "
+                  f"({len(failed_runs)} failed runs), below --min-round-fraction {args.min_round_fraction}; "
+                  "the round is not recorded and no bank is evolved from it. Rerunning resumes its missing trials.",
+                  file=sys.stderr)
+            return 1
         wins = sum(1 for trial in trials.values() if trial.get("success"))
         record = {"round": round_num, "bank": str(bank_path) if bank_path else None, "episodes": episodes, "tasks": tasks,
                   "trials": len(trials), "successes": wins, "accuracy": wins / len(trials) if trials else 0.0,

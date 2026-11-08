@@ -13,7 +13,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # baselines/pigey_setup
 
-from runner.claude_code import ClaudeCodeBackend, ClaudeCodeError, action_schema, conversation_content, parse_result  # noqa: E402
+from runner.claude_code import (ClaudeCodeBackend, ClaudeCodeError, action_schema, conversation_content,  # noqa: E402
+                                parse_result, rate_limit_wait)
 from runner import run_claude  # noqa: E402
 
 TOOLS = [{"name": "Grasp", "input_schema": {"type": "object", "properties": {
@@ -109,6 +110,43 @@ class ClaudeCodeTests(unittest.TestCase):
             self.assertEqual(run.call_count, 1)
             self.assertEqual(backend.errors[0]['kind'], 'nonzero_exit')
             self.assertNotIn('usage limit', str(caught.exception).lower())
+
+    def test_rate_limit_wait_follows_the_reported_reset(self):
+        limited = ('{"type":"assistant","error":"rate_limit","api_error_status":429,"api_error_params":'
+                   '{"rate_limit_info":{"status":"rejected","resetsAt":%d,"rateLimitType":"five_hour"}}}')
+        self.assertAlmostEqual(rate_limit_wait(limited % 1000, 0, now=400), 660)
+        self.assertEqual(rate_limit_wait(limited % 100, 0, now=400), 60)        # reset already passed: back off
+        self.assertEqual(rate_limit_wait('"api_error_status":429', 3, now=0), 480)
+        self.assertEqual(rate_limit_wait('"api_error_status":429', 9, now=0), 1800)  # capped at 30 min
+        self.assertIsNone(rate_limit_wait('usage limit reached', 0))
+        self.assertIsNone(rate_limit_wait(stream(), 0))
+
+    @patch('runner.claude_code.shutil.which', return_value='/mock/claude')
+    def test_usage_limit_is_waited_out_and_not_recorded_as_an_error(self, _which):
+        limited = subprocess.CompletedProcess([], 1, '{"error":"rate_limit","api_error_status":429}', '')
+        with tempfile.TemporaryDirectory() as root, \
+                patch('runner.claude_code.subprocess.run',
+                      side_effect=[limited, limited, subprocess.CompletedProcess([], 0, stream(), '')]) as run, \
+                patch('runner.claude_code.time.sleep') as sleep:
+            backend = ClaudeCodeBackend(Path(root))
+            response = backend('', '', [{'role': 'user', 'content': 'go'}], '', TOOLS)
+        self.assertEqual(run.call_count, 3)
+        self.assertEqual([c.args[0] for c in sleep.call_args_list], [60.0, 120.0])
+        self.assertEqual(response['content'][1]['name'], 'Grasp')
+        self.assertEqual(backend.errors, [])
+        self.assertEqual([w['seconds'] for w in backend.rate_limit_waits], [60, 120])
+
+    @patch('runner.claude_code.shutil.which', return_value='/mock/claude')
+    def test_usage_limit_past_the_cap_fails_the_call(self, _which):
+        limited = subprocess.CompletedProcess([], 1, '{"error":"rate_limit","api_error_status":429}', '')
+        with tempfile.TemporaryDirectory() as root, \
+                patch('runner.claude_code.subprocess.run', return_value=limited) as run, \
+                patch('runner.claude_code.time.sleep'), patch('runner.claude_code.RATE_LIMIT_MAX_WAIT', 150):
+            backend = ClaudeCodeBackend(Path(root))
+            with self.assertRaises(ClaudeCodeError):
+                backend('', '', [{'role': 'user', 'content': 'go'}], '', TOOLS)
+        self.assertEqual(run.call_count, 2)  # waited 60 s once; another 120 s would pass the 150 s cap
+        self.assertEqual(backend.errors[0]['kind'], 'rate_limit')
 
     def test_runner_marks_backend_failure_and_restores_auth_environment(self):
         observed = {}

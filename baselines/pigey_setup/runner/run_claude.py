@@ -113,7 +113,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, epilog="Other options are forwarded to Pigey's agent_sim.py.")
     parser.add_argument("--model", "--claude-model", default=os.environ.get("PIGEY_CLAUDE_MODEL", "claude-haiku-4-5"))
     parser.add_argument("--claude-timeout", type=int, default=int(os.environ.get("CLAUDE_CLI_TIMEOUT", "300")))
-    parser.add_argument("--claude-max-turns", type=int, default=3)
+    parser.add_argument("--claude-max-turns", type=int, default=int(os.environ.get("PIGEY_CLAUDE_MAX_TURNS", "3")),
+                        help="CLI agent-loop turns per Pigey step (env PIGEY_CLAUDE_MAX_TURNS; object_task's HeXA arm used 10)")
     parser.add_argument("--mode", choices=["harness"], default="harness")
     parser.add_argument("--out-dir", default=None)
     parser.add_argument("--perception", choices=["local", "gemini"], default=os.environ.get("PIGEY_PERCEPTION", "local"),
@@ -217,7 +218,9 @@ def main(argv=None):
             errors = all_errors()
             self.data.update(backend="claude-code", claude_code_calls=backend.calls,
                              perception=args.perception, verifier=args.verifier, sam=args.sam, phase0=args.phase0,
-                             backend_errors=errors, status="backend_error" if errors else "completed")
+                             backend_errors=errors, status="backend_error" if errors else "completed",
+                             rate_limit_waits=[wait for source in (backend, verifier) if source is not None
+                                               for wait in getattr(source, "rate_limit_waits", [])])
             if verifier is not None:
                 self.data.update(verify_model=verifier.model, verify_calls=verifier.calls)
             if local_er is not None:

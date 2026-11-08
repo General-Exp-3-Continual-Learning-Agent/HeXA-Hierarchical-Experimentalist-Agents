@@ -3,7 +3,9 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # baselines/pigey_setup
 
@@ -43,6 +45,45 @@ class SeedBankTests(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 loop.seed_bank(other, out)
             self.assertEqual(target.read_text(), '{"a": 1}')
+
+
+class LoopGuardTests(unittest.TestCase):
+    def run_round(self, out, finished_tasks):
+        def run_trial(args, task, episode, round_dir, bank_path, extra):
+            if task in finished_tasks:
+                write_trial(round_dir, task, episode, True)
+                return 0
+            return 1  # a backend error: no finished trial.json
+        with patch('hexa.loop.hexa_teacher.install', return_value=SimpleNamespace(calls=[])), \
+                patch('hexa.loop.build_bank', return_value=None), patch('hexa.loop.bank_summary', return_value={}), \
+                patch('hexa.loop.run_trial', side_effect=run_trial):
+            return loop.main(['--out-dir', str(out), '--suite', 'libero_goal_task', '--tasks', '0-9',
+                              '--episodes', '10', '--rounds', '1', '--policy-port', '1'])
+
+    def test_round_losing_most_trials_is_not_recorded(self):
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
+            out = Path(tmp)
+            self.assertEqual(self.run_round(out, finished_tasks={0, 1, 2, 3}), 1)
+            self.assertFalse((out / 'progress.json').exists())
+            self.assertEqual(self.run_round(out, finished_tasks=set(range(10))), 0)  # resume finishes the round
+            progress = json.loads((out / 'progress.json').read_text())
+            self.assertEqual((progress[0]['round'], progress[0]['trials']), (1, 10))
+
+    def test_failed_teacher_call_sets_the_bank_aside_and_stops(self):
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
+            out = Path(tmp)
+            (out / 'bank_round_1.json').write_text('{}')
+            teacher = SimpleNamespace(calls=[])
+
+            def evolve(output_path, **unused):
+                teacher.calls.append({'error': 'exit=1: rate_limit'})
+                Path(output_path).write_text('{}')  # the evolver still writes the unchanged bank
+            args = SimpleNamespace(max_skills=10, max_mistakes=5, teacher_model='claude-sonnet-5-5')
+            with patch('skillrl.distillation.evolving_distill.evolve_skill_bank', side_effect=evolve), \
+                    patch('skillrl.core.skill_bank.SkillBank.load'), self.assertRaises(SystemExit):
+                loop.build_bank(args, 2, out, teacher, 'libero_goal_task')
+            self.assertFalse((out / 'bank_round_2.json').exists())
+            self.assertTrue((out / 'bank_round_2.teacher_error.json').exists())
 
 
 class CompletedTrialsTests(unittest.TestCase):

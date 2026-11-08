@@ -2,6 +2,7 @@
 # the perception servers and the pi0.5 policy server once per job. Exports
 # POLICY_PORT, PIGEY_ER_URL and PIGEY_SAM_URL, writes $TMPDIR/{policy,er,sam}-server.pid,
 # and installs an EXIT trap that stops the servers. Exits the job on a failed start.
+# PIGEY_POLICY_ONLY=1 starts only the pi0.5 policy (raw-VLA runs: no Claude, no perception).
 : "${SLURM_JOB_ID:?start_servers.sh runs inside a Slurm job}"
 : "${SETUP:?SETUP must point at baselines/pigey_setup}"
 : "${PIGEY_ROOT:?source activate.sh first}"
@@ -15,19 +16,21 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Claude Code needs outbound HTTPS from this node.
-curl -s -o /dev/null -w 'api.anthropic.com HTTPS status: %{http_code}\n' --max-time 15 https://api.anthropic.com \
-    || { echo "No outbound HTTPS from $(hostname); Claude Code cannot run here" >&2; exit 1; }
+if [[ -z "${PIGEY_POLICY_ONLY:-}" ]]; then
+    # Claude Code needs outbound HTTPS from this node.
+    curl -s -o /dev/null -w 'api.anthropic.com HTTPS status: %{http_code}\n' --max-time 15 https://api.anthropic.com \
+        || { echo "No outbound HTTPS from $(hostname); Claude Code cannot run here" >&2; exit 1; }
 
-# GPU memory split on one A100-80GB: vLLM 35%, JAX 35%, rest for SAM and EGL.
-# Perception starts first because vLLM checks free memory at startup.
-PIGEY_ER_GPU_UTIL="${PIGEY_ER_GPU_UTIL:-0.35}" bash "$SETUP/servers/serve_perception.sh"
-source "$TMPDIR/perception.env"
+    # GPU memory split on one A100-80GB: vLLM 35%, JAX 35%, rest for SAM and EGL.
+    # Perception starts first because vLLM checks free memory at startup.
+    PIGEY_ER_GPU_UTIL="${PIGEY_ER_GPU_UTIL:-0.35}" bash "$SETUP/servers/serve_perception.sh"
+    source "$TMPDIR/perception.env"
+fi
 # GPU nodes are shared, so pick a free port (after the perception servers have
 # bound theirs) unless PIGEY_POLICY_PORT is set. The policy binds 0.0.0.0.
 POLICY_PORT="${PIGEY_POLICY_PORT:-$(python "$SETUP/runner/free_ports.py" 1)}"
 export POLICY_PORT
-printf 'Policy port %s; ER %s; SAM %s\n' "$POLICY_PORT" "$PIGEY_ER_URL" "$PIGEY_SAM_URL"
+printf 'Policy port %s; ER %s; SAM %s\n' "$POLICY_PORT" "${PIGEY_ER_URL:-none}" "${PIGEY_SAM_URL:-none}"
 (
     cd "$PIGEY_ROOT/openpi" || exit 1
     export XLA_PYTHON_CLIENT_MEM_FRACTION="${PIGEY_POLICY_GPU_FRACTION:-0.35}"
