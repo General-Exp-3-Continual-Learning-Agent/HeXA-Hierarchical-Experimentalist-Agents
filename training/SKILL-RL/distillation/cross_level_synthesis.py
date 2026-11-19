@@ -104,8 +104,7 @@ predicting which principles the target level will reward.
 **Environment (shared across all levels)**: 2D physics simulation (Box2D).
 Gravity = -9.8 m/s². World bounds [-5, 5] on both axes. The agent places ONE
 red ball at (x, y) with a chosen radius (0.1 ≤ r ≤ 2.0) at t=0; the simulation
-then runs to completion. Mass scales as r³; momentum and impact force scale
-with both mass and the ball's velocity at first contact.
+then runs to completion.
 ═══════════════════════════════════════════════════════════════════════════
 
 ═══ SOURCE LEVELS ═══
@@ -115,7 +114,6 @@ with both mass and the ball's velocity at first contact.
 ═══ TARGET LEVEL: {target_level} ═══
 
 {target_block}
-{structural_hint_block}
 ═══ TASK ═══
 
 Produce a SKILL BANK for the target level. The bank must contain:
@@ -133,8 +131,7 @@ Produce a SKILL BANK for the target level. The bank must contain:
 2. **No invented coordinates.** You have NEVER seen the target level solved.
    Do NOT predict specific (x, y, r) values that "work" for the target. The
    `example` field, if used, must describe a *qualitative* placement
-   (e.g. "place near the end of the lever opposite the green ball, with
-   r large enough to dominate the lever's mass") — never specific numbers.
+   never specific numbers.
 
 3. **Use target-level entities.** Phrase each skill in terms of the entities
    that exist in the TARGET scene description above. Do NOT mention source-
@@ -378,7 +375,6 @@ def synthesize_target_bank(
     output_dir: Path,
     teacher_model: str = TEACHER_MODEL,
     target_block_override: str | None = None,
-    structural_hint: str | None = None,
 ) -> tuple[SkillBank, dict]:
     """Run the cross-level synthesis pipeline.
 
@@ -429,18 +425,11 @@ def synthesize_target_bank(
     prompt_template, prompt_label = _select_prompt_template(teacher_model)
     print(f"  Prompt template: {prompt_label}")
 
-    structural_hint_block = (
-        f"\n═══ STRUCTURAL ANALOGY HINT (use this to ground the transfer) ═══\n"
-        f"{structural_hint.strip()}\n"
-        if structural_hint else ""
-    )
-
     prompt = prompt_template.format(
         n_sources=len(source_bank_paths),
         source_blocks="\n\n---\n\n".join(source_bank_blocks),
         target_level=target_level,
         target_block=target_block,
-        structural_hint_block=structural_hint_block,
     )
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -579,13 +568,6 @@ def _main() -> None:
              f"auto-selected: claude-* gets the 8-rule version with audit "
              f"fields; everything else gets the slim Qwen-friendly variant.",
     )
-    parser.add_argument(
-        "--structural-hint", default=None,
-        help="Optional one-paragraph hint telling the teacher how the source "
-             "and target levels are structurally related (e.g. shared "
-             "mechanism) and what NOT to transfer. High-leverage for small "
-             "teachers — prevents hallucinated mechanisms.",
-    )
     args = parser.parse_args()
 
     source_bank_paths: dict[str, Path] = dict(args.source_bank)
@@ -599,14 +581,11 @@ def _main() -> None:
         )
 
     print(f"\n[cross-level synthesis] target={args.target} sources={list(source_bank_paths)}")
-    if args.structural_hint:
-        print(f"[cross-level synthesis] structural hint: {args.structural_hint[:100]}...")
     synthesize_target_bank(
         target_level=args.target,
         source_bank_paths=source_bank_paths,
         output_dir=args.output_dir,
         teacher_model=args.teacher_model,
-        structural_hint=args.structural_hint,
     )
 
 

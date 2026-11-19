@@ -160,11 +160,11 @@ LEVEL_BLURBS = {
             "- Blue Ball (dynamic): sits inside the bottom basket; the success target.\n"
             "- Black Platform (static): a horizontal bar the top basket rests on.\n"
             "- Ramp (static): an angled bar rising from the platform's left edge upward "
-            "to the right, useful for rolling the red ball onto the top basket.\n"
+            "to the right.\n"
         ),
         "goal": (
-            "Place ONE red ball so that the green ball is released from under the "
-            "inverted top basket and contacts the blue ball for at least 3 seconds."
+            "Place ONE red ball so that the green ball contacts the blue ball for "
+            "at least 3 seconds."
         ),
         # react_agent/level_prompts/pass_the_parcel.py:50 -- same as the default.
     },
@@ -180,8 +180,8 @@ LEVEL_BLURBS = {
             "box (y ~ -5).\n"
         ),
         "goal": (
-            "Place ONE red ball so that the green ball is deflected sideways, misses "
-            "the basket, and touches the purple ground for at least 3 seconds."
+            "Place ONE red ball so that the green ball touches the purple ground "
+            "for at least 3 seconds."
         ),
         # react_agent/level_prompts/basket_case.py -- same as the default.
     },
@@ -189,8 +189,7 @@ LEVEL_BLURBS = {
         "name": "Tipping Point",
         "elements": (
             "- Green Bar (dynamic, vertical, length 2.0-5.0): rests upright inside a "
-            "small gray basket on the ground. Its center of mass sits above the "
-            "basket floor; small horizontal pushes at the top can topple it.\n"
+            "small gray basket on the ground.\n"
             "- Gray Basket (dynamic): a small basket sitting near the bottom of the "
             "box, holding the green bar. Can slide if struck hard.\n"
             "- Purple Wall (static, vertical, spans top to bottom): standing flush "
@@ -198,8 +197,8 @@ LEVEL_BLURBS = {
             "the box.\n"
         ),
         "goal": (
-            "Place ONE red ball so that the green bar tips over and contacts the "
-            "purple wall for at least 3 seconds."
+            "Place ONE red ball so that the green bar contacts the purple wall for "
+            "at least 3 seconds."
         ),
         # react_agent/level_prompts/tipping_point.py -- same as the default.
     },

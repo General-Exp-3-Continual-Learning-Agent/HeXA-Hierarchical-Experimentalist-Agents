@@ -162,6 +162,14 @@ def main():
     parser.add_argument("--xl-framing", action="store_true",
                         help="Label level skills as cross-level transferred "
                              "(use when --skill-bank is a cross-level synthesised bank).")
+    parser.add_argument("--skills-header", default=None,
+                        help="Replace the level-skills header with this text (no leading '## '). "
+                             "Overrides the --xl-framing header, e.g. for a bank derived from the "
+                             "level description only.")
+    parser.add_argument("--skills-preamble-file", default=None,
+                        help="Text file whose contents are inserted at the top of the injected skills "
+                             "block (e.g. distillation/raw_source_preamble.txt for the raw-source "
+                             "transfer ablation). Default: none (no change).")
     parser.add_argument("--within-seed", action="store_true",
                         help="Within-seed experimentation: refine a seed-local copy of the "
                              "bank after each turn (default: static injection).")
@@ -232,6 +240,8 @@ def main():
         max_specific_skills=args.max_specific_skills,
         max_mistakes=args.max_mistakes,
         xl_framing=args.xl_framing,
+        skills_header=args.skills_header,
+        skills_preamble=(Path(args.skills_preamble_file).read_text() if args.skills_preamble_file else None),
         model_label=args.model,
         within_seed=args.within_seed,
         teacher_model=args.teacher_model,

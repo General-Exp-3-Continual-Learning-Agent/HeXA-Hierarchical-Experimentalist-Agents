@@ -1,10 +1,8 @@
 """
-level_prompts package — split from react_agent/prompts.py.
+level_prompts package: one submodule per InterPhyre level.
 
-Each level has its own submodule. This __init__ re-exports everything so that:
+This __init__ re-exports every prompt so callers can use
     from react_agent.level_prompts import X
-works for every X that was previously importable via:
-    from react_agent.prompts import X
 """
 
 # ─── shared ────────────────────────────────────────────────
@@ -30,9 +28,6 @@ from .down_to_earth import (
     DOWN_TO_EARTH_INITIAL,
     OSS_DOWN_TO_EARTH_SYSTEM,
     OSS_DOWN_TO_EARTH_INITIAL,
-    _OSS_DTE_STRATEGY_BLOCK,
-    _OSS_DTE_PHYSICS_LAST_TWO,
-    _DTE_STRATEGY_BLOCK,
 )
 
 # ─── two_body_problem ──────────────────────────────────────
@@ -44,13 +39,6 @@ from .two_body_problem import (
     TWO_BODY_INITIAL,
     OSS_TWO_BODY_SYSTEM,
     OSS_TWO_BODY_INITIAL,
-    _OSS_TBP_HOW_TO_PUSH_BLOCK,
-    _OSS_TBP_PRACTICAL_FULL,
-    _OSS_TBP_PRACTICAL_GEOMETRY_ONLY,
-    _OSS_TBP_PRACTICAL_RADIUS_ONLY,
-    _OSS_TBP_CORE_FACT_BLOCK,
-    _OSS_TBP_CRITICAL_COLLISION_BLOCK,
-    _OSS_TBP_STRATEGY_BLOCK,
 )
 
 # ─── catapult ──────────────────────────────────────────────
@@ -75,7 +63,6 @@ from .falling_into_place import (
     FALLING_INTO_PLACE_INITIAL,
     OSS_FALLING_INTO_PLACE_SYSTEM,
     OSS_FALLING_INTO_PLACE_INITIAL,
-    _OSS_FIP_HOW_TO_PLACE_BLOCK,
 )
 
 # ─── pass_the_parcel ───────────────────────────────────────
@@ -278,9 +265,6 @@ __all__ = [
     "DOWN_TO_EARTH_INITIAL",
     "OSS_DOWN_TO_EARTH_SYSTEM",
     "OSS_DOWN_TO_EARTH_INITIAL",
-    "_OSS_DTE_STRATEGY_BLOCK",
-    "_OSS_DTE_PHYSICS_LAST_TWO",
-    "_DTE_STRATEGY_BLOCK",
     # two_body_problem
     "TWO_BODY_ANALYSIS_TOOL",
     "TWO_BODY_TOOL_DESCRIPTIONS",
@@ -289,13 +273,6 @@ __all__ = [
     "TWO_BODY_INITIAL",
     "OSS_TWO_BODY_SYSTEM",
     "OSS_TWO_BODY_INITIAL",
-    "_OSS_TBP_HOW_TO_PUSH_BLOCK",
-    "_OSS_TBP_PRACTICAL_FULL",
-    "_OSS_TBP_PRACTICAL_GEOMETRY_ONLY",
-    "_OSS_TBP_PRACTICAL_RADIUS_ONLY",
-    "_OSS_TBP_CORE_FACT_BLOCK",
-    "_OSS_TBP_CRITICAL_COLLISION_BLOCK",
-    "_OSS_TBP_STRATEGY_BLOCK",
     # catapult
     "CATAPULT_SCENE_TOOL",
     "CATAPULT_TRACE_TOOL",
@@ -314,7 +291,6 @@ __all__ = [
     "FALLING_INTO_PLACE_INITIAL",
     "OSS_FALLING_INTO_PLACE_SYSTEM",
     "OSS_FALLING_INTO_PLACE_INITIAL",
-    "_OSS_FIP_HOW_TO_PLACE_BLOCK",
     # pass_the_parcel
     "PASS_THE_PARCEL_ANALYSIS_TOOL",
     "PASS_THE_PARCEL_TOOL_DESCRIPTIONS",

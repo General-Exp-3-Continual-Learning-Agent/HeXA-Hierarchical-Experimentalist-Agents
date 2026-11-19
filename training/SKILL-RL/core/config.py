@@ -35,56 +35,40 @@ ALL_LEVELS = [
 # ── Level descriptions (provided to teacher for context during distillation) ──
 LEVEL_DESCRIPTIONS = {
     "down_to_earth": (
-        "A green ball sits on a raised platform with gaps on either side. "
-        "The agent must place a red ball so it collides with the green ball "
-        "and pushes it off the platform edge, through a gap, down to the "
-        "purple ground below. Success requires the green ball to touch the "
-        "purple ground for 3+ seconds. Key physics: collision impulse "
-        "direction, platform edge geometry, gap width analysis."
+        "A green ball falls onto a raised black platform, with gaps between "
+        "the platform and the walls on either side. Without intervention it "
+        "stays on the platform. The agent places one red ball. Success "
+        "requires the green ball to touch the purple ground for 3+ seconds."
     ),
     "two_body_problem": (
         "A green ball and a blue ball start separated horizontally, both "
-        "dynamic and falling under gravity. Without intervention they fall "
-        "straight down and never meet. The agent must place a red ball so "
-        "that it falls onto the green ball and pushes it horizontally into "
-        "the blue ball. Success requires green-blue contact for 3+ seconds. "
-        "Key physics: collision angle (along center-to-center line), "
-        "horizontal offset controls push direction, radius controls mass."
+        "dynamic and falling under gravity from rest. Without intervention "
+        "they fall straight down and never meet. The agent places one red "
+        "ball. Success requires green-blue contact for 3+ seconds."
     ),
     "catapult": (
-        "A lever (bar) rests on a pivot with a green ball on one end. "
-        "A blue ball sits in a basket at a distance. The agent must drop "
-        "a red ball onto the other end of the lever to catapult the green "
-        "ball through an arc into the basket where the blue ball is. "
-        "Success requires green-blue contact for 3+ seconds. Key physics: "
-        "lever arm ratio controls launch angle, drop position relative to "
-        "pivot matters more than ball mass/radius, arc height vs distance "
-        "tradeoff."
+        "A gray bar rests on a gray pivot ball on the left platform, with a "
+        "green ball on its left end. A blue ball sits in a basket on the "
+        "right ledge. The agent places one red ball. Success requires "
+        "green-blue contact for 3+ seconds."
     ),
     "falling_into_place": (
-        "A green ball sits on a platform and a blue jar is positioned above, "
-        "ready to fall. The agent must place a red ball to push the green "
-        "ball across a gap so it intercepts the falling blue jar. Success "
-        "requires green-blue contact for 3+ seconds. Key physics: timing "
-        "the horizontal push to match the jar's vertical fall, intercept "
-        "geometry, gap crossing."
+        "A green ball sits on one of two black platforms separated by a gap, "
+        "and a blue jar (opening facing down) is positioned above and falls "
+        "under gravity. The agent places one red ball. Success requires "
+        "green-blue contact for 3+ seconds."
     ),
     "basket_case": (
-        "A green ball is positioned above a basket. The agent must place a "
-        "red ball to deflect the green ball so it MISSES the basket and "
-        "lands on the ground instead. Success requires the green ball to "
-        "touch the ground for 3+ seconds. Key physics: deflection angle, "
-        "collision timing before the ball enters the basket, push direction "
-        "away from basket opening."
+        "A green ball is positioned directly above an upright basket near the "
+        "purple ground; without intervention it falls into the basket. The "
+        "agent places one red ball. Success requires the green ball to touch "
+        "the purple ground for 3+ seconds."
     ),
     "pass_the_parcel": (
-        "A green ball sits on/in an inverted basket on a platform, with a "
-        "ramp nearby. A blue ball is in a bottom basket below. The agent "
-        "must place a red ball to knock the green ball out of the top "
-        "basket and guide it down (via ramp or direct fall) into the bottom "
-        "basket where the blue ball is. Success requires green-blue contact "
-        "for 3+ seconds. Key physics: dislodging from inverted basket, "
-        "ramp trajectory, multi-stage chain of events."
+        "A green ball is trapped under an inverted basket on a black platform, "
+        "with a ramp rising from the platform's left edge. A blue ball sits in "
+        "an upright basket below the platform. The agent places one red ball. "
+        "Success requires green-blue contact for 3+ seconds."
     ),
 }
 

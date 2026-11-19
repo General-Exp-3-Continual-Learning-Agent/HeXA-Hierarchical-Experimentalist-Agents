@@ -225,17 +225,19 @@ def compute_trajectory_reward(trajectory: dict) -> float:
 
 # ── Trajectory formatting helpers ──────────────────────────────────────
 
-def format_trajectory_for_teacher(trajectory: dict, max_steps: int = 10) -> str:
+def format_trajectory_for_teacher(trajectory: dict, max_steps: int = 10,
+                                  show_reward: bool = True) -> str:
     """Format a single trajectory dict into a readable text block for the teacher.
 
     Includes reward score so the teacher can weight trajectories by quality.
     Truncates to the last *max_steps* reasoning steps to stay within context limits.
     """
-    reward = compute_trajectory_reward(trajectory)
-    lines = [f"--- Seed {trajectory.get('seed', '?')} | "
-             f"Success: {trajectory.get('success', '?')} | "
-             f"Iterations: {trajectory.get('iterations', '?')} | "
-             f"Reward: {reward:+.2f} ---"]
+    header = (f"--- Seed {trajectory.get('seed', '?')} | "
+              f"Success: {trajectory.get('success', '?')} | "
+              f"Iterations: {trajectory.get('iterations', '?')}")
+    if show_reward:
+        header += f" | Reward: {compute_trajectory_reward(trajectory):+.2f}"
+    lines = [header + " ---"]
 
     steps = trajectory.get("trajectory", [])
     if len(steps) > max_steps:
@@ -288,17 +290,23 @@ def last_selection() -> list[dict]:
     return list(_LAST_SELECTION[-1]) if _LAST_SELECTION else []
 
 
-def format_trajectories_block(trajectories: list[dict], max_trajs: int = 5) -> str:
+def format_trajectories_block(trajectories: list[dict], max_trajs: int = 5,
+                              show_reward: bool = True) -> str:
     """Format multiple trajectories into a single block for the teacher prompt.
 
-    Sorts by reward (highest first) so the teacher sees the best evidence first.
+    Default: sorts by reward (highest first) so the teacher sees the best evidence
+    first, and prints each trajectory's reward. show_reward=False (summary bank)
+    prints no reward and keeps seed order instead of reward order.
     """
-    sorted_trajs = sorted(
-        trajectories, key=lambda t: compute_trajectory_reward(t), reverse=True
-    )
+    if show_reward:
+        sorted_trajs = sorted(
+            trajectories, key=lambda t: compute_trajectory_reward(t), reverse=True
+        )
+    else:
+        sorted_trajs = sorted(trajectories, key=lambda t: t.get("seed", 0))
     if len(sorted_trajs) > max_trajs:
         sorted_trajs = sorted_trajs[:max_trajs]
     record_selection(sorted_trajs)
     return "\n\n".join(
-        format_trajectory_for_teacher(t) for t in sorted_trajs
+        format_trajectory_for_teacher(t, show_reward=show_reward) for t in sorted_trajs
     )

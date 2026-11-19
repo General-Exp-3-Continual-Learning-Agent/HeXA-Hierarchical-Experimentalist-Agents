@@ -45,6 +45,9 @@ class SkillBank:
         self.level_skills: dict[str, list[Skill]] = {}
         self.common_mistakes: list[Mistake] = []
         self.level_mistakes: dict[str, list[Mistake]] = {}
+        # "Summary bank" ablation: one free-text block of insights/lessons.
+        # When non-empty it REPLACES the structured skills/mistakes in the prompt.
+        self.summary_text: str = ""
 
     # ── Persistence ────────────────────────────────────────────────────
 
@@ -63,6 +66,8 @@ class SkillBank:
                 for lvl, mistakes in self.level_mistakes.items()
             },
         }
+        if self.summary_text:
+            data["summary_text"] = self.summary_text
         path.write_text(json.dumps(data, indent=2))
 
     @classmethod
@@ -75,6 +80,7 @@ class SkillBank:
             lvl: [Skill(**s) for s in skills]
             for lvl, skills in data.get("level_skills", {}).items()
         }
+        bank.summary_text = data.get("summary_text", "") or ""
         bank.common_mistakes = [Mistake(**m) for m in data.get("common_mistakes", [])]
         bank.level_mistakes = {
             lvl: [Mistake(**m) for m in mistakes]
@@ -133,6 +139,9 @@ class SkillBank:
         max_mistakes: Optional[int] = None,
     ) -> str:
         """Render skills + mistakes into a structured text block for prompt injection."""
+        if self.summary_text:
+            return ("=== LEARNED PHYSICS INSIGHTS ===\n\n" + self.summary_text.strip()
+                    + "\n\n=== END INSIGHTS ===")
         if skills is None:
             skills = self.get_skills_for_level(level_name)
         if mistakes is None:

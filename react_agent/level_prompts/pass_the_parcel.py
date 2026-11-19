@@ -39,7 +39,7 @@ The environment is a 2D box with coordinates ranging from -5 to 5 on both axes. 
 - **Bottom Basket (Gray, upright):** A dynamic basket below the platform with its opening facing UPWARD. It holds the blue ball.
 - **Blue Ball:** A dynamic ball sitting inside the bottom basket. This is the target — the green ball must touch it.
 - **Black Platform:** A static horizontal bar. The top basket and (initially) red ball sit on it.
-- **Ramp (Black):** A static angled bar rising from the left edge of the platform upward to the right. Useful for rolling the red ball down onto the top basket.
+- **Ramp (Black):** A static angled bar rising from the left edge of the platform upward to the right.
 
 **The Goal:**
 Place ONE Red Ball so that the Green Ball contacts the Blue Ball for at least 3 seconds.
@@ -57,7 +57,7 @@ Place ONE Red Ball so that the Green Ball contacts the Blue Ball for at least 3 
 PASS_THE_PARCEL_INITIAL = """\
 Solve the Pass The Parcel puzzle. You have {max_iterations} iterations to solve this. Start by calling get_level_state.
 
-Your goal: knock the inverted top basket off the platform to release the green ball, which must then contact the blue ball in the bottom basket for 3 seconds.
+Your goal: the green ball must contact the blue ball in the bottom basket for 3 seconds.
 
 Remember: use the tools to test your ideas before submitting your final answer with the finish tool."""
 
@@ -91,4 +91,4 @@ Placement Constraints:
 OSS_PASS_THE_PARCEL_INITIAL = """\
 Solve the Pass The Parcel puzzle. Call get_level_state first, then get_ramp_center to find the ramp angle and basket positions.
 
-Knock the inverted top basket off the platform to release the green ball, which must then contact the blue ball. Use simulate_action to test placements. When it succeeds, call finish."""
+The green ball must contact the blue ball. Use simulate_action to test placements. When it succeeds, call finish."""

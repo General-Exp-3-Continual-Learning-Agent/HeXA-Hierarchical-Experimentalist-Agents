@@ -58,7 +58,3 @@ The synthesised bank is staged as `<offline-output-dir>/skill_bank_offline.json`
 ## Existing results
 
 The paper ran cross-level on three target levels: `catapult`, `falling_into_place` (Qwen-7B teacher), and `two_body_problem` (Qwen-7B teacher). Each run produces a synthesised bank (`skill_bank_xl_<target>.json`), an audit sidecar with `source_skills` citations, the raw teacher response (`_synthesis_raw_<target>.txt`), and the offline-evaluation outputs. The pre-computed outputs are not bundled in this code-only release.
-
-## Optional `--structural-hint`
-
-For small teachers that hallucinate mechanisms (Qwen-7B inventing levers on a level with no pivot), you can pass a one-paragraph hint relating the source and target scenes — see the docstring in `cross_level_synthesis.py` for guidance. The Claude variants generally don't need it.

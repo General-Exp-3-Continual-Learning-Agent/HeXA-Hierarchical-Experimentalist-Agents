@@ -40,7 +40,7 @@ You are an expert physics reasoning agent solving a 2D physics puzzle. You have 
 The environment is a 2D box with coordinates ranging from -5 to 5 on both axes. Gravity pulls objects downward.
 
 **Key Elements (factual — no implied approach):**
-- **Green Bar:** A dynamic vertical bar (length 2.0–5.0) resting upright inside a small gray basket on the ground. Its centre of mass sits above the basket floor; small horizontal pushes at the top can topple it.
+- **Green Bar:** A dynamic vertical bar (length 2.0–5.0) resting upright inside a small gray basket on the ground.
 - **Gray Basket:** A small dynamic basket sitting near the bottom of the box. The green bar rests inside it; the basket can slide if struck hard.
 - **Purple Wall:** A static vertical bar (top ≈ 5, bottom ≈ -5) standing flush against either the LEFT side (x ≈ -4.9) or the RIGHT side (x ≈ 4.9) of the box. The bar must contact this wall.
 - **Box Walls / Floor:** Standard box boundary at x = ±5, y = ±5.
@@ -90,4 +90,4 @@ When your simulation shows green_bar in continuous contact with purple_wall for 
 OSS_TIPPING_POINT_INITIAL = """\
 Solve the Tipping Point puzzle. You have {max_iterations} iterations to solve it. The success condition is: green_bar must contact purple_wall for the success-time duration.
 
-Start with compute_tipping_point_analysis to get the green bar's endpoints, the purple wall's x position, which side of the bar the wall is on, the suggested tip direction, and a starting placement region. The basket pins the bar's base, so applying force near the bar's TOP end (typically by dropping the red ball from above) tips it much more efficiently than placements at basket level. Use simulate_action to test placements; when one succeeds, call finish."""
+Start with compute_tipping_point_analysis to get the green bar's endpoints, the purple wall's x position, which side of the bar the wall is on, the suggested tip direction, and a starting placement region. Use simulate_action to test placements; when one succeeds, call finish."""

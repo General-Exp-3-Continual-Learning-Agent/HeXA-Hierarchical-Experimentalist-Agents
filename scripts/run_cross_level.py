@@ -61,10 +61,6 @@ def main() -> None:
         help="Teacher model used for synthesis (default: claude-sonnet-4-6).",
     )
     parser.add_argument(
-        "--structural-hint", default=None,
-        help="Optional one-paragraph hint relating source and target levels.",
-    )
-    parser.add_argument(
         "--skip-synthesis", action="store_true",
         help="Skip step 1 if a synthesised bank already exists at the expected path.",
     )
@@ -85,8 +81,6 @@ def main() -> None:
         ]
         for sb in args.source_bank:
             cmd += ["--source-bank", sb]
-        if args.structural_hint:
-            cmd += ["--structural-hint", args.structural_hint]
         print(f"[1/2] Synthesising target bank → {synthesised}")
         rc = subprocess.run(cmd, cwd=ROOT, env=_env()).returncode
         if rc != 0:

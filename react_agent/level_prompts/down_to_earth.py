@@ -87,26 +87,3 @@ OSS_DOWN_TO_EARTH_INITIAL = """\
 Solve the Down to Earth puzzle. Start by calling get_level_state to inspect the level, then call compute_gap_analysis to find which side has a wider gap.
 
 Use simulate_action to test placements. When one succeeds, call finish with those coordinates."""
-
-# Ablation blocks for Down to Earth
-_OSS_DTE_STRATEGY_BLOCK = """
-Strategy:
-- First, call get_level_state to understand the scene layout.
-- Call compute_gap_analysis to determine which side the green ball can fall off.
-- The red ball should collide with the green ball on the platform to push it toward the wider gap.
-- Call simulate_action to test placements and observe what happens.
-- If a simulation fails, analyze WHY and adjust your approach.
-- When a simulation succeeds, call finish with those coordinates."""
-
-_OSS_DTE_PHYSICS_LAST_TWO = (
-    "\n- To push the green ball RIGHT, place the red ball to its LEFT. To push LEFT, place to the RIGHT."
-    "\n- The green ball can only fall off the platform if the gap between the platform edge and the wall is wider than the green ball's diameter."
-)
-
-# Non-OSS ablation blocks
-_DTE_STRATEGY_BLOCK = """**Strategy Tips:**
-- First, use get_level_state to understand the scene layout.
-- Use compute_gap_analysis to determine which side the green ball can fall off.
-- The red ball should collide with the green ball on the platform to push it toward the wider gap.
-- Use simulate_action to test your ideas and observe what happens.
-- If a simulation fails, analyze WHY and adjust your approach."""

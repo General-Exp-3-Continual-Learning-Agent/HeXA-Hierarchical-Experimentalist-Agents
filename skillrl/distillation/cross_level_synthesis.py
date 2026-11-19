@@ -107,8 +107,7 @@ predicting which principles the target level will reward.
 **Environment (shared across all levels)**: 2D physics simulation (Box2D).
 Gravity = -9.8 m/s². World bounds [-5, 5] on both axes. The agent places ONE
 red ball at (x, y) with a chosen radius (0.1 ≤ r ≤ 2.0) at t=0; the simulation
-then runs to completion. Mass scales as r³; momentum and impact force scale
-with both mass and the ball's velocity at first contact.
+then runs to completion.
 ═══════════════════════════════════════════════════════════════════════════
 
 ═══ SOURCE LEVELS ═══
@@ -118,7 +117,6 @@ with both mass and the ball's velocity at first contact.
 ═══ TARGET LEVEL: {target_level} ═══
 
 {target_block}
-{structural_hint_block}
 ═══ TASK ═══
 
 Produce a SKILL BANK for the target level. The bank must contain:
@@ -238,11 +236,10 @@ then runs to completion.
 ═══ TARGET LEVEL: {target_level} ═══
 
 {target_block}
-{structural_hint_block}
 ═══ TASK ═══
 
 Produce a SKILL BANK for the target level. The bank must contain:
-- 3 to 8 SKILLS. Fewer is correct when the sources support fewer; do not pad.
+- 6 to 10 SKILLS. Fewer is correct when the sources support fewer; do not pad.
 - 1 to 4 MISTAKES.
 
 ═══ HARD CONSTRAINTS ═══
@@ -319,6 +316,102 @@ Produce a SKILL BANK for the target level. The bank must contain:
     }}
   ],
   "synthesis_reasoning": "<2-4 sentences: which source entries you transferred and which you deliberately did NOT transfer and why>"
+}}
+```
+
+Be precise and specific. Do not pad. Do not produce extra fields. Output ONLY
+the JSON object inside a single fenced ```json block.
+"""
+
+
+# ── Description-only prompt (--description-only) ───────────────────────
+# Ablation control for cross-level transfer: the same structure, output
+# size, rules and environment block as the neutral full prompt, but with NO
+# source banks. The teacher sees only the shared environment and the factual
+# target description, so every entry comes from the teacher's own physics
+# reading of the scene. Provenance field: `derivation` (stated facts used)
+# instead of `source_skills` / `transfer_rationale`.
+
+DESCRIPTION_ONLY_SYNTHESIS_PROMPT = """\
+You are an expert physics analyst preparing a SKILL BANK for a 2D physics
+puzzle that the agent has NEVER attempted. You are given only the shared
+environment facts and a factual description of the level — no trajectories,
+no solutions, no skills from any other level, and no success/failure data.
+
+Your task: from the facts below alone, predict which physics knowledge and
+checks will help the agent solve this level.
+
+═══════════════════════════════════════════════════════════════════════════
+**Environment (shared across all levels)**: 2D physics simulation (Box2D).
+Gravity = -9.8 m/s². World bounds [-5, 5] on both axes. The agent places ONE
+red ball at (x, y) with a chosen radius (0.1 ≤ r ≤ 2.0) at t=0; the simulation
+then runs to completion.
+═══════════════════════════════════════════════════════════════════════════
+
+═══ LEVEL: {target_level} ═══
+
+{target_block}
+═══ TASK ═══
+
+Produce a SKILL BANK for this level. The bank must contain:
+- 6 to 10 SKILLS.
+- 1 to 4 MISTAKES.
+
+═══ HARD CONSTRAINTS ═══
+
+1. **Every entry MUST state its derivation.** For each skill and mistake,
+   include `derivation`: which specific facts in the environment or level
+   description above it follows from, plus the standard physics used. If it
+   needs a fact about the level that is not stated, do NOT emit it.
+
+2. **No invented numbers.** You have NEVER seen this level solved. Do NOT
+   write coordinates, radii, distances, or other magnitudes, except those
+   stated in the environment or the level description. Describe actions
+   qualitatively, in terms of the level's entities.
+
+3. **Use level entities.** Phrase `principle`, `when_to_apply` and `example`
+   only in terms of entities named in the level description.
+
+4. **Actionable.** Each skill must say what the agent should DO or CHECK, and
+   why, in terms of the level's entities. Statements that only say one
+   quantity "affects" or "influences" another, without saying in which
+   direction or what to do about it, are forbidden, as are platitudes ("be
+   careful", "consider gravity", "place strategically").
+
+5. **Confidence calibration.** Confidence is a float in [0.1, 1.0], weighted by
+   how directly the entry follows from the stated facts and how certain the
+   physics is. Assign 0.7+ only when the entry follows directly from stated
+   facts with no assumption about unstated geometry.
+
+6. **Avoid redundancy.** Each skill captures a DISTINCT idea.
+
+7. **Mistakes**: predicted failure modes for this level, under the same rules
+   (derivation, no invented numbers, level entities). `how_to_avoid` must say
+   what to do instead.
+{transfer_guard_block}
+═══ OUTPUT FORMAT (single JSON object) ═══
+
+```json
+{{
+  "skills": [
+    {{
+      "title": "<3-7 word name>",
+      "principle": "<2-3 sentences, in level terms>",
+      "when_to_apply": "<specific condition, in level terms>",
+      "example": "<qualitative description, NO numbers — or omit>",
+      "confidence": <float in [0.1, 1.0]>,
+      "derivation": "<which stated facts + physics it follows from>"
+    }}
+  ],
+  "mistakes": [
+    {{
+      "description": "<1 sentence in level terms>",
+      "why_it_happens": "<1 sentence root cause>",
+      "how_to_avoid": "<1-2 sentences: what to do instead>",
+      "derivation": "<which stated facts + physics it follows from>"
+    }}
+  ],
+  "synthesis_reasoning": "<2-4 sentences: which facts you treated as load-bearing and what you deliberately did NOT claim and why>"
 }}
 ```
 
@@ -422,7 +515,6 @@ will reward.
 ═══ TARGET TASK: {target_level} ═══
 
 {target_block}
-{structural_hint_block}
 ═══ TASK ═══
 
 Produce a SKILL BANK for the target task. The bank must contain:
@@ -548,9 +640,7 @@ TRANSFER_GUARD_BLOCK = """
 10. **Mechanism check.** Every skill and mistake must carry a
    `mechanism_check` field (1-2 sentences): what physical role the source
    mechanism played in the source level, and whether the SAME role exists in
-   the target given only the target description. If the role differs (e.g.
-   in the source a larger ball hurt because it tightened an overlap
-   tolerance, but in the target ball mass is what drives the effect), do NOT
+   the target given only the target description. If the role differs, do NOT
    emit the item. This applies with extra force to mistakes: a source
    anti-pattern is only a target anti-pattern if its cause carries over.
 
@@ -882,8 +972,8 @@ never attempted. The agent's free parameters are the red ball's x, y and radius.
 
 For each entry answer `prescribes_default`: does it recommend a default,
 starting or preferred value, region or direction for any free parameter
-(e.g. "start near X", "prefer small radius", "do not place high on the first
-attempt"), rather than describing a mechanism, a trade-off to test, or a
+(e.g. "start near X", "prefer a small/large value of P", "avoid region R on
+the first attempt"), rather than describing a mechanism, a trade-off to test, or a
 procedure (such as how to resolve an overlap)? Corrective rules triggered by a
 specific observed outcome ("if A happened, change B") are NOT defaults.
 Output ONLY a JSON object in a fenced ```json block:
@@ -1015,8 +1105,7 @@ follows from those facts alone.
 Write 2 to 4 PRIOR entries. Each states physics that follows directly from the
 facts above and that bears on how the agent should explore its free parameters
 (x, y, radius). Cover:
-- how each free parameter scales the physical effect it controls (e.g. what
-  radius does to mass and momentum, what drop height does to impact speed);
+- how each free parameter scales the physical effect it controls;
 - the trade-offs each parameter carries (what gets worse as it grows or shrinks);
 - for the quantity that most likely decides success in this level, EVERY
   distinct way the agent can raise or lower it, so a failed attempt can be
@@ -1024,7 +1113,7 @@ facts above and that bears on how the agent should explore its free parameters
 
 HARD RULES:
 1. No default, starting or preferred value or direction for any parameter
-   ("start small", "use a moderate radius", "prefer the far end" are all
+   (e.g. "start near X", "prefer a small/large value of P" are
    forbidden). Where a choice matters, say what each direction trades off and
    that it should be tested.
 2. No numbers except those stated in the facts above.
@@ -1706,7 +1795,6 @@ def synthesize_target_bank(
     output_dir: Path,
     teacher_model: str = TEACHER_MODEL,
     target_block_override: str | None = None,
-    structural_hint: str | None = None,
     transfer_guard: bool = False,
     source_critic: bool = False,
     target_priors: bool = False,
@@ -1717,6 +1805,7 @@ def synthesize_target_bank(
     source_block_overrides: Mapping[str, str] | None = None,
     domain_block: str | None = None,
     dry_run: bool = False,
+    description_only: bool = False,
 ) -> tuple[SkillBank | None, dict]:
     """Run the cross-level synthesis pipeline.
 
@@ -1752,6 +1841,9 @@ def synthesize_target_bank(
         physics variants, which bake their own in.
     dry_run : Build and dump the prompt, then stop without calling the teacher.
         Returns ``(None, audit)`` with ``audit["dry_run"] is True``.
+    description_only : Ablation control. Build the bank from the shared
+        environment and the factual target description only (no source banks),
+        using ``DESCRIPTION_ONLY_SYNTHESIS_PROMPT``.
 
     Returns
     -------
@@ -1802,7 +1894,14 @@ def synthesize_target_bank(
         n_err = len(bank.level_mistakes.get(source_level, []))
         print(f"  Loaded {source_level}: {n_sk} skills, {n_err} mistakes from {bank_path}")
 
-    prompt_template, prompt_label = _select_prompt_template(teacher_model, prompt_variant)
+    if description_only:
+        if source_bank_paths or per_item or source_critic:
+            raise ValueError("--description-only takes no source banks and is "
+                             "incompatible with --per-item / --source-critic.")
+        prompt_template = DESCRIPTION_ONLY_SYNTHESIS_PROMPT
+        prompt_label = "description-only (env + target description, no sources; neutral)"
+    else:
+        prompt_template, prompt_label = _select_prompt_template(teacher_model, prompt_variant)
     print(f"  Prompt template: {prompt_label}")
 
     if "{domain_block}" in prompt_template and not domain_block:
@@ -1811,18 +1910,11 @@ def synthesize_target_bank(
             "paragraph; pass domain_block."
         )
 
-    structural_hint_block = (
-        f"\n═══ STRUCTURAL ANALOGY HINT (use this to ground the transfer) ═══\n"
-        f"{structural_hint.strip()}\n"
-        if structural_hint else ""
-    )
-
     prompt = prompt_template.format(
         n_sources=len(source_bank_paths),
         source_blocks="\n\n---\n\n".join(source_bank_blocks),
         target_level=target_level,
         target_block=target_block,
-        structural_hint_block=structural_hint_block,
         domain_block=(domain_block or ""),
         transfer_guard_block=(TRANSFER_GUARD_BLOCK if transfer_guard else "")
                              + (SOURCE_CRITIC_BLOCK if source_critic else ""),
@@ -1977,6 +2069,7 @@ def synthesize_target_bank(
             "source_skills": raw.get("source_skills", []),
             "transfer_rationale": raw.get("transfer_rationale", ""),
             "mechanism_check": raw.get("mechanism_check", ""),
+            **({"derivation": raw.get("derivation", "")} if description_only else {}),
         })
         n_sources_cited = len(raw.get("source_skills", []))
         print(
@@ -2027,6 +2120,7 @@ def synthesize_target_bank(
             "source_skills": raw.get("source_skills", []),
             "transfer_rationale": raw.get("transfer_rationale", ""),
             "mechanism_check": raw.get("mechanism_check", ""),
+            **({"derivation": raw.get("derivation", "")} if description_only else {}),
         })
         print(f"    [MISTAKE {mistake_id}] '{raw.get('description', '')[:60]}'")
 
@@ -2057,6 +2151,7 @@ def synthesize_target_bank(
         "prompt_template": ("per-item (role map + per-entry rewrite + code checks)"
                             if per_item else prompt_label),
         "detailed_scenes": detailed_scenes,
+        "description_only": description_only,
         "per_item": {k: v for k, v in per_item_log.items() if k != "items"} if per_item else False,
         "transfer_guard": guard_log if transfer_guard else False,
         "source_critic": critic_log if source_critic else False,
@@ -2097,7 +2192,7 @@ def _main() -> None:
              "or in the TARGET_BLOCKS of a --blocks-module.",
     )
     parser.add_argument(
-        "--source-bank", action="append", required=True,
+        "--source-bank", action="append", default=[],
         type=_parse_source_bank_arg,
         help="Repeatable. Format: '<source_level>=<path_to_evolved_bank.json>'.",
     )
@@ -2147,13 +2242,6 @@ def _main() -> None:
              "definitions) for source and target instead of the short ones.",
     )
     parser.add_argument(
-        "--structural-hint", default=None,
-        help="Optional one-paragraph hint telling the teacher how the source "
-             "and target levels are structurally related (e.g. shared "
-             "mechanism) and what NOT to transfer. High-leverage for small "
-             "teachers — prevents hallucinated mechanisms.",
-    )
-    parser.add_argument(
         "--transfer-guard", action="store_true",
         help="Forbid carrying source-calibrated numbers into the target bank, "
              "require a per-item mechanism check, and validate the output "
@@ -2177,6 +2265,13 @@ def _main() -> None:
         help="Test every kept transferred entry for a parameter default "
              "(rule 9); rewrite offenders once, re-check, drop the rest.",
     )
+    parser.add_argument(
+        "--description-only", action="store_true",
+        help="Ablation control: build the bank from the shared environment and "
+             "the factual target description ONLY (no source banks). Uses "
+             "DESCRIPTION_ONLY_SYNTHESIS_PROMPT (neutral, same rules/size as "
+             "full-neutral). Do not pass --source-bank.",
+    )
     args = parser.parse_args()
 
     source_block_overrides: dict[str, str] = {}
@@ -2199,7 +2294,10 @@ def _main() -> None:
             )
 
     source_bank_paths: dict[str, Path] = dict(args.source_bank)
-    if not source_bank_paths:
+    if args.description_only:
+        if source_bank_paths:
+            parser.error("--description-only takes no --source-bank.")
+    elif not source_bank_paths:
         parser.error("Provide at least one --source-bank entry.")
     if len(source_bank_paths) == 1:
         print(
@@ -2209,14 +2307,11 @@ def _main() -> None:
         )
 
     print(f"\n[cross-level synthesis] target={args.target} sources={list(source_bank_paths)}")
-    if args.structural_hint:
-        print(f"[cross-level synthesis] structural hint: {args.structural_hint[:100]}...")
     synthesize_target_bank(
         target_level=args.target,
         source_bank_paths=source_bank_paths,
         output_dir=args.output_dir,
         teacher_model=args.teacher_model,
-        structural_hint=args.structural_hint,
         transfer_guard=args.transfer_guard,
         source_critic=args.source_critic,
         target_priors=args.target_priors,
@@ -2228,6 +2323,7 @@ def _main() -> None:
         target_block_override=target_block_override,
         domain_block=domain_block,
         dry_run=args.dry_run,
+        description_only=args.description_only,
     )
 
 

@@ -36,6 +36,9 @@ from skillrl.core.config import (
 from skillrl.core.skill_bank import SkillBank
 from skillrl.distillation.distill import load_trajectories, run_distillation
 from skillrl.distillation.evolving_distill import evolve_skill_bank
+from skillrl.distillation.update_strategies import (
+    SUMMARY_MAX_WORDS, UPDATE_STRATEGIES, seed_summary_bank, update_skill_bank,
+)
 from skillrl.runner.run_skill_agent import run_batch, _load_model
 
 
@@ -109,6 +112,9 @@ def run_evolving_loop(
     max_general_skills: int = 2,
     max_specific_skills: int = 6,
     max_mistakes_agent: int = 4,
+    condition_collection_on_bank: bool = True,
+    update_strategy: str = "evolution",
+    summary_max_words: int = SUMMARY_MAX_WORDS,
     verbose: bool = False,
 ):
     """Run the evolving skill refinement loop.
@@ -128,7 +134,19 @@ def run_evolving_loop(
     model_name : Model for the agent (default: claude).
     teacher_model : Model for the teacher/distiller.
     skip_general : Skip cross-level generalization (recommended for single-level).
+    condition_collection_on_bank : If False, run the "skill-unconditioned
+        collection" ablation — the training actor collects every round's
+        trajectories WITHOUT any bank skills/mistakes injected. Phase 1
+        (evolve the real bank from the previous bank + newly collected
+        trajectories) and the saved banks are unchanged, and the bank is simply
+        never fed back into Phase 2 collection. Default True = full HExA.
+    update_strategy : How the bank is updated each round from round 2 on.
+        "evolution" (default) = full HExA (one teacher call rewrites the whole
+        bank). "append_only" / "single_parent" = update ablations, see
+        skillrl/distillation/update_strategies.py. Round-1 seeding is unchanged.
     """
+    if update_strategy not in UPDATE_STRATEGIES:
+        raise ValueError(f"update_strategy must be one of {UPDATE_STRATEGIES}, got {update_strategy!r}")
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -168,6 +186,10 @@ def run_evolving_loop(
     print(f"  EVOLVING SKILL LOOP: {level_name}")
     print(f"  Rounds: {resume_from_round + 1}-{num_rounds}, Seeds/round: {seeds_per_round}, Start seed: {start_seed}")
     print(f"  Max skills per level: {max_skills}, Max mistakes per level: {max_mistakes}")
+    if not condition_collection_on_bank:
+        print(f"  [ABLATION] condition_collection_on_bank=False: training actor "
+              f"collects with NO bank skills/mistakes injected; bank still evolves normally.")
+    print(f"  Update strategy: {update_strategy}")
     print(f"{'='*70}")
 
     init_successes, init_failures = collect_trajectories(initial_traj_dir)
@@ -195,6 +217,10 @@ def run_evolving_loop(
                 print(f"\n  Phase 1: Skill bank already exists, skipping distillation")
                 bank = SkillBank.load(skill_bank_path)
                 print(f"\n  Loaded existing skill bank: {skill_bank_path}")
+            elif update_strategy == "summary":
+                print(f"\n  Phase 1: Seeding SUMMARY bank from initial trajectories")
+                bank = seed_summary_bank(level_name, initial_traj_dir, skill_bank_path,
+                                         teacher_model=teacher_model, max_words=summary_max_words)
             else:
                 print(f"\n  Phase 1: Seeding skill bank from initial trajectories")
 
@@ -233,16 +259,30 @@ def run_evolving_loop(
                     print(f"  [Error] Previous round trajectory directory not found: {prev_round_dir}")
                     raise FileNotFoundError(f"Cannot resume: {prev_round_dir} not found")
 
-                # Evolve the bank
-                bank = evolve_skill_bank(
-                    level_name=level_name,
-                    prev_bank=prev_bank,
-                    new_trajs_dir=prev_round_dir,
-                    output_path=skill_bank_path,
-                    max_skills=max_skills,
-                    max_mistakes=max_mistakes,
-                    teacher_model=teacher_model,
-                )
+                if update_strategy == "evolution":
+                    # Evolve the bank (full HExA)
+                    bank = evolve_skill_bank(
+                        level_name=level_name,
+                        prev_bank=prev_bank,
+                        new_trajs_dir=prev_round_dir,
+                        output_path=skill_bank_path,
+                        max_skills=max_skills,
+                        max_mistakes=max_mistakes,
+                        teacher_model=teacher_model,
+                    )
+                else:
+                    bank = update_skill_bank(
+                        strategy=update_strategy,
+                        level_name=level_name,
+                        prev_bank=prev_bank,
+                        new_trajs_dir=prev_round_dir,
+                        output_path=skill_bank_path,
+                        round_num=round_num,
+                        max_skills=max_skills,
+                        max_mistakes=max_mistakes,
+                        teacher_model=teacher_model,
+                        summary_max_words=summary_max_words,
+                    )
                 print(f"\n  Evolved skill bank saved: {skill_bank_path}")
 
         # ── Phase 2: Run skill-augmented agent ───────────────────────────────
@@ -288,6 +328,7 @@ def run_evolving_loop(
                 max_general_skills=max_general_skills,
                 max_specific_skills=max_specific_skills,
                 max_mistakes=max_mistakes_agent,
+                condition_on_bank=condition_collection_on_bank,
             )
 
             # Combine with already-run seeds (loaded from disk) so round_stats reflects the full batch
@@ -301,6 +342,28 @@ def run_evolving_loop(
                     except json.JSONDecodeError:
                         print(f"  [Warning] Could not parse {traj_path}, skipping")
             results.extend(fresh_results)
+
+        # ── Crash guard (ablation strategies only) ──────────────────────────
+        # A Claude-CLI failure (e.g. usage limit) shows up as a 1-iteration,
+        # few-second episode or an "error communicating" turn. Move such files
+        # aside and stop BEFORE recording the round, so a plain resubmit reruns
+        # exactly those seeds instead of evolving the bank on junk episodes.
+        if update_strategy != "evolution":
+            crashed = []
+            for r_ in results:
+                if ((r_.get("iterations") or 0) <= 1 and (r_.get("elapsed_time") or 0) < 10) \
+                        or "error communicating" in json.dumps(r_, default=str):
+                    crashed.append(r_.get("seed"))
+            if crashed:
+                stash = round_eval_dir / f"crashed_cli_{int(time.time())}"
+                stash.mkdir(parents=True, exist_ok=True)
+                for sd in crashed:
+                    f = round_eval_dir / level_name / f"trajectory_seed{sd}_skillrl.json"
+                    if f.exists():
+                        shutil.move(str(f), str(stash / f.name))
+                raise SystemExit(
+                    f"[crash guard] round {round_num}: Claude-CLI crash on seeds {crashed}; "
+                    f"moved to {stash}. Resubmit the job to rerun them.")
 
         # ── Phase 3: Collect results ─────────────────────────────────────────
         round_successes = [r for r in results if r.get("success")]
@@ -319,6 +382,8 @@ def run_evolving_loop(
             "accuracy": round_accuracy,
             "skill_bank": str(skill_bank_path),
             "elapsed_seconds": round_elapsed,
+            "condition_collection_on_bank": condition_collection_on_bank,
+            "update_strategy": update_strategy,
         }
         round_stats.append(stats)
 
@@ -380,6 +445,21 @@ def main():
     parser.add_argument("--max-general-skills", type=int, default=0)
     parser.add_argument("--max-specific-skills", type=int, default=6)
     parser.add_argument("--max-mistakes-agent", type=int, default=4)
+    parser.add_argument(
+        "--condition-collection-on-bank",
+        choices=["true", "false"], default="true",
+        help="true (default) = full HExA (inject bank into the training actor). "
+             "false = skill-unconditioned collection ablation (train actor sees "
+             "no bank skills/mistakes; bank still evolves and is saved each round).",
+    )
+    parser.add_argument(
+        "--update-strategy", choices=list(UPDATE_STRATEGIES), default="evolution",
+        help="Bank update each round (round 2+): evolution (default, full HExA), "
+             "append_only, single_parent, or summary (one rolling free-text summary, "
+             "also seeds round 1). See distillation/update_strategies.py.",
+    )
+    parser.add_argument("--summary-max-words", type=int, default=SUMMARY_MAX_WORDS,
+                        help="Word cap of the summary bank (--update-strategy summary)")
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
 
@@ -406,6 +486,9 @@ def main():
         max_general_skills=args.max_general_skills,
         max_specific_skills=args.max_specific_skills,
         max_mistakes_agent=args.max_mistakes_agent,
+        condition_collection_on_bank=(args.condition_collection_on_bank == "true"),
+        update_strategy=args.update_strategy,
+        summary_max_words=args.summary_max_words,
         verbose=args.verbose,
     )
 

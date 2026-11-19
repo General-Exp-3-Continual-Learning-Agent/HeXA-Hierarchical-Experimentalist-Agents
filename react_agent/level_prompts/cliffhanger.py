@@ -89,4 +89,4 @@ When your simulation shows green_bar in continuous contact with purple_ground fo
 OSS_CLIFFHANGER_INITIAL = """\
 Solve the Cliffhanger puzzle. You have {max_iterations} iterations to solve it. The success condition is: green_bar must contact purple_ground for at least 3 seconds.
 
-Start with compute_cliffhanger_analysis to get the green bar's bottom/top point coordinates, the platform extents, and the closer edge (the side the bar must topple past). Use simulate_action to test placements; when one succeeds, call finish."""
+Start with compute_cliffhanger_analysis to get the green bar's bottom/top point coordinates, the platform extents, and the closer edge. Use simulate_action to test placements; when one succeeds, call finish."""

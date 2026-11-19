@@ -85,13 +85,4 @@ Placement Constraints:
 OSS_FALLING_INTO_PLACE_INITIAL = """\
 Solve the Falling Into Place puzzle. Call get_level_state first, then call compute_intercept_setup to find the push direction and jar fall timing.
 
-Remember: place the red ball HIGH ABOVE the green ball with a slight horizontal offset. Use simulate_action to test placements. When it succeeds, call finish."""
-
-# Ablation blocks for Falling Into Place
-_OSS_FIP_HOW_TO_PLACE_BLOCK = """
-How to Place the Red Ball:
-- Place the red ball HIGH ABOVE the green ball (at least 2-3 units higher in y) so it gains speed while falling.
-- Offset the red ball slightly in the OPPOSITE direction of where green needs to travel. For example, if green must go RIGHT, place red slightly to the LEFT of green.
-- Use a radius between 0.5 and 1.5 for strong impact.
-- Do NOT place the red ball at the same height as the green ball — it must fall onto the green ball from above.
-"""
+Use simulate_action to test placements. When it succeeds, call finish."""

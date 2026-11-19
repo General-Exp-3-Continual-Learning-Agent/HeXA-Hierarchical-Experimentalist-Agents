@@ -365,6 +365,8 @@ def run_skill_augmented(
     worked_examples: Optional[list[dict]] = None,
     ablation_level: Optional[int] = None,
     xl_framing: bool = False,
+    skills_header: Optional[str] = None,
+    skills_preamble: Optional[str] = None,
     model_label: str = "",
     within_seed: bool = False,
     teacher_model: str = TEACHER_MODEL,
@@ -378,6 +380,7 @@ def run_skill_augmented(
     ws_require_numbers: bool = False,
     prediction_cap: Optional[int] = None,
     explore: bool = False,
+    condition_on_bank: bool = True,
 ) -> dict:
     """Run ReactAgent with skill-augmented prompts.
 
@@ -419,12 +422,36 @@ def run_skill_augmented(
     explore : Enforce test-time exploration (ExploreToolkit): radius-band
                 coverage over the first simulations plus a stall breaker,
                 and tell the actor the rules in the system prompt.
+    condition_on_bank : If False, the actor collects this episode WITHOUT any
+                bank skills or mistakes injected (the "skill-unconditioned
+                collection" ablation). The passed skill_bank is replaced by an
+                empty bank before any prompt is built, so no skills, mistakes,
+                worked examples, within-seed K*, or provenance text can leak
+                into the collection actor. Evolution/eval are unaffected — they
+                call this with the real bank (default True preserves behavior).
+                Incompatible with within_seed (which re-injects bank content).
 
     Returns
     -------
     dict with keys: success, action, iterations, trajectory, final_observation,
                     seed, skills_used, elapsed_time
     """
+    # Skill-unconditioned collection ablation: strip the bank BEFORE any prompt
+    # is built. Rebinding to an empty SkillBank guarantees no bank content can
+    # reach the collection actor through any path — the skills/mistakes block,
+    # worked examples, within-seed K*/kstar, or the xl-framing header all read
+    # from this now-empty bank, and the recorded skills_used/mistakes_injected
+    # come out empty too, honestly reflecting that nothing was injected.
+    if not condition_on_bank:
+        if within_seed:
+            raise ValueError(
+                "condition_on_bank=False is incompatible with within_seed: "
+                "within-seed refinement would re-inject bank content during "
+                "collection. Use one-shot injection for the unconditioned "
+                "collection ablation."
+            )
+        skill_bank = SkillBank()
+
     # 1. Get base prompts — either ablated or full
     if ablation_level is not None:
         if not _HAS_ABLATION:
@@ -464,12 +491,20 @@ def run_skill_augmented(
 
         # 4b. Honest provenance label for cross-level transferred banks.
         # Single-line header swap — no extra paragraph, so prompt size is unchanged.
-        if xl_framing and skills_block:
+        if (xl_framing or skills_header) and skills_block:
             original_header = f"## {level_name.replace('_', ' ').title()}-Specific Skills"
             skills_block = skills_block.replace(
                 original_header,
-                "## Cross-Level Skills (transferred from other puzzles — verify with simulation)",
+                "## " + (skills_header or
+                         "Cross-Level Skills (transferred from other puzzles — verify with simulation)"),
             )
+
+        # 4c. Optional preamble explaining how to use the block (raw-source transfer
+        # ablation): inserted right after the block's opening banner.
+        if skills_preamble and skills_block:
+            banner = "=== LEARNED PHYSICS SKILLS ===\n"
+            skills_block = skills_block.replace(
+                banner, banner + "\n" + skills_preamble.strip() + "\n", 1)
 
         # 5. Augment system prompt
         augmented_system = original_system

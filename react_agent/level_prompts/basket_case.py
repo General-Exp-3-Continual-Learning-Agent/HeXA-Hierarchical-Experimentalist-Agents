@@ -39,7 +39,7 @@ The environment is a 2D box with coordinates ranging from -5 to 5 on both axes. 
 - **Purple Ground:** A static bar at the very bottom of the scene (y ~ -5). This is the target surface.
 
 **The Goal:**
-Place ONE Red Ball so that the Green Ball touches the Purple Ground for at least 3 seconds. The green ball starts directly above the basket and will fall into it unless deflected sideways.
+Place ONE Red Ball so that the Green Ball touches the Purple Ground for at least 3 seconds. The green ball starts directly above the basket.
 
 **Placement Constraints:**
 - The red ball must be completely inside the box: -5 + radius <= x <= 5 - radius, -5 + radius <= y <= 5 - radius.
@@ -54,7 +54,7 @@ Place ONE Red Ball so that the Green Ball touches the Purple Ground for at least
 BASKET_CASE_INITIAL = """\
 Solve the Basket Case puzzle. You have {max_iterations} iterations to solve it. Start by inspecting the level state, then use compute_basket_analysis to find the basket position, scale, and recommended push direction.
 
-Your goal: deflect the green ball sideways so it misses the basket and lands on the purple ground for 3 seconds.
+Your goal: the green ball must touch the purple ground for 3 seconds.
 
 Remember: use the tools to test your ideas before submitting your final answer with the finish tool."""
 
@@ -74,7 +74,7 @@ Key Elements:
 - Purple Ground: A static bar at the very bottom (y ~ -5). The target surface.
 
 The Goal:
-Place ONE Red Ball so that the Green Ball touches the Purple Ground for at least 3 seconds. The green ball starts directly above the basket — you must deflect it sideways so it misses the basket and lands on the ground.
+Place ONE Red Ball so that the Green Ball touches the Purple Ground for at least 3 seconds. The green ball starts directly above the basket.
 
 Placement Constraints:
 - Red ball must be inside box: -5 + radius <= x <= 5 - radius, -5 + radius <= y <= 5 - radius.
@@ -85,4 +85,4 @@ Placement Constraints:
 OSS_BASKET_CASE_INITIAL = """\
 Solve the Basket Case puzzle. Call get_level_state first, then compute_basket_analysis to find basket position and scale.
 
-Deflect the green ball sideways so it misses the basket and lands on the purple ground. Use simulate_action to test placements. When it succeeds, call finish."""
+The green ball must touch the purple ground. Use simulate_action to test placements. When it succeeds, call finish."""
