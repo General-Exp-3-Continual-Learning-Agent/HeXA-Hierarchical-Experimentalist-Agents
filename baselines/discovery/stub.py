@@ -15,7 +15,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-_DISCOVERY = Path(__file__).resolve().parents[2] / "discovery-agents"
+_DISCOVERY = Path(__file__).resolve().parents[2]  # HeXA root (hexa_discovery/)
 if str(_DISCOVERY) not in sys.path:
     sys.path.insert(0, str(_DISCOVERY))
 

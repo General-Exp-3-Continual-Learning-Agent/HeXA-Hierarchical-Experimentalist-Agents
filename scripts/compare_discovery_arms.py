@@ -2,8 +2,8 @@
 """Pair two DiscoverPhysics arms on their seeds and test the difference.
 
     python scripts/compare_discovery_arms.py \
-        --a discovery-agents/hexa_discovery/data/runs/osc_eval:baseline \
-        --b discovery-agents/hexa_discovery/data/runs/osc_episodic_rag:eval_frozen
+        --a hexa_discovery/data/runs/osc_eval:baseline \
+        --b hexa_discovery/data/runs/osc_episodic_rag:eval_frozen
 
 Each side is `<run-dir>:<arm>`, where `<arm>` is the value `rejudge.py` stored
 (`baseline`, `with_bank`, or `eval_frozen` for a memory arm, which it takes from

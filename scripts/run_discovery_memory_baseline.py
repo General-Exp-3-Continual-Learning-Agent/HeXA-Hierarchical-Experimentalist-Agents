@@ -12,12 +12,12 @@ against the no-bank baselines already on disk and against HeXA's bank arm.
 
     # the real thing
     python scripts/run_discovery_memory_baseline.py --arm oscillator \
-        --out discovery-agents/hexa_discovery/data/runs/osc_episodic_rag
+        --out hexa_discovery/data/runs/osc_episodic_rag
 
 Then re-judge with the independent judge before reading anything, exactly as
 the HeXA arms were:
 
-    cd discovery-agents && python -m hexa_discovery.rejudge \
+    python -m hexa_discovery.rejudge \
         --run-dir hexa_discovery/data/runs/osc_episodic_rag/eval_frozen \
         --judge-model claude-opus-4-6
 
@@ -66,7 +66,7 @@ from baselines.orbit.embedding import (  # noqa: E402
 DEFAULT_KEY = HASHING
 
 REPO = Path(__file__).resolve().parent.parent
-DATA = REPO / "discovery-agents" / "hexa_discovery" / "data"
+DATA = REPO / "hexa_discovery" / "data"
 OFFLINE = DATA / "offline" / "sonnet"
 
 #: HeXA's cross-world training order, from `data/runs/logo_global_term/manifest.json`.

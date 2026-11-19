@@ -37,7 +37,6 @@ results/
 results_core/
 gepa_opt/runs/
 gepa_opt/
-discovery-agents/
 Direct Results/
 *.zip
 logs/
@@ -62,7 +61,7 @@ baselines/data_ace/
 baselines/tests/_teststore_rb/
 skillrl/data/
 skillrl/loops/data/
-discovery-agents/hexa_discovery/data/
+hexa_discovery/data/
 training/SKILL-RL/analysis/
 training/SKILL-RL/data/
 training/SKILL-RL/cross_banks/

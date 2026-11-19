@@ -6,7 +6,7 @@ untouched; everything DiscoverPhysics-specific is here, the same split
 
 The arms run under HeXA's own DiscoverPhysics protocol so they land paired,
 per seed, against the existing no-bank baselines in
-`discovery-agents/hexa_discovery/data/runs/`:
+`hexa_discovery/data/runs/`:
 
   within-world   offline init on the world's 5 bank-free episodes (seeds
                  100-104), 5 build rounds x 3 seeds (200-214), freeze,

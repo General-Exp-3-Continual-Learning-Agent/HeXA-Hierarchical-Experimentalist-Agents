@@ -117,6 +117,7 @@ then runs to completion.
 ═══ TARGET LEVEL: {target_level} ═══
 
 {target_block}
+{structural_hint_block}
 ═══ TASK ═══
 
 Produce a SKILL BANK for the target level. The bank must contain:
@@ -236,6 +237,7 @@ then runs to completion.
 ═══ TARGET LEVEL: {target_level} ═══
 
 {target_block}
+{structural_hint_block}
 ═══ TASK ═══
 
 Produce a SKILL BANK for the target level. The bank must contain:
@@ -515,6 +517,7 @@ will reward.
 ═══ TARGET TASK: {target_level} ═══
 
 {target_block}
+{structural_hint_block}
 ═══ TASK ═══
 
 Produce a SKILL BANK for the target task. The bank must contain:
@@ -1795,6 +1798,7 @@ def synthesize_target_bank(
     output_dir: Path,
     teacher_model: str = TEACHER_MODEL,
     target_block_override: str | None = None,
+    structural_hint: str | None = None,
     transfer_guard: bool = False,
     source_critic: bool = False,
     target_priors: bool = False,
@@ -1910,11 +1914,17 @@ def synthesize_target_bank(
             "paragraph; pass domain_block."
         )
 
+    structural_hint_block = (
+        f"\n{structural_hint.strip()}\n"
+        if structural_hint else ""
+    )
+
     prompt = prompt_template.format(
         n_sources=len(source_bank_paths),
         source_blocks="\n\n---\n\n".join(source_bank_blocks),
         target_level=target_level,
         target_block=target_block,
+        structural_hint_block=structural_hint_block,
         domain_block=(domain_block or ""),
         transfer_guard_block=(TRANSFER_GUARD_BLOCK if transfer_guard else "")
                              + (SOURCE_CRITIC_BLOCK if source_critic else ""),

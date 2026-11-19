@@ -15,7 +15,7 @@ The log carries the independent explanation score and reward but not
 log names, so nothing is recomputed from scratch and nothing is re-judged.
 
     python scripts/repair_discovery_rejudge.py \
-        --run-dir discovery-agents/hexa_discovery/data/runs/osc_eval
+        --run-dir hexa_discovery/data/runs/osc_eval
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ import re
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "discovery-agents"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from hexa_discovery.config import PASS_ERR_THRESHOLD  # noqa: E402
 from hexa_discovery.rejudge import (  # noqa: E402

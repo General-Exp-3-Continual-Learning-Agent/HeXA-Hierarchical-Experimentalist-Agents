@@ -30,7 +30,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Optional
 
-_DISCOVERY = Path(__file__).resolve().parents[2] / "discovery-agents"
+_DISCOVERY = Path(__file__).resolve().parents[2]  # HeXA root (hexa_discovery/)
 if str(_DISCOVERY) not in sys.path:
     sys.path.insert(0, str(_DISCOVERY))
 
