@@ -117,7 +117,6 @@ then runs to completion.
 ═══ TARGET LEVEL: {target_level} ═══
 
 {target_block}
-{structural_hint_block}
 ═══ TASK ═══
 
 Produce a SKILL BANK for the target level. The bank must contain:
@@ -164,6 +163,18 @@ Produce a SKILL BANK for the target level. The bank must contain:
 8. **Mistakes**: derive each from source-bank mistakes or from the failure
    modes those mistakes imply. Apply the same hard constraints (cite sources,
    no invented coordinates, target-side entities, specific mechanism).
+
+═══ PARAMETER RE-CALIBRATION ═══
+
+A source bank's preferred value for a parameter — or its cap on one — describes
+the body THAT level had to move; it is not a limit on the target. The one
+magnitude the agent sets here is the red ball's radius, which fixes its mass and
+so the momentum it delivers on contact. If the body the target requires moving
+is heavier or mechanically coupled (resting on a pivot, loaded at one end,
+carrying something), the source radii are too small for it: emit a skill that
+scales the radius up, starting well above the source-calibrated values, and that
+separates "too little momentum" from "wrong contact geometry" — only the first
+is fixed by a larger radius. Name no specific target radius.
 {transfer_guard_block}
 ═══ OUTPUT FORMAT (single JSON object) ═══
 
@@ -237,7 +248,6 @@ then runs to completion.
 ═══ TARGET LEVEL: {target_level} ═══
 
 {target_block}
-{structural_hint_block}
 ═══ TASK ═══
 
 Produce a SKILL BANK for the target level. The bank must contain:
@@ -1591,12 +1601,30 @@ def _run_per_item_transfer(target_level: str, target_scene: str,
 #: Prompt variants selectable by name. ``None`` / ``"auto"`` keeps the historic
 #: teacher-model-prefix routing, so existing InterPhyre invocations are unchanged.
 #: "full" and "slim" are the older names for "physics" and "physics-slim".
+# ── Hinted physics prompt (DiscoverPhysics only) ───────────────────────
+# The InterPhyre main cross-level runs use CROSS_LEVEL_SYNTHESIS_PROMPT exactly
+# as the PRA pipeline does: nothing sits between the factual target description
+# and the task, so the teacher gets no structural scaffolding for the target.
+# hexa_discovery, however, has always passed a `structural_hint` (the four
+# stages a discovery episode must clear) into the physics prompt. Deriving its
+# template from the base one keeps that single caller byte-identical to its
+# historic prompt while leaving the InterPhyre variants hint-free, and the two
+# stay in lockstep if the base prompt is edited.
+CROSS_LEVEL_SYNTHESIS_PROMPT_HINTED = CROSS_LEVEL_SYNTHESIS_PROMPT.replace(
+    "{target_block}\n═══ TASK ═══",
+    "{target_block}\n{structural_hint_block}\n═══ TASK ═══",
+)
+assert "{structural_hint_block}" in CROSS_LEVEL_SYNTHESIS_PROMPT_HINTED
+
+
 PROMPT_VARIANTS: dict[str, tuple[str, str]] = {
     "physics": (CROSS_LEVEL_SYNTHESIS_PROMPT, "physics (8-rule, with audit fields)"),
     "physics-slim": (CROSS_LEVEL_SYNTHESIS_PROMPT_QWEN, "physics-slim (3-rule, no audit fields)"),
     "full-neutral": (CROSS_LEVEL_SYNTHESIS_PROMPT_NEUTRAL,
                      "full-neutral (9-rule, audit fields, no hint examples)"),
     "text-game": (CROSS_TASK_SYNTHESIS_PROMPT, "text-game (9-rule, with audit fields)"),
+    "physics-hint": (CROSS_LEVEL_SYNTHESIS_PROMPT_HINTED,
+                     "physics-hint (8-rule, audit fields, accepts structural_hint; DiscoverPhysics)"),
 }
 PROMPT_VARIANTS["full"] = PROMPT_VARIANTS["physics"]
 PROMPT_VARIANTS["slim"] = PROMPT_VARIANTS["physics-slim"]
@@ -1912,6 +1940,18 @@ def synthesize_target_bank(
         raise ValueError(
             f"Prompt variant '{prompt_label}' parameterises the shared-environment "
             "paragraph; pass domain_block."
+        )
+
+    # The InterPhyre physics templates carry no {structural_hint_block} slot --
+    # their main cross-level runs are kept byte-identical to the PRA pipeline,
+    # so nothing may be injected between the target description and the task.
+    # Only the domain-neutral cross-task template (ORBIT games, DiscoverPhysics)
+    # accepts a hint. Fail loudly rather than dropping a caller's hint silently.
+    if structural_hint and "{structural_hint_block}" not in prompt_template:
+        raise ValueError(
+            f"Prompt variant '{prompt_label}' takes no structural_hint "
+            "(the InterPhyre physics prompts have no hint slot); pass "
+            "prompt_variant='text-game' or drop structural_hint."
         )
 
     structural_hint_block = (

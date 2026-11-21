@@ -59,8 +59,11 @@ def main() -> None:
                         "its answer-free scene block.")
     p.add_argument("--output-dir", required=True)
     p.add_argument("--teacher-model", default="claude-sonnet-5")
-    p.add_argument("--prompt-variant", default="physics",
-                   choices=("physics", "physics-slim", "text-game"))
+    # "physics-hint" is the physics prompt with the structural-hint slot this
+    # script has always filled; plain "physics" is now the hint-free InterPhyre
+    # main-run template and rejects --structural-hint content.
+    p.add_argument("--prompt-variant", default="physics-hint",
+                   choices=("physics-hint", "physics", "physics-slim", "text-game"))
     p.add_argument("--dry-run", action="store_true",
                    help="Build and dump the prompt without calling the teacher.")
     args = p.parse_args()
