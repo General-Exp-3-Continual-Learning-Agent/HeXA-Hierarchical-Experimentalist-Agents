@@ -158,6 +158,21 @@ def run_evolving_loop(
             "factual-block variants (no strategy hints leaked to teacher)."
         )
 
+    # Small Qwen teachers lose the task in the full ~2k-token evolution prompt:
+    # they return flat confidences, stop merging, and emit near-duplicate skills
+    # until the cap. The slim template keeps every evolution rule and cuts the
+    # worked examples, per-rule rationales and optional audit fields.
+    # Patched AFTER the catapult block on purpose: catapult keeps its factual
+    # scene block on the two round-1 prompts, the slim template drives rounds 2+.
+    from skillrl.distillation import teacher_prompts_qwen_slim as _tpq
+    if _tpq.is_small_qwen_teacher(teacher_model):
+        _tpq.patch()
+        print(
+            f"  [Prompts] Teacher {teacher_model} is a small Qwen: patched "
+            "evolving_distill with the slim evolution prompt (~1/3 the length, "
+            "same evolution rules, no audit fields)."
+        )
+
     # ── Resume detection ─────────────────────────────────────────
     progress_path = output_dir / "progress_evolving.json"
     resume_from_round = 0

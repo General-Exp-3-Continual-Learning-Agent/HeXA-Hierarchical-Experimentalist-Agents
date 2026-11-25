@@ -156,6 +156,56 @@ HeXA/
 
 Wrappers forward every flag to the underlying module — `python scripts/run_hexa.py --help` prints the same options as `python -m skillrl.loops.evolving_loop --help`.
 
+### Small open-weight actors (Qwen2.5-3B)
+
+HeXA uses the same actor model as its teacher, so a 3B run asks one small model to
+both solve episodes and maintain the bank. The paper's Qwen2.5-3B runs therefore use
+a different **configuration** from the 7B and Sonnet runs. The method is unchanged —
+same loop, same retriever, same update rule, same frozen-bank evaluation — and the
+three settings below exist because the defaults were tuned against larger teachers.
+
+**1. Slim evolution prompt (automatic).** The default
+`SKILL_BANK_EVOLUTION_PROMPT` is ~8.2k characters and is resent on every round from
+round 2 on, on top of the bank and the trajectory block. A 3B teacher loses the task
+in that much preamble: it returns flat confidences, stops merging, and emits
+near-duplicate skills until the cap. `skillrl/distillation/teacher_prompts_qwen_slim.py`
+keeps every evolution rule — complete-bank output, hard caps, `is_new`/`source_seeds`,
+confidence moving in both directions, numeric constants copied through, duplicate and
+dead-skill removal, contrastive mistakes, self-consistency — and cuts the worked
+examples, the per-rule rationales, and the optional audit fields that
+`evolving_distill` already reads with a default. Placeholders are identical, so it is
+a drop-in rebind. `evolving_loop` applies it automatically when the teacher model name
+looks like a 3B Qwen, so **no other model's runs are affected**: 7B, Qwen3-8B, gpt-oss
+and Sonnet all keep the full template.
+
+**2. Bank capacity 5 skills / 3 mistakes** (`--max-skills 5 --max-mistakes 3`, default
+10/5). At the default the 3B teacher filled the bank with near-paraphrases that all
+carried the same uninformative confidence, which makes the retriever's choice among
+them arbitrary. A tighter cap forces the evolver to merge or drop rather than
+accumulate. Keep the injection caps consistent with capacity — asking for 6 skills out
+of a 5-skill bank just injects the whole bank.
+
+**3. Six seeds per round** (`--seeds-per-round 6`, default 3). Evolution is
+contrastive: it needs a success and a failure from the same round to say what the
+success did differently. At a small actor's solve rate, 3 seeds/round frequently
+produced a round with no success at all, so the evolver had nothing to contrast and
+kept rewriting the same few ideas. Wider rounds, same number of rounds.
+
+```bash
+python scripts/run_hexa.py \
+  --level two_body_problem \
+  --initial-traj-dir Initial_trajectories/two_body_problem \
+  --output-dir runs/tbp_qwen3b \
+  --model openai:Qwen/Qwen2.5-3B-Instruct \
+  --teacher-model openai:Qwen/Qwen2.5-3B-Instruct \
+  --num-rounds 17 --seeds-per-round 6 --start-seed 6 \
+  --max-skills 5 --max-mistakes 3
+```
+
+The actor prompt, tool set, retriever, update strategy and evaluation protocol
+(frozen bank, `--no-evolver`, held-out seeds) are exactly those used for every other
+model in the paper.
+
 ---
 
 ## Documentation
