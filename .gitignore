@@ -35,8 +35,6 @@ htmlcov/
 eval_results_*/
 results/
 results_core/
-gepa_opt/runs/
-gepa_opt/
 Direct Results/
 *.zip
 logs/

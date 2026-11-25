@@ -27,7 +27,7 @@ class SessionLimitError(RuntimeError):
 
     This must propagate (NOT be swallowed into a fake "failure" action): a
     session-limit episode is not a real failure, and recording it as one
-    poisons GEPA's optimization and test scores. Callers catch this to stop
+    poisons the run's scores. Callers catch this to stop
     the run cleanly with the checkpoint intact, then resume in a fresh session.
     """
 

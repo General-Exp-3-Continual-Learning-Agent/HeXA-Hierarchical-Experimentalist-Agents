@@ -4,7 +4,7 @@
 produces a `RetrievedBlock`, `Problem.build_prompt` accepts a guidelines string, and
 **no code has ever joined them**. Consequently `Attempt.added_tokens` has never been
 populated from a real injection, and the added-token figure -- the x-axis of the
-Pareto comparison against CORE (0.92k), GEPA (1.29k), Episodic RAG (33.6k) and
+Pareto comparison against CORE (0.92k), Episodic RAG (33.6k) and
 MemRL (32.7k) -- is unverified. This module is that join.
 
 Two things it must get right, both of which fail silently otherwise.

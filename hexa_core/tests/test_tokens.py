@@ -6,7 +6,7 @@ Run with::
 
 Imports only :mod:`hexa_core.tokens` and stdlib -- deliberately not ``skillrl``
 or CORE. This suite backs CORE's Figure 3 number (added task-external context per
-eval item: CORE 0.92k, GEPA 1.29k, Episodic RAG 33.6k, MemRL 32.7k), and a
+eval item: CORE 0.92k, Episodic RAG 33.6k, MemRL 32.7k), and a
 token-counting test that fails because the skill bank moved would be worse than
 no test.
 

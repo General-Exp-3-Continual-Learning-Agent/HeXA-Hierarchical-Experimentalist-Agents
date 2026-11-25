@@ -26,10 +26,6 @@ matplotlib>=3.10.0
 # Progress bars (used in the runner)
 tqdm>=4.66.0
 
-# GEPA reflective prompt optimizer (only for gepa_opt/ — catapult prompt search).
-# The reflection + actor models run through the Claude Code CLI, so no API keys
-# or litellm backend are required for the catapult workflow.
-gepa>=0.1.1
 
 # Optional — only for the open-source / Qwen baselines (uncomment if needed):
 # torch>=2.1.0

@@ -2,7 +2,7 @@
 
 The headline number this supports is *added tokens per eval item*: the size of
 the guidelines block HExA injects, measured against the byte-identical CORE base
-prompt. CORE reports 0.92k, GEPA 1.29k, Episodic RAG 33.6k, MemRL 32.7k.
+prompt. CORE reports 0.92k, Episodic RAG 33.6k, MemRL 32.7k.
 
 ``tiktoken`` is used when available. The fallback is a word/char heuristic — it
 is fine for enforcing an injection budget but should not be quoted in a paper, so
