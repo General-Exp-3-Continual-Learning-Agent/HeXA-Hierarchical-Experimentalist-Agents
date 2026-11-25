@@ -591,7 +591,7 @@ if [ -n "${PIPELINE:-}" ]; then
     PIPE_CC="${PIPE_CONCURRENCY:-64}"
     PIPE_M1="${PIPELINE_M1:-1}"        # difficulty-weighted reward; 0 disables
 
-    PILOT=("$PY_BIN" -u "$REPO_DIR/scripts/run_pilot.py"
+    PILOT=("$PY_BIN" -u "$REPO_DIR/scripts/run_core_hexa.py"
            --base-url "$BASE_URL" --model "$SERVED_MODEL_NAME"
            --task "$PIPE_TASK" --concurrency "$PIPE_CC"
            --round-target "$PIPE_ROUNDS")
@@ -642,7 +642,7 @@ if [ -n "${PIPELINE:-}" ]; then
     #    here would make the real run measure the no-memory baseline for 2000 calls.
     #    Skipped for PIPELINE=train, where the caller has already smoked this task.
     #    Also skipped for core_matched, which does not run our actor at all -- the
-    #    smoke exercises run_pilot.py, so there it would only burn ~40 calls on an
+    #    smoke exercises run_core_hexa.py, so there it would only burn ~40 calls on an
     #    unrelated task before CORE's runner starts.
     if [ "${PIPELINE}" != "train" ] && [ "${PIPELINE}" != "eval_rerun" ] \
        && [ "${PIPELINE}" != "core_matched" ]; then

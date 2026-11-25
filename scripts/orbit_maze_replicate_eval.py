@@ -18,7 +18,7 @@ config; pass `--max-response-tokens` etc. only to deliberately change the arm.
 
 Usage
 -----
-    python scripts/replicate_maze_eval.py \\
+    python scripts/orbit_maze_replicate_eval.py \\
         --bank results/orbit_maze_hexa_v3/round9/bank.json \\
         --out results/orbit_maze_hexa_v3/eval_rep1 \\
         --model Qwen/Qwen3-8B --concurrency 40

@@ -24,7 +24,7 @@
 # this project: an over-long evolution response is rejected and
 # `evolve_skill_bank` keeps the previous bank, so a whole round learns nothing.
 #
-#   RUN_INDEX=1 VLLM_URL=http://gpu017:8000/v1 sbatch scripts/run_minesweeper_hexa_reps.sh
+#   RUN_INDEX=1 VLLM_URL=http://gpu017:8000/v1 sbatch scripts/run_orbit_minesweeper_hexa_reps.sh
 
 set -Eeuo pipefail
 REPO_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"

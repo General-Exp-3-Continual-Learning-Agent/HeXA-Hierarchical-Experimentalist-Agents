@@ -229,7 +229,7 @@ cp "$ENDPOINT_JSON" "$REPO_DIR/logs/vllm_endpoint_latest.json"
 echo "  endpoint written to: ${ENDPOINT_JSON}"
 echo
 echo "  export HEXA_VLLM_URL=${BASE_URL}"
-echo "  python scripts/run_orbit_maze_baseline.py --n 5 \\"
+echo "  python scripts/run_orbit_maze_zeroshot.py --n 5 \\"
 echo "      --model ${SERVED_MODEL_NAME} --reasoning-effort '' \\"
 echo "      --out results/orbit_maze_baseline"
 echo

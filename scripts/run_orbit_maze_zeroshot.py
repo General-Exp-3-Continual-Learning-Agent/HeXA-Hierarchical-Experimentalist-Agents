@@ -7,10 +7,10 @@ reference line the HExA arm is diffed against; ORBIT's Table 2 stays a cited
 cross-model reference and is never differenced directly (RECON §2, D3).
 
     # server up first:  sbatch scripts/serve_gpt_oss_vllm.sh
-    python scripts/run_orbit_maze_baseline.py --n 50 --out results/orbit_maze_baseline
+    python scripts/run_orbit_maze_zeroshot.py --n 50 --out results/orbit_maze_baseline
 
     # plumbing check, no server, oracle plays optimally:
-    python scripts/run_orbit_maze_baseline.py --n 3 --stub --out /tmp/smoke
+    python scripts/run_orbit_maze_zeroshot.py --n 3 --stub --out /tmp/smoke
 
 Serial by construction (D5): ORBIT's env seeding is global, so concurrent
 instances are not independently reproducible. Writes ``runs.jsonl`` (one full

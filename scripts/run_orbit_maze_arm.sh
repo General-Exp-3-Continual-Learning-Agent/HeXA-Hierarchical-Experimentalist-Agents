@@ -24,7 +24,7 @@
 #   ARM_ARGS="--n 256 --concurrency 12 --resume" \
 #   VLLM_URL=http://gpu013:8000/v1 \
 #   OUT=results/orbit_maze_baseline \
-#     sbatch scripts/run_maze_arm.sh
+#     sbatch scripts/run_orbit_maze_arm.sh
 #
 # For the HExA arm, set SCRIPT=scripts/run_orbit_maze_hexa.py.
 
@@ -33,7 +33,7 @@ set -Eeuo pipefail
 REPO_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 cd "$REPO_DIR"
 
-SCRIPT="${SCRIPT:-scripts/run_orbit_maze_baseline.py}"
+SCRIPT="${SCRIPT:-scripts/run_orbit_maze_zeroshot.py}"
 PYTHON="${PYTHON:-$HOME/.conda/envs/phyreagent/bin/python}"
 OUT="${OUT:-results/orbit_maze_baseline}"
 MODEL="${MODEL:-Qwen/Qwen3-8B}"

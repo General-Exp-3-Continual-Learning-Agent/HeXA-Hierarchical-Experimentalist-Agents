@@ -6,12 +6,12 @@
 #SBATCH --mem=16G
 #SBATCH -t 12:00:00
 #SBATCH -o logs/orbit_memory_%j.log
-# No -e: stderr merges into the same file, matching run_maze_arm.sh -- reading a
+# No -e: stderr merges into the same file, matching run_orbit_maze_arm.sh -- reading a
 # run's story across two files interleaved by nothing is a waste of time.
 
 # ─── One Episodic RAG / MemRL arm on ORBIT Maze or Mastermind ────────────────
 #
-# CPU only, like run_maze_arm.sh: the client waits on the vLLM server the whole
+# CPU only, like run_orbit_maze_arm.sh: the client waits on the vLLM server the whole
 # time. The GPU belongs to the separate serve_gpt_oss_vllm.sh job it talks to.
 #
 #   TASK=mastermind METHOD=memrl \

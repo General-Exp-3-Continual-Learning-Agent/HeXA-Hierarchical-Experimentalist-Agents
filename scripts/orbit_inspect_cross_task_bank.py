@@ -17,7 +17,7 @@ Three checks, in increasing order of how much they need a human:
 
 Exit code is non-zero if a hard gate fails.
 
-    python scripts/inspect_cross_task_bank.py --dir results/orbit_transfer/maze_from_minesweeper/run0
+    python scripts/orbit_inspect_cross_task_bank.py --dir results/orbit_transfer/maze_from_minesweeper/run0
 """
 
 from __future__ import annotations

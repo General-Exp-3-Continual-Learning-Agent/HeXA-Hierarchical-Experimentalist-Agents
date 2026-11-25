@@ -62,7 +62,7 @@ from hexa_core.seeds import (
     core_generation_seed,
 )
 
-#: Matches HeXA's own default (`run_pilot.py --llm-seed` is not exposed; CORE's
+#: Matches HeXA's own default (`run_core_hexa.py --llm-seed` is not exposed; CORE's
 #: own `--llm-seed` default is 42, transcribed in `hexa_core/train_baseline.py`).
 LLM_SEED = 42
 

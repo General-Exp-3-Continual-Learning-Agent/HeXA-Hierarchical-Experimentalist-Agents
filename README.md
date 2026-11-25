@@ -56,7 +56,7 @@ HeXA/
 |---|---|---|
 | `scripts/run_hexa.py` | `skillrl.loops.evolving_loop` | **HeXA** (offline→online evolving) — headline method |
 | `scripts/run_hexa_catapult.py` | `skillrl.distillation.teacher_prompts_catapult` | Dedicated catapult entry point (equivalent to `run_hexa.py --level catapult`) |
-| `scripts/run_hexa_iterative.py` | `skillrl.loops.iterative_loop` | Off2On with re-distillation each round |
+| `scripts/run_hexa_off2on_iterative.py` | `skillrl.loops.iterative_loop` | Off2On with re-distillation each round |
 | `scripts/run_hexa_offline.py` | `skillrl.loops.offline_loop` | Distill once, evaluate against fixed bank |
 | `scripts/run_hexa_online_evolving.py` | `skillrl.loops.online_evolving_loop` | Online start, then evolve |
 | `scripts/run_hexa_online_iterative.py` | `skillrl.loops.online_iterative_loop` | Online start, then re-distill each round |

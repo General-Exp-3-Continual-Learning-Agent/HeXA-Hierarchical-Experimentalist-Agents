@@ -6,11 +6,11 @@
 #SBATCH --mem=24G
 #SBATCH -t 12:00:00
 #SBATCH -o logs/dc_phase4_%j.log
-# stderr merged into stdout, same reasoning as run_maze_arm.sh.
+# stderr merged into stdout, same reasoning as run_orbit_maze_arm.sh.
 
 # ─── cross-task transfer Phase 4: all eight zero-shot eval arms, sequentially ───────────
 #
-# Batch rather than login node for the same reasons as run_maze_arm.sh: eight
+# Batch rather than login node for the same reasons as run_orbit_maze_arm.sh: eight
 # 256-instance arms is a multi-hour job, and the login node's `python` has no
 # numpy -- the deps live in the phyreagent conda env.
 #

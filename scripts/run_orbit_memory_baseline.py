@@ -520,8 +520,8 @@ def main() -> int:
     print(f"retrieval: {summary['retrieval']}")
     print(f"\nwall clock {summary['wall_clock_s']:.0f}s -> {out_dir}")
     print("\nnext: diff against the no-bank arm on clean episode-1, paired by "
-          "instance_id. Run run_orbit_maze_baseline.py / "
-          "run_orbit_mastermind_baseline.py on the same --eval-size.")
+          "instance_id. Run run_orbit_maze_zeroshot.py / "
+          "run_orbit_mastermind_zeroshot.py on the same --eval-size.")
     return 0
 
 

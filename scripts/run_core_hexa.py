@@ -30,9 +30,9 @@ and the bank itself for memorised answers.
 
 Usage
 -----
-    python scripts/run_pilot.py --smoke              # ~40 calls, wiring check
-    python scripts/run_pilot.py                      # the real pilot
-    python scripts/run_pilot.py --task tower-of-hanoi --n-train 5
+    python scripts/run_core_hexa.py --smoke              # ~40 calls, wiring check
+    python scripts/run_core_hexa.py                      # the real pilot
+    python scripts/run_core_hexa.py --task tower-of-hanoi --n-train 5
 """
 
 from __future__ import annotations

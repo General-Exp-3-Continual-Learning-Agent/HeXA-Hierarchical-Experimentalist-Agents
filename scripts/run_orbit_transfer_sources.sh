@@ -23,7 +23,7 @@
 #
 #   SERVER_JOB=63790814 sbatch scripts/run_orbit_transfer_sources.sh
 #
-# Every arm runs through scripts/run_maze_arm.sh, which is task-agnostic: it only
+# Every arm runs through scripts/run_orbit_maze_arm.sh, which is task-agnostic: it only
 # needs SCRIPT, OUT, ARM_ARGS, MODEL and VLLM_URL.
 
 set -Eeuo pipefail
@@ -51,7 +51,7 @@ VLLM_URL=$(python -c "import json,sys; print(json.load(open('${ENDPOINT}'))['bas
 echo "[$(date)] endpoint ${VLLM_URL}"
 curl -sf "${VLLM_URL}/models" >/dev/null || { echo "ERROR: ${VLLM_URL} not answering"; exit 1; }
 
-# run_maze_arm.sh appends `--model` and `--out` itself, so ARM_ARGS must not
+# run_orbit_maze_arm.sh appends `--model` and `--out` itself, so ARM_ARGS must not
 # carry either; passing --out twice makes argparse take the last one silently.
 submit () {  # submit <dependency-or-empty> <walltime> <script> <out> <args...>
     local dep="$1" walltime="$2" script="$3" out="$4"; shift 4
@@ -59,14 +59,14 @@ submit () {  # submit <dependency-or-empty> <walltime> <script> <out> <args...>
     [[ -n "$dep" ]] && flags+=(--dependency="afterany:${dep}")
     sbatch "${flags[@]}" --parsable \
         --export=ALL,SCRIPT="$script",OUT="$out",MODEL="$MODEL",VLLM_URL="$VLLM_URL",ARM_ARGS="$*" \
-        scripts/run_maze_arm.sh
+        scripts/run_orbit_maze_arm.sh
 }
 
 BASE_IDS=()
 for task in minesweeper wordle; do
     for run in 0 1 2; do
         out="results/orbit_${task}_baseline/run${run}"
-        id=$(submit "" 6:00:00 scripts/run_orbit_source_baseline.py "$out" \
+        id=$(submit "" 6:00:00 scripts/run_orbit_source_zeroshot.py "$out" \
              --task "$task" --run-index "$run" --concurrency 8)
         echo "baseline ${task} run${run} -> job ${id}"
         BASE_IDS+=("$id")

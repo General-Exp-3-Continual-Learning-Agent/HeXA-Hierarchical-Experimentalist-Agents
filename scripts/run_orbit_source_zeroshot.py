@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """No-bank baseline on a cross-task transfer source task -- Phase 2's gate, not a headline.
 
-Mirrors `run_orbit_mastermind_baseline.py`. Same actor, same record schema, no
+Mirrors `run_orbit_mastermind_zeroshot.py`. Same actor, same record schema, no
 guidelines injected, so the system prompt is byte-identical to ORBIT's.
 
 **Three runs, by design.** Every ORBIT arm in this project so far is n=1, which

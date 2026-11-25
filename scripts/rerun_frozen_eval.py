@@ -7,7 +7,7 @@ checked against a larger token budget before it is believed -- and paying for a 
 30-round retrain just to change one eval-time setting wastes the 600+300 calls of
 training that already happened. `_frozen_eval` (`hexa_core/passive_loop.py:606`) is
 self-contained: task + frozen bank + a generate function, no training state. This
-script calls it twice (with_memory=True/False) exactly as `run_pilot.py` does, with the
+script calls it twice (with_memory=True/False) exactly as `run_core_hexa.py` does, with the
 same seeding (`llm_seed`, `run_index`) so the pairing is identical to the original run
 -- only the client's `max_tokens` differs.
 

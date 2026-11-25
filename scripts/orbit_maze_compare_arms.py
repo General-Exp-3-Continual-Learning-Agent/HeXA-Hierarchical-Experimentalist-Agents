@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Paired comparison of two Maze arms (DESIGN_PHASE3_MAZE §14).
 
-    python scripts/compare_orbit_maze_arms.py \
+    python scripts/orbit_maze_compare_arms.py \
         --a results/orbit_maze_baseline \
         --b results/orbit_maze_hexa/eval_frozen \
         --out results/comparison_hexa_vs_nobank.json

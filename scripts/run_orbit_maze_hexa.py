@@ -2,7 +2,7 @@
 """Phase 3: within-task HExA on ORBIT Maze.
 
 Runs the round loop over training instances, then a frozen-bank eval on held-out
-instances. Companion to ``run_orbit_maze_baseline.py``, which produces the no-bank
+instances. Companion to ``run_orbit_maze_zeroshot.py``, which produces the no-bank
 arm this is diffed against -- same instances, same sampling seeds, so the two are
 paired (DESIGN_PHASE3_MAZE §14).
 
@@ -325,7 +325,7 @@ def main() -> int:
     print(f"\nwall clock {time.monotonic() - started:.0f}s")
     print(f"wrote {args.out}")
     print("\nnext: diff against the no-bank arm on `clean` episode-1, paired by "
-          "instance (§14). Run run_orbit_maze_baseline.py on the same --eval-size.")
+          "instance (§14). Run run_orbit_maze_zeroshot.py on the same --eval-size.")
     return 0
 
 

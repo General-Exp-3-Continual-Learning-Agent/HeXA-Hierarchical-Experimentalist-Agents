@@ -9,11 +9,11 @@ rule used by ``run_hexa.py``.
 
 Forwards every flag to ``skillrl.loops.iterative_loop``. Help:
 
-    python scripts/run_hexa_iterative.py --help
+    python scripts/run_hexa_off2on_iterative.py --help
 
 Example:
 
-    python scripts/run_hexa_iterative.py \\
+    python scripts/run_hexa_off2on_iterative.py \\
         --level pass_the_parcel \\
         --initial-traj-dir Initial_trajectories/pass_the_parcel \\
         --num-rounds 3 --seeds-per-round 3

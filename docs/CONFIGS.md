@@ -5,7 +5,7 @@ HeXA is one cell in a 3×3 design space:
 |              | **Static** (no rounds)         | **Iterative** (re-distill each round) | **Evolving** (incrementally evolve) |
 |---           |---                             |---                                    |---                                  |
 | **Offline**  | `run_hexa_offline.py`          | —                                     | —                                   |
-| **Off2On**   | —                              | `run_hexa_iterative.py`               | **`run_hexa.py`** *(HeXA)*          |
+| **Off2On**   | —                              | `run_hexa_off2on_iterative.py`               | **`run_hexa.py`** *(HeXA)*          |
 | **Online**   | —                              | `run_hexa_online_iterative.py`        | `run_hexa_online_evolving.py`       |
 
 Off2On = "offline-to-online": round 1 distills from initial offline trajectories, rounds 2+ collect online. **Online** = "pure online": round 1 runs the agent with no skill bank, rounds 2+ distill/evolve from the online rollouts.
@@ -18,7 +18,7 @@ Off2On = "offline-to-online": round 1 distills from initial offline trajectories
 - Rounds 2+: `evolve_skill_bank(prev_bank, new_trajs)` — preserves confidence for retained skills, enforces `MAX_SKILLS_PER_LEVEL`
 - Reported in the paper as **HeXA** with `--seeds-per-round 3`
 
-### Off2On / Iterative — `run_hexa_iterative.py`
+### Off2On / Iterative — `run_hexa_off2on_iterative.py`
 **Loop:** [skillrl/loops/iterative_loop.py](../skillrl/loops/iterative_loop.py) · `run_iterative_loop`
 - Each round re-distills from scratch using the latest round's trajectories + best N carry-over successes
 - The teacher does **not** see the prior bank

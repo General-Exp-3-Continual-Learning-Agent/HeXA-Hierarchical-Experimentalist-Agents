@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """No-bank baseline on Mastermind -- the arm every later claim is paired against.
 
-Mirrors `run_orbit_maze_baseline.py`: the same actor, the same record schema, no
+Mirrors `run_orbit_maze_zeroshot.py`: the same actor, the same record schema, no
 guidelines injected, so the system prompt is byte-identical to ORBIT's.
 """
 

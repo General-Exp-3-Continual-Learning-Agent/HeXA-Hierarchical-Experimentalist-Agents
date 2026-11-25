@@ -6,7 +6,7 @@ called. The leaked/clean partition has to exist ahead of the Phase 2 baseline
 rather than being retrofitted (DECISIONS.md, the section following D1), so this
 script is a prerequisite for Phase 2 and not a reporting convenience.
 
-    python scripts/build_orbit_maze_pools.py --out results/orbit_maze_pools
+    python scripts/orbit_maze_build_pools.py --out results/orbit_maze_pools
 
 Writes ``pools.json`` (every instance, both splits, with identity and leakage
 flags) and ``summary.json`` (the manifest plus aggregate counts).

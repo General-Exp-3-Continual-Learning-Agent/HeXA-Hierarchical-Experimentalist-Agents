@@ -125,7 +125,7 @@ def main() -> int:
 
     print("\n[phase 3] inspection follows -- read it before spending eval compute")
     return subprocess.run(
-        [sys.executable, "scripts/inspect_cross_task_bank.py", "--dir", str(out),
+        [sys.executable, "scripts/orbit_inspect_cross_task_bank.py", "--dir", str(out),
          "--target", args.target, *sum((["--source", x] for x in sources), [])],
         cwd=Path(__file__).resolve().parent.parent,
     ).returncode

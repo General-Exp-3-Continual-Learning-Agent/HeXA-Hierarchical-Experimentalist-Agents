@@ -10,7 +10,7 @@ The number this arm has to beat is measured, but read the scoring note first.
 ORBIT's `_is_episode_success` is `terminated and reward > 0`, and GEM's Mastermind
 reward is black_pegs/4, so an episode that exhausts its three guesses with one peg
 correct is flagged a success. That inflates the flagged rate 3.51x over the rate at
-which the code is actually cracked. Score with `scripts/score_mastermind.py`.
+which the code is actually cracked. Score with `scripts/orbit_mastermind_score.py`.
 
 On true solves (reward 4/4), the gpt-oss-120b no-bank baseline is ep3 0.270 /
 any 0.273 -- not the 0.508 / 0.723 the flagged metric reports. A single hand-written

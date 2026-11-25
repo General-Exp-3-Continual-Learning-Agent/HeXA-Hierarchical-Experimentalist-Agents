@@ -30,8 +30,8 @@ not have credited. Report the primary rule; use this for a robustness check.
 Instances whose code cannot be pinned keep their original fields and are marked
 `scoring.rescored = false`.
 
-    python scripts/rescore_mastermind_runs.py --apply      # writes, keeps .bak
-    python scripts/rescore_mastermind_runs.py              # dry run
+    python scripts/orbit_mastermind_rescore_runs.py --apply      # writes, keeps .bak
+    python scripts/orbit_mastermind_rescore_runs.py              # dry run
 """
 
 from __future__ import annotations

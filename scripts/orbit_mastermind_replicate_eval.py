@@ -21,7 +21,7 @@ path.
 
 Usage
 -----
-    python scripts/replicate_mastermind_eval.py \\
+    python scripts/orbit_mastermind_replicate_eval.py \\
         --bank results/orbit_mastermind_hexa_qwen8/round7/bank.json \\
         --out results/orbit_mastermind_hexa_qwen8/eval_rep1 \\
         --model Qwen/Qwen3-8B --max-response-tokens 16384 --concurrency 40

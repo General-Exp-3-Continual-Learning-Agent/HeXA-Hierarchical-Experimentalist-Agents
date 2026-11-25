@@ -7,11 +7,11 @@ actor, same freeze-then-evaluate split, so each arm lands paired *per seed*
 against the no-bank baselines already on disk and against HeXA's bank arm.
 
     # plumbing check -- no model calls, scripted episodes
-    python scripts/run_discovery_memory_baseline.py --arm oscillator --stub \
+    python scripts/run_discoverphysics_memory.py --arm oscillator --stub \
         --out /tmp/smoke
 
     # the real thing
-    python scripts/run_discovery_memory_baseline.py --arm oscillator \
+    python scripts/run_discoverphysics_memory.py --arm oscillator \
         --out hexa_discovery/data/runs/osc_episodic_rag
 
 Then re-judge with the independent judge before reading anything, exactly as
