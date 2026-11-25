@@ -32,6 +32,92 @@ For other levels, use `python scripts/run_hexa.py --level <level> --initial-traj
 
 ---
 
+## Results at a glance
+
+Rough headline numbers from the paper. Every arm differs only in what is added to
+the actor's context, every memory is built on training instances and frozen
+before evaluation, and all arms are paired on the same held-out instances.
+Appendices carry the significance tests, token budgets and per-episode splits.
+
+### InterPhyre (our suite) — held-out solve rate (%)
+
+| Method | catapult | PtP | DtE (7B) | TBP (7B) | Tokens/ep. |
+|---|---|---|---|---|---|
+| Zero-shot | 0.0 | 0.0 | 7.0 | 0.0 | 0 |
+| ReAct | 11.0 | 20.0 | 63.3 | 12.0 | 0 |
+| Reflexion | 21.3 | 32.0 | 76.0 | 27.9 | 287 |
+| Episodic RAG | 62.9 | 60.0 | 42.7 | 18.7 | 6,513 |
+| MemRL | 49.0 | 46.0 | 36.0 | 23.3 | 10,149 |
+| **HeXA** | **82.7** | **96.0** | **82.7** | **50.0** | **2,392** |
+
+Claude Sonnet on catapult / pass-the-parcel, Qwen2.5-7B on down-to-earth /
+two-body. HeXA wins on every level while injecting fewer tokens than either
+memory baseline. Cross-level synthesis — a catapult bank written from other
+levels' banks, with no catapult trajectory ever seen — reaches **42.7%**, against
+11.0% for ReAct on the same level.
+
+### Interactive games — success in at least one of three episodes
+
+| Task | Actor | Zero-Shot | Episodic RAG | MemRL | HeXA |
+|---|---|---|---|---|---|
+| Mastermind | gpt-oss-120b | .683 | .650 | .690 | **.883** |
+| Mastermind | Qwen3-8B | .367 | .492 | .392 | **.640** |
+| Maze | gpt-oss-120b | .607 | .601 | **.667** | .649 |
+| Maze | Qwen3-8B | .479 | .483 | .513 | **.564** |
+
+Maze on gpt-oss-120b is the one setting of the ten external ones where HeXA is
+not the best method.
+
+Cross-task transfer holds up here too: a Mastermind bank synthesised from a
+**Wordle** bank plus a statement of Mastermind's rules, having seen *zero*
+Mastermind trajectories, scores **.933** — matching the within-task bank (.883)
+built from 80 target trajectories.
+
+### Reasoning and planning — accuracy on held-out items
+
+| Task | Zero-Shot | Episodic RAG | MemRL | HeXA |
+|---|---|---|---|---|
+| MathGAP | .510 | .560 | .600 | **.863** |
+| ZebraLogic | .560 | .720 | .650 | **.807** |
+| Tower of Hanoi | .263 | .377 | .273 | **.520** |
+| Matchstick | .737 | .767 | .703 | **.787** |
+
+gpt-oss-120b throughout.
+
+### DiscoverPhysics — explanation score from an independent judge
+
+| Task | Zero-Shot | Episodic RAG | MemRL | HeXA |
+|---|---|---|---|---|
+| oscillator | .516 | .822 | .780 | **.853** |
+| circle | .580 | .580 | .569 | **.916** |
+
+Claude Sonnet actor, judged by an independent model.
+
+### Robot manipulation — LIBERO-PRO success rate (%)
+
+HeXA's bank is injected into the **Pigey** agent, whose Claude Sonnet
+orchestrator drives a frozen pi-0.5 policy. The pi-0.5 row is the policy given
+the task instruction directly, with no orchestrator.
+
+| Method | Goal task | Goal swap | Object task | Object swap | Spatial task | Spatial swap |
+|---|---|---|---|---|---|---|
+| pi-0.5 | 24.4 | 36.4 | 10.4 | 16.8 | 56.4 | 47.6 |
+| Pigey | 30.4 | 43.2 | 28.0 | 26.0 | 70.4 | 51.6 |
+| **HeXA** | **56.8** | **73.6** | **53.6** | **35.6** | **77.2** | **63.2** |
+| Δ over Pigey | +26.4 | +30.4 | +25.6 | +9.6 | +6.8 | +11.6 |
+
+The bank helps on all six perturbation suites, +6.8 to +30.4 points over the same
+orchestrator without it — about +44% relative on average. The smallest gain is on
+the suite where the no-bank agent already does best.
+
+Scripts for these: the `scripts/run_orbit_*` family (games and cross-task
+transfer), `scripts/run_core_*` (reasoning and planning), and
+`scripts/run_discoverphysics_memory.py`. The LIBERO-PRO robotics integration is
+not on `main` — it lives on the `robotics_baseline` branch, since it depends on
+the Pigey agent and a pi-0.5 checkpoint rather than on this repo's simulator.
+
+---
+
 ## What's where
 
 ```
@@ -77,7 +163,7 @@ Wrappers forward every flag to the underlying module — `python scripts/run_hex
 - [docs/HEXA.md](docs/HEXA.md) — method walkthrough: distil → evolve cycle, bank capacity, evolution rule
 - [docs/CONFIGS.md](docs/CONFIGS.md) — variant matrix: Init × Update rule, mapped to scripts and files
 - [docs/CROSS_LEVEL.md](docs/CROSS_LEVEL.md) — meta-transfer (no target trajectories used)
-- [docs/ABLATIONS.md](docs/ABLATIONS.md) — reward ablation (contrastive-only) and skills-only ablation
+- [docs/ABLATIONS.md](docs/ABLATIONS.md) — every reported ablation: reward labels, initialization x update rule, within-level skill building, cross-level hierarchy, injection-time bank content
 
 ---
 
