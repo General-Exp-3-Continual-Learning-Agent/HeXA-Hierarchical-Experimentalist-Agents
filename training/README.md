@@ -89,3 +89,18 @@ sbatch examples/eval/slurm_eval.sh \
 ```
 
 Results are written to `logs/eval/eval<N>.jsonl` with a printed solve rate.
+
+## Layout note: vendored code
+
+Two directories here are intentionally vendored rather than imported, so the GRPO
+results are reproducible against the exact code they were produced with:
+
+- **`verl/` and `verl_tool/`** — a pinned copy of the
+  [verl](https://github.com/volcengine/verl) RL framework and its tool plugins.
+  Together these are the large majority of the files in this repository; they are
+  third-party code (see `../THIRD_PARTY_LICENSES.md`), not part of HExA itself.
+- **`SKILL-RL/`** — a frozen snapshot of the top-level `skillrl/` package, taken at
+  the time of the training runs. It is **not** a live copy and has since diverged
+  from `skillrl/`; the evolving-GRPO hooks (`verl_tool/hooks/skill_evolution.py`),
+  `examples/eval/` and `tools/` import from this snapshot on purpose. Change
+  `skillrl/` for new HExA work; change `SKILL-RL/` only to alter GRPO training.

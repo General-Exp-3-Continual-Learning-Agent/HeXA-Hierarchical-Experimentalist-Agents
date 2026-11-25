@@ -1,5 +1,0 @@
-gpu014
-Fri Nov  6 06:40:10 PM UTC 2026
-name, memory.total [MiB]
-NVIDIA A100-SXM4-80GB, 81920 MiB
-/var/spool/slurm/slurmd/job66801105/slurm_script: line 30: /home/udhanuka_umass_edu/Scalar_Research/HeXA/baselines/pigey_setup/activate.sh: No such file or directory

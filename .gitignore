@@ -40,10 +40,11 @@ gepa_opt/
 Direct Results/
 *.zip
 logs/
+slurm-*.out
+slurm-*.err
 Plots/
 *.gif
 *.mp4
-INSTALL.md
 
 # OS thumbnails
 Thumbs.db
@@ -68,3 +69,9 @@ training/SKILL-RL/cross_banks/
 training/SKILL-RL/FirstFiveTrajs/
 training/SKILL-RL/Skill_banks/
 *.pdf
+
+# Third-party reference clones kept locally, not part of this repo
+RoboDojo/
+ace/
+baselines/Pigey/
+reasoning-bank/
