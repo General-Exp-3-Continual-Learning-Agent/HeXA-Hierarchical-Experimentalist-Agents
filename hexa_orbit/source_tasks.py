@@ -1,4 +1,4 @@
-"""Design C source tasks: Minesweeper and Wordle, as Design-B-shaped instances.
+"""cross-task transfer source tasks: Minesweeper and Wordle, as within-task-shaped instances.
 
 Both are GEM environments reached through ORBIT's own ``GEMEnvAdapter``, exactly
 as Mastermind is, so this module is :mod:`hexa_orbit.mastermind` with the
@@ -11,7 +11,7 @@ These are **source** tasks. Nothing measured on them is a headline: their banks
 exist to be transferred to Maze and Mastermind (Phase 3), and their own held-out
 accuracy is a gate on whether the bank is worth transferring, not a claim.
 
-Two decisions from ``DESIGN_C_STATUS.md`` are implemented here rather than
+Two decisions from the cross-task transfer plan are implemented here rather than
 described:
 
 **D-C1 — Minesweeper's opening is pinned to (2, 2).** ``_setup_mines`` excludes

@@ -7,10 +7,10 @@
 #SBATCH -t 4:00:00
 #SBATCH -o logs/dc_p4_mm_%j.log
 
-# ─── Design C Phase 4, Mastermind only, on the ORBIT-paper config ────────────
+# ─── cross-task transfer Phase 4, Mastermind only, on the ORBIT-paper config ────────────
 #
 # Run after Phase 3's gates have been read by a person. The redo job stops at
-# Phase 3 by design: `run_design_c_phase3_all.py` exits non-zero when any bank is
+# Phase 3 by design: `run_orbit_transfer_synthesize_all.py` exits non-zero when any bank is
 # blocked and `set -e` halts there, so eval compute is never spent on a bank
 # nobody looked at.
 #
@@ -18,7 +18,7 @@
 # unaffected by the target-block fix, since a raw dump injects the SOURCE bank
 # and never reads the target description.
 #
-#   VLLM_URL=http://gpu017:8000/v1 sbatch scripts/run_design_c_phase4_mastermind.sh
+#   VLLM_URL=http://gpu017:8000/v1 sbatch scripts/run_orbit_transfer_eval_mastermind.sh
 
 set -Eeuo pipefail
 REPO_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
@@ -35,6 +35,6 @@ if ! curl -sf "${VLLM_URL}/models" >/dev/null 2>&1; then
 fi
 echo "[$(date)] endpoint ${VLLM_URL} is live"
 
-exec "$PYTHON" -u scripts/run_design_c_phase4_all.py \
+exec "$PYTHON" -u scripts/run_orbit_transfer_eval_all.py \
     --run-index 0 --concurrency "$CONCURRENCY" --model "$MODEL" \
     --base-url "$VLLM_URL" --target mastermind --no-ablation

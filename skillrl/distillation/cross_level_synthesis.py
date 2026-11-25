@@ -498,7 +498,7 @@ Be concise. Output ONLY the JSON object.
 # same kind of unseen specific that a catapult (x, y) was.
 #
 # It keeps the 8-rule discipline and the audit fields (source_skills,
-# transfer_rationale) rather than following the Qwen-slim variant: Design C's
+# transfer_rationale) rather than following the Qwen-slim variant: cross-task transfer's
 # Phase 3 manual inspection reads those fields, and the ORBIT teacher is
 # gpt-oss-120b, not a 7B model.
 
@@ -1783,7 +1783,7 @@ def verify_citations(
     per-turn citation check that guards within-task evolution
     (``evolving_distill.py:140``) has nothing to check against here. What *is*
     checkable is that each cited id exists in the source bank it names — the
-    only automatic guard against a fabricated audit trail. Design B measured a
+    only automatic guard against a fabricated audit trail. within-task HExA measured a
     58% turn-citation fabrication rate on a weak teacher; assume nothing.
 
     Reports rather than filters: a bogus citation invalidates the audit trail

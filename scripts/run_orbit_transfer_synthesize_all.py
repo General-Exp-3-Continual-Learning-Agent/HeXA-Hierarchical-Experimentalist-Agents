@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Phase 3 in bulk: every source set x target x replicate, then the verdicts.
 
-Runs the 18 syntheses the pre-registered lattice needs (`DESIGN_C_STATUS.md` 6b)
+Runs the 18 syntheses the pre-registered lattice needs (`the cross-task transfer plan` 6b)
 and collects each one's inspection into a single table, then **stops**. It does
 not launch Phase 4.
 
@@ -12,9 +12,9 @@ The mechanical gates (citations resolve, no source entity survives) are enforced
 here; the inverted-premise flags are printed for a person to read. Chaining an eval
 onto this would quietly convert "flagged for reading" into "passed".
 
-    python scripts/run_design_c_phase3_all.py --dry-run    # prompts only, no teacher
-    python scripts/run_design_c_phase3_all.py
-    python scripts/run_design_c_phase3_all.py --target maze --runs 0
+    python scripts/run_orbit_transfer_synthesize_all.py --dry-run    # prompts only, no teacher
+    python scripts/run_orbit_transfer_synthesize_all.py
+    python scripts/run_orbit_transfer_synthesize_all.py --target maze --runs 0
 """
 
 from __future__ import annotations
@@ -65,7 +65,7 @@ def main() -> int:
         for arm in arms:
             for run in runs:
                 sources = sets[arm]
-                cmd = [sys.executable, "scripts/run_design_c_phase3.py",
+                cmd = [sys.executable, "scripts/run_orbit_transfer_synthesize.py",
                        "--target", target, "--run-index", str(run),
                        "--teacher-model", args.teacher_model]
                 for s in sources:
@@ -77,7 +77,7 @@ def main() -> int:
                 results.append({
                     "target": target, "arm": arm, "run": run,
                     "sources": sources, "returncode": proc.returncode,
-                    "dir": f"results/design_c/{target}_from_{'_'.join(sorted(sources))}/run{run}",
+                    "dir": f"results/orbit_transfer/{target}_from_{'_'.join(sorted(sources))}/run{run}",
                 })
 
     print(f"\n\n{'=' * 72}\nPHASE 3 VERDICTS\n{'=' * 72}")
@@ -94,7 +94,7 @@ def main() -> int:
         print(f"{r['target']:<11} {r['arm']:<6} {r['run']:<4} "
               f"{'+'.join(r['sources']):<24} {verdict}")
 
-    summary = ROOT / "results/design_c/phase3_summary.json"
+    summary = ROOT / "results/orbit_transfer/phase3_summary.json"
     summary.parent.mkdir(parents=True, exist_ok=True)
     summary.write_text(json.dumps(results, indent=2))
     print(f"\nwrote {summary}")

@@ -668,7 +668,7 @@ def _traj(first_success, reward_value, seed):
 def test_reward_bin_selection_always_includes_slow_successes():
     """The class `balanced` excluded: failed episode 1, then solved.
 
-    That is the cross-episode adaptation Design B distills, and sorting successes
+    That is the cross-episode adaptation within-task HExA distills, and sorting successes
     by reward descending buries it under every +1.00 fast success.
     """
     trajectories = (

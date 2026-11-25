@@ -7,15 +7,15 @@
 #SBATCH -t 2:00:00
 #SBATCH -o logs/mm_b_reps_%j.log
 
-# ─── Matched replicates of the Design B bank ─────────────────────────────────
+# ─── Matched replicates of the within-task HExA bank ─────────────────────────────────
 #
-# Design C's three runs are eval-SEED replicates of a single synthesised bank:
+# cross-task transfer's three runs are eval-SEED replicates of a single synthesised bank:
 # the bank is fixed at mastermind_from_wordle/run0 and only the actor seed
 # varies. The like-for-like control is therefore three eval-seed replicates of
-# the ONE Design B bank -- not three fresh evolutions, which would measure a
+# the ONE within-task HExA bank -- not three fresh evolutions, which would measure a
 # different source of variance than the number it is being compared against.
 #
-#   VLLM_URL=http://gpu017:8000/v1 sbatch scripts/run_designb_mastermind_evalreps.sh
+#   VLLM_URL=http://gpu017:8000/v1 sbatch scripts/run_orbit_within_task_mastermind_reps.sh
 
 set -Eeuo pipefail
 REPO_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
@@ -30,10 +30,10 @@ curl -sf "${VLLM_URL}/models" >/dev/null || { echo "ERROR: ${VLLM_URL} not answe
 echo "[$(date)] endpoint live; bank ${BANK}"
 
 for R in 0 1 2; do
-    echo "=== Design B bank, eval-seed replicate run${R} ==="
+    echo "=== within-task HExA bank, eval-seed replicate run${R} ==="
     "$PYTHON" -u scripts/run_orbit_target_zeroshot.py \
         --target mastermind --bank "$BANK" --run-index "$R" \
         --concurrency 24 --model "$MODEL" --base-url "$VLLM_URL" \
-        --out "results/design_c/phase4/mastermind_designb_bank/run${R}"
+        --out "results/orbit_transfer/phase4/mastermind_within_task_bank/run${R}"
 done
 echo "[$(date)] done"

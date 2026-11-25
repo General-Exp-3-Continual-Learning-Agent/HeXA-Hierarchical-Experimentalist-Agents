@@ -15,8 +15,8 @@ before any eval compute is spent.
 bank and the factual target description; the target's own pools are never
 constructed here.
 
-    python scripts/run_design_c_phase3.py --target maze --run-index 0 --dry-run
-    python scripts/run_design_c_phase3.py --target maze --run-index 0
+    python scripts/run_orbit_transfer_synthesize.py --target maze --run-index 0 --dry-run
+    python scripts/run_orbit_transfer_synthesize.py --target maze --run-index 0
 """
 
 from __future__ import annotations
@@ -89,7 +89,7 @@ def main() -> int:
 
     tag = "_".join(sorted(sources))
     out = args.out or Path(
-        f"results/design_c/{args.target}_from_{tag}/run{args.run_index}")
+        f"results/orbit_transfer/{args.target}_from_{tag}/run{args.run_index}")
     out.mkdir(parents=True, exist_ok=True)
 
     if args.target not in cross_task_blocks.TARGET_BLOCKS:

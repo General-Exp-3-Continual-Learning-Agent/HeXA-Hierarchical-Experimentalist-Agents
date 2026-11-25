@@ -1,7 +1,7 @@
 """Task-neutral view over ORBIT's Maze, with HExA's instance/episode structure.
 
 One :class:`MazeInstance` is one fixed hidden maze played for exactly
-:data:`EPISODES_PER_INSTANCE` episodes -- the Design B unit the evolver reflects
+:data:`EPISODES_PER_INSTANCE` episodes -- the within-task HExA unit the evolver reflects
 on. The maze rules themselves (generation, wall collision, the shortest-path
 filter, termination) are never reimplemented: ``MazeEnvAdapter`` is imported in
 place and every episode is a real ``reset(seed=...)`` on it.

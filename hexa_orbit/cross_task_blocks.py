@@ -1,4 +1,4 @@
-"""Factual task blocks for Design C cross-task synthesis on ORBIT.
+"""Factual task blocks for cross-task transfer cross-task synthesis on ORBIT.
 
 :mod:`skillrl.distillation.cross_level_synthesis` was built for InterPhyre and
 carries its Box2D scene registries inline. This module is the ORBIT counterpart:

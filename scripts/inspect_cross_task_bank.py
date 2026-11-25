@@ -2,7 +2,7 @@
 """Read a synthesised target bank before any eval compute is spent.
 
 The plan calls manual inspection the cheapest place to catch a broken transfer,
-and Design C makes it more than a nicety: with zero target trajectories there is
+and cross-task transfer makes it more than a nicety: with zero target trajectories there is
 no transcript to check a skill against, so nothing downstream will catch a
 plausible-sounding skill built on a premise the target does not have. This script
 does the mechanical part of that reading and leaves the judgement to a person.
@@ -17,7 +17,7 @@ Three checks, in increasing order of how much they need a human:
 
 Exit code is non-zero if a hard gate fails.
 
-    python scripts/inspect_cross_task_bank.py --dir results/design_c/maze_from_minesweeper/run0
+    python scripts/inspect_cross_task_bank.py --dir results/orbit_transfer/maze_from_minesweeper/run0
 """
 
 from __future__ import annotations
@@ -69,7 +69,7 @@ INVERTED_PREMISES = {
             "Minesweeper ends the episode on one wrong probe, so 'act only where "
             "safety is proven' is correct there. Maze has NO losing move -- a wall "
             "costs a turn and nothing else -- so the same skill makes an agent "
-            "stall instead of explore, which is the failure the Design B maze arm "
+            "stall instead of explore, which is the failure the within-task HExA maze arm "
             "already showed (a distilled bank cost 15.2 points by replacing a "
             "working implicit policy with a cautious verbal one).",
             re.compile(r"\b(safe|safety|risk|risky|danger|dangerous|avoid guess|"

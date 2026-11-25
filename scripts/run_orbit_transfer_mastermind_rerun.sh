@@ -13,9 +13,9 @@
 # 4-digit / 1-8 / 1680-code task; the eval runs 3-digit / 1-6 / 120 codes. The
 # block is fixed and pinned by a test; this redoes synthesis and eval on the
 # corrected description. See
-# results/design_c/_CONFOUNDED_mastermind_4digit_block/WHY_CONFOUNDED.md
+# results/orbit_transfer/_CONFOUNDED_mastermind_4digit_block/WHY_CONFOUNDED.md
 #
-#   VLLM_URL=http://gpu017:8000/v1 sbatch scripts/run_design_c_mastermind_redo.sh
+#   VLLM_URL=http://gpu017:8000/v1 sbatch scripts/run_orbit_transfer_mastermind_rerun.sh
 
 set -Eeuo pipefail
 REPO_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
@@ -36,10 +36,10 @@ fi
 echo "[$(date)] endpoint ${VLLM_URL} is live"
 
 echo "########## PHASE 3 (mastermind only) ##########"
-"$PYTHON" -u scripts/run_design_c_phase3_all.py --runs 0 --target mastermind
+"$PYTHON" -u scripts/run_orbit_transfer_synthesize_all.py --runs 0 --target mastermind
 
 echo "########## PHASE 4 (mastermind only) ##########"
-"$PYTHON" -u scripts/run_design_c_phase4_all.py \
+"$PYTHON" -u scripts/run_orbit_transfer_eval_all.py \
     --run-index 0 --concurrency "$CONCURRENCY" --model "$MODEL" \
     --base-url "$VLLM_URL" --target mastermind --no-ablation
 echo "[$(date)] done"

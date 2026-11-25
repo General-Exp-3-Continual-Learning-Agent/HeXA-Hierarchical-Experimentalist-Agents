@@ -7,7 +7,7 @@
 #SBATCH -t 12:00:00
 #SBATCH -o logs/dc_phase2_launcher_%j.log
 
-# ─── Design C Phase 2 launcher: source banks for Minesweeper and Wordle ───────
+# ─── cross-task transfer Phase 2 launcher: source banks for Minesweeper and Wordle ───────
 #
 # Waits for the gpt-oss-120b server named by SERVER_JOB to publish its endpoint,
 # then submits the arms in two stages so the no-bank gate exists before the bank
@@ -21,7 +21,7 @@
 # replicates share their pools and differ in actor sampling seed and play order,
 # so they are paired on identical instances.
 #
-#   SERVER_JOB=63790814 sbatch scripts/run_design_c_phase2.sh
+#   SERVER_JOB=63790814 sbatch scripts/run_orbit_transfer_sources.sh
 #
 # Every arm runs through scripts/run_maze_arm.sh, which is task-agnostic: it only
 # needs SCRIPT, OUT, ARM_ARGS, MODEL and VLLM_URL.
@@ -90,4 +90,4 @@ for task in minesweeper wordle; do
     done
 done
 
-echo "[$(date)] all Design C Phase 2 arms submitted"
+echo "[$(date)] all cross-task transfer Phase 2 arms submitted"

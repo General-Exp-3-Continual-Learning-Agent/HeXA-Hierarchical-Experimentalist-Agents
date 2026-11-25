@@ -1,4 +1,4 @@
-"""Phase 1 tests for Design C's source tasks: identity, determinism, T=3, labels.
+"""Phase 1 tests for cross-task transfer's source tasks: identity, determinism, T=3, labels.
 
 Same job as ``test_adapter``/``test_mastermind`` for Maze and Mastermind. Two
 tests here are not bookkeeping and would each invalidate Phase 2 if they failed:

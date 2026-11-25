@@ -10,7 +10,7 @@ bucket or its ``iterations < 10`` failure bucket. It discriminates nothing here.
 ``hexa_bridge.patch(reward_fn=...)``, which rebinds the name in *both*
 ``teacher_prompts`` and ``distill`` because it is read in three places.
 
-**Keyed on the first solved episode, not the success count.** The metric Design B
+**Keyed on the first solved episode, not the success count.** The metric within-task HExA
 lives or dies on is episode-1 success on held-out instances, so episode-1 success
 sits at the top of the scale and the evolver's incentive points at the claim.
 That is training on the objective, not leaking the test: legitimacy comes from

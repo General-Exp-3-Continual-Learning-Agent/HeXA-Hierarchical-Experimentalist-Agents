@@ -3,7 +3,7 @@
 
 The memory-baseline counterpart to `run_orbit_maze_hexa.py`: same tasks, same
 pools, same actor, same frozen-eval protocol, so the arm is paired per
-`instance_id` with the no-bank baseline and with Design B.
+`instance_id` with the no-bank baseline and with within-task HExA.
 
     # 0. calibrate MemRL's similarity constants (cheap, no rollouts, no server)
     python -m baselines.orbit.calibrate --task mastermind
@@ -444,7 +444,7 @@ def main() -> int:
         "protocol": (
             "build memory on the train pool, then evaluate frozen on the "
             "held-out pool — hexa_orbit.loop.frozen_eval's shape, so this arm "
-            "is paired per instance_id with the no-bank and Design B arms"
+            "is paired per instance_id with the no-bank and within-task HExA arms"
         ),
         "actor": actor_config.to_dict(),
         "embedding_model": args.embedding_model,

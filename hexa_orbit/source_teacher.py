@@ -1,4 +1,4 @@
-"""Teacher prompts and installation for Design C's source tasks.
+"""Teacher prompts and installation for cross-task transfer's source tasks.
 
 :mod:`hexa_orbit.mastermind_teacher` with the level parameterised. The prompt
 *structure* is deliberately not redesigned: the Mastermind v3 arm (+17.6 episode-3,

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""No-bank baseline on a Design C source task -- Phase 2's gate, not a headline.
+"""No-bank baseline on a cross-task transfer source task -- Phase 2's gate, not a headline.
 
 Mirrors `run_orbit_mastermind_baseline.py`. Same actor, same record schema, no
 guidelines injected, so the system prompt is byte-identical to ORBIT's.

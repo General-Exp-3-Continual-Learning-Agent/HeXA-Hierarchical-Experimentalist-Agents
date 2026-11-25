@@ -1,4 +1,4 @@
-"""Design C Phase 0a: cross-task synthesis on ORBIT.
+"""Cross-task transfer, phase 0a: cross-task synthesis on ORBIT.
 
 The synthesis machinery was built for InterPhyre and hardcoded its domain in
 three places — the source-block registry, the prompt body's Box2D paragraph, and

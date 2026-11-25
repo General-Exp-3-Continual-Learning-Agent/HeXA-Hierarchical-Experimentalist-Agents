@@ -1,4 +1,4 @@
-"""HExA Design B on ORBIT's Maze environment.
+"""Within-task HExA on ORBIT's Maze environment.
 
 Glue only. ORBIT's maze generator, transition rules, termination conditions and
 episode-success rule are imported in place from the ORBIT checkout and never

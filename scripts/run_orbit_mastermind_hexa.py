@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""HExA Design B on Mastermind: distil a skill bank, then evaluate it frozen.
+"""Within-task HExA on Mastermind: distil a skill bank, then evaluate it frozen.
 
 Mirrors `run_orbit_maze_hexa.py`. The loop itself is task-agnostic -- it drives
 whatever `task` object it is handed -- so what differs is the level name, the

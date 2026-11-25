@@ -1,4 +1,4 @@
-"""The Design C source-task teacher path: rendering, loading, installation.
+"""The cross-task transfer source-task teacher path: rendering, loading, installation.
 
 Covers the seam that killed a Maze run and a Mastermind run respectively: a
 trajectory loader bound to the wrong level, and prompts that fail their own
@@ -257,7 +257,7 @@ def test_minesweeper_description_carries_no_cross_model_comparison():
 
     An earlier draft of this description quoted one actor's waste rate against
     another's. Aggregate or not, that is one model's behaviour entering a second
-    model's teacher prompt, which is the thing Design C is supposed to isolate.
+    model's teacher prompt, which is the thing cross-task transfer is supposed to isolate.
     """
     from hexa_orbit.source_teacher import TASK_DESCRIPTIONS
 

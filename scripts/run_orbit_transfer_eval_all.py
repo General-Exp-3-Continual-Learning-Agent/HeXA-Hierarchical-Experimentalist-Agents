@@ -4,7 +4,7 @@
 Six transfer arms plus two raw-dump ablations. The ablation injects the SOURCE
 bank verbatim (no relevance filtering, no re-grounding); if it matches the
 synthesised arm, Phase 3's contribution is unearned. Baselines already exist at
-results/design_c/{target}_baseline/run{0,1,2} and are not re-run.
+results/orbit_transfer/{target}_baseline/run{0,1,2} and are not re-run.
 
 Primary metric per the 2026-08-31 pre-registration amendment:
   maze       -> episode 1
@@ -37,7 +37,7 @@ ABLATIONS = [
 
 
 def bank_path(target: str, sources: list[str]) -> Path:
-    return (ROOT / "results/design_c" / f"{target}_from_{'_'.join(sources)}"
+    return (ROOT / "results/orbit_transfer" / f"{target}_from_{'_'.join(sources)}"
             / "run0" / f"skill_bank_xl_{target}.json")
 
 
@@ -65,7 +65,7 @@ def main() -> int:
             results.append({"target": target, "arm": arm, "sources": sources,
                             "returncode": None, "note": "bank missing"})
             continue
-        out = (ROOT / "results/design_c/phase4"
+        out = (ROOT / "results/orbit_transfer/phase4"
                / f"{target}_{arm}_{'_'.join(sources)}" / f"run{args.run_index}")
         cmd = [sys.executable, "-u", str(ROOT / "scripts/run_orbit_target_zeroshot.py"),
                "--target", target, "--bank", str(bank),
@@ -91,7 +91,7 @@ def main() -> int:
                         "bank_level": bank_level, "returncode": rc,
                         "dir": str(out.relative_to(ROOT))})
 
-    summary = ROOT / "results/design_c/phase4_summary.json"
+    summary = ROOT / "results/orbit_transfer/phase4_summary.json"
     summary.parent.mkdir(parents=True, exist_ok=True)
     summary.write_text(json.dumps(results, indent=2))
     print(f"\nwrote {summary}", flush=True)

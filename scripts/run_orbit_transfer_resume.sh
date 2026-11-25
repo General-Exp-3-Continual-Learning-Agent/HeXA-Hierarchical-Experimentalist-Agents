@@ -1,7 +1,7 @@
 #!/bin/bash
-# Restart Design C after the gpt-oss server was lost. One command, n=1 (D-C9).
+# Restart cross-task transfer after the gpt-oss server was lost. One command, n=1 (D-C9).
 #
-#   SERVER_JOB=<jobid> bash scripts/run_design_c_resume.sh
+#   SERVER_JOB=<jobid> bash scripts/run_orbit_transfer_resume.sh
 #
 # Submits the one thing Phase 3 is blocked on: Minesweeper HExA run0, resumed
 # from its last completed round.
@@ -10,7 +10,7 @@
 # already holds it on gpt-oss-120b: n=256, `guidelines: None`, `added_tokens: 0`,
 # and its instance ids are identical to `MastermindTask().eval_specs(256)` --
 # checked, 256/256 -- so the transfer arms pair against it exactly. Maze's
-# baseline is `results/design_c/maze_baseline/run{0,1,2}`, already at n=3.
+# baseline is `results/orbit_transfer/maze_baseline/run{0,1,2}`, already at n=3.
 #
 # It stops there. Phase 3 is a separate command on purpose: its banks must be read
 # before any eval compute is spent, and a script that chained straight into Phase 4
@@ -49,5 +49,5 @@ echo "minesweeper hexa run0 (resumes from its last round) -> $id"
 
 echo
 echo "When it finishes, Phase 3 (6 syntheses, run0 only):"
-echo "  python scripts/run_design_c_phase3_all.py --runs 0"
+echo "  python scripts/run_orbit_transfer_synthesize_all.py --runs 0"
 echo "Read every inverted-premise flag before queueing Phase 4."

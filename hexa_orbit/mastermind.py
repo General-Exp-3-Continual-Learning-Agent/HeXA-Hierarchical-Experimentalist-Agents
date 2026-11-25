@@ -1,4 +1,4 @@
-"""Mastermind as a Design-B task: same hidden code, three episodes.
+"""Mastermind as a within-task task: same hidden code, three episodes.
 
 Why this task exists alongside Maze. The maze result was a strong negative --
 injecting a distilled bank cost gpt-oss-120b 15.2 points of episode-3 accuracy

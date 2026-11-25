@@ -39,6 +39,6 @@ the maze layout or the secret code would hand the baseline the answer.
 
 **Memory is frozen for the eval pass.**  It is built over the training pool and
 read-only over the held-out eval pool, mirroring `hexa_orbit.loop.frozen_eval`,
-so these arms are paired per `instance_id` with the no-bank and Design B arms
+so these arms are paired per `instance_id` with the no-bank and within-task HExA arms
 already in `MAZE_RESULTS.md` and `MASTERMIND_RESULTS.md`.
 """

@@ -406,7 +406,7 @@ def format_trajectory_for_teacher(
     ``max_steps`` is reinterpreted as **turns rendered per episode** rather than
     total turns kept from the end. The stock function keeps the last N steps of a
     single episode; here, truncating from the end would drop episode 1 entirely,
-    which is the episode Design B is about. The parameter name is kept because
+    which is the episode within-task HExA is about. The parameter name is kept because
     ``hexa_bridge``'s selector calls this positionally.
     """
     reward = trajectory_reward(trajectory)
@@ -532,7 +532,7 @@ def select_by_reward_bin(
     fast success (+1.00) above a slow one (+0.60/+0.30), so the top slots are always
     episode-1 solves. Measured live: every success sent was ``+1.00``. The class the
     evolver therefore **never sees** is ``[False, True, True]`` -- failed episode 1,
-    then solved -- which is exactly the cross-episode adaptation Design B exists to
+    then solved -- which is exactly the cross-episode adaptation within-task HExA exists to
     distill. The selector was excluding the evidence for the mechanism under test.
 
     This selector buckets by outcome class and fills a quota from each, so a

@@ -1,13 +1,13 @@
 #!/bin/bash
-#SBATCH --job-name=mm_designb
+#SBATCH --job-name=mm_within_task
 #SBATCH --partition=cpu
 #SBATCH --nodes=1
 #SBATCH -c 8
 #SBATCH --mem=24G
 #SBATCH -t 10:00:00
-#SBATCH -o logs/mm_designb_%j.log
+#SBATCH -o logs/mm_within_task_%j.log
 
-# ─── Design B Mastermind, rerun on the ORBIT-paper task config ───────────────
+# ─── within-task HExA Mastermind, rerun on the ORBIT-paper task config ───────────────
 #
 # `hexa_orbit.mastermind.TASK_CONFIG` was changed to match the ORBIT paper:
 # code_length 3, num_numbers 6 (120 codes), down from 4/8 (1680 codes). Every
@@ -16,7 +16,7 @@
 #
 #   results/orbit_mastermind_baseline_oss      4/8  stale
 #   results/orbit_mastermind_hexa_v3           4/8  stale
-#   results/design_c/mastermind_baseline       4/8  stale (partial)
+#   results/orbit_transfer/mastermind_baseline       4/8  stale (partial)
 #
 # The old hexa_v3 run was compromised twice: besides the config, its bank
 # changed in only rounds 0, 8 and 14 of 20 -- the teacher-truncation signature

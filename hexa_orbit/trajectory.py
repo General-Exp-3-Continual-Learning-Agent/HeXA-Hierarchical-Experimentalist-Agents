@@ -3,7 +3,7 @@
 ``skillrl``'s distil/evolve path takes trajectory dicts of a fixed shape
 (``seed`` / ``success`` / ``iterations`` / ``trajectory`` / ``action``).
 :func:`instance_trajectory` emits exactly that for a whole three-episode
-instance, which is Design B's unit of reflection: a skill like "if episode 1
+instance, which is within-task HExA's unit of reflection: a skill like "if episode 1
 showed the left corridor dead-ends, don't re-walk it in episode 2" is only
 expressible when the evolver sees all three episodes at once.
 
@@ -74,7 +74,7 @@ def outcome_of(observation: str) -> str:
 def first_success_episode(episode_successes: Sequence[bool]) -> Optional[int]:
     """1-based index of the first solved episode, or ``None``.
 
-    The quantity the reward is keyed on (:mod:`hexa_orbit.reward`): Design B's
+    The quantity the reward is keyed on (:mod:`hexa_orbit.reward`): within-task HExA's
     claim is about a head start at episode 1, so *when* the instance was first
     solved carries the signal that a success count does not.
     """

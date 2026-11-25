@@ -10,11 +10,11 @@ even accidentally.
 weights but still opens every unseen instance where a base model would; a bank
 that lifts episode-1 success on a task the agent has never played is a claim their
 architecture cannot make about itself. Episodes 2 and 3 are reported, but a gain
-that appears only there is within-instance adaptation, which Design B already
+that appears only there is within-instance adaptation, which within-task HExA already
 measures.
 
     python scripts/run_orbit_target_zeroshot.py --target maze --run-index 0 \
-        --bank results/design_c/maze_from_minesweeper/run0/skill_bank_xl_maze.json
+        --bank results/orbit_transfer/maze_from_minesweeper/run0/skill_bank_xl_maze.json
 """
 
 from __future__ import annotations
@@ -96,7 +96,7 @@ def main() -> int:
     started = time.monotonic()
     summary = loop.frozen_eval(
         task, eval_specs, actor_factory, bank, args.out,
-        # Deliberately empty: there is no target training pool in Design C, and
+        # Deliberately empty: there is no target training pool in cross-task transfer, and
         # passing one would invent a leakage split that does not exist.
         train_specs=(),
         injection_budget_tokens=args.injection_budget_tokens,

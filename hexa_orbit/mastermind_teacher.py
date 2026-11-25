@@ -366,7 +366,7 @@ def install(max_trajs: int = 6, reward_bin_selection: bool = False) -> None:
         # Measured over rounds 0-2 of v2 that sent an identical profile every time
         # -- [1.0, 1.0, 1.0, 1.0, -0.8, -0.8] -- four episode-1 solves and two total
         # failures. Round 2 held 13 instances that failed episode 1 and then solved
-        # it, the cross-episode adaptation Design B exists to distil, and sent none
+        # it, the cross-episode adaptation within-task HExA exists to distil, and sent none
         # of them. Bound in every module holding its own reference, as `patch` does.
         import skillrl.distillation.evolving_distill as _ev  # noqa: PLC0415
 

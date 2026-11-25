@@ -4,7 +4,7 @@
 The bank this produces is **input to Phase 3's cross-task synthesis**, not a
 result. Its own held-out accuracy is reported only as a gate -- "is this bank
 worth transferring?" -- and must not be quoted as a within-task claim, which is
-Design B's territory (`Design_C_Orbit_Plan.md`, "Do not").
+within-task HExA's territory (`the cross-task transfer plan`, "Do not").
 
 Mirrors `run_orbit_mastermind_hexa.py`; the loop is task-agnostic and everything
 task-specific is installed by `source_teacher.install(level)`.
@@ -141,7 +141,7 @@ def main() -> int:
     # A truncated evolution response makes `evolve_skill_bank` fall back to the
     # previous bank with a printed warning and no error, which in the round line
     # is indistinguishable from convergence -- Mastermind v3 legitimately left its
-    # bank unchanged in 17 of 20 rounds. The first Design C Phase 2 lost every
+    # bank unchanged in 17 of 20 rounds. The first cross-task transfer Phase 2 lost every
     # Minesweeper round and about half of Wordle's that way, unnoticed until the
     # logs were read by hand. So count it here and say so loudly.
     unchanged = sum(1 for r in result.rounds

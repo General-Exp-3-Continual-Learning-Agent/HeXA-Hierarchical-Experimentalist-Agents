@@ -1,4 +1,4 @@
-"""The Design B round loop: batch of instances -> evolve -> repeat -> frozen eval.
+"""The within-task HExA round loop: batch of instances -> evolve -> repeat -> frozen eval.
 
 Structure and vocabulary follow ``hexa_core/passive_loop.py`` so the two arms of the
 project are read the same way. What differs is the unit: a round here is a batch of
@@ -189,7 +189,7 @@ def render_block(
         bank,
         level(),
         budget_tokens,
-        max_general=0,       # single task family; cross-task transfer is Design C
+        max_general=0,       # single task family; cross-task transfer is cross-task transfer
         max_specific=MAX_SKILLS if top_k is None else int(top_k),
         max_mistakes=MAX_MISTAKES if top_k is None else 0,
     )

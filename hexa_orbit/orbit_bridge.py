@@ -39,7 +39,7 @@ _SIBLING_DEFAULT = _THIS_REPO.parent / "ORBIT"
 # Files every usable ORBIT checkout must have. Checking several guards against
 # the failure that actually happens: $ORBIT_REPO pointing at a partial clone.
 # Note none of these live under third_party/ -- the submodules are empty in a
-# fresh clone (RECON §0a) and Design B does not need them, so requiring them
+# fresh clone (RECON §0a) and within-task HExA does not need them, so requiring them
 # would reject a perfectly usable checkout.
 _REQUIRED_MARKERS = (
     Path("envs") / "maze_env_adapter.py",
@@ -118,7 +118,7 @@ def _register_envs_package(root: Path) -> None:
     ``ORBIT/envs/__init__.py`` eagerly re-exports every adapter, including
     ``GEMEnvAdapter`` -- whose module raises ``ImportError`` at import time when
     ``gem`` is absent (``envs/gem_env_adapter.py:15-20``), and ``gem`` lives in
-    an uninitialised submodule (RECON §0a). Design B is Maze-only (D1), so that
+    an uninitialised submodule (RECON §0a). within-task HExA is Maze-only (D1), so that
     import is pure cost.
 
     Skipping it is safe because that ``__init__`` is nothing but re-exports plus

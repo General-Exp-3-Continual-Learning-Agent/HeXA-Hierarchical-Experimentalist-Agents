@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Phase 3: HExA Design B on ORBIT Maze.
+"""Phase 3: within-task HExA on ORBIT Maze.
 
 Runs the round loop over training instances, then a frozen-bank eval on held-out
 instances. Companion to ``run_orbit_maze_baseline.py``, which produces the no-bank
@@ -319,7 +319,7 @@ def main() -> int:
     print()
     print(report.format_summary(
         summary["report"],
-        title=f"Maze HExA Design B, {arm_label} "
+        title=f"Maze within-task HExA, {arm_label} "
               f"({'ORACLE STUB' if args.stub else config.model})",
     ))
     print(f"\nwall clock {time.monotonic() - started:.0f}s")

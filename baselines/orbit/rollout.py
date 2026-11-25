@@ -11,7 +11,7 @@ no-bank baseline's.
     no bank        nothing
 
 The injection point is `MazeActor(guidelines=...)`, which appends to the system
-prompt and nowhere else.  That is the seam Design B already uses, so a memory
+prompt and nowhere else.  That is the seam within-task HExA already uses, so a memory
 block costs tokens in exactly the place a skill bank does and the two are
 comparable at equal added context.
 
