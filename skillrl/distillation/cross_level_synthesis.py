@@ -172,9 +172,7 @@ magnitude the agent sets here is the red ball's radius, which fixes its mass and
 so the momentum it delivers on contact. If the body the target requires moving
 is heavier or mechanically coupled (resting on a pivot, loaded at one end,
 carrying something), the source radii are too small for it: emit a skill that
-scales the radius up, starting well above the source-calibrated values, and that
-separates "too little momentum" from "wrong contact geometry" — only the first
-is fixed by a larger radius. Name no specific target radius.
+scales the radius up, starting well above the source-calibrated values.
 {transfer_guard_block}
 ═══ OUTPUT FORMAT (single JSON object) ═══
 
