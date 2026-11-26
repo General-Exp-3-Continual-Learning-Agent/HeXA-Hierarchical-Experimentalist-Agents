@@ -44,6 +44,7 @@ The environment is a 2D box with coordinates ranging from -5 to 5 on both axes. 
 Introduce a Red Ball into the scene so that the Green Ball is knocked off the platform and touches the Purple Ground for at least 3 seconds.
 
 **Placement Constraints:**
+- The red ball's radius must be between 0.1 and 2.0.
 - The red ball must be completely inside the box: -5 + radius <= x <= 5 - radius, -5 + radius <= y <= 5 - radius.
 - The red ball must NOT overlap with the green ball at t=0: distance between centers > sum of radii.
 - The red ball must NOT overlap with the black platform at t=0.

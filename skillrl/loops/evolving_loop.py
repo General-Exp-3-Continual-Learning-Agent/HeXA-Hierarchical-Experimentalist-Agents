@@ -106,6 +106,7 @@ def run_evolving_loop(
     model_name: str = "claude",
     teacher_model: str = TEACHER_MODEL,
     max_iterations: int = DEFAULT_MAX_ITERATIONS,
+    dedup_guard: bool = False,
     temperature: float = DEFAULT_TEMPERATURE,
     max_new_tokens: int = DEFAULT_MAX_NEW_TOKENS,
     skip_general: bool = True,
@@ -213,6 +214,15 @@ def run_evolving_loop(
     # Load model once
     model_fn = _load_model(model_name)
     is_oss = "gpt-oss" in model_name.lower() if isinstance(model_name, str) else False
+
+    # Small-Qwen actor config (see react_agent.prompts_qwen_slim_actor). Gated
+    # on the actor model, so every other actor is untouched.
+    from react_agent.prompts_qwen_slim_actor import is_small_qwen_actor
+    slim_actor = is_small_qwen_actor(model_name)
+    if slim_actor:
+        print(f"  [Prompts] Actor {model_name} is a small Qwen: slim system "
+              f"prompt, radius bound stated, skill-example caveat on, and "
+              f"rejected placements report their legal ranges.")
 
     current_seed = start_seed
 
@@ -344,6 +354,8 @@ def run_evolving_loop(
                 max_specific_skills=max_specific_skills,
                 max_mistakes=max_mistakes_agent,
                 condition_on_bank=condition_collection_on_bank,
+                dedup_guard=dedup_guard,
+                slim_actor=slim_actor,
             )
 
             # Combine with already-run seeds (loaded from disk) so round_stats reflects the full batch
@@ -453,6 +465,8 @@ def main():
     parser.add_argument("--teacher-model", type=str, default=TEACHER_MODEL,
                         help="Teacher model for evolution")
     parser.add_argument("--max-iterations", type=int, default=DEFAULT_MAX_ITERATIONS)
+    parser.add_argument("--dedup-guard", action="store_true",
+                        help="Flag byte-exact repeated calls to the actor.")
     parser.add_argument("--temperature", type=float, default=DEFAULT_TEMPERATURE)
     parser.add_argument("--max-new-tokens", type=int, default=DEFAULT_MAX_NEW_TOKENS)
     parser.add_argument("--skip-general", action="store_true", default=True,
@@ -495,6 +509,7 @@ def main():
         model_name=args.model,
         teacher_model=args.teacher_model,
         max_iterations=args.max_iterations,
+        dedup_guard=args.dedup_guard,
         temperature=args.temperature,
         max_new_tokens=args.max_new_tokens,
         skip_general=args.skip_general,

@@ -960,6 +960,7 @@ class ReactAgent:
         max_new_tokens: int = 800,
         is_oss: bool = False,
         on_turn_end=None,
+        dedup_guard: bool = False,
     ):
         self.model_fn = model_fn
         self.toolkit = toolkit
@@ -974,6 +975,10 @@ class ReactAgent:
         # system prompt (e.g. re-rendered from a refined skill bank). None --
         # the default -- keeps solve() byte-for-byte identical to before.
         self.on_turn_end = on_turn_end
+        # Tell the model when a call is a byte-exact repeat that returned a
+        # byte-identical observation, instead of letting it re-emit the same
+        # call until the budget runs out.
+        self.dedup_guard = dedup_guard
 
     @staticmethod
     def _make_tool_call_id(iteration: int) -> str:
@@ -1029,6 +1034,9 @@ class ReactAgent:
         usage_log = []
         # Track last valid coordinates for OSS empty-args recovery
         _last_valid_coords = {}
+
+        # (tool, canonical args) -> (iteration, observation) for the duplicate guard.
+        seen_calls = {}
 
         for iteration in range(1, self.max_iterations + 1):
             if self.verbose:
@@ -1159,6 +1167,25 @@ class ReactAgent:
                 print(f"\n[Tool Call] {action_name}({action_args})")
 
             observation = self.toolkit.dispatch_tool(action_name, action_args or {})
+
+            # Duplicate guard: the tool is always dispatched (get_contact_log and
+            # friends depend on simulation state, so a cached reply could be
+            # wrong); the note fires only when the fresh observation is itself
+            # byte-identical to the earlier one, which makes it always accurate.
+            if self.dedup_guard:
+                _key = (action_name, json.dumps(action_args or {}, sort_keys=True))
+                _prev = seen_calls.get(_key)
+                if _prev is not None and _prev[1] == observation:
+                    observation += (
+                        f"\n\n[repeat] You already made this exact call at iteration "
+                        f"{_prev[0]} and the result is identical. Repeating it cannot "
+                        f"tell you anything new. Choose DIFFERENT argument values, or "
+                        f"call finish if you already have a placement that worked."
+                    )
+                    if self.verbose:
+                        print(f"[Dedup] exact repeat of iteration {_prev[0]}")
+                else:
+                    seen_calls[_key] = (iteration, observation)
 
             if self.verbose:
                 print(f"\n[Observation]")

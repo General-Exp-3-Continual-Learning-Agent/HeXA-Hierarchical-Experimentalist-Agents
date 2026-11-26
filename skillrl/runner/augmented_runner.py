@@ -381,6 +381,14 @@ def run_skill_augmented(
     prediction_cap: Optional[int] = None,
     explore: bool = False,
     condition_on_bank: bool = True,
+    # Feedback knob. Defaults to the original behaviour so every existing
+    # experiment reproduces byte-for-byte; the 3B config turns it on.
+    dedup_guard: bool = False,
+    # Small-Qwen actor config: slim system prompt + stated radius bound, the
+    # "Example numbers came from another seed" caveat on the skill block, and
+    # legal-range reporting on rejected placements. Off by default so no other
+    # actor or level sees a changed prompt or a changed observation.
+    slim_actor: bool = False,
 ) -> dict:
     """Run ReactAgent with skill-augmented prompts.
 
@@ -467,6 +475,12 @@ def run_skill_augmented(
         original_initial = build_initial_user_message(
             level_name, is_oss=is_oss, max_iterations=max_iterations
         )
+        if slim_actor:
+            from react_agent import prompts_qwen_slim_actor as _slim
+            original_system = _slim.slim_system_prompt(original_system, level_name)
+            original_initial = _slim.slim_initial_message(
+                original_initial, max_iterations
+            )
 
     def render_system(bank: SkillBank, show_all: bool = False):
         """Retriever(K, level, M, N) -> skill block -> augmented system prompt.
@@ -485,8 +499,13 @@ def run_skill_augmented(
             mistakes = mistakes[:max_mistakes]
 
         # 4. Format skills + mistakes block
+        _caveat = None
+        if slim_actor:
+            from react_agent import prompts_qwen_slim_actor as _slim
+            _caveat = _slim.EXAMPLE_CAVEAT
         skills_block = bank.format_skills_as_prompt(
             level_name, skills=skills, mistakes=mistakes,
+            example_caveat=_caveat,
         )
 
         # 4b. Honest provenance label for cross-level transferred banks.
@@ -681,7 +700,10 @@ def run_skill_augmented(
     agent_module.build_initial_user_message = patched_initial
 
     try:
-        toolkit = InterphyreToolkit(level_name=level_name, seed=seed, is_oss=is_oss)
+        toolkit = InterphyreToolkit(
+            level_name=level_name, seed=seed, is_oss=is_oss,
+            legality_hint=slim_actor,
+        )
         # Goal object the green ball must reach: blue_ball (catapult, two_body_problem)
         # or blue_basket (falling_into_place).
         info_objs = getattr(toolkit, "_level_info", {})
@@ -717,6 +739,7 @@ def run_skill_augmented(
             max_new_tokens=max_new_tokens,
             is_oss=is_oss,
             on_turn_end=on_turn_end,
+            dedup_guard=dedup_guard,
         )
 
         start = time.perf_counter()

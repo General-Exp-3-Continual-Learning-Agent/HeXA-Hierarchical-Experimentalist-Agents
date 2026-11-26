@@ -57,10 +57,16 @@ def _contact_manifold(red_body, other_body):
 class InterphyreToolkit:
     """Toolkit wrapping Interphyre API for physics puzzle levels."""
 
-    def __init__(self, level_name: str = "down_to_earth", seed: int = 42, is_oss: bool = False):
+    def __init__(self, level_name: str = "down_to_earth", seed: int = 42, is_oss: bool = False,
+                 legality_hint: bool = False):
         self.level_name = level_name
         self.seed = seed
         self.is_oss = is_oss
+        # When True, a rejected placement also reports the legal x ranges for
+        # the radius. Observation text is read by every method, so this stays
+        # OFF by default: turning it on changes the environment for whatever
+        # run enables it, and only runs that enable it are comparable.
+        self.legality_hint = legality_hint
 
         # Create an environment with extended max_steps
         self.env = InterphyreEnv(load_level(level_name, seed), config=_SIM_CONFIG)
@@ -230,12 +236,20 @@ class InterphyreToolkit:
         lines.append("=" * 60)
         return "\n".join(lines)
 
-    def _validate_placement(self, x: float, y: float, radius: float):
-        """Return an error string if the placement is invalid, else None."""
+    # Action-space bounds for the red ball. Single source of truth: the
+    # validator, the legality hint and the system prompt all read these.
+    RADIUS_MIN = 0.1
+    RADIUS_MAX = 2.0
+
+    def _placement_errors(self, x: float, y: float, radius: float) -> list:
+        """Legality errors for a placement. Pure: no formatting, no hint."""
         errors = []
 
-        if radius < 0.1 or radius > 2.0:
-            errors.append(f"Radius {radius:.4f} out of range [0.1, 2.0].")
+        if radius < self.RADIUS_MIN or radius > self.RADIUS_MAX:
+            errors.append(
+                f"Radius {radius:.4f} out of range "
+                f"[{self.RADIUS_MIN}, {self.RADIUS_MAX}]."
+            )
 
         if x - radius < -5.0:
             errors.append(f"Left edge (x-radius = {x - radius:.4f}) exceeds left wall (-5).")
@@ -280,8 +294,79 @@ class InterphyreToolkit:
                     f"Move at least {shortfall:.4f} units further away from the platform."
                 )
 
+        return errors
+
+    def _legal_x_intervals(self, y: float, radius: float, step: float = 0.05) -> list:
+        """Legal x intervals at height `y` for this `radius`, as [(lo, hi), ...].
+
+        Sampled through `_placement_errors` itself, so an interval it returns is
+        legal by construction -- no duplicated circle/rectangle geometry that
+        could drift from the validator. Endpoints are pulled inward by one step
+        so a value read off the interval is inside the legal set, not on its
+        boundary.
+        """
+        lo_bound, hi_bound = -5.0 + radius, 5.0 - radius
+        if hi_bound <= lo_bound:
+            return []
+        intervals, run_start, x = [], None, lo_bound
+        n = int((hi_bound - lo_bound) / step) + 1
+        for i in range(n + 1):
+            x = min(lo_bound + i * step, hi_bound)
+            ok = not self._placement_errors(x, y, radius)
+            if ok and run_start is None:
+                run_start = x
+            elif not ok and run_start is not None:
+                intervals.append((run_start, x - step))
+                run_start = None
+        if run_start is not None:
+            intervals.append((run_start, hi_bound))
+        return [(a, b) for a, b in intervals if b - a >= step]
+
+    def _legality_hint(self, x: float, y: float, radius: float) -> str:
+        """Code-computed legal placements near the attempted one.
+
+        Reports LEGALITY only -- which (x, y, radius) the simulator will accept.
+        It never says which placement solves the puzzle, so it carries no
+        strategy information; the agent still has to find the solution.
+        """
+        r = min(max(radius, self.RADIUS_MIN), self.RADIUS_MAX)
+        y_lo, y_hi = -5.0 + r, 5.0 - r
+        y_use = min(max(y, y_lo), y_hi)
+
+        lines = [f"LEGAL PLACEMENTS (radius must be in "
+                 f"[{self.RADIUS_MIN}, {self.RADIUS_MAX}]):"]
+        if abs(r - radius) > 1e-9:
+            lines.append(f"  Using radius={r:g} below (yours was out of range).")
+        if abs(y_use - y) > 1e-9:
+            lines.append(f"  Using y={y_use:.2f} below (yours put the ball "
+                         f"outside the box; legal y is [{y_lo:.2f}, {y_hi:.2f}]).")
+
+        intervals = self._legal_x_intervals(y_use, r)
+        if intervals:
+            spans = ", ".join(f"[{a:.2f}, {b:.2f}]" for a, b in intervals)
+            lines.append(f"  With radius={r:g} at y={y_use:.2f}, legal x: {spans}")
+            best = min(
+                (iv for iv in intervals),
+                key=lambda iv: min(abs(iv[0] - x), abs(iv[1] - x)),
+            )
+            pick = best[0] if abs(best[0] - x) <= abs(best[1] - x) else best[1]
+            lines.append(
+                f'  Accepted example: {{"x": {pick:.2f}, "y": {y_use:.2f}, '
+                f'"radius": {r:g}}}'
+            )
+        else:
+            lines.append(f"  No legal x at y={y_use:.2f} with radius={r:g} -- "
+                         f"use a smaller radius or a different y.")
+        return "\n".join(lines)
+
+    def _validate_placement(self, x: float, y: float, radius: float):
+        """Return an error string if the placement is invalid, else None."""
+        errors = self._placement_errors(x, y, radius)
         if errors:
-            return "INVALID placement:\n" + "\n".join(f"  - {e}" for e in errors)
+            msg = "INVALID placement:\n" + "\n".join(f"  - {e}" for e in errors)
+            if self.legality_hint:
+                msg += "\n" + self._legality_hint(x, y, radius)
+            return msg
         return None
 
     def simulate_action(self, x: float, y: float, radius: float) -> str:

@@ -137,6 +137,7 @@ class SkillBank:
         skills: Optional[list[Skill]] = None,
         mistakes: Optional[list[Mistake]] = None,
         max_mistakes: Optional[int] = None,
+        example_caveat: Optional[str] = None,
     ) -> str:
         """Render skills + mistakes into a structured text block for prompt injection."""
         if self.summary_text:
@@ -156,6 +157,13 @@ class SkillBank:
         specific = [s for s in skills if s.source_level != "general"]
 
         lines = ["=== LEARNED PHYSICS SKILLS ===", ""]
+        # Small actors copy an "Example:" line verbatim, coordinates and all,
+        # though those coordinates come from a seed with different geometry.
+        # Off by default: it changes the injected block for every method that
+        # reads it, so only runs that opt in are comparable.
+        if example_caveat and any(s.example for s in skills):
+            lines.append(example_caveat)
+            lines.append("")
 
         if general:
             lines.append("## General Principles")

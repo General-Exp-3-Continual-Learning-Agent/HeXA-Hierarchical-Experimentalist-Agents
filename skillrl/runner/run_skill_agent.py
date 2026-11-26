@@ -148,6 +148,17 @@ def main():
     parser.add_argument("--model", type=str, default="claude",
                         help="Model: claude, mock, openai:<name>, or HF model name")
     parser.add_argument("--max-iterations", type=int, default=DEFAULT_MAX_ITERATIONS)
+    parser.add_argument(
+        "--dedup-guard", action="store_true",
+        help="Tell the actor when a call is a byte-exact repeat that returned "
+             "a byte-identical observation.",
+    )
+    parser.add_argument(
+        "--no-slim-actor", action="store_true",
+        help="Disable the small-Qwen actor config (slim prompt, stated radius "
+             "bound, example caveat, legal-range reporting), which is otherwise "
+             "auto-enabled when --model names a ~3B Qwen.",
+    )
     parser.add_argument("--temperature", type=float, default=DEFAULT_TEMPERATURE)
     parser.add_argument("--max-new-tokens", type=int, default=DEFAULT_MAX_NEW_TOKENS)
     parser.add_argument("--eval-dir", type=str, default=str(EVAL_RESULTS_DIR))
@@ -224,6 +235,16 @@ def main():
     model_fn = _load_model(args.model)
     is_oss = "gpt-oss" in args.model.lower() if isinstance(args.model, str) else False
 
+    # Small-Qwen actor config, gated on the ACTOR model name exactly as the
+    # teacher-side slim prompt is gated on the teacher model name. Any other
+    # actor keeps the stock prompts and the stock observation text.
+    from react_agent.prompts_qwen_slim_actor import is_small_qwen_actor
+    slim_actor = is_small_qwen_actor(args.model) and not args.no_slim_actor
+    if slim_actor:
+        print(f"  [Prompts] Actor {args.model} is a small Qwen: slim system "
+              f"prompt, radius bound stated, skill-example caveat on, and "
+              f"rejected placements report their legal ranges.")
+
     run_batch(
         model_fn=model_fn,
         level_name=args.level,
@@ -255,6 +276,8 @@ def main():
         ws_require_numbers=args.ws_require_numbers,
         prediction_cap=args.prediction_cap,
         explore=args.explore,
+        dedup_guard=args.dedup_guard,
+        slim_actor=slim_actor,
     )
 
 
